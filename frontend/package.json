@@ -19,7 +19,8 @@
     "lint:fix": "yarn lint:check --fix",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "precommit": "lint-staged"
   },
   "dependencies": {
     "@babel/core": "7.9.0",
@@ -106,16 +107,10 @@
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.2.0",
     "http-proxy-middleware": "^1.0.6",
-    "husky": "^4.3.6",
     "lint-staged": "^10.5.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*": [
