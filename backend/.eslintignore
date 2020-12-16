@@ -1,0 +1,6 @@
+/**
+!/src
+/src/**/*
+!/src/**/*.ts
+!/src/**/*.tsx
+/src/__gen
