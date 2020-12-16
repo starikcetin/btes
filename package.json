@@ -24,7 +24,6 @@
     "lint:fix": "run-p -l lint:fix:*",
     "postinstall:backend": "yarn backend generate",
     "postinstall": "run-p -l postinstall:*",
-
     "precommit:backend": "yarn backend precommit",
     "precommit:frontend": "yarn frontend precommit",
     "precommit": "run-s -l precommit:*"
