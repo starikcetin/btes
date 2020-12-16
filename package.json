@@ -1,4 +1,27 @@
 {
-    "private": true,
-    "workspaces": ["frontend", "backend"]
+  "private": true,
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "backend": "yarn workspace backend",
+    "frontend": "yarn workspace frontend",
+
+    "start:backend": "yarn backend start:dev",
+    "start:frontend": "yarn frontend start",
+    "start": "run-p -l start:*",
+
+    "build:backend": "yarn backend build",
+    "build:frontend": "yarn frontend build",
+    "build": "run-p -l build:*",
+
+    "lint:backend": "yarn backend lint",
+    "lint:frontend": "yarn frontend lint",
+    "lint": "run-p -l lint:*",
+
+    "lint:fix:backend": "yarn backend lint:fix",
+    "lint:fix:frontend": "yarn frontend lint:fix",
+    "lint:fix": "run-p -l lint:fix:*",
+
+    "postinstall:backend": "yarn backend generate",
+    "postinstall": "run-p -l postinstall:*"
+  }
 }
