@@ -5,8 +5,8 @@
   "private": true,
   "main": "dist/server.js",
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "yarn lint --fix",
+    "lint:check": "eslint .",
+    "lint:fix": "yarn lint:check --fix",
     "clean": "rimraf dist",
     "generate": "tsoa spec-and-routes",
     "compile": "tsc",

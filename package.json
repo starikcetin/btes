@@ -13,9 +13,9 @@
     "build:frontend": "yarn frontend build",
     "build": "run-p -l build:*",
 
-    "lint:backend": "yarn backend lint",
-    "lint:frontend": "yarn frontend lint",
-    "lint": "run-p -l lint:*",
+    "lint:check:backend": "yarn backend lint:check",
+    "lint:check:frontend": "yarn frontend lint:check",
+    "lint:check": "run-p -l lint:check:*",
 
     "lint:fix:backend": "yarn backend lint:fix",
     "lint:fix:frontend": "yarn frontend lint:fix",
