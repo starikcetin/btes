@@ -30,7 +30,7 @@ Monorepo for Blockchain Technology Education Software project.
 |`yarn lint:fix`|Lints the project and tries to automatically the fix errors.|
 
 # Packages
-|Command|Path|Description|
+|Name|Path|Description|
 |-|-|-|
 |`frontend`|`/frontend`|Frontend of the BTES project.|
 |`backend`|`/backend`|Backend of the BTES project.|
