@@ -1,19 +1,24 @@
 import io from 'socket.io';
 import http from 'http';
-import { simulationBridge } from './core/simulationBridge';
+import { SimulationWelcomePayload } from './common/socketPayloads/SimulationWelcomePayload';
+import { SimulationSocketListener } from './SimulationSocketListener';
+import { socketEvents } from './common/constants/socketEvents';
 
 class SocketManager {
   private httpServer: http.Server = http.createServer();
   private socketServer: io.Server = io(this.httpServer);
 
+  private readonly uidToSocketListenerMap: {
+    [uid: string]: SimulationSocketListener;
+  } = {};
+
   constructor() {
-    this.socketServer.on('connection', (socket) => {
+    this.socketServer.on(socketEvents.native.connect, (socket) => {
       console.log(`new socket connection on root. socket id: ${socket.id}`);
 
-      socket.emit(
-        'welcome',
-        `Connected to socket endpoint on root namespace with socket id: ${socket.id}`
-      );
+      this.emitWelcome(socket, {
+        message: `Connected to socket endpoint on root namespace with socket id: ${socket.id}`,
+      });
     });
   }
 
@@ -27,28 +32,17 @@ class SocketManager {
   ): io.Namespace {
     const ns = this.socketServer.of(namespace);
 
-    ns.on('connection', (socket) => {
+    ns.on(socketEvents.native.connect, (socket) => {
       console.log(
         `new socket connection on ${namespace} with socket id: ${socket.id}`
       );
 
-      socket.on('simulation-ping', (body) => {
-        console.log('received simulation-ping:', body);
-        simulationBridge.handleSimulationPing(namespace, body);
+      const listener = new SimulationSocketListener(namespace, socket);
+      this.uidToSocketListenerMap[namespace] = listener;
+
+      this.emitWelcome(socket, {
+        message: `Connected to socket endpoint on ${namespace} namespace with socket id: ${socket.id}`,
       });
-
-      socket.on(
-        'simulation-create-node',
-        (body: { positionX: number; positionY: number }) => {
-          console.log('received simulation-create-node:', body);
-          simulationBridge.handleSimulationCreateNode(namespace, body);
-        }
-      );
-
-      socket.emit(
-        'welcome',
-        `Connected to socket endpoint on ${namespace} namespace with socket id: ${socket.id}`
-      );
 
       if (connectionCallback) {
         connectionCallback(socket);
@@ -56,6 +50,10 @@ class SocketManager {
     });
 
     return ns;
+  }
+
+  private emitWelcome(socket: io.Socket, body: SimulationWelcomePayload) {
+    socket.emit(socketEvents.simulation.welcome, body);
   }
 }
 

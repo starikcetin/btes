@@ -33,7 +33,7 @@ const SandboxSimulation: React.FC = () => {
   }, [simulationUid]);
 
   const sendSimulationPingOnClick = () => {
-    simulationBridge.sendSimulationPing(simulationUid);
+    simulationBridge.sendSimulationPing(simulationUid, { date: Date.now() });
   };
 
   const formatSimulationPongs = () => {
