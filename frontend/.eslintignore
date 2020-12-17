@@ -1,8 +1,11 @@
-/**
-# !/config
-# !/public
-# !/scripts
+# Folder
+/*
+#!/config
+#!/public
+#!/scripts
 !/src
-/src/**/*
-!/src/**/*.ts
-!/src/**/*.tsx
+
+# File
+*.*
+!*.ts
+!*.tsx
