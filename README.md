@@ -34,6 +34,7 @@ Monorepo for Blockchain Technology Education Software project.
 |-|-|-|
 |`frontend`|`/frontend`|Frontend of the BTES project.|
 |`backend`|`/backend`|Backend of the BTES project.|
+|`common`|`/common`|Shared code between other packages of the BTES project.|
 
 # License
 Copyright (c) 2020. All rights reserved. Refer to the [LICENSE](/LICENSE) file.
