@@ -9,7 +9,7 @@ interface NodeModalProps {
   node: SimulationNodePayload;
 }
 
-function NodeModal(props: NodeModalProps) {
+const NodeModal: React.FC<NodeModalProps> = (props) => {
   const { show, closeHandler, node } = props;
 
   return (
@@ -94,6 +94,6 @@ function NodeModal(props: NodeModalProps) {
       </Modal.Body>
     </Modal>
   );
-}
+};
 
 export default NodeModal;

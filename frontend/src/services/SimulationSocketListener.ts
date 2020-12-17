@@ -8,7 +8,7 @@ export class SimulationSocketListener {
     this.socket = socket;
     this.simulationUid = simulationUid;
     socket.on('simulation-pong', this.handleSimulationPong);
-    socket.on("simulation-node-created", this.handleSimulationNodeCreated)
+    socket.on('simulation-node-created', this.handleSimulationNodeCreated);
   }
 
   private handleSimulationPong = (body: {
@@ -25,13 +25,17 @@ export class SimulationSocketListener {
     );
   };
 
-  private handleSimulationNodeCreated = (body: { nodeUid: string; positionX: number; positionY: number; }) => {
-    console.log("received simulaiton from", this.simulationUid, "with:", body);
+  private handleSimulationNodeCreated = (body: {
+    nodeUid: string;
+    positionX: number;
+    positionY: number;
+  }) => {
+    console.log('received simulaiton from', this.simulationUid, 'with:', body);
     store.dispatch(
       simulationSlice.actions.nodeCreated({
         simulationUid: this.simulationUid,
-        ...body
+        ...body,
       })
     );
-  }
+  };
 }

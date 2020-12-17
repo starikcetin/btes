@@ -1,7 +1,6 @@
 import io from 'socket.io';
 import http from 'http';
 import { simulationBridge } from './core/simulationBridge';
-import { listeners } from 'process';
 
 class SocketManager {
   private httpServer: http.Server = http.createServer();

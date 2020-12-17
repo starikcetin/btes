@@ -41,15 +41,21 @@ class SimulationBridge {
     ns.emit('simulation-pong', body);
   }
 
-  public handleSimulationCreateNode(simulaitonUid: string, body: { positionX: number; positionY: number; }) {
+  public handleSimulationCreateNode(
+    simulaitonUid: string,
+    body: { positionX: number; positionY: number }
+  ) {
     const simulation = this.uidToSimulationMap[simulaitonUid];
     simulation.handleSimulationCreateNode(body);
   }
 
-  public sendSimulationNodeCreated(simulationUid: string, body: { nodeUid: string; positionX: number; positionY: number; }) {
-    console.log("sending simulation-node-created:", body);
+  public sendSimulationNodeCreated(
+    simulationUid: string,
+    body: { nodeUid: string; positionX: number; positionY: number }
+  ) {
+    console.log('sending simulation-node-created:', body);
     const ns = this.uidToNsMap[simulationUid];
-    ns.emit("simulation-node-created", body);
+    ns.emit('simulation-node-created', body);
   }
 }
 

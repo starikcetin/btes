@@ -41,7 +41,10 @@ export const simulationSlice = createSlice({
 
       sim.pongs.push(payload);
     },
-    nodeCreated: (state, { payload }: PayloadAction<SimulationNodeCreatedPayload>) => {
+    nodeCreated: (
+      state,
+      { payload }: PayloadAction<SimulationNodeCreatedPayload>
+    ) => {
       const sim = state[payload.simulationUid];
 
       if (!sim) {

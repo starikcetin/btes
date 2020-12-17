@@ -4,7 +4,7 @@ import { SimulationNode } from './SimulationNode';
 
 export class Simulation {
   private readonly simulationUid: string;
-  private readonly nodeMap: {[nodeUid: string]: SimulationNode} = {};
+  private readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
 
   constructor(simulationUid: string) {
     this.simulationUid = simulationUid;
@@ -24,7 +24,10 @@ export class Simulation {
     simulationBridge.sendSimulationPong(this.simulationUid, body);
   }
 
-  public handleSimulationCreateNode(body: { positionX: number; positionY: number; }) {
+  public handleSimulationCreateNode(body: {
+    positionX: number;
+    positionY: number;
+  }): void {
     const nodeUid = nodeUidGenerator.next().toString();
     const newNode = new SimulationNode(nodeUid, body.positionX, body.positionY);
     this.nodeMap[nodeUid] = newNode;
@@ -32,7 +35,11 @@ export class Simulation {
     this.sendSimulationNodeCreated(newNode);
   }
 
-  private sendSimulationNodeCreated(body: { nodeUid:string; positionX:number; positionY: number; }) {
+  private sendSimulationNodeCreated(body: {
+    nodeUid: string;
+    positionX: number;
+    positionY: number;
+  }) {
     simulationBridge.sendSimulationNodeCreated(this.simulationUid, body);
   }
 }

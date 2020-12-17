@@ -39,10 +39,18 @@ class SimulationBridge {
     socket.emit('simulation-ping', { date: Date.now() });
   }
 
-  public sendSimulationCreateNode(simulationUid: string, body: { positionX: number; positionY: number }) {
-    console.log("sending simulation-create-node to", simulationUid, "with:", body);
+  public sendSimulationCreateNode(
+    simulationUid: string,
+    body: { positionX: number; positionY: number }
+  ) {
+    console.log(
+      'sending simulation-create-node to',
+      simulationUid,
+      'with:',
+      body
+    );
     const socket = this.getSocket(simulationUid);
-    socket.emit("simulation-create-node", body);
+    socket.emit('simulation-create-node', body);
   }
 
   private setupNewConnection(

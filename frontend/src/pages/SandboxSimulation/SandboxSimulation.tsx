@@ -7,9 +7,7 @@ import { RootState } from '../../state/RootState';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { SimulationNodePayload } from '../../state/simulation/SimulationNodePayload';
 import NodeModal from '../../components/NodeModal/NodeModal';
-import { store } from '../../state/store';
-import { simulationSlice } from '../../state/simulation/simulationSlice';
-import nodeIcon from './pcIcon.png';
+// import nodeIcon from './pcIcon.png';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -51,17 +49,17 @@ const SandboxSimulation: React.FC = () => {
     return result || '';
   };
 
-  useEffect(() => {
-    connect();
-  }, [connect]);
-
-  const createNode = (event: any) => {
+  const createNode = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     simulationBridge.sendSimulationCreateNode(simulationUid, {
       positionX: event.pageX,
       positionY: event.pageY,
     });
   };
-  const isViewingAnyNode = viewingNode !== null;
+
+  useEffect(() => {
+    connect();
+  }, [connect]);
+
   return (
     <div className="sandbox-simulation-page container-fluid">
       {connected ? (
@@ -96,11 +94,11 @@ const SandboxSimulation: React.FC = () => {
                 </span>
               </MenuItem>
             </ContextMenu>
-            {isViewingAnyNode && (
+            {viewingNode && (
               <NodeModal
-                show={isViewingAnyNode}
+                show={true}
                 closeHandler={() => setViewingNode(null)}
-                node={viewingNode!}
+                node={viewingNode}
               />
             )}
           </div>
