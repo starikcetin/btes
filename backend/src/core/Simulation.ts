@@ -1,6 +1,10 @@
 import { simulationBridge } from './simulationBridge';
 import { nodeUidGenerator } from '../utils/uidGenerators';
 import { SimulationNode } from './SimulationNode';
+import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
+import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
+import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
+import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
 
 export class Simulation {
   private readonly simulationUid: string;
@@ -10,24 +14,18 @@ export class Simulation {
     this.simulationUid = simulationUid;
   }
 
-  public handleSimulationPing(body: { date: number }): void {
+  public handleSimulationPing(body: SimulationPingPayload): void {
     this.sendSimulationPong({
       pingDate: body.date,
       pongDate: Date.now(),
     });
   }
 
-  private sendSimulationPong(body: {
-    pingDate: number;
-    pongDate: number;
-  }): void {
+  private sendSimulationPong(body: SimulationPongPayload): void {
     simulationBridge.sendSimulationPong(this.simulationUid, body);
   }
 
-  public handleSimulationCreateNode(body: {
-    positionX: number;
-    positionY: number;
-  }): void {
+  public handleSimulationCreateNode(body: SimulationCreateNodePayload): void {
     const nodeUid = nodeUidGenerator.next().toString();
     const newNode = new SimulationNode(nodeUid, body.positionX, body.positionY);
     this.nodeMap[nodeUid] = newNode;
@@ -35,11 +33,7 @@ export class Simulation {
     this.sendSimulationNodeCreated(newNode);
   }
 
-  private sendSimulationNodeCreated(body: {
-    nodeUid: string;
-    positionX: number;
-    positionY: number;
-  }) {
+  private sendSimulationNodeCreated(body: SimulationNodeCreatedPayload) {
     simulationBridge.sendSimulationNodeCreated(this.simulationUid, body);
   }
 }

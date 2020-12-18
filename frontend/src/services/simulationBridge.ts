@@ -3,6 +3,14 @@ import io from 'socket.io-client';
 import { SimulationSocketListener } from './SimulationSocketListener';
 import { store } from '../state/store';
 import { simulationSlice } from '../state/simulation/simulationSlice';
+import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
+import { SimulationWelcomePayload } from '../common/socketPayloads/SimulationWelcomePayload';
+import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
+import {
+  logSocketEmit,
+  logSocketReceive,
+} from '../common/utils/socketLogUtils';
+import { socketEvents } from '../common/constants/socketEvents';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -21,36 +29,41 @@ class SimulationBridge {
         path: '/api/socket/socket.io',
       });
 
-      socket.on('connect', () => {
+      socket.on(socketEvents.native.connect, () => {
         console.log('socket connected');
       });
 
-      socket.on('welcome', (message: string) => {
-        console.log('socket welcome: ', message);
-        this.setupNewConnection(simulationUid, socket);
-        resolve();
-      });
+      socket.on(
+        socketEvents.simulation.welcome,
+        (body: SimulationWelcomePayload) => {
+          logSocketReceive(
+            socketEvents.simulation.welcome,
+            simulationUid,
+            body
+          );
+          this.setupNewConnection(simulationUid, socket);
+          resolve();
+        }
+      );
     });
   }
 
-  public sendSimulationPing(simulationUid: string) {
-    console.log('sending simulation-ping to', simulationUid);
+  public sendSimulationPing(
+    simulationUid: string,
+    body: SimulationPingPayload
+  ) {
+    logSocketEmit(socketEvents.simulation.ping, simulationUid, body);
     const socket = this.getSocket(simulationUid);
-    socket.emit('simulation-ping', { date: Date.now() });
+    socket.emit(socketEvents.simulation.ping, body);
   }
 
   public sendSimulationCreateNode(
     simulationUid: string,
-    body: { positionX: number; positionY: number }
+    body: SimulationCreateNodePayload
   ) {
-    console.log(
-      'sending simulation-create-node to',
-      simulationUid,
-      'with:',
-      body
-    );
+    logSocketEmit(socketEvents.simulation.createNode, simulationUid, body);
     const socket = this.getSocket(simulationUid);
-    socket.emit('simulation-create-node', body);
+    socket.emit(socketEvents.simulation.createNode, body);
   }
 
   private setupNewConnection(

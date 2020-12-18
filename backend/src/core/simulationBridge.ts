@@ -1,61 +1,67 @@
 import { Namespace } from 'socket.io';
 import { Simulation } from './Simulation';
 import { fatalAssert } from '../utils/fatalAssert';
+import { logSocketEmit } from '../common/utils/socketLogUtils';
+import { socketEvents } from '../common/constants/socketEvents';
+import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
+import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
+import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
+import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
 
 class SimulationBridge {
-  private uidToSimulationMap: { [key: string]: Simulation } = {};
-  private uidToNsMap: { [key: string]: Namespace } = {};
+  private simulationMap: { [simulationUid: string]: Simulation } = {};
+  private nsMap: { [simulationUid: string]: Namespace } = {};
 
   public createSimulation(simulationUid: string, ns: Namespace) {
     const newSimulation = new Simulation(simulationUid);
-    this.uidToSimulationMap[simulationUid] = newSimulation;
-    this.uidToNsMap[simulationUid] = ns;
+    this.simulationMap[simulationUid] = newSimulation;
+    this.nsMap[simulationUid] = ns;
   }
 
   public checkSimulationExists(simulationUid: string): boolean {
-    const simulationExists = !!this.uidToSimulationMap[simulationUid];
-    const namespaceExists = !!this.uidToNsMap[simulationUid];
+    const simulationExists = !!this.simulationMap[simulationUid];
+    const namespaceExists = !!this.nsMap[simulationUid];
 
     fatalAssert(
       simulationExists === namespaceExists,
-      `Desync between simulation map and namespace map! simulationExists: ${simulationExists}, namespaceExists: ${namespaceExists}`
+      `Desync between simulation map and namespace map! simulationUid: ${simulationUid}, simulationExists: ${simulationExists}, namespaceExists: ${namespaceExists}`
     );
 
     return simulationExists;
   }
 
-  public handleSimulationPing(simulationUid: string, body: { date: number }) {
-    const simulation = this.uidToSimulationMap[simulationUid];
+  public handleSimulationPing(
+    simulationUid: string,
+    body: SimulationPingPayload
+  ) {
+    const simulation = this.simulationMap[simulationUid];
     simulation.handleSimulationPing(body);
   }
 
   public sendSimulationPong(
     simulationUid: string,
-    body: {
-      pingDate: number;
-      pongDate: number;
-    }
+    body: SimulationPongPayload
   ) {
-    console.log('sending simulation-pong:', body);
-    const ns = this.uidToNsMap[simulationUid];
-    ns.emit('simulation-pong', body);
+    logSocketEmit(socketEvents.simulation.pong, simulationUid, body);
+    const ns = this.nsMap[simulationUid];
+    ns.emit(socketEvents.simulation.pong, body);
   }
 
   public handleSimulationCreateNode(
     simulaitonUid: string,
-    body: { positionX: number; positionY: number }
+    body: SimulationCreateNodePayload
   ) {
-    const simulation = this.uidToSimulationMap[simulaitonUid];
+    const simulation = this.simulationMap[simulaitonUid];
     simulation.handleSimulationCreateNode(body);
   }
 
   public sendSimulationNodeCreated(
     simulationUid: string,
-    body: { nodeUid: string; positionX: number; positionY: number }
+    body: SimulationNodeCreatedPayload
   ) {
-    console.log('sending simulation-node-created:', body);
-    const ns = this.uidToNsMap[simulationUid];
-    ns.emit('simulation-node-created', body);
+    logSocketEmit(socketEvents.simulation.nodeCreated, simulationUid, body);
+    const ns = this.nsMap[simulationUid];
+    ns.emit(socketEvents.simulation.nodeCreated, body);
   }
 }
 

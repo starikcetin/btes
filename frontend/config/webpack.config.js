@@ -272,6 +272,15 @@ module.exports = function(webpackEnv) {
       },
     },
     resolve: {
+      /* FUTURE REFERENCE
+       * Setting `symlinks: false` resolves symlinks relative to symlink location and not the target (real) location.
+       * This was needed to make common package symlinks work.
+       * https://dreamdevourer.com/create-react-app-fix-for-webpack-symlinks-without-ejecting/
+       * https://webpack.js.org/configuration/resolve/#resolvesymlinks
+       * Tarık, 2020-12-18 02:04
+       */
+      symlinks: false,
+
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
