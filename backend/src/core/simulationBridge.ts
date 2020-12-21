@@ -7,15 +7,23 @@ import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPa
 import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
 import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
+import { SimulationNamespaceListener } from './SimulationSocketListener';
 
 class SimulationBridge {
   private simulationMap: { [simulationUid: string]: Simulation } = {};
   private nsMap: { [simulationUid: string]: Namespace } = {};
 
+  private readonly uidToSocketListenerMap: {
+    [uid: string]: SimulationNamespaceListener;
+  } = {};
+
   public createSimulation(simulationUid: string, ns: Namespace) {
     const newSimulation = new Simulation(simulationUid);
+    const listener = new SimulationNamespaceListener(simulationUid, ns);
+
     this.simulationMap[simulationUid] = newSimulation;
     this.nsMap[simulationUid] = ns;
+    this.uidToSocketListenerMap[simulationUid] = listener;
   }
 
   public checkSimulationExists(simulationUid: string): boolean {

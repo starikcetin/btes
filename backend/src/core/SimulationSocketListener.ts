@@ -1,11 +1,11 @@
-import { logSocketReceive } from './common/utils/socketLogUtils';
+import { logSocketReceive } from '../common/utils/socketLogUtils';
 import { Socket, Namespace } from 'socket.io';
-import { simulationBridge } from './core/simulationBridge';
-import { SimulationPingPayload } from './common/socketPayloads/SimulationPingPayload';
-import { SimulationCreateNodePayload } from './common/socketPayloads/SimulationCreateNodePayload';
-import { socketEvents } from './common/constants/socketEvents';
-import { getClientCount } from './utils/getClientCount';
-import { emitWelcome } from './utils/emitWelcome';
+import { simulationBridge } from './simulationBridge';
+import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
+import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
+import { socketEvents } from '../common/constants/socketEvents';
+import { getClientCount } from '../utils/getClientCount';
+import { emitWelcome } from '../utils/emitWelcome';
 
 export class SimulationNamespaceListener {
   private readonly simulationUid: string;
