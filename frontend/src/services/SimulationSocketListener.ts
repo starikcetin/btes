@@ -19,6 +19,16 @@ export class SimulationSocketListener {
     );
   }
 
+  public teardown = (): void => {
+    // this.socket.off(socketEvents.simulation.pong, this.handleSimulationPong);
+    // this.socket.off(
+    //   socketEvents.simulation.nodeCreated,
+    //   this.handleSimulationNodeCreated
+    // );
+
+    this.socket.removeAllListeners();
+  };
+
   private handleSimulationPong = (body: SimulationPongPayload): void => {
     logSocketReceive(socketEvents.simulation.pong, this.simulationUid, body);
     store.dispatch(

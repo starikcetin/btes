@@ -2,12 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './SandboxSimulation.scss';
 import { useParams } from 'react-router-dom';
 import { simulationBridge } from '../../services/simulationBridge';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { SimulationNodePayload } from '../../state/simulation/SimulationNodePayload';
 import NodeModal from '../../components/NodeModal/NodeModal';
-import { simulationSlice } from '../../state/simulation/simulationSlice';
 // import nodeIcon from './pcIcon.png';
 
 interface SandboxSimulationParamTypes {
@@ -27,7 +26,6 @@ const SandboxSimulation: React.FC = () => {
   const [viewingNode, setViewingNode] = useState<SimulationNodePayload | null>(
     null
   );
-  const dispatch = useDispatch();
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);
@@ -35,9 +33,8 @@ const SandboxSimulation: React.FC = () => {
   }, [simulationUid]);
 
   const teardown = useCallback(() => {
-    const action = simulationSlice.actions.teardown({ simulationUid });
-    dispatch(action);
-  }, [dispatch, simulationUid]);
+    simulationBridge.teardown(simulationUid);
+  }, [simulationUid]);
 
   const sendSimulationPingOnClick = () => {
     simulationBridge.sendSimulationPing(simulationUid, { date: Date.now() });
@@ -65,6 +62,7 @@ const SandboxSimulation: React.FC = () => {
 
   useEffect(() => {
     connect();
+
     return () => {
       teardown();
     };

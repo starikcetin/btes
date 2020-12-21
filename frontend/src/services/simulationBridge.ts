@@ -48,6 +48,31 @@ class SimulationBridge {
     });
   }
 
+  public teardown(simulationUid: string) {
+    const listener = this.uidToSocketListenerMap[simulationUid];
+    listener?.teardown();
+    delete this.uidToSocketListenerMap[simulationUid];
+
+    const socket = this.uidtoSocketMap[simulationUid];
+    socket?.disconnect();
+    delete this.uidtoSocketMap[simulationUid];
+
+    const teardownAction = simulationSlice.actions.teardown({ simulationUid });
+    store.dispatch(teardownAction);
+
+    if (!listener && !socket) {
+      console.warn(
+        `Teardown of ${simulationUid} is complete, but BOTH the socket AND the listener was missing.`,
+        `Unnecessary teardown?`
+      );
+    } else if (!listener || !socket) {
+      console.warn(
+        `Teardown of ${simulationUid} is complete, but EITHER the socket OR the listener was missing.`,
+        `This indicates a desync between the two. There might be a serious bug here!`
+      );
+    }
+  }
+
   public sendSimulationPing(
     simulationUid: string,
     body: SimulationPingPayload
