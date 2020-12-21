@@ -1,24 +1,21 @@
 import io from 'socket.io';
 import http from 'http';
-import { SimulationWelcomePayload } from './common/socketPayloads/SimulationWelcomePayload';
-import { SimulationSocketListener } from './SimulationSocketListener';
+import { SimulationNamespaceListener } from './SimulationSocketListener';
 import { socketEvents } from './common/constants/socketEvents';
+import { emitWelcome } from './utils/emitWelcome';
 
 class SocketManager {
   private httpServer: http.Server = http.createServer();
   private socketServer: io.Server = io(this.httpServer);
 
   private readonly uidToSocketListenerMap: {
-    [uid: string]: SimulationSocketListener;
+    [uid: string]: SimulationNamespaceListener;
   } = {};
 
   constructor() {
     this.socketServer.on(socketEvents.native.connect, (socket) => {
       console.log(`new socket connection on root. socket id: ${socket.id}`);
-
-      this.emitWelcome(socket, {
-        message: `Connected to socket endpoint on root namespace with socket id: ${socket.id}`,
-      });
+      emitWelcome(socket, 'root');
     });
   }
 
@@ -26,34 +23,13 @@ class SocketManager {
     this.httpServer.listen(port, listeningListener);
   }
 
-  public getOrCreateNamespace(
-    namespace: string,
-    connectionCallback?: (socket: io.Socket) => void
-  ): io.Namespace {
+  public getOrCreateNamespace(namespace: string): io.Namespace {
     const ns = this.socketServer.of(namespace);
 
-    ns.on(socketEvents.native.connect, (socket) => {
-      console.log(
-        `new socket connection on ${namespace} with socket id: ${socket.id}`
-      );
-
-      const listener = new SimulationSocketListener(namespace, socket);
-      this.uidToSocketListenerMap[namespace] = listener;
-
-      this.emitWelcome(socket, {
-        message: `Connected to socket endpoint on ${namespace} namespace with socket id: ${socket.id}`,
-      });
-
-      if (connectionCallback) {
-        connectionCallback(socket);
-      }
-    });
+    const listener = new SimulationNamespaceListener(namespace, ns);
+    this.uidToSocketListenerMap[namespace] = listener;
 
     return ns;
-  }
-
-  private emitWelcome(socket: io.Socket, body: SimulationWelcomePayload) {
-    socket.emit(socketEvents.simulation.welcome, body);
   }
 }
 
