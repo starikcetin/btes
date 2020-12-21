@@ -3,6 +3,7 @@ import { SimulationPongActionPayload } from './SimulationPongActionPayload';
 import { SimulationSetupActionPayload } from './SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
 import { SimulationNodePayload as SimulationNodeCreatedPayload } from './SimulationNodePayload';
+import { SimulationTeardownPayload } from './SimulationTeardownPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -56,6 +57,14 @@ export const simulationSlice = createSlice({
       }
 
       sim.nodes.push(payload);
+    },
+
+    teardown: (
+      state,
+      { payload }: PayloadAction<SimulationTeardownPayload>
+    ) => {
+      // state[payload.simulationUid] = undefined;
+      delete state[payload.simulationUid];
     },
   },
 });
