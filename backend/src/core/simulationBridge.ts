@@ -10,23 +10,26 @@ import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPa
 import { SimulationNamespaceListener } from './SimulationSocketListener';
 
 class SimulationBridge {
-  private simulationMap: { [simulationUid: string]: Simulation } = {};
-  private nsMap: { [simulationUid: string]: Namespace } = {};
+  private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
+  private readonly nsMap: { [simulationUid: string]: Namespace } = {};
 
-  private readonly uidToSocketListenerMap: {
-    [uid: string]: SimulationNamespaceListener;
+  private readonly listenerMap: {
+    [simulaitonUid: string]: SimulationNamespaceListener;
   } = {};
 
-  public createSimulation(simulationUid: string, ns: Namespace) {
+  public readonly setupNewSimulation = (
+    simulationUid: string,
+    ns: Namespace
+  ) => {
     const newSimulation = new Simulation(simulationUid);
     const listener = new SimulationNamespaceListener(simulationUid, ns);
 
     this.simulationMap[simulationUid] = newSimulation;
     this.nsMap[simulationUid] = ns;
-    this.uidToSocketListenerMap[simulationUid] = listener;
-  }
+    this.listenerMap[simulationUid] = listener;
+  };
 
-  public checkSimulationExists(simulationUid: string): boolean {
+  public readonly checkSimulationExists = (simulationUid: string): boolean => {
     const simulationExists = !!this.simulationMap[simulationUid];
     const namespaceExists = !!this.nsMap[simulationUid];
 
@@ -36,41 +39,41 @@ class SimulationBridge {
     );
 
     return simulationExists;
-  }
+  };
 
-  public handleSimulationPing(
+  public readonly handleSimulationPing = (
     simulationUid: string,
     body: SimulationPingPayload
-  ) {
+  ) => {
     const simulation = this.simulationMap[simulationUid];
     simulation.handleSimulationPing(body);
-  }
+  };
 
-  public sendSimulationPong(
+  public readonly sendSimulationPong = (
     simulationUid: string,
     body: SimulationPongPayload
-  ) {
+  ) => {
     logSocketEmit(socketEvents.simulation.pong, simulationUid, body);
     const ns = this.nsMap[simulationUid];
     ns.emit(socketEvents.simulation.pong, body);
-  }
+  };
 
-  public handleSimulationCreateNode(
+  public readonly handleSimulationCreateNode = (
     simulaitonUid: string,
     body: SimulationCreateNodePayload
-  ) {
+  ) => {
     const simulation = this.simulationMap[simulaitonUid];
     simulation.handleSimulationCreateNode(body);
-  }
+  };
 
-  public sendSimulationNodeCreated(
+  public readonly sendSimulationNodeCreated = (
     simulationUid: string,
     body: SimulationNodeCreatedPayload
-  ) {
+  ) => {
     logSocketEmit(socketEvents.simulation.nodeCreated, simulationUid, body);
     const ns = this.nsMap[simulationUid];
     ns.emit(socketEvents.simulation.nodeCreated, body);
-  }
+  };
 }
 
 export const simulationBridge = new SimulationBridge();

@@ -20,7 +20,7 @@ export class SimulationInstanceBrokerController extends Controller {
     }
 
     const ns = socketManager.getOrCreateNamespace(uidStr);
-    simulationBridge.createSimulation(uidStr, ns);
+    simulationBridge.setupNewSimulation(uidStr, ns);
 
     console.log(
       `created simulation instance with uid: ${uidStr} name: ${ns.name}`

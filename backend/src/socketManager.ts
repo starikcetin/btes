@@ -14,14 +14,17 @@ class SocketManager {
     });
   }
 
-  public start(port: string | number, listeningListener?: () => void) {
+  public readonly start = (
+    port: string | number,
+    listeningListener?: () => void
+  ) => {
     this.httpServer.listen(port, listeningListener);
-  }
+  };
 
-  public getOrCreateNamespace(namespace: string): io.Namespace {
+  public readonly getOrCreateNamespace = (namespace: string): io.Namespace => {
     const ns = this.socketServer.of(namespace);
     return ns;
-  }
+  };
 }
 
 export const socketManager = new SocketManager();

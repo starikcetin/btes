@@ -18,7 +18,7 @@ export class SimulationNamespaceListener {
     ns.on(socketEvents.native.connect, this.setupSocket);
   }
 
-  private setupSocket = (socket: Socket) => {
+  private readonly setupSocket = (socket: Socket) => {
     console.log(
       `new socket connection on ${this.simulationUid} with socket id: ${socket.id}`
     );
@@ -27,7 +27,7 @@ export class SimulationNamespaceListener {
     emitWelcome(socket, this.simulationUid);
   };
 
-  private registerListeners = (socket: Socket): void => {
+  private readonly registerListeners = (socket: Socket): void => {
     // native events
     socket.on(
       socketEvents.native.disconnect,
@@ -42,7 +42,7 @@ export class SimulationNamespaceListener {
     );
   };
 
-  private teardownSocket = (socket: Socket): void => {
+  private readonly teardownSocket = (socket: Socket): void => {
     // socket.off(socketEvents.simulation.ping, this.handleSimulationPing);
     // socket.off(socketEvents.simulation.createNode, this.handleSimulationCreateNode);
 
@@ -56,12 +56,16 @@ export class SimulationNamespaceListener {
     // TODO: teardown the namsepace itself when 0 clients left.
   };
 
-  private handleSimulationPing = (body: SimulationPingPayload): void => {
+  private readonly handleSimulationPing = (
+    body: SimulationPingPayload
+  ): void => {
     logSocketReceive(socketEvents.simulation.ping, this.simulationUid, body);
     simulationBridge.handleSimulationPing(this.simulationUid, body);
   };
 
-  private handleSimulationCreateNode = (body: SimulationCreateNodePayload) => {
+  private readonly handleSimulationCreateNode = (
+    body: SimulationCreateNodePayload
+  ) => {
     logSocketReceive(
       socketEvents.simulation.createNode,
       this.simulationUid,
