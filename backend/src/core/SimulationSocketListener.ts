@@ -1,4 +1,3 @@
-import { logSocketReceive } from '../common/utils/socketLogUtils';
 import { Socket, Namespace } from 'socket.io';
 import { simulationBridge } from './simulationBridge';
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
@@ -19,10 +18,6 @@ export class SimulationNamespaceListener {
   }
 
   private readonly setupSocket = (socket: Socket) => {
-    console.log(
-      `new socket connection on ${this.simulationUid} with socket id: ${socket.id}`
-    );
-
     this.registerListeners(socket);
     emitWelcome(socket, this.simulationUid);
   };
@@ -59,19 +54,12 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationPing = (
     body: SimulationPingPayload
   ): void => {
-    logSocketReceive(socketEvents.simulation.ping, this.simulationUid, body);
     simulationBridge.handleSimulationPing(this.simulationUid, body);
   };
 
   private readonly handleSimulationCreateNode = (
     body: SimulationCreateNodePayload
   ) => {
-    logSocketReceive(
-      socketEvents.simulation.createNode,
-      this.simulationUid,
-      body
-    );
-
     simulationBridge.handleSimulationCreateNode(this.simulationUid, body);
   };
 }

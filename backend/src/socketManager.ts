@@ -12,7 +12,6 @@ class SocketManager {
     this.socketServer.use(socketLoggerMiddleware);
 
     this.socketServer.on(socketEvents.native.connect, (socket) => {
-      console.log(`new socket connection on root. socket id: ${socket.id}`);
       emitWelcome(socket, 'root');
     });
   }

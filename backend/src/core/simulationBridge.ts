@@ -1,7 +1,6 @@
 import { Namespace } from 'socket.io';
 import { Simulation } from './Simulation';
 import { fatalAssert } from '../utils/fatalAssert';
-import { logSocketEmit } from '../common/utils/socketLogUtils';
 import { socketEvents } from '../common/constants/socketEvents';
 import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
 import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
@@ -53,7 +52,6 @@ class SimulationBridge {
     simulationUid: string,
     body: SimulationPongPayload
   ) => {
-    logSocketEmit(socketEvents.simulation.pong, simulationUid, body);
     const ns = this.nsMap[simulationUid];
     ns.emit(socketEvents.simulation.pong, body);
   };
@@ -70,7 +68,6 @@ class SimulationBridge {
     simulationUid: string,
     body: SimulationNodeCreatedPayload
   ) => {
-    logSocketEmit(socketEvents.simulation.nodeCreated, simulationUid, body);
     const ns = this.nsMap[simulationUid];
     ns.emit(socketEvents.simulation.nodeCreated, body);
   };
