@@ -1,3 +1,53 @@
+/*************************************************
+ * REQUIREMENTS FOR A COMPLETE REPLACEMENT
+ *
+ * > Log outgoing custom events (.emit)
+ * > Log incoming custom events (.on)
+ * > Log native events (connect, disconnect, ...)
+ * > Log level control with environment variable
+ *
+ *************************************************
+ * ALTERNATIVES
+ *
+ * > A simpler way of logging the incoming custom events:
+ *   https://github.com/hden/socketio-wildcard#sunsetting
+ *   https://socket.io/docs/v2/server-api/index.html#socket-use-fn
+ *
+ *   Limitations:
+ *       1. only incoming events
+ *       2. only custom events
+ *
+ * > A simpler (and perhaps safer) way of logging the outgoing custom events:
+ *
+ *   export const emit(...) {
+ *       log(event, params)
+ *       realEmit(...);
+ *   }
+ *
+ *   And the consumers would use our emit implementation instead of directly
+ *   calling the real emit.
+ *
+ *   Limitations:
+ *       1. only outgoing events
+ *       2. only custom events
+ *
+ *************************************************
+ * FLAWS
+ *
+ * > We can only log incoming events if someone has already registered for it.
+ * > This concept feels like overengineering and not safe at all, and I feel like
+ *   something is going to blow up as we start using more complex stuff.
+ *
+ *************************************************
+ * TODO
+ *
+ * > Instead of disabling only the logging, we should disable everything and run
+ *   a stub middleware if the log level is 'none'.
+ *
+ *************************************************
+ * Tarık, 2020-12-22 20:25
+ */
+
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
