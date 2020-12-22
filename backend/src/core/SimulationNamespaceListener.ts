@@ -15,7 +15,6 @@ export class SimulationNamespaceListener {
     this.ns = ns;
 
     ns.on(socketEvents.native.connect, (socket) => {
-      console.log('connection on', this.ns.name, socket.id);
       this.setupSocket(socket);
     });
   }

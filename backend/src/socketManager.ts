@@ -2,7 +2,7 @@ import io from 'socket.io';
 import http from 'http';
 import { socketEvents } from './common/constants/socketEvents';
 import { emitWelcome } from './utils/emitWelcome';
-import { socketLoggerMiddleware } from './socketLoggerMiddleware';
+import { socketLoggerMiddleware } from './socketMiddleware/socketLoggerMiddleware';
 
 class SocketManager {
   private httpServer: http.Server = http.createServer();
