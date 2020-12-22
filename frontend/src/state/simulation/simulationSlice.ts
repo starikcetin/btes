@@ -4,6 +4,7 @@ import { SimulationSetupActionPayload } from './SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
 import { SimulationNodePayload as SimulationNodeCreatedPayload } from './SimulationNodePayload';
 import { SimulationTeardownPayload } from './SimulationTeardownPayload';
+import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -26,7 +27,7 @@ export const simulationSlice = createSlice({
       state[payload.simulationUid] = {
         uid: payload.simulationUid,
         pongs: [],
-        nodes: [],
+        nodes: {},
       };
     },
     pong: (state, { payload }: PayloadAction<SimulationPongActionPayload>) => {
@@ -56,15 +57,29 @@ export const simulationSlice = createSlice({
         return;
       }
 
-      sim.nodes.push(payload);
-    },
+      const node = sim.nodes[payload.nodeUid];
 
+      if (node) {
+        console.warn(
+          'Overwriting an existing node data! nodeUid:',
+          payload.nodeUid
+        );
+      }
+
+      sim.nodes[payload.nodeUid] = payload;
+    },
     teardown: (
       state,
       { payload }: PayloadAction<SimulationTeardownPayload>
     ) => {
       // state[payload.simulationUid] = undefined;
       delete state[payload.simulationUid];
+    },
+    nodeDeleted: (
+      state,
+      { payload }: PayloadAction<SimulationNodeDeletedPayload>
+    ) => {
+      delete state[payload.simulationUid].nodes[payload.nodeUid];
     },
   },
 });

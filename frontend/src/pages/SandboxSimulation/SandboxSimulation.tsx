@@ -17,12 +17,15 @@ const SandboxSimulation: React.FC = () => {
   const [connected, setConnected] = useState(false);
   const simulationPongTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
+
   const simulationPongs = useSelector(
-    (state: RootState) => state.simulation[simulationUid]?.pongs
+    (state: RootState) => state.simulation[simulationUid]?.pongs || []
   );
-  const nodes = useSelector(
-    (state: RootState) => state.simulation[simulationUid]?.nodes
+
+  const nodes = useSelector((state: RootState) =>
+    Object.values(state.simulation[simulationUid]?.nodes || {})
   );
+
   const [viewingNode, setViewingNode] = useState<SimulationNodePayload | null>(
     null
   );
@@ -51,6 +54,12 @@ const SandboxSimulation: React.FC = () => {
       .join('\n');
 
     return result || '';
+  };
+
+  const deleteNode = (nodeUid: string, event: React.UIEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    simulationBridge.sendSimulationDeleteNode(simulationUid, { nodeUid });
   };
 
   const createNode = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -88,8 +97,22 @@ const SandboxSimulation: React.FC = () => {
                       onClick={() => setViewingNode(node)}
                       key={node.nodeUid}
                     >
-                      <span className="alert-info">NODE</span>
-                      <p className="card-text text-center">{node.nodeUid}</p>
+                      <ContextMenuTrigger
+                        id={`nodeRightClickArea_${node.nodeUid}`}
+                      >
+                        <span className="alert-info">NODE</span>
+                        <p className="card-text text-center">{node.nodeUid}</p>
+                      </ContextMenuTrigger>
+                      <ContextMenu id={`nodeRightClickArea_${node.nodeUid}`}>
+                        <MenuItem
+                          data={{ event: 'deleteNode' }}
+                          onClick={(event) => deleteNode(node.nodeUid, event)}
+                        >
+                          <span className="menu-item bg-success border p-2">
+                            Delete Node
+                          </span>
+                        </MenuItem>
+                      </ContextMenu>
                     </div>
                   );
                 })}

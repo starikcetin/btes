@@ -5,6 +5,7 @@ import { SimulationCreateNodePayload } from '../common/socketPayloads/Simulation
 import { socketEvents } from '../common/constants/socketEvents';
 import { getClientCount } from '../utils/getClientCount';
 import { emitWelcome } from '../utils/emitWelcome';
+import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
 
 export class SimulationNamespaceListener {
   private readonly simulationUid: string;
@@ -37,6 +38,10 @@ export class SimulationNamespaceListener {
       socketEvents.simulation.createNode,
       this.handleSimulationCreateNode
     );
+    socket.on(
+      socketEvents.simulation.deleteNode,
+      this.handleSimulationDeleteNode
+    );
   };
 
   private readonly teardownSocket = (socket: Socket): void => {
@@ -67,5 +72,11 @@ export class SimulationNamespaceListener {
     body: SimulationCreateNodePayload
   ) => {
     simulationBridge.handleSimulationCreateNode(this.simulationUid, body);
+  };
+
+  private readonly handleSimulationDeleteNode = (
+    body: SimulationDeleteNodePayload
+  ) => {
+    simulationBridge.handleSimulationDeleteNode(this.simulationUid, body);
   };
 }

@@ -4,6 +4,7 @@ import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPa
 import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
 import { logSocketReceive } from '../common/utils/socketLogUtils';
 import { socketEvents } from '../common/constants/socketEvents';
+import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -16,6 +17,10 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.nodeCreated,
       this.handleSimulationNodeCreated
+    );
+    socket.on(
+      socketEvents.simulation.nodeDeleted,
+      this.handleSimulationNodeDeleted
     );
   }
 
@@ -50,6 +55,17 @@ export class SimulationSocketListener {
     );
     store.dispatch(
       simulationSlice.actions.nodeCreated({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleSimulationNodeDeleted = (
+    body: SimulationNodeDeletedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.nodeDeleted({
         simulationUid: this.simulationUid,
         ...body,
       })
