@@ -9,5 +9,7 @@ export const socketEvents = {
     pong: 'simulation-pong',
     createNode: 'simulation-create-node',
     nodeCreated: 'simulation-node-created',
+    deleteNode: 'simulation-delete-node',
+    nodeDeleted: 'simulation-node-deleted',
   },
 } as const;

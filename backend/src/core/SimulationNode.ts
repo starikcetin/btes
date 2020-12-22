@@ -8,4 +8,8 @@ export class SimulationNode {
     this.positionX = positionX;
     this.positionY = positionY;
   }
+
+  public readonly teardown = (): void => {
+    // no-op for now
+  };
 }

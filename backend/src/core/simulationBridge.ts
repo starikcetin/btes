@@ -7,6 +7,8 @@ import { SimulationCreateNodePayload } from '../common/socketPayloads/Simulation
 import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
+import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
+import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
 
 class SimulationBridge {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -70,6 +72,22 @@ class SimulationBridge {
   ) => {
     const ns = this.nsMap[simulationUid];
     ns.emit(socketEvents.simulation.nodeCreated, body);
+  };
+
+  public readonly handleSimulationDeleteNode = (
+    simulationUid: string,
+    body: SimulationDeleteNodePayload
+  ) => {
+    const simulation = this.simulationMap[simulationUid];
+    simulation.handleSimulationDeleteNode(body);
+  };
+
+  public readonly sendSimulationNodeDeleted = (
+    simulationUid: string,
+    body: SimulationNodeDeletedPayload
+  ) => {
+    const ns = this.nsMap[simulationUid];
+    ns.emit(socketEvents.simulation.nodeDeleted, body);
   };
 }
 

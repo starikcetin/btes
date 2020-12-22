@@ -5,6 +5,8 @@ import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPa
 import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
 import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
 import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
+import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
+import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
 
 export class Simulation {
   private readonly simulationUid: string;
@@ -14,26 +16,48 @@ export class Simulation {
     this.simulationUid = simulationUid;
   }
 
-  public handleSimulationPing(body: SimulationPingPayload): void {
+  public readonly handleSimulationPing = (
+    body: SimulationPingPayload
+  ): void => {
     this.sendSimulationPong({
       pingDate: body.date,
       pongDate: Date.now(),
     });
-  }
+  };
 
-  private sendSimulationPong(body: SimulationPongPayload): void {
+  private readonly sendSimulationPong = (body: SimulationPongPayload): void => {
     simulationBridge.sendSimulationPong(this.simulationUid, body);
-  }
+  };
 
-  public handleSimulationCreateNode(body: SimulationCreateNodePayload): void {
+  public readonly handleSimulationCreateNode = (
+    body: SimulationCreateNodePayload
+  ): void => {
     const nodeUid = nodeUidGenerator.next().toString();
     const newNode = new SimulationNode(nodeUid, body.positionX, body.positionY);
     this.nodeMap[nodeUid] = newNode;
 
     this.sendSimulationNodeCreated(newNode);
-  }
+  };
 
-  private sendSimulationNodeCreated(body: SimulationNodeCreatedPayload) {
+  private readonly sendSimulationNodeCreated = (
+    body: SimulationNodeCreatedPayload
+  ) => {
     simulationBridge.sendSimulationNodeCreated(this.simulationUid, body);
-  }
+  };
+
+  public readonly handleSimulationDeleteNode = (
+    body: SimulationDeleteNodePayload
+  ): void => {
+    const node = this.nodeMap[body.nodeUid];
+    node.teardown();
+    delete this.nodeMap[body.nodeUid];
+
+    this.sendSimulationNodeDeleted({ nodeUid: body.nodeUid });
+  };
+
+  private readonly sendSimulationNodeDeleted = (
+    body: SimulationNodeDeletedPayload
+  ) => {
+    simulationBridge.sendSimulationNodeDeleted(this.simulationUid, body);
+  };
 }
