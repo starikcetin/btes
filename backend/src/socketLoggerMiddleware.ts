@@ -6,6 +6,17 @@ import { Socket } from 'socket.io';
 const SocketLogLevels = ['none', 'summary', 'full'] as const;
 type SocketLogLevel = typeof SocketLogLevels[number];
 
+const resolveLogLevel = (): SocketLogLevel => {
+  const rawLogLevel = process.env.SOCKET_LOG_LEVEL;
+
+  if (rawLogLevel && !SocketLogLevels.some((s) => rawLogLevel === s)) {
+    const valid = SocketLogLevels.join(', ');
+    throw `SOCKET_LOG_LEVEL environment variable is invalid. Given: ${rawLogLevel} | Valid: ${valid}`;
+  }
+
+  return (rawLogLevel || 'summary') as SocketLogLevel;
+};
+
 const socketLogLevel: SocketLogLevel = resolveLogLevel();
 
 export const socketLoggerMiddleware = (
@@ -19,27 +30,28 @@ export const socketLoggerMiddleware = (
     const realNspOn = socket.nsp.on.bind(socket.nsp);
 
     socket.emit = (event, ...args) =>
-      wrapEmit(event, socket, args, realSocketEmit);
+      wrapEmit(false, event, socket, args, realSocketEmit);
 
     socket.on = (event, listener) =>
-      wrapOn(socket, event, listener, realSocketOn);
+      wrapOn(false, socket, event, listener, realSocketOn);
 
     socket.nsp.emit = (event, ...args) =>
-      wrapEmit(event, socket, args, realNspEmit);
+      wrapEmit(true, event, socket, args, realNspEmit);
 
     socket.nsp.on = (event: string, listener: Function) =>
-      wrapOn(socket, event, listener, realNspOn);
+      wrapOn(true, socket, event, listener, realNspOn);
   }
 
   next();
 };
 
-function wrapEmit(
+const wrapEmit = (
+  isNs: boolean,
   event: string | symbol,
   socket: Socket,
   args: any[],
   realEmit: (event: string | symbol, ...args: any[]) => boolean
-) {
+) => {
   switch (event) {
     case 'connection':
     case 'disconnection':
@@ -49,32 +61,34 @@ function wrapEmit(
 
     case 'connect':
     case 'disconnect':
-      log([`[socket --> ${socket.id}]`, event]);
+      log([`[${isNs ? 'nsp' : 'socket'} --> ${socket.id}]`, event]);
       break;
 
     default:
-      log([`[socket --> ${socket.id}]`, event], [...args]);
+      log([`[${isNs ? 'nsp' : 'socket'}  --> ${socket.id}]`, event], [...args]);
       break;
   }
 
   return realEmit(event, ...args);
-}
+};
 
-function wrapOn(
+const wrapOn = (
+  isNs: boolean,
   socket: Socket,
   event: string | symbol,
   listener: Function,
   realOn: any
-) {
-  const wrappedListener = makeWrappedListener(socket, event, listener);
+) => {
+  const wrappedListener = makeWrappedListener(isNs, socket, event, listener);
   return realOn(event, wrappedListener);
-}
+};
 
-function makeWrappedListener(
+const makeWrappedListener = (
+  isNs: boolean,
   socket: Socket,
   event: string | symbol,
   listener: Function
-) {
+) => {
   return (...listenerArgs: any[]): any => {
     switch (event) {
       case 'connection':
@@ -85,33 +99,25 @@ function makeWrappedListener(
 
       case 'connect':
       case 'disconnect':
-        log([`[socket <-- ${socket.id}]`, event]);
+        log([`[${isNs ? 'nsp' : 'socket'} <-- ${socket.id}]`, event]);
         break;
 
       default:
-        log([`[socket <-- ${socket.id}]`, event], [...listenerArgs]);
+        log(
+          [`[${isNs ? 'nsp' : 'socket'} <-- ${socket.id}]`, event],
+          [...listenerArgs]
+        );
         break;
     }
 
     return listener(...listenerArgs);
   };
-}
+};
 
-function log(summary: any[], full: any[] = []) {
+const log = (summary: any[], full: any[] = []) => {
   if (socketLogLevel === 'full') {
     console.log(...summary, ...full);
   } else if (socketLogLevel === 'summary') {
     console.log(...summary);
   }
-}
-
-function resolveLogLevel(): SocketLogLevel {
-  const logLevelRaw = process.env.SOCKET_LOG_LEVEL;
-
-  if (logLevelRaw && !SocketLogLevels.some((s) => logLevelRaw === s)) {
-    const valid = SocketLogLevels.join(', ');
-    throw `SOCKET_LOG_LEVEL environment variable is invalid. Given: ${logLevelRaw} | Valid: ${valid}`;
-  }
-
-  return (process.env.SOCKET_LOG_LEVEL || 'summary') as SocketLogLevel;
-}
+};
