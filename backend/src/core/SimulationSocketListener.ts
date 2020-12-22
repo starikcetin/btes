@@ -38,9 +38,13 @@ export class SimulationNamespaceListener {
   };
 
   private readonly teardownSocket = (socket: Socket): void => {
-    // socket.off(socketEvents.simulation.ping, this.handleSimulationPing);
-    // socket.off(socketEvents.simulation.createNode, this.handleSimulationCreateNode);
-
+    /* This would NOT work:
+     *    socket.removeListener(socketEvents.simulation.ping, this.handleSimulationPing);
+     * because the socketLoggerMiddleware is wrapping the listeners.
+     * This would work:
+     *    socket.removeAllListeners(socketEvents.simulation.ping);
+     * Tarık, 2020-12-22 07:02
+     */
     socket.removeAllListeners();
 
     const clientsLeft = getClientCount(this.ns);
