@@ -6,7 +6,7 @@ import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPa
 import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
 import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
-import { SimulationNamespaceListener } from './SimulationSocketListener';
+import { SimulationNamespaceListener } from './SimulationNamespaceListener';
 
 class SimulationBridge {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
