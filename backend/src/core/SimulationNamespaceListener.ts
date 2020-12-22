@@ -14,7 +14,9 @@ export class SimulationNamespaceListener {
     this.simulationUid = simulationUid;
     this.ns = ns;
 
-    ns.on(socketEvents.native.connect, this.setupSocket);
+    ns.on(socketEvents.native.connect, (socket) => {
+      this.setupSocket(socket);
+    });
   }
 
   private readonly setupSocket = (socket: Socket) => {
