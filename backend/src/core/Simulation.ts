@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { simulationBridge } from './simulationBridge';
 import { nodeUidGenerator } from '../utils/uidGenerators';
 import { SimulationNode } from './SimulationNode';
@@ -7,10 +9,13 @@ import { SimulationCreateNodePayload } from '../common/socketPayloads/Simulation
 import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
 import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
 import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
+import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
+import { SimulationSnapshot } from '../common/SimulationSnapshot';
+import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
 
 export class Simulation {
-  private readonly simulationUid: string;
-  private readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
+  public readonly simulationUid: string;
+  public readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
 
   constructor(simulationUid: string) {
     this.simulationUid = simulationUid;
@@ -59,5 +64,30 @@ export class Simulation {
     body: SimulationNodeDeletedPayload
   ) => {
     simulationBridge.sendSimulationNodeDeleted(this.simulationUid, body);
+  };
+
+  public readonly handleSimulationRequestSnapshot = (
+    // rule exception reason: consistency
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    body: SimulationRequestSnapshotPayload
+  ): void => {
+    const snapshot = this.takeSnapshot();
+    this.sendSimulationSnapshotReport({ snapshot });
+  };
+
+  private readonly sendSimulationSnapshotReport = (
+    body: SimulationSnapshotReportPayload
+  ) => {
+    simulationBridge.sendSimulationSnapshotReport(this.simulationUid, body);
+  };
+
+  private readonly takeSnapshot = (): SimulationSnapshot => {
+    const nodeSnapshots = _.mapValues(this.nodeMap, (node) =>
+      node.takeSnapshot()
+    );
+    return {
+      simulationUid: this.simulationUid,
+      nodeMap: nodeSnapshots,
+    };
   };
 }

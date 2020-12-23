@@ -9,6 +9,8 @@ import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPa
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
 import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
 import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
+import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
+import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 
 class SimulationBridge {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -88,6 +90,22 @@ class SimulationBridge {
   ) => {
     const ns = this.nsMap[simulationUid];
     ns.emit(socketEvents.simulation.nodeDeleted, body);
+  };
+
+  public readonly handleSimulationRequestSnapshot = (
+    simulationUid: string,
+    body: SimulationRequestSnapshotPayload
+  ) => {
+    const simulation = this.simulationMap[simulationUid];
+    simulation.handleSimulationRequestSnapshot(body);
+  };
+
+  public readonly sendSimulationSnapshotReport = (
+    simulationUid: string,
+    body: SimulationSnapshotReportPayload
+  ): void => {
+    const ns = this.nsMap[simulationUid];
+    ns.emit(socketEvents.simulation.snapshotReport, body);
   };
 }
 
