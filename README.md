@@ -8,7 +8,7 @@ Monorepo for Blockchain Technology Education Software project.
 1. If you already have `nvm` (Node Version Manager) installed, skip this step. Otherwise install `nvm`:
     * On Windows: https://github.com/coreybutler/nvm-windows
     * On Linux: https://github.com/nvm-sh/nvm
-1. **(Repeat)** Run:
+1. Run:
     * On Windows: `nvm install 12.0.0`.
     * On Linux: `nvm install`.
 1. **(Repeat)** Run:
