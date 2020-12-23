@@ -11,5 +11,7 @@ export const socketEvents = {
     nodeCreated: 'simulation-node-created',
     deleteNode: 'simulation-delete-node',
     nodeDeleted: 'simulation-node-deleted',
+    requestSnapshot: 'simulation-request-snapshot',
+    snapshotReport: 'simulation-snapshot-report',
   },
 } as const;
