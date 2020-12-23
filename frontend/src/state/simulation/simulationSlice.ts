@@ -2,9 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SimulationPongActionPayload } from './SimulationPongActionPayload';
 import { SimulationSetupActionPayload } from './SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
-import { SimulationNodePayload as SimulationNodeCreatedPayload } from './SimulationNodePayload';
+import { SimulationNodeCreatedPayload } from './SimulationNodePayload';
 import { SimulationTeardownPayload } from './SimulationTeardownPayload';
 import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
+import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -25,9 +26,9 @@ export const simulationSlice = createSlice({
       }
 
       state[payload.simulationUid] = {
-        uid: payload.simulationUid,
+        simulationUid: payload.simulationUid,
         pongs: [],
-        nodes: {},
+        nodeMap: {},
       };
     },
     pong: (state, { payload }: PayloadAction<SimulationPongActionPayload>) => {
@@ -57,7 +58,7 @@ export const simulationSlice = createSlice({
         return;
       }
 
-      const node = sim.nodes[payload.nodeUid];
+      const node = sim.nodeMap[payload.nodeUid];
 
       if (node) {
         console.warn(
@@ -66,7 +67,7 @@ export const simulationSlice = createSlice({
         );
       }
 
-      sim.nodes[payload.nodeUid] = payload;
+      sim.nodeMap[payload.nodeUid] = payload;
     },
     teardown: (
       state,
@@ -79,7 +80,30 @@ export const simulationSlice = createSlice({
       state,
       { payload }: PayloadAction<SimulationNodeDeletedPayload>
     ) => {
-      delete state[payload.simulationUid].nodes[payload.nodeUid];
+      delete state[payload.simulationUid].nodeMap[payload.nodeUid];
+    },
+    snapshotReport: (
+      state,
+      { payload }: PayloadAction<SimulationSnapshotReportPayload>
+    ) => {
+      const { simulationUid, snapshot } = payload;
+
+      if (simulationUid !== snapshot.simulationUid) {
+        console.warn(
+          '"snapshotReport": Snapshot and payload has different simulationUids!'
+        );
+      }
+
+      const old = state[simulationUid];
+
+      state[simulationUid] = {
+        // state not included in snapshot, carry over from old state
+        pongs: old.pongs,
+
+        // state included in a snapshot, overwrite with the snapshot
+        simulationUid: snapshot.simulationUid,
+        nodeMap: snapshot.nodeMap,
+      };
     },
   },
 });

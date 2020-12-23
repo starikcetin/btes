@@ -1,4 +1,4 @@
-export interface SimulationNodePayload {
+export interface SimulationNodeCreatedPayload {
   simulationUid: string;
   nodeUid: string;
   positionX: number;
