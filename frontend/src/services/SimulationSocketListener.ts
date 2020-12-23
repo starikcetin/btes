@@ -5,6 +5,7 @@ import { SimulationNodeCreatedPayload } from '../common/socketPayloads/Simulatio
 import { logSocketReceive } from '../common/utils/socketLogUtils';
 import { socketEvents } from '../common/constants/socketEvents';
 import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
+import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -21,6 +22,10 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.nodeDeleted,
       this.handleSimulationNodeDeleted
+    );
+    socket.on(
+      socketEvents.simulation.snapshotReport,
+      this.handleSimulationSnapshotReport
     );
   }
 
@@ -66,6 +71,17 @@ export class SimulationSocketListener {
   ) => {
     store.dispatch(
       simulationSlice.actions.nodeDeleted({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleSimulationSnapshotReport = (
+    body: SimulationSnapshotReportPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.snapshotReport({
         simulationUid: this.simulationUid,
         ...body,
       })

@@ -5,9 +5,9 @@ import { simulationBridge } from '../../services/simulationBridge';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
-import { SimulationNodePayload } from '../../state/simulation/SimulationNodePayload';
 import NodeModal from '../../components/NodeModal/NodeModal';
 // import nodeIcon from './pcIcon.png';
+import { NodeData } from '../../state/simulation/NodeData';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -23,12 +23,10 @@ const SandboxSimulation: React.FC = () => {
   );
 
   const nodes = useSelector((state: RootState) =>
-    Object.values(state.simulation[simulationUid]?.nodes || {})
+    Object.values(state.simulation[simulationUid]?.nodeMap || {})
   );
 
-  const [viewingNode, setViewingNode] = useState<SimulationNodePayload | null>(
-    null
-  );
+  const [viewingNode, setViewingNode] = useState<NodeData | null>(null);
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);

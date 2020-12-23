@@ -1,12 +1,12 @@
 import React from 'react';
 import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
 import './NodeModal.css';
-import { SimulationNodePayload } from '../../state/simulation/SimulationNodePayload';
+import { NodeData } from '../../state/simulation/NodeData';
 
 interface NodeModalProps {
   show: boolean;
   closeHandler: () => void;
-  node: SimulationNodePayload;
+  node: NodeData;
 }
 
 const NodeModal: React.FC<NodeModalProps> = (props) => {

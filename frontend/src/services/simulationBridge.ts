@@ -12,6 +12,8 @@ import {
   logSocketReceive,
 } from '../common/utils/socketLogUtils';
 import { socketEvents } from '../common/constants/socketEvents';
+import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
+import { SimulationSnapshotReportPayload } from '../../../backend/src/common/socketPayloads/SimulationSnapshotReportPayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -43,9 +45,16 @@ class SimulationBridge {
             body
           );
           this.setupNewConnection(simulationUid, socket);
-          resolve();
+
+          // request the initial state via snapshot
+          this.sendSimulationRequestSnapshot(simulationUid, {});
         }
       );
+
+      // only resolve connection procedure when we receive the first snapshot
+      socket.once(socketEvents.simulation.snapshotReport, () => {
+        resolve();
+      });
     });
   }
 
@@ -99,6 +108,15 @@ class SimulationBridge {
     logSocketEmit(socketEvents.simulation.deleteNode, simulationUid, body);
     const socket = this.getSocket(simulationUid);
     socket.emit(socketEvents.simulation.deleteNode, body);
+  }
+
+  public sendSimulationRequestSnapshot(
+    simulationUid: string,
+    body: SimulationRequestSnapshotPayload
+  ) {
+    logSocketEmit(socketEvents.simulation.requestSnapshot, simulationUid, body);
+    const socket = this.getSocket(simulationUid);
+    socket.emit(socketEvents.simulation.requestSnapshot, body);
   }
 
   private setupNewConnection(

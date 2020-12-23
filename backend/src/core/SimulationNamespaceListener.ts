@@ -6,6 +6,7 @@ import { socketEvents } from '../common/constants/socketEvents';
 import { getClientCount } from '../utils/getClientCount';
 import { emitWelcome } from '../utils/emitWelcome';
 import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
+import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
 
 export class SimulationNamespaceListener {
   private readonly simulationUid: string;
@@ -41,6 +42,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.deleteNode,
       this.handleSimulationDeleteNode
+    );
+    socket.on(
+      socketEvents.simulation.requestSnapshot,
+      this.handleSimulationRequestSnapshot
     );
   };
 
@@ -78,5 +83,11 @@ export class SimulationNamespaceListener {
     body: SimulationDeleteNodePayload
   ) => {
     simulationBridge.handleSimulationDeleteNode(this.simulationUid, body);
+  };
+
+  private readonly handleSimulationRequestSnapshot = (
+    body: SimulationRequestSnapshotPayload
+  ) => {
+    simulationBridge.handleSimulationRequestSnapshot(this.simulationUid, body);
   };
 }
