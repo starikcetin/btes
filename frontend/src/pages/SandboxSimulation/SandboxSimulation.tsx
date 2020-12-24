@@ -64,7 +64,7 @@ const SandboxSimulation: React.FC = () => {
   const createNode = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     simulationBridge.sendSimulationCreateNode(simulationUid, {
       positionX: event.pageX,
-      positionY: event.pageY,
+      positionY: event.pageY - 50, // 50 is element height compensation
     });
   };
 
@@ -74,7 +74,7 @@ const SandboxSimulation: React.FC = () => {
     data: DraggableData
   ) => {
     simulationBridge.sendSimulationUpdateNodePosition(simulationUid, {
-      nodeUid: nodeUid,
+      nodeUid,
       positionX: data.x,
       positionY: data.y,
     });
@@ -96,7 +96,7 @@ const SandboxSimulation: React.FC = () => {
             <ContextMenuTrigger id="rightClickArea">
               <div className="d-flex position-absolute h-75 border w-100">
                 {nodes.map((node) => {
-                  const topPosition = node.positionY - 50; //from element height
+                  const topPosition = node.positionY;
                   const leftPosition = node.positionX;
                   return (
                     <div key={node.nodeUid}>

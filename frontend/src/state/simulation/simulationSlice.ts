@@ -6,6 +6,7 @@ import { SimulationNodeCreatedPayload } from './SimulationNodePayload';
 import { SimulationTeardownPayload } from './SimulationTeardownPayload';
 import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
 import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
+import { SimulationNodePositionUpdatedPayload as SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -104,6 +105,15 @@ export const simulationSlice = createSlice({
         simulationUid: snapshot.simulationUid,
         nodeMap: snapshot.nodeMap,
       };
+    },
+    nodePositionUpdated: (
+      state,
+      { payload }: PayloadAction<SimulationNodePositionUpdatedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+      const node = sim.nodeMap[payload.nodeUid];
+      node.positionX = payload.positionX;
+      node.positionY = payload.positionY;
     },
   },
 });

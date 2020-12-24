@@ -12,6 +12,7 @@ import { SimulationNodeDeletedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
+import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
 
 class SimulationBridge {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -115,6 +116,14 @@ class SimulationBridge {
   ): void => {
     const ns = this.nsMap[simulationUid];
     ns.emit(socketEvents.simulation.snapshotReport, body);
+  };
+
+  public readonly sendSimulationNodePositionUpdated = (
+    simulationUid: string,
+    body: SimulationNodePositionUpdatedPayload
+  ) => {
+    const ns = this.nsMap[simulationUid];
+    ns.emit(socketEvents.simulation.nodePositionUpdated, body);
   };
 }
 
