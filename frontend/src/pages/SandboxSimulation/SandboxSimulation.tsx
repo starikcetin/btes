@@ -8,6 +8,7 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import NodeModal from '../../components/NodeModal/NodeModal';
 // import nodeIcon from './pcIcon.png';
 import { NodeData } from '../../state/simulation/NodeData';
+import Draggable from 'react-draggable';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -82,6 +83,11 @@ const SandboxSimulation: React.FC = () => {
           <div className="row">
             <ContextMenuTrigger id="rightClickArea">
               <div className="d-flex position-absolute h-75 border w-100">
+                <Draggable>
+                  <div className="position-absolute">
+                    <span>sldfkjksjf</span>
+                  </div>
+                </Draggable>
                 {nodes.map((node) => {
                   const style = {
                     top: node.positionY - 50, //from element height
@@ -89,17 +95,23 @@ const SandboxSimulation: React.FC = () => {
                     cursor: 'pointer',
                   };
                   return (
-                    <div
-                      className="card position-absolute d-flex justify-content-center"
-                      style={style}
-                      onClick={() => setViewingNode(node)}
-                      key={node.nodeUid}
-                    >
+                    <div>
                       <ContextMenuTrigger
                         id={`nodeRightClickArea_${node.nodeUid}`}
                       >
-                        <span className="alert-info">NODE</span>
-                        <p className="card-text text-center">{node.nodeUid}</p>
+                        <Draggable>
+                          <div
+                            className="node-card card position-absolute justify-content-center"
+                            style={style}
+                            onDoubleClick={() => setViewingNode(node)}
+                            key={node.nodeUid}
+                          >
+                            <span className="alert-info">NODE</span>
+                            <p className="card-text text-center">
+                              {node.nodeUid}
+                            </p>
+                          </div>
+                        </Draggable>
                       </ContextMenuTrigger>
                       <ContextMenu id={`nodeRightClickArea_${node.nodeUid}`}>
                         <MenuItem
