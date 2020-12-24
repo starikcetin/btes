@@ -7,6 +7,7 @@ import { SimulationCreateNodePayload } from '../common/socketPayloads/Simulation
 import { SimulationWelcomePayload } from '../common/socketPayloads/SimulationWelcomePayload';
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
 import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
+import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import {
   logSocketEmit,
   logSocketReceive,
@@ -99,6 +100,19 @@ class SimulationBridge {
     logSocketEmit(socketEvents.simulation.createNode, simulationUid, body);
     const socket = this.getSocket(simulationUid);
     socket.emit(socketEvents.simulation.createNode, body);
+  }
+
+  public sendSimulationUpdateNodePosition(
+    simulationUid: string,
+    body: SimulationUpdateNodePositionPayload
+  ) {
+    logSocketEmit(
+      socketEvents.simulation.updateNodePosition,
+      simulationUid,
+      body
+    );
+    const socket = this.getSocket(simulationUid);
+    socket.emit(socketEvents.simulation.updateNodePosition, body);
   }
 
   public sendSimulationDeleteNode(

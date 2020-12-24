@@ -12,6 +12,7 @@ import { SimulationNodeDeletedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { SimulationSnapshot } from '../common/SimulationSnapshot';
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
+import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -42,6 +43,15 @@ export class Simulation {
     this.nodeMap[nodeUid] = newNode;
 
     this.sendSimulationNodeCreated(newNode);
+  };
+
+  public readonly handleSimulationUpdateNodePosition = (
+    body: SimulationUpdateNodePositionPayload
+  ): void => {
+    //TODO update the position of the node here, it gives
+    // TS2540: Cannot assign to 'positionX' because it is a read-only property.
+    // I dont know how to do it!
+    const node = this.nodeMap[body.nodeUid];
   };
 
   private readonly sendSimulationNodeCreated = (
