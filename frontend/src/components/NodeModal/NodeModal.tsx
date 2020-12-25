@@ -3,23 +3,26 @@ import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
 import './NodeModal.css';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
+import { NodeData } from '../../state/simulation/NodeData';
+import { empty } from '../../common/utils/empty';
 
 interface NodeModalProps {
-  show: boolean;
   closeHandler: () => void;
   simulationUid: string;
-  nodeUid: string;
+  nodeUid: string | null;
 }
 
 const NodeModal: React.FC<NodeModalProps> = (props) => {
-  const { show, closeHandler, simulationUid, nodeUid } = props;
-  const node = useSelector(
-    (state: RootState) => state.simulation[simulationUid].nodeMap[nodeUid] || {}
+  const { closeHandler, simulationUid, nodeUid } = props;
+  const node = useSelector((state: RootState) =>
+    nodeUid
+      ? state.simulation[simulationUid].nodeMap[nodeUid]
+      : empty<NodeData>()
   );
 
   return (
     <Modal
-      show={show}
+      show={!!nodeUid}
       onHide={closeHandler}
       backdrop="static"
       keyboard={false}
@@ -72,8 +75,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
             <Container>
               <Row>
                 <Col>
-                  <p>Node Tree</p>
-                  {/*<BlockchainTreeView rootBlock={node.blockchainRootBlock} />*/}
+                  <p>Blockchain</p>
                 </Col>
               </Row>
             </Container>
@@ -90,9 +92,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
                   <th>Event</th>
                 </tr>
               </thead>
-              <tbody>
-                <p>logs</p>
-              </tbody>
+              <tbody></tbody>
             </Table>
           </Tab>
         </Tabs>

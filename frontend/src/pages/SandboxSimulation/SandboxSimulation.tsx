@@ -92,14 +92,6 @@ const SandboxSimulation: React.FC = () => {
                 </span>
               </MenuItem>
             </ContextMenu>
-            {viewingNodeUid && (
-              <NodeModal
-                show={true}
-                closeHandler={() => setViewingNodeUid(null)}
-                simulationUid={simulationUid}
-                nodeUid={viewingNodeUid}
-              />
-            )}
           </div>
           <div className="fixed-bottom d-flex row align-content-center m-3">
             <div className="input-group">
@@ -120,6 +112,11 @@ const SandboxSimulation: React.FC = () => {
               ></textarea>
             </div>
           </div>
+          <NodeModal
+            closeHandler={() => setViewingNodeUid(null)}
+            simulationUid={simulationUid}
+            nodeUid={viewingNodeUid}
+          />
         </>
       ) : (
         <div>
