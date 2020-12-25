@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 import { simulationBridge } from '../../services/simulationBridge';
@@ -18,6 +18,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     data: { nodeUid, positionY, positionX },
     launchHandler,
   } = props;
+  const draggableNodeRef = useRef<HTMLDivElement>(null);
 
   const contextMenuId = `nodeRightClickArea_${nodeUid}`;
 
@@ -45,10 +46,12 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
         <Draggable
           onStop={updateNodePosition}
           position={{ x: positionX, y: positionY }}
+          nodeRef={draggableNodeRef}
         >
           <div
             className="node-card card position-absolute justify-content-center"
             onDoubleClick={handleDoubleClick}
+            ref={draggableNodeRef}
           >
             <span className="alert-info">NODE</span>
             <p className="card-text text-center">{nodeUid}</p>
