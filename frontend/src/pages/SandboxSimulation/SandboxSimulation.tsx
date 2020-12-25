@@ -6,9 +6,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import NodeModal from '../../components/NodeModal/NodeModal';
-// import nodeIcon from './pcIcon.png';
-import { NodeData } from '../../state/simulation/NodeData';
-import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 
 interface SandboxSimulationParamTypes {
