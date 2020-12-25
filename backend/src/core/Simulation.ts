@@ -46,23 +46,6 @@ export class Simulation {
     this.sendSimulationNodeCreated(newNode.takeSnapshot());
   };
 
-  public readonly handleSimulationUpdateNodePosition = (
-    body: SimulationUpdateNodePositionPayload
-  ): void => {
-    const node = this.nodeMap[body.nodeUid];
-    node.updatePosition(body.positionX, body.positionY);
-    this.sendSimulationNodePositionUpdated(body);
-  };
-
-  private readonly sendSimulationNodePositionUpdated = (
-    body: SimulationNodePositionUpdatedPayload
-  ) => {
-    simulationBridge.sendSimulationNodePositionUpdated(
-      this.simulationUid,
-      body
-    );
-  };
-
   private readonly sendSimulationNodeCreated = (
     body: SimulationNodeCreatedPayload
   ) => {
@@ -98,6 +81,23 @@ export class Simulation {
     body: SimulationSnapshotReportPayload
   ) => {
     simulationBridge.sendSimulationSnapshotReport(this.simulationUid, body);
+  };
+
+  public readonly handleSimulationUpdateNodePosition = (
+    body: SimulationUpdateNodePositionPayload
+  ): void => {
+    const node = this.nodeMap[body.nodeUid];
+    node.updatePosition(body.positionX, body.positionY);
+    this.sendSimulationNodePositionUpdated(body);
+  };
+
+  private readonly sendSimulationNodePositionUpdated = (
+    body: SimulationNodePositionUpdatedPayload
+  ) => {
+    simulationBridge.sendSimulationNodePositionUpdated(
+      this.simulationUid,
+      body
+    );
   };
 
   private readonly takeSnapshot = (): SimulationSnapshot => {
