@@ -8,6 +8,7 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import NodeModal from '../../components/NodeModal/NodeModal';
 // import nodeIcon from './pcIcon.png';
 import { NodeData } from '../../state/simulation/NodeData';
+import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -63,7 +64,19 @@ const SandboxSimulation: React.FC = () => {
   const createNode = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     simulationBridge.sendSimulationCreateNode(simulationUid, {
       positionX: event.pageX,
-      positionY: event.pageY,
+      positionY: event.pageY - 50, // 50 is element height compensation
+    });
+  };
+
+  const updateNodePosition = (
+    nodeUid: string,
+    event: DraggableEvent,
+    data: DraggableData
+  ) => {
+    simulationBridge.sendSimulationUpdateNodePosition(simulationUid, {
+      nodeUid,
+      positionX: data.x,
+      positionY: data.y,
     });
   };
 
@@ -80,26 +93,33 @@ const SandboxSimulation: React.FC = () => {
       {connected ? (
         <>
           <div className="row">
-            <ContextMenuTrigger id="rightClickArea">
+            <ContextMenuTrigger id="rightClickArea" holdToDisplay={-1}>
               <div className="d-flex position-absolute h-75 border w-100">
                 {nodes.map((node) => {
-                  const style = {
-                    top: node.positionY - 50, //from element height
-                    left: node.positionX,
-                    cursor: 'pointer',
-                  };
+                  const topPosition = node.positionY;
+                  const leftPosition = node.positionX;
                   return (
-                    <div
-                      className="card position-absolute d-flex justify-content-center"
-                      style={style}
-                      onClick={() => setViewingNode(node)}
-                      key={node.nodeUid}
-                    >
+                    <div key={node.nodeUid}>
                       <ContextMenuTrigger
                         id={`nodeRightClickArea_${node.nodeUid}`}
+                        holdToDisplay={-1}
                       >
-                        <span className="alert-info">NODE</span>
-                        <p className="card-text text-center">{node.nodeUid}</p>
+                        <Draggable
+                          onStop={(event, data) =>
+                            updateNodePosition(node.nodeUid, event, data)
+                          }
+                          position={{ x: leftPosition, y: topPosition }}
+                        >
+                          <div
+                            className="node-card card position-absolute justify-content-center"
+                            onDoubleClick={() => setViewingNode(node)}
+                          >
+                            <span className="alert-info">NODE</span>
+                            <p className="card-text text-center">
+                              {node.nodeUid}
+                            </p>
+                          </div>
+                        </Draggable>
                       </ContextMenuTrigger>
                       <ContextMenu id={`nodeRightClickArea_${node.nodeUid}`}>
                         <MenuItem

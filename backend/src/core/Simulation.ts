@@ -12,6 +12,8 @@ import { SimulationNodeDeletedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { SimulationSnapshot } from '../common/SimulationSnapshot';
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
+import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
+import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -41,7 +43,7 @@ export class Simulation {
     const newNode = new SimulationNode(nodeUid, body.positionX, body.positionY);
     this.nodeMap[nodeUid] = newNode;
 
-    this.sendSimulationNodeCreated(newNode);
+    this.sendSimulationNodeCreated(newNode.takeSnapshot());
   };
 
   private readonly sendSimulationNodeCreated = (
@@ -79,6 +81,23 @@ export class Simulation {
     body: SimulationSnapshotReportPayload
   ) => {
     simulationBridge.sendSimulationSnapshotReport(this.simulationUid, body);
+  };
+
+  public readonly handleSimulationUpdateNodePosition = (
+    body: SimulationUpdateNodePositionPayload
+  ): void => {
+    const node = this.nodeMap[body.nodeUid];
+    node.updatePosition(body.positionX, body.positionY);
+    this.sendSimulationNodePositionUpdated(body);
+  };
+
+  private readonly sendSimulationNodePositionUpdated = (
+    body: SimulationNodePositionUpdatedPayload
+  ) => {
+    simulationBridge.sendSimulationNodePositionUpdated(
+      this.simulationUid,
+      body
+    );
   };
 
   private readonly takeSnapshot = (): SimulationSnapshot => {

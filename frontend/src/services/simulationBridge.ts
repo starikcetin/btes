@@ -7,13 +7,13 @@ import { SimulationCreateNodePayload } from '../common/socketPayloads/Simulation
 import { SimulationWelcomePayload } from '../common/socketPayloads/SimulationWelcomePayload';
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
 import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
+import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import {
   logSocketEmit,
   logSocketReceive,
 } from '../common/utils/socketLogUtils';
 import { socketEvents } from '../common/constants/socketEvents';
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
-import { SimulationSnapshotReportPayload } from '../../../backend/src/common/socketPayloads/SimulationSnapshotReportPayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -117,6 +117,19 @@ class SimulationBridge {
     logSocketEmit(socketEvents.simulation.requestSnapshot, simulationUid, body);
     const socket = this.getSocket(simulationUid);
     socket.emit(socketEvents.simulation.requestSnapshot, body);
+  }
+
+  public sendSimulationUpdateNodePosition(
+    simulationUid: string,
+    body: SimulationUpdateNodePositionPayload
+  ) {
+    logSocketEmit(
+      socketEvents.simulation.updateNodePosition,
+      simulationUid,
+      body
+    );
+    const socket = this.getSocket(simulationUid);
+    socket.emit(socketEvents.simulation.updateNodePosition, body);
   }
 
   private setupNewConnection(

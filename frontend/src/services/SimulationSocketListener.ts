@@ -6,6 +6,7 @@ import { logSocketReceive } from '../common/utils/socketLogUtils';
 import { socketEvents } from '../common/constants/socketEvents';
 import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
+import { SimulationNodePositionUpdatedPayload } from '../../../common/src/socketPayloads/SimulationNodePositionUpdatedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -26,6 +27,10 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.snapshotReport,
       this.handleSimulationSnapshotReport
+    );
+    socket.on(
+      socketEvents.simulation.nodePositionUpdated,
+      this.handleSimulationNodePositionUpdated
     );
   }
 
@@ -82,6 +87,17 @@ export class SimulationSocketListener {
   ) => {
     store.dispatch(
       simulationSlice.actions.snapshotReport({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleSimulationNodePositionUpdated = (
+    body: SimulationNodePositionUpdatedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.nodePositionUpdated({
         simulationUid: this.simulationUid,
         ...body,
       })

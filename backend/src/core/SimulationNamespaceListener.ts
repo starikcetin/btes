@@ -7,6 +7,7 @@ import { getClientCount } from '../utils/getClientCount';
 import { emitWelcome } from '../utils/emitWelcome';
 import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
+import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
 
 export class SimulationNamespaceListener {
   private readonly simulationUid: string;
@@ -46,6 +47,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.requestSnapshot,
       this.handleSimulationRequestSnapshot
+    );
+    socket.on(
+      socketEvents.simulation.updateNodePosition,
+      this.handleSimulationUpdateNodePosition
     );
   };
 
@@ -89,5 +94,14 @@ export class SimulationNamespaceListener {
     body: SimulationRequestSnapshotPayload
   ) => {
     simulationBridge.handleSimulationRequestSnapshot(this.simulationUid, body);
+  };
+
+  private readonly handleSimulationUpdateNodePosition = (
+    body: SimulationUpdateNodePositionPayload
+  ) => {
+    simulationBridge.handleSimulationUpdateNodePosition(
+      this.simulationUid,
+      body
+    );
   };
 }
