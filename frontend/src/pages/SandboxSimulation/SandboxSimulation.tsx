@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import './SandboxSimulation.scss';
-import { useParams } from 'react-router-dom';
-import { simulationBridge } from '../../services/simulationBridge';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../state/RootState';
+import { useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
+
+import './SandboxSimulation.scss';
+import { RootState } from '../../state/RootState';
 import NodeModal from '../../components/NodeModal/NodeModal';
+import { simulationBridge } from '../../services/simulationBridge';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 
 interface SandboxSimulationParamTypes {

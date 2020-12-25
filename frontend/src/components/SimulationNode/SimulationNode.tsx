@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
-import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
+import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu';
 
 import './SimulationNode.scss';
 // import nodeIcon from './pcIcon.png';
-import { simulationBridge } from '../../services/simulationBridge';
 import { NodeData } from '../../state/simulation/NodeData';
+import { simulationBridge } from '../../services/simulationBridge';
 
 interface SimulationNodeProps {
   simulationUid: string;

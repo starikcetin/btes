@@ -1,10 +1,11 @@
 import React from 'react';
-import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
-import './NodeModal.css';
 import { useSelector } from 'react-redux';
+import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
+
+import './NodeModal.css';
+import { empty } from '../../common/utils/empty';
 import { RootState } from '../../state/RootState';
 import { NodeData } from '../../state/simulation/NodeData';
-import { empty } from '../../common/utils/empty';
 
 interface NodeModalProps {
   closeHandler: () => void;
