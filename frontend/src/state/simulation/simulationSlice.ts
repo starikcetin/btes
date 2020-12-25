@@ -6,7 +6,7 @@ import { SimulationNodeCreatedPayload } from './SimulationNodePayload';
 import { SimulationTeardownPayload } from './SimulationTeardownPayload';
 import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
 import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
-import { SimulationNodePositionUpdatedPayload as SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
+import { SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
