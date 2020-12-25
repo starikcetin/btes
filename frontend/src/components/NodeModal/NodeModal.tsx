@@ -1,16 +1,21 @@
 import React from 'react';
 import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
 import './NodeModal.css';
-import { NodeData } from '../../state/simulation/NodeData';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/RootState';
 
 interface NodeModalProps {
   show: boolean;
   closeHandler: () => void;
-  node: NodeData;
+  simulationUid: string;
+  nodeUid: string;
 }
 
 const NodeModal: React.FC<NodeModalProps> = (props) => {
-  const { show, closeHandler, node } = props;
+  const { show, closeHandler, simulationUid, nodeUid } = props;
+  const node = useSelector(
+    (state: RootState) => state.simulation[simulationUid].nodeMap[nodeUid] || {}
+  );
 
   return (
     <Modal

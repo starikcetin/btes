@@ -9,6 +9,7 @@ import NodeModal from '../../components/NodeModal/NodeModal';
 // import nodeIcon from './pcIcon.png';
 import { NodeData } from '../../state/simulation/NodeData';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
+import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -27,7 +28,7 @@ const SandboxSimulation: React.FC = () => {
     Object.values(state.simulation[simulationUid]?.nodeMap || {})
   );
 
-  const [viewingNode, setViewingNode] = useState<NodeData | null>(null);
+  const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);
@@ -55,28 +56,10 @@ const SandboxSimulation: React.FC = () => {
     return result || '';
   };
 
-  const deleteNode = (nodeUid: string, event: React.UIEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    simulationBridge.sendSimulationDeleteNode(simulationUid, { nodeUid });
-  };
-
   const createNode = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     simulationBridge.sendSimulationCreateNode(simulationUid, {
       positionX: event.pageX,
       positionY: event.pageY - 50, // 50 is element height compensation
-    });
-  };
-
-  const updateNodePosition = (
-    nodeUid: string,
-    event: DraggableEvent,
-    data: DraggableData
-  ) => {
-    simulationBridge.sendSimulationUpdateNodePosition(simulationUid, {
-      nodeUid,
-      positionX: data.x,
-      positionY: data.y,
     });
   };
 
@@ -95,45 +78,14 @@ const SandboxSimulation: React.FC = () => {
           <div className="row">
             <ContextMenuTrigger id="rightClickArea" holdToDisplay={-1}>
               <div className="d-flex position-absolute h-75 border w-100">
-                {nodes.map((node) => {
-                  const topPosition = node.positionY;
-                  const leftPosition = node.positionX;
-                  return (
-                    <div key={node.nodeUid}>
-                      <ContextMenuTrigger
-                        id={`nodeRightClickArea_${node.nodeUid}`}
-                        holdToDisplay={-1}
-                      >
-                        <Draggable
-                          onStop={(event, data) =>
-                            updateNodePosition(node.nodeUid, event, data)
-                          }
-                          position={{ x: leftPosition, y: topPosition }}
-                        >
-                          <div
-                            className="node-card card position-absolute justify-content-center"
-                            onDoubleClick={() => setViewingNode(node)}
-                          >
-                            <span className="alert-info">NODE</span>
-                            <p className="card-text text-center">
-                              {node.nodeUid}
-                            </p>
-                          </div>
-                        </Draggable>
-                      </ContextMenuTrigger>
-                      <ContextMenu id={`nodeRightClickArea_${node.nodeUid}`}>
-                        <MenuItem
-                          data={{ event: 'deleteNode' }}
-                          onClick={(event) => deleteNode(node.nodeUid, event)}
-                        >
-                          <span className="menu-item bg-success border p-2">
-                            Delete Node
-                          </span>
-                        </MenuItem>
-                      </ContextMenu>
-                    </div>
-                  );
-                })}
+                {nodes.map((node) => (
+                  <SimulationNode
+                    key={node.nodeUid}
+                    simulationUid={simulationUid}
+                    data={node}
+                    launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
+                  ></SimulationNode>
+                ))}
               </div>
             </ContextMenuTrigger>
             <ContextMenu id="rightClickArea">
@@ -143,11 +95,12 @@ const SandboxSimulation: React.FC = () => {
                 </span>
               </MenuItem>
             </ContextMenu>
-            {viewingNode && (
+            {viewingNodeUid && (
               <NodeModal
                 show={true}
-                closeHandler={() => setViewingNode(null)}
-                node={viewingNode}
+                closeHandler={() => setViewingNodeUid(null)}
+                simulationUid={simulationUid}
+                nodeUid={viewingNodeUid}
               />
             )}
           </div>
