@@ -93,7 +93,7 @@ const SandboxSimulation: React.FC = () => {
       {connected ? (
         <>
           <div className="row">
-            <ContextMenuTrigger id="rightClickArea">
+            <ContextMenuTrigger id="rightClickArea" holdToDisplay={-1}>
               <div className="d-flex position-absolute h-75 border w-100">
                 {nodes.map((node) => {
                   const topPosition = node.positionY;
@@ -102,6 +102,7 @@ const SandboxSimulation: React.FC = () => {
                     <div key={node.nodeUid}>
                       <ContextMenuTrigger
                         id={`nodeRightClickArea_${node.nodeUid}`}
+                        holdToDisplay={-1}
                       >
                         <Draggable
                           onStop={(event, data) =>
