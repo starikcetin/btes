@@ -9,6 +9,7 @@ import { socketEvents } from '../common/constants/socketEvents';
 import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { SimulationNodePositionUpdatedPayload } from '../../../common/src/socketPayloads/SimulationNodePositionUpdatedPayload';
+import { SimulationLogActionPayload } from '../state/simulation/SimulationLogActionPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -88,11 +89,18 @@ export class SimulationSocketListener {
       this.simulationUid,
       body
     );
+
     store.dispatch(
       simulationSlice.actions.nodeCreated({
         simulationUid: this.simulationUid,
         ...body,
       })
+    );
+
+    this.dispatchLogNodeEvent(
+      body.nodeUid,
+      socketEvents.simulation.nodeCreated,
+      body
     );
   };
 
@@ -125,6 +133,29 @@ export class SimulationSocketListener {
       simulationSlice.actions.nodePositionUpdated({
         simulationUid: this.simulationUid,
         ...body,
+      })
+    );
+
+    this.dispatchLogNodeEvent(
+      body.nodeUid,
+      socketEvents.simulation.nodePositionUpdated,
+      body
+    );
+  };
+
+  private readonly dispatchLogNodeEvent = (
+    nodeUid: string,
+    eventName: string,
+    body: unknown
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.logNode({
+        simulationUid: this.simulationUid,
+        nodeUid,
+        direction: 'incoming',
+        eventName,
+        payload: body,
+        timestamp: Date.now(),
       })
     );
   };

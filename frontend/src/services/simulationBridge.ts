@@ -101,6 +101,12 @@ class SimulationBridge {
     simulationUid: string,
     body: SimulationDeleteNodePayload
   ) {
+    this.dispatchLogNodeEvent(
+      simulationUid,
+      body.nodeUid,
+      socketEvents.simulation.updateNodePosition,
+      body
+    );
     this.emit(simulationUid, socketEvents.simulation.deleteNode, body);
   }
 
@@ -115,6 +121,12 @@ class SimulationBridge {
     simulationUid: string,
     body: SimulationUpdateNodePositionPayload
   ) {
+    this.dispatchLogNodeEvent(
+      simulationUid,
+      body.nodeUid,
+      socketEvents.simulation.updateNodePosition,
+      body
+    );
     this.emit(simulationUid, socketEvents.simulation.updateNodePosition, body);
   }
 
@@ -145,6 +157,24 @@ class SimulationBridge {
     store.dispatch(
       simulationSlice.actions.log({
         simulationUid,
+        direction: 'outgoing',
+        eventName,
+        payload: body,
+        timestamp: Date.now(),
+      })
+    );
+  }
+
+  private dispatchLogNodeEvent(
+    simulationUid: string,
+    nodeUid: string,
+    eventName: string,
+    body: unknown
+  ) {
+    store.dispatch(
+      simulationSlice.actions.logNode({
+        simulationUid,
+        nodeUid,
         direction: 'outgoing',
         eventName,
         payload: body,

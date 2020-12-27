@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import _ from 'lodash';
+
 import { SimulationPongActionPayload } from './SimulationPongActionPayload';
 import { SimulationSetupActionPayload } from './SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
@@ -8,6 +10,7 @@ import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
 import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
 import { SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
 import { SimulationLogActionPayload } from './SimulationLogActionPayload';
+import { SimulationLogNodeActionPayload } from './SimulationLogNodeActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -70,7 +73,7 @@ export const simulationSlice = createSlice({
         );
       }
 
-      sim.nodeMap[payload.nodeUid] = payload;
+      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload };
     },
     teardown: (
       state,
@@ -106,7 +109,10 @@ export const simulationSlice = createSlice({
 
         // state included in a snapshot, overwrite with the snapshot
         simulationUid: snapshot.simulationUid,
-        nodeMap: snapshot.nodeMap,
+        nodeMap: _.mapValues(snapshot.nodeMap, (node) => ({
+          logs: old.nodeMap[node.nodeUid]?.logs || [],
+          ...node,
+        })),
       };
     },
     nodePositionUpdated: (
@@ -120,6 +126,12 @@ export const simulationSlice = createSlice({
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);
+    },
+    logNode: (
+      state,
+      { payload }: PayloadAction<SimulationLogNodeActionPayload>
+    ) => {
+      state[payload.simulationUid].nodeMap[payload.nodeUid].logs.push(payload);
     },
   },
 });
