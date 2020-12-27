@@ -87,11 +87,7 @@ const SandboxSimulation: React.FC = () => {
               </div>
             </ContextMenuTrigger>
             <ContextMenu id="rightClickArea">
-              <MenuItem data={{ event: 'createNode' }} onClick={createNode}>
-                <span className="menu-item bg-success border p-2">
-                  Create Node
-                </span>
-              </MenuItem>
+              <MenuItem onClick={createNode}>Create Node</MenuItem>
             </ContextMenu>
           </div>
           <div className="fixed-bottom d-flex row align-content-center m-3">
