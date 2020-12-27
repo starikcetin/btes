@@ -6,6 +6,7 @@ import './NodeModal.css';
 import { empty } from '../../common/utils/empty';
 import { RootState } from '../../state/RootState';
 import { NodeData } from '../../state/simulation/NodeData';
+import LogTable from '../LogTable/LogTable';
 
 interface NodeModalProps {
   closeHandler: () => void;
@@ -82,19 +83,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
             </Container>
           </Tab>
           <Tab eventKey="log" title="Log" className="node-details-tab-content">
-            <Table striped>
-              <colgroup>
-                <col style={{ width: '34%' }} />
-                <col style={{ width: '66%' }} />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Event</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </Table>
+            <LogTable logs={node.logs} />
           </Tab>
         </Tabs>
       </Modal.Body>

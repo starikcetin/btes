@@ -9,7 +9,7 @@ interface LogTableProps {
 }
 
 const LogTable: React.FC<LogTableProps> = (props) => {
-  const { logs } = props;
+  const { logs = [] } = props;
 
   return (
     <Table striped>
@@ -28,7 +28,7 @@ const LogTable: React.FC<LogTableProps> = (props) => {
       </thead>
       <tbody>
         {logs.map((log) => (
-          <tr>
+          <tr key={log.timestamp + log.eventName}>
             <td>{new Date(log.timestamp).toLocaleTimeString()}</td>
             <td>{log.direction}</td>
             <td>{log.eventName}</td>
