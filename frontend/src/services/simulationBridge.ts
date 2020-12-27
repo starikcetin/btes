@@ -1,4 +1,4 @@
-import io from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 import { SimulationSocketListener } from './SimulationSocketListener';
 import { store } from '../state/store';
@@ -17,7 +17,7 @@ import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/Simul
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
-    [uid: string]: SocketIOClient.Socket;
+    [uid: string]: Socket;
   } = {};
 
   private readonly uidToSocketListenerMap: {
@@ -28,7 +28,7 @@ class SimulationBridge {
     return new Promise<void>((resolve) => {
       console.log('connecting to ', simulationUid);
 
-      const socket = io.connect(`/${simulationUid}`, {
+      const socket = io(`/${simulationUid}`, {
         path: '/api/socket/socket.io',
       });
 
@@ -87,55 +87,50 @@ class SimulationBridge {
     simulationUid: string,
     body: SimulationPingPayload
   ) {
-    logSocketEmit(socketEvents.simulation.ping, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.ping, body);
+    this.emit(simulationUid, socketEvents.simulation.ping, body);
   }
 
   public sendSimulationCreateNode(
     simulationUid: string,
     body: SimulationCreateNodePayload
   ) {
-    logSocketEmit(socketEvents.simulation.createNode, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.createNode, body);
+    this.emit(simulationUid, socketEvents.simulation.createNode, body);
   }
 
   public sendSimulationDeleteNode(
     simulationUid: string,
     body: SimulationDeleteNodePayload
   ) {
-    logSocketEmit(socketEvents.simulation.deleteNode, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.deleteNode, body);
+    this.dispatchLogNodeEvent(
+      simulationUid,
+      body.nodeUid,
+      socketEvents.simulation.updateNodePosition,
+      body
+    );
+    this.emit(simulationUid, socketEvents.simulation.deleteNode, body);
   }
 
   public sendSimulationRequestSnapshot(
     simulationUid: string,
     body: SimulationRequestSnapshotPayload
   ) {
-    logSocketEmit(socketEvents.simulation.requestSnapshot, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.requestSnapshot, body);
+    this.emit(simulationUid, socketEvents.simulation.requestSnapshot, body);
   }
 
   public sendSimulationUpdateNodePosition(
     simulationUid: string,
     body: SimulationUpdateNodePositionPayload
   ) {
-    logSocketEmit(
-      socketEvents.simulation.updateNodePosition,
+    this.dispatchLogNodeEvent(
       simulationUid,
+      body.nodeUid,
+      socketEvents.simulation.updateNodePosition,
       body
     );
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.updateNodePosition, body);
+    this.emit(simulationUid, socketEvents.simulation.updateNodePosition, body);
   }
 
-  private setupNewConnection(
-    simulationUid: string,
-    socket: SocketIOClient.Socket
-  ) {
+  private setupNewConnection(simulationUid: string, socket: Socket) {
     store.dispatch(simulationSlice.actions.setup({ simulationUid }));
     this.uidtoSocketMap[simulationUid] = socket;
     const listener = new SimulationSocketListener(simulationUid, socket);
@@ -152,6 +147,40 @@ class SimulationBridge {
     }
 
     return socket;
+  }
+
+  private emit(simulationUid: string, eventName: string, body: unknown) {
+    logSocketEmit(eventName, simulationUid, body);
+    const socket = this.getSocket(simulationUid);
+    socket.emit(eventName, body);
+
+    store.dispatch(
+      simulationSlice.actions.log({
+        simulationUid,
+        direction: 'outgoing',
+        eventName,
+        payload: body,
+        timestamp: Date.now(),
+      })
+    );
+  }
+
+  private dispatchLogNodeEvent(
+    simulationUid: string,
+    nodeUid: string,
+    eventName: string,
+    body: unknown
+  ) {
+    store.dispatch(
+      simulationSlice.actions.logNode({
+        simulationUid,
+        nodeUid,
+        direction: 'outgoing',
+        eventName,
+        payload: body,
+        timestamp: Date.now(),
+      })
+    );
   }
 }
 

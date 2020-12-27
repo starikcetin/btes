@@ -68,6 +68,7 @@
     "jest-resolve": "24.9.0",
     "jest-watch-typeahead": "0.4.2",
     "jquery": "^3.5.1",
+    "lodash": "^4.17.20",
     "mini-css-extract-plugin": "0.9.0",
     "node-sass": "4.12.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
@@ -90,7 +91,7 @@
     "resolve-url-loader": "3.1.1",
     "sass-loader": "8.0.2",
     "semver": "6.3.0",
-    "socket.io-client": "^2.3.1",
+    "socket.io-client": "^3.0.4",
     "style-loader": "0.23.1",
     "terser-webpack-plugin": "2.3.8",
     "ts-pnp": "1.1.6",
@@ -102,9 +103,9 @@
     "workbox-webpack-plugin": "4.3.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.166",
     "@types/react-bootstrap": "^0.32.25",
     "@types/react-redux": "^7.1.11",
-    "@types/socket.io-client": "^1.4.34",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-prettier": "^3.2.0",
     "http-proxy-middleware": "^1.0.6",

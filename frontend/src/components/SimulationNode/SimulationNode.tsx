@@ -60,9 +60,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
         </Draggable>
       </ContextMenuTrigger>
       <ContextMenu id={`nodeRightClickArea_${nodeUid}`}>
-        <MenuItem data={{ event: 'deleteNode' }} onClick={handleDeleteNode}>
-          <span className="menu-item bg-success border p-2">Delete Node</span>
-        </MenuItem>
+        <MenuItem onClick={handleDeleteNode}>Delete Node</MenuItem>
       </ContextMenu>
     </div>
   );

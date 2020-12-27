@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import _ from 'lodash';
+
 import { SimulationPongActionPayload } from './SimulationPongActionPayload';
 import { SimulationSetupActionPayload } from './SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
@@ -7,6 +9,8 @@ import { SimulationTeardownPayload } from './SimulationTeardownPayload';
 import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
 import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
 import { SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
+import { SimulationLogActionPayload } from './SimulationLogActionPayload';
+import { SimulationLogNodeActionPayload } from './SimulationLogNodeActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -30,6 +34,7 @@ export const simulationSlice = createSlice({
         simulationUid: payload.simulationUid,
         pongs: [],
         nodeMap: {},
+        logs: [],
       };
     },
     pong: (state, { payload }: PayloadAction<SimulationPongActionPayload>) => {
@@ -68,7 +73,7 @@ export const simulationSlice = createSlice({
         );
       }
 
-      sim.nodeMap[payload.nodeUid] = payload;
+      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload };
     },
     teardown: (
       state,
@@ -100,10 +105,14 @@ export const simulationSlice = createSlice({
       state[simulationUid] = {
         // state not included in snapshot, carry over from old state
         pongs: old.pongs,
+        logs: old.logs,
 
         // state included in a snapshot, overwrite with the snapshot
         simulationUid: snapshot.simulationUid,
-        nodeMap: snapshot.nodeMap,
+        nodeMap: _.mapValues(snapshot.nodeMap, (node) => ({
+          logs: old.nodeMap[node.nodeUid]?.logs || [],
+          ...node,
+        })),
       };
     },
     nodePositionUpdated: (
@@ -114,6 +123,15 @@ export const simulationSlice = createSlice({
       const node = sim.nodeMap[payload.nodeUid];
       node.positionX = payload.positionX;
       node.positionY = payload.positionY;
+    },
+    log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
+      state[payload.simulationUid].logs.push(payload);
+    },
+    logNode: (
+      state,
+      { payload }: PayloadAction<SimulationLogNodeActionPayload>
+    ) => {
+      state[payload.simulationUid].nodeMap[payload.nodeUid].logs.push(payload);
     },
   },
 });

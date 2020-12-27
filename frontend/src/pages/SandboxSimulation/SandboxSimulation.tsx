@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 
 import './SandboxSimulation.scss';
@@ -8,6 +8,7 @@ import { RootState } from '../../state/RootState';
 import NodeModal from '../../components/NodeModal/NodeModal';
 import { simulationBridge } from '../../services/simulationBridge';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
+import LogModal from '../../components/LogModal/LogModal';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -15,15 +16,15 @@ interface SandboxSimulationParamTypes {
 
 const SandboxSimulation: React.FC = () => {
   const [connected, setConnected] = useState(false);
-  const simulationPongTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [shouldShowLogs, setShouldShowLogs] = useState(false);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
-
-  const simulationPongs = useSelector(
-    (state: RootState) => state.simulation[simulationUid]?.pongs || []
-  );
 
   const nodes = useSelector((state: RootState) =>
     Object.values(state.simulation[simulationUid]?.nodeMap || {})
+  );
+
+  const logs = useSelector((state: RootState) =>
+    Object.values(state.simulation[simulationUid]?.logs || [])
   );
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
@@ -41,24 +42,15 @@ const SandboxSimulation: React.FC = () => {
     simulationBridge.sendSimulationPing(simulationUid, { date: Date.now() });
   };
 
-  const formatSimulationPongs = () => {
-    const result = simulationPongs
-      ?.map(
-        (simPong) =>
-          `ping: ${new Date(simPong.pingDate).toUTCString()}\t` +
-          `pong: ${new Date(simPong.pongDate).toUTCString()}`
-      )
-      .reverse()
-      .join('\n');
-
-    return result || '';
-  };
-
   const createNode = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     simulationBridge.sendSimulationCreateNode(simulationUid, {
       positionX: event.pageX,
       positionY: event.pageY - 50, // 50 is element height compensation
     });
+  };
+
+  const showLogsOnClick = () => {
+    setShouldShowLogs(true);
   };
 
   useEffect(() => {
@@ -75,7 +67,7 @@ const SandboxSimulation: React.FC = () => {
         <>
           <div className="row">
             <ContextMenuTrigger id="rightClickArea" holdToDisplay={-1}>
-              <div className="d-flex position-absolute h-75 border w-100">
+              <div className="d-flex position-absolute h-100 border w-100">
                 {nodes.map((node) => (
                   <SimulationNode
                     key={node.nodeUid}
@@ -87,36 +79,20 @@ const SandboxSimulation: React.FC = () => {
               </div>
             </ContextMenuTrigger>
             <ContextMenu id="rightClickArea">
-              <MenuItem data={{ event: 'createNode' }} onClick={createNode}>
-                <span className="menu-item bg-success border p-2">
-                  Create Node
-                </span>
-              </MenuItem>
+              <MenuItem onClick={createNode}>Create Node</MenuItem>
+              <MenuItem onClick={sendSimulationPingOnClick}>Send Ping</MenuItem>
+              <MenuItem onClick={showLogsOnClick}>Show Logs</MenuItem>
             </ContextMenu>
-          </div>
-          <div className="fixed-bottom d-flex row align-content-center m-3">
-            <div className="input-group">
-              <div className="input-group-append">
-                <input
-                  type="button"
-                  className="form-control btn btn-outline-success"
-                  onClick={sendSimulationPingOnClick}
-                  value="Send Simulation Ping"
-                />
-              </div>
-              <textarea
-                className="form-control"
-                style={{ resize: 'both' }}
-                readOnly
-                ref={simulationPongTextAreaRef}
-                value={formatSimulationPongs()}
-              ></textarea>
-            </div>
           </div>
           <NodeModal
             closeHandler={() => setViewingNodeUid(null)}
             simulationUid={simulationUid}
             nodeUid={viewingNodeUid}
+          />
+          <LogModal
+            closeHandler={() => setShouldShowLogs(false)}
+            logs={logs}
+            show={shouldShowLogs}
           />
         </>
       ) : (
