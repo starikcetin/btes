@@ -7,6 +7,7 @@ import { SimulationTeardownPayload } from './SimulationTeardownPayload';
 import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
 import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
 import { SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
+import { SimulationLogActionPayload } from './SimulationLogActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -30,6 +31,7 @@ export const simulationSlice = createSlice({
         simulationUid: payload.simulationUid,
         pongs: [],
         nodeMap: {},
+        logs: [],
       };
     },
     pong: (state, { payload }: PayloadAction<SimulationPongActionPayload>) => {
@@ -100,6 +102,7 @@ export const simulationSlice = createSlice({
       state[simulationUid] = {
         // state not included in snapshot, carry over from old state
         pongs: old.pongs,
+        logs: old.logs,
 
         // state included in a snapshot, overwrite with the snapshot
         simulationUid: snapshot.simulationUid,
@@ -114,6 +117,9 @@ export const simulationSlice = createSlice({
       const node = sim.nodeMap[payload.nodeUid];
       node.positionX = payload.positionX;
       node.positionY = payload.positionY;
+    },
+    log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
+      state[payload.simulationUid].logs.push(payload);
     },
   },
 });

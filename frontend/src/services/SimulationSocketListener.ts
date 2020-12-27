@@ -34,17 +34,37 @@ export class SimulationSocketListener {
       socketEvents.simulation.nodePositionUpdated,
       this.handleSimulationNodePositionUpdated
     );
+
+    socket.onAny(this.handleAny);
   }
 
   public teardown = (): void => {
-    // this.socket.off(socketEvents.simulation.pong, this.handleSimulationPong);
-    // this.socket.off(
-    //   socketEvents.simulation.nodeCreated,
-    //   this.handleSimulationNodeCreated
-    // );
-
     Object.values(socketEvents.simulation).forEach((event) =>
       this.socket.off(event)
+    );
+
+    this.socket.offAny(this.handleAny);
+  };
+
+  private readonly handleAny = (
+    eventName: string,
+    body: unknown,
+    ...remainingArgs: unknown[]
+  ) => {
+    if (remainingArgs.length > 0) {
+      console.warn(
+        eventName,
+        ' received has more than one argument! All custom socket events must have a single wrapper payload.'
+      );
+    }
+
+    store.dispatch(
+      simulationSlice.actions.log({
+        simulationUid: this.simulationUid,
+        direction: 'incoming',
+        eventName,
+        payload: body,
+      })
     );
   };
 
