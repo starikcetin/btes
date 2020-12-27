@@ -1,2 +1,63 @@
 .sandbox-simulation-page {
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    .row {
+        display: block;
+        overflow: hidden;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+
+        .d-flex {
+            display: block;
+            overflow: hidden;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+    }
+
+    .sliding-panel {
+        transition: 0.25s;
+        position: absolute;
+        bottom: 100px;
+        right: -180px;
+        width: 200px;
+
+        &:hover {
+            transition: 0.25s;
+            right: 0px;
+        }
+
+        &-handle {
+            padding: 10px;
+            border: 1px solid rgb(180, 180, 180);
+            border-radius: 5px 0 0 5px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            justify-items: center;
+            align-items: center;
+            width: 50px;
+            left: -49px;
+            position: absolute;
+        }
+
+        &-body {
+            padding: 10px;
+            border: 1px solid rgb(180, 180, 180);
+            // border-radius: 5px 0 0 5px;
+        }
+    }
 }
