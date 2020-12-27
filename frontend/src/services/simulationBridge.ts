@@ -87,49 +87,35 @@ class SimulationBridge {
     simulationUid: string,
     body: SimulationPingPayload
   ) {
-    logSocketEmit(socketEvents.simulation.ping, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.ping, body);
+    this.emit(simulationUid, socketEvents.simulation.ping, body);
   }
 
   public sendSimulationCreateNode(
     simulationUid: string,
     body: SimulationCreateNodePayload
   ) {
-    logSocketEmit(socketEvents.simulation.createNode, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.createNode, body);
+    this.emit(simulationUid, socketEvents.simulation.createNode, body);
   }
 
   public sendSimulationDeleteNode(
     simulationUid: string,
     body: SimulationDeleteNodePayload
   ) {
-    logSocketEmit(socketEvents.simulation.deleteNode, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.deleteNode, body);
+    this.emit(simulationUid, socketEvents.simulation.deleteNode, body);
   }
 
   public sendSimulationRequestSnapshot(
     simulationUid: string,
     body: SimulationRequestSnapshotPayload
   ) {
-    logSocketEmit(socketEvents.simulation.requestSnapshot, simulationUid, body);
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.requestSnapshot, body);
+    this.emit(simulationUid, socketEvents.simulation.requestSnapshot, body);
   }
 
   public sendSimulationUpdateNodePosition(
     simulationUid: string,
     body: SimulationUpdateNodePositionPayload
   ) {
-    logSocketEmit(
-      socketEvents.simulation.updateNodePosition,
-      simulationUid,
-      body
-    );
-    const socket = this.getSocket(simulationUid);
-    socket.emit(socketEvents.simulation.updateNodePosition, body);
+    this.emit(simulationUid, socketEvents.simulation.updateNodePosition, body);
   }
 
   private setupNewConnection(simulationUid: string, socket: Socket) {
@@ -149,6 +135,21 @@ class SimulationBridge {
     }
 
     return socket;
+  }
+
+  private emit(simulationUid: string, eventName: string, body: unknown) {
+    logSocketEmit(eventName, simulationUid, body);
+    const socket = this.getSocket(simulationUid);
+    socket.emit(eventName, body);
+
+    store.dispatch(
+      simulationSlice.actions.log({
+        simulationUid,
+        direction: 'outgoing',
+        eventName,
+        payload: body,
+      })
+    );
   }
 }
 
