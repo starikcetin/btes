@@ -1,2 +1,13 @@
 .sandbox-simulation-page {
+    .sliding-panel {
+        padding: 5px;
+
+        &-handle {
+            padding: 5px;
+        }
+
+        &-body {
+            padding: 5px;
+        }
+    }
 }

@@ -2,6 +2,9 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
+import { Card } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 
 import './SandboxSimulation.scss';
 import { RootState } from '../../state/RootState';
@@ -83,6 +86,12 @@ const SandboxSimulation: React.FC = () => {
               <MenuItem onClick={sendSimulationPingOnClick}>Send Ping</MenuItem>
               <MenuItem onClick={showLogsOnClick}>Show Logs</MenuItem>
             </ContextMenu>
+          </div>
+          <div className="sliding-panel">
+            <div className="sliding-panel-handle">
+              <FontAwesomeIcon icon={faNetworkWired} />
+            </div>
+            <div className="sliding-panel-body">Network Status: Online</div>
           </div>
           <NodeModal
             closeHandler={() => setViewingNodeUid(null)}
