@@ -148,6 +148,7 @@ class SimulationBridge {
         direction: 'outgoing',
         eventName,
         payload: body,
+        timestamp: Date.now(),
       })
     );
   }

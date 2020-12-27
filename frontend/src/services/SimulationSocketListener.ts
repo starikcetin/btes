@@ -64,6 +64,7 @@ export class SimulationSocketListener {
         direction: 'incoming',
         eventName,
         payload: body,
+        timestamp: Date.now(),
       })
     );
   };

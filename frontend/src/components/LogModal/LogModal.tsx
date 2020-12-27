@@ -20,7 +20,7 @@ const LogModal: React.FC<LogModalProps> = (props) => {
       onHide={closeHandler}
       backdrop="static"
       keyboard={false}
-      size="xl"
+      size="lg"
     >
       <Modal.Header closeButton>
         <Modal.Title>Logs</Modal.Title>

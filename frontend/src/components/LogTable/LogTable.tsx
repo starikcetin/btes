@@ -12,26 +12,26 @@ const LogTable: React.FC<LogTableProps> = (props) => {
   const { logs } = props;
 
   return (
-    <Table striped size="sm">
+    <Table striped>
       <colgroup>
-        <col style={{ width: '33%' }} />
-        <col style={{ width: '33%' }} />
-        <col style={{ width: '33%' }} />
+        <col style={{ width: '15%' }} />
+        <col style={{ width: '20%' }} />
+        <col style={{ width: '65%' }} />
       </colgroup>
       <thead>
         <tr>
           <th>Time</th>
-          <th>Event</th>
           <th>Direction</th>
+          <th>Event</th>
           {/* <th>Payload</th> */}
         </tr>
       </thead>
       <tbody>
         {logs.map((log) => (
           <tr>
-            <td>0</td>
-            <td>{log.eventName}</td>
+            <td>{new Date(log.timestamp).toLocaleTimeString()}</td>
             <td>{log.direction}</td>
+            <td>{log.eventName}</td>
             {/* <td>
                   <div
                     style={{

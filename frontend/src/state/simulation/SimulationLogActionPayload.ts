@@ -5,4 +5,5 @@ export interface SimulationLogActionPayload {
   readonly direction: SocketEventDirection;
   readonly eventName: string;
   readonly payload: unknown;
+  readonly timestamp: number;
 }
