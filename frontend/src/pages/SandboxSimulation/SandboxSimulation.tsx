@@ -79,6 +79,14 @@ const SandboxSimulation: React.FC = () => {
                     launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
                   ></SimulationNode>
                 ))}
+                <div className="sliding-panel">
+                  <div className="sliding-panel-handle">
+                    <FontAwesomeIcon icon={faNetworkWired} />
+                  </div>
+                  <div className="sliding-panel-body">
+                    Network Status: Online
+                  </div>
+                </div>
               </div>
             </ContextMenuTrigger>
             <ContextMenu id="rightClickArea">
@@ -86,12 +94,6 @@ const SandboxSimulation: React.FC = () => {
               <MenuItem onClick={sendSimulationPingOnClick}>Send Ping</MenuItem>
               <MenuItem onClick={showLogsOnClick}>Show Logs</MenuItem>
             </ContextMenu>
-          </div>
-          <div className="sliding-panel">
-            <div className="sliding-panel-handle">
-              <FontAwesomeIcon icon={faNetworkWired} />
-            </div>
-            <div className="sliding-panel-body">Network Status: Online</div>
           </div>
           <NodeModal
             closeHandler={() => setViewingNodeUid(null)}
