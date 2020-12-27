@@ -6,7 +6,7 @@ import { socketLoggerMiddleware } from './socketMiddleware/socketLoggerMiddlewar
 
 class SocketManager {
   private httpServer: http.Server = http.createServer();
-  private socketServer: io.Server = io(this.httpServer);
+  private socketServer: io.Server = new io.Server(this.httpServer);
 
   constructor() {
     this.socketServer.use(socketLoggerMiddleware);

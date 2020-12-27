@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io-client';
+
 import { store } from '../state/store';
 import { simulationSlice } from '../state/simulation/simulationSlice';
 import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
@@ -10,9 +12,9 @@ import { SimulationNodePositionUpdatedPayload } from '../../../common/src/socket
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
-  private readonly socket: SocketIOClient.Socket;
+  private readonly socket: Socket;
 
-  constructor(simulationUid: string, socket: SocketIOClient.Socket) {
+  constructor(simulationUid: string, socket: Socket) {
     this.socket = socket;
     this.simulationUid = simulationUid;
     socket.on(socketEvents.simulation.pong, this.handleSimulationPong);
@@ -41,7 +43,9 @@ export class SimulationSocketListener {
     //   this.handleSimulationNodeCreated
     // );
 
-    this.socket.removeAllListeners();
+    Object.values(socketEvents.simulation).forEach((event) =>
+      this.socket.off(event)
+    );
   };
 
   private handleSimulationPong = (body: SimulationPongPayload): void => {

@@ -107,10 +107,10 @@ export const socketLoggerMiddleware = (
 
 const wrapEmit = (
   isNs: boolean,
-  event: string | symbol,
+  event: string,
   socketOrNsp: Socket | Namespace,
   args: any[],
-  realEmit: (event: string | symbol, ...args: any[]) => boolean
+  realEmit: (event: string, ...args: any[]) => boolean
 ) => {
   switch (event) {
     case 'connection':

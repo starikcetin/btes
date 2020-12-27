@@ -1,4 +1,4 @@
-import io from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 import { SimulationSocketListener } from './SimulationSocketListener';
 import { store } from '../state/store';
@@ -17,7 +17,7 @@ import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/Simul
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
-    [uid: string]: SocketIOClient.Socket;
+    [uid: string]: Socket;
   } = {};
 
   private readonly uidToSocketListenerMap: {
@@ -28,7 +28,7 @@ class SimulationBridge {
     return new Promise<void>((resolve) => {
       console.log('connecting to ', simulationUid);
 
-      const socket = io.connect(`/${simulationUid}`, {
+      const socket = io(`/${simulationUid}`, {
         path: '/api/socket/socket.io',
       });
 
@@ -132,10 +132,7 @@ class SimulationBridge {
     socket.emit(socketEvents.simulation.updateNodePosition, body);
   }
 
-  private setupNewConnection(
-    simulationUid: string,
-    socket: SocketIOClient.Socket
-  ) {
+  private setupNewConnection(simulationUid: string, socket: Socket) {
     store.dispatch(simulationSlice.actions.setup({ simulationUid }));
     this.uidtoSocketMap[simulationUid] = socket;
     const listener = new SimulationSocketListener(simulationUid, socket);
