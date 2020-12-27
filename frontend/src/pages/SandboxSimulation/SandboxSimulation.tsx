@@ -8,6 +8,7 @@ import { RootState } from '../../state/RootState';
 import NodeModal from '../../components/NodeModal/NodeModal';
 import { simulationBridge } from '../../services/simulationBridge';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
+import LogModal from '../../components/LogModal/LogModal';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -15,10 +16,15 @@ interface SandboxSimulationParamTypes {
 
 const SandboxSimulation: React.FC = () => {
   const [connected, setConnected] = useState(false);
+  const [shouldShowLogs, setShouldShowLogs] = useState(false);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
 
   const nodes = useSelector((state: RootState) =>
     Object.values(state.simulation[simulationUid]?.nodeMap || {})
+  );
+
+  const logs = useSelector((state: RootState) =>
+    Object.values(state.simulation[simulationUid]?.logs || [])
   );
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
@@ -41,6 +47,10 @@ const SandboxSimulation: React.FC = () => {
       positionX: event.pageX,
       positionY: event.pageY - 50, // 50 is element height compensation
     });
+  };
+
+  const showLogsOnClick = () => {
+    setShouldShowLogs(true);
   };
 
   useEffect(() => {
@@ -71,12 +81,18 @@ const SandboxSimulation: React.FC = () => {
             <ContextMenu id="rightClickArea">
               <MenuItem onClick={createNode}>Create Node</MenuItem>
               <MenuItem onClick={sendSimulationPingOnClick}>Send Ping</MenuItem>
+              <MenuItem onClick={showLogsOnClick}>Show Logs</MenuItem>
             </ContextMenu>
           </div>
           <NodeModal
             closeHandler={() => setViewingNodeUid(null)}
             simulationUid={simulationUid}
             nodeUid={viewingNodeUid}
+          />
+          <LogModal
+            closeHandler={() => setShouldShowLogs(false)}
+            logs={logs}
+            show={shouldShowLogs}
           />
         </>
       ) : (
