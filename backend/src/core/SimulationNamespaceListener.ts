@@ -1,5 +1,4 @@
 import { Socket, Namespace } from 'socket.io';
-import { simulationBridge } from './simulationBridge';
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
 import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
 import { socketEvents } from '../common/constants/socketEvents';
@@ -8,13 +7,19 @@ import { emitWelcome } from '../utils/emitWelcome';
 import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
 import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
+import { Simulation } from './Simulation';
+import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
+import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
+import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
+import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
+import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 
 export class SimulationNamespaceListener {
-  private readonly simulationUid: string;
+  private readonly simulation: Simulation;
   private readonly ns: Namespace;
 
-  constructor(simulationUid: string, ns: Namespace) {
-    this.simulationUid = simulationUid;
+  constructor(simulation: Simulation, ns: Namespace) {
+    this.simulation = simulation;
     this.ns = ns;
 
     ns.on(socketEvents.native.connect, (socket) => {
@@ -24,7 +29,7 @@ export class SimulationNamespaceListener {
 
   private readonly setupSocket = (socket: Socket) => {
     this.registerListeners(socket);
-    emitWelcome(socket, this.simulationUid);
+    emitWelcome(socket, this.simulation.simulationUid);
   };
 
   private readonly registerListeners = (socket: Socket): void => {
@@ -66,42 +71,78 @@ export class SimulationNamespaceListener {
 
     const clientsLeft = getClientCount(this.ns);
     console.log(
-      `${clientsLeft} clients remaining in namespace ${this.simulationUid}`
+      `${clientsLeft} clients remaining in namespace ${this.simulation.simulationUid}`
     );
 
     // TODO: teardown the namsepace itself when 0 clients left.
   };
 
-  private readonly handleSimulationPing = (
-    body: SimulationPingPayload
-  ): void => {
-    simulationBridge.handleSimulationPing(this.simulationUid, body);
+  private readonly handleSimulationPing = (body: SimulationPingPayload) => {
+    this.sendSimulationPong({
+      pingDate: body.date,
+      pongDate: Date.now(),
+    });
+  };
+
+  private readonly sendSimulationPong = (body: SimulationPongPayload) => {
+    this.ns.emit(socketEvents.simulation.pong, body);
   };
 
   private readonly handleSimulationCreateNode = (
     body: SimulationCreateNodePayload
   ) => {
-    simulationBridge.handleSimulationCreateNode(this.simulationUid, body);
+    const newNode = this.simulation.createNode(body.positionX, body.positionY);
+    const nodeSnapshot = newNode.takeSnapshot();
+    this.sendSimulationNodeCreated(nodeSnapshot);
+  };
+
+  private readonly sendSimulationNodeCreated = (
+    body: SimulationNodeCreatedPayload
+  ) => {
+    this.ns.emit(socketEvents.simulation.nodeCreated, body);
   };
 
   private readonly handleSimulationDeleteNode = (
     body: SimulationDeleteNodePayload
   ) => {
-    simulationBridge.handleSimulationDeleteNode(this.simulationUid, body);
+    this.simulation.deleteNode(body.nodeUid);
+    this.sendSimulationNodeDeleted({ nodeUid: body.nodeUid });
+  };
+
+  private readonly sendSimulationNodeDeleted = (
+    body: SimulationNodeDeletedPayload
+  ) => {
+    this.ns.emit(socketEvents.simulation.nodeDeleted, body);
   };
 
   private readonly handleSimulationRequestSnapshot = (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     body: SimulationRequestSnapshotPayload
   ) => {
-    simulationBridge.handleSimulationRequestSnapshot(this.simulationUid, body);
+    const snapshot = this.simulation.takeSnapshot();
+    this.sendSimulationSnapshotReport({ snapshot });
+  };
+
+  private readonly sendSimulationSnapshotReport = (
+    body: SimulationSnapshotReportPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.snapshotReport, body);
   };
 
   private readonly handleSimulationUpdateNodePosition = (
     body: SimulationUpdateNodePositionPayload
   ) => {
-    simulationBridge.handleSimulationUpdateNodePosition(
-      this.simulationUid,
-      body
+    this.simulation.updateNodePosition(
+      body.nodeUid,
+      body.positionX,
+      body.positionY
     );
+    this.sendSimulationNodePositionUpdated(body);
+  };
+
+  private readonly sendSimulationNodePositionUpdated = (
+    body: SimulationNodePositionUpdatedPayload
+  ) => {
+    this.ns.emit(socketEvents.simulation.nodePositionUpdated, body);
   };
 }
