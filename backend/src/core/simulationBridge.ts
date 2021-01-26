@@ -50,8 +50,10 @@ class SimulationBridge {
     simulationUid: string,
     body: SimulationPingPayload
   ) => {
-    const simulation = this.simulationMap[simulationUid];
-    simulation.handleSimulationPing(body);
+    this.sendSimulationPong(simulationUid, {
+      pingDate: body.date,
+      pongDate: Date.now(),
+    });
   };
 
   public readonly sendSimulationPong = (
@@ -67,7 +69,9 @@ class SimulationBridge {
     body: SimulationCreateNodePayload
   ) => {
     const simulation = this.simulationMap[simulaitonUid];
-    simulation.handleSimulationCreateNode(body);
+    const newNode = simulation.createNode(body.positionX, body.positionY);
+    const nodeSnapshot = newNode.takeSnapshot();
+    this.sendSimulationNodeCreated(simulaitonUid, nodeSnapshot);
   };
 
   public readonly handleSimulationUpdateNodePosition = (
@@ -75,7 +79,8 @@ class SimulationBridge {
     body: SimulationUpdateNodePositionPayload
   ) => {
     const simulation = this.simulationMap[simulaitonUid];
-    simulation.handleSimulationUpdateNodePosition(body);
+    simulation.updateNodePosition(body.nodeUid, body.positionX, body.positionY);
+    this.sendSimulationNodePositionUpdated(simulaitonUid, body);
   };
 
   public readonly sendSimulationNodeCreated = (
@@ -91,7 +96,8 @@ class SimulationBridge {
     body: SimulationDeleteNodePayload
   ) => {
     const simulation = this.simulationMap[simulationUid];
-    simulation.handleSimulationDeleteNode(body);
+    simulation.deleteNode(body.nodeUid);
+    this.sendSimulationNodeDeleted(simulationUid, { nodeUid: body.nodeUid });
   };
 
   public readonly sendSimulationNodeDeleted = (
@@ -104,10 +110,12 @@ class SimulationBridge {
 
   public readonly handleSimulationRequestSnapshot = (
     simulationUid: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     body: SimulationRequestSnapshotPayload
   ) => {
     const simulation = this.simulationMap[simulationUid];
-    simulation.handleSimulationRequestSnapshot(body);
+    const snapshot = simulation.takeSnapshot();
+    this.sendSimulationSnapshotReport(simulationUid, { snapshot });
   };
 
   public readonly sendSimulationSnapshotReport = (
