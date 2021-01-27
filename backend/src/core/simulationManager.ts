@@ -3,7 +3,7 @@ import { Simulation } from './Simulation';
 import { fatalAssert } from '../utils/fatalAssert';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
 
-class SimulationBridge {
+class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
   private readonly nsMap: { [simulationUid: string]: Namespace } = {};
 
@@ -11,10 +11,7 @@ class SimulationBridge {
     [simulaitonUid: string]: SimulationNamespaceListener;
   } = {};
 
-  public readonly setupNewSimulation = (
-    simulationUid: string,
-    ns: Namespace
-  ) => {
+  public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
     const newSimulation = new Simulation(simulationUid);
     const listener = new SimulationNamespaceListener(newSimulation, ns);
 
@@ -36,4 +33,4 @@ class SimulationBridge {
   };
 }
 
-export const simulationBridge = new SimulationBridge();
+export const simulationManager = new SimulationManager();
