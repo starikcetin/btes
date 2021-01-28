@@ -1,14 +1,31 @@
 {
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "files.eol": "\n",
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
   },
+
   "eslint.packageManager": "yarn",
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
   "eslint.codeActionsOnSave.mode": "all",
   "eslint.run": "onType",
   "eslint.alwaysShowStatus": true,
-  "files.eol": "\n"
+
+  "stylelint.packageManager": "yarn",
+  "stylelint.enable": true,
+  "stylelint.reportInvalidScopeDisables": true,
+  "stylelint.reportNeedlessDisables": true,
+  
+  // default, applies to all unspecified languages
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  
+  // style
+  "[scss]": {
+    "editor.defaultFormatter": "stylelint.vscode-stylelint",
+  },
+  "[css]": {
+    "editor.defaultFormatter": "stylelint.vscode-stylelint",
+  },
 }
