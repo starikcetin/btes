@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Route } from 'tsoa';
-import { simulationBridge } from '../../core/simulationBridge';
+import { simulationManager } from '../../core/simulationManager';
 import { socketManager } from '../../socketManager';
 import { simulationUidGenerator } from '../../utils/uidGenerators';
 
@@ -13,14 +13,14 @@ export class SimulationInstanceBrokerController extends Controller {
   public async create(): Promise<string> {
     const uidStr = simulationUidGenerator.next().toString();
 
-    if (simulationBridge.checkSimulationExists(uidStr)) {
+    if (simulationManager.checkSimulationExists(uidStr)) {
       throw new Error(
         `A simulation with ID ${uidStr} already exists! Refusing to create.`
       );
     }
 
     const ns = socketManager.getOrCreateNamespace(uidStr);
-    simulationBridge.setupNewSimulation(uidStr, ns);
+    simulationManager.createSimulation(uidStr, ns);
 
     console.log(
       `created simulation instance with uid: ${uidStr} name: ${ns.name}`
@@ -34,6 +34,6 @@ export class SimulationInstanceBrokerController extends Controller {
    */
   @Get('check')
   public async check(@Query() simulationUid: string): Promise<boolean> {
-    return simulationBridge.checkSimulationExists(simulationUid);
+    return simulationManager.checkSimulationExists(simulationUid);
   }
 }

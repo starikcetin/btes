@@ -1,19 +1,8 @@
 import _ from 'lodash';
 
-import { simulationBridge } from './simulationBridge';
 import { nodeUidGenerator } from '../utils/uidGenerators';
 import { SimulationNode } from './SimulationNode';
-import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
-import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
-import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
-import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
-import { SimulationDeleteNodePayload } from '../common/socketPayloads/SimulationDeleteNodePayload';
-import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
-import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { SimulationSnapshot } from '../common/SimulationSnapshot';
-import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
-import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
-import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -23,84 +12,32 @@ export class Simulation {
     this.simulationUid = simulationUid;
   }
 
-  public readonly handleSimulationPing = (
-    body: SimulationPingPayload
-  ): void => {
-    this.sendSimulationPong({
-      pingDate: body.date,
-      pongDate: Date.now(),
-    });
-  };
-
-  private readonly sendSimulationPong = (body: SimulationPongPayload): void => {
-    simulationBridge.sendSimulationPong(this.simulationUid, body);
-  };
-
-  public readonly handleSimulationCreateNode = (
-    body: SimulationCreateNodePayload
-  ): void => {
+  public readonly createNode = (
+    positionX: number,
+    positionY: number
+  ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
-    const newNode = new SimulationNode(nodeUid, body.positionX, body.positionY);
+    const newNode = new SimulationNode(nodeUid, positionX, positionY);
     this.nodeMap[nodeUid] = newNode;
-
-    this.sendSimulationNodeCreated(newNode.takeSnapshot());
+    return newNode;
   };
 
-  private readonly sendSimulationNodeCreated = (
-    body: SimulationNodeCreatedPayload
-  ) => {
-    simulationBridge.sendSimulationNodeCreated(this.simulationUid, body);
-  };
-
-  public readonly handleSimulationDeleteNode = (
-    body: SimulationDeleteNodePayload
-  ): void => {
-    const node = this.nodeMap[body.nodeUid];
+  public readonly deleteNode = (nodeUid: string): void => {
+    const node = this.nodeMap[nodeUid];
     node.teardown();
-    delete this.nodeMap[body.nodeUid];
-
-    this.sendSimulationNodeDeleted({ nodeUid: body.nodeUid });
+    delete this.nodeMap[nodeUid];
   };
 
-  private readonly sendSimulationNodeDeleted = (
-    body: SimulationNodeDeletedPayload
-  ) => {
-    simulationBridge.sendSimulationNodeDeleted(this.simulationUid, body);
-  };
-
-  public readonly handleSimulationRequestSnapshot = (
-    // rule exception reason: consistency
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    body: SimulationRequestSnapshotPayload
+  public readonly updateNodePosition = (
+    nodeUid: string,
+    positionX: number,
+    positionY: number
   ): void => {
-    const snapshot = this.takeSnapshot();
-    this.sendSimulationSnapshotReport({ snapshot });
+    const node = this.nodeMap[nodeUid];
+    node.updatePosition(positionX, positionY);
   };
 
-  private readonly sendSimulationSnapshotReport = (
-    body: SimulationSnapshotReportPayload
-  ) => {
-    simulationBridge.sendSimulationSnapshotReport(this.simulationUid, body);
-  };
-
-  public readonly handleSimulationUpdateNodePosition = (
-    body: SimulationUpdateNodePositionPayload
-  ): void => {
-    const node = this.nodeMap[body.nodeUid];
-    node.updatePosition(body.positionX, body.positionY);
-    this.sendSimulationNodePositionUpdated(body);
-  };
-
-  private readonly sendSimulationNodePositionUpdated = (
-    body: SimulationNodePositionUpdatedPayload
-  ) => {
-    simulationBridge.sendSimulationNodePositionUpdated(
-      this.simulationUid,
-      body
-    );
-  };
-
-  private readonly takeSnapshot = (): SimulationSnapshot => {
+  public readonly takeSnapshot = (): SimulationSnapshot => {
     const nodeSnapshots = _.mapValues(this.nodeMap, (node) =>
       node.takeSnapshot()
     );
