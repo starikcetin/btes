@@ -16,7 +16,7 @@
   },
   "scripts": {
     "lint:check:eslint": "eslint .",
-    "lint:check:stylelint": "stylelint .",
+    "lint:check:stylelint": "stylelint . --report-needless-disables --report-invalid-scope-disables --report-descriptionless-disables",
     "lint:fix:eslint": "yarn lint:check:eslint --fix",
     "lint:fix:stylelint": "yarn lint:check:stylelint --fix",
     "lint:check": "run-p -lc --aggregate-output lint:check:*",
