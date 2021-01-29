@@ -1,0 +1,10 @@
+# Folder
+/*
+!/public
+!/src
+/src/common
+
+# File
+*.*
+!*.scss
+!*.css
