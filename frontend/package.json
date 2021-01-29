@@ -129,6 +129,9 @@
   "lint-staged": {
     "*": [
       "eslint --fix"
+    ],
+    "*.{sass,scss,css}": [
+      "stylelint --fix"
     ]
   }
 }
