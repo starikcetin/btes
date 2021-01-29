@@ -1,10 +1,10 @@
-.simulation-node {
-  .node-icon {
+.comp-simulation-node {
+  &--node-icon {
     z-index: 10;
     height: 50px;
   }
 
-  .node-card {
+  &--node-card {
     cursor: move !important;
   }
 }

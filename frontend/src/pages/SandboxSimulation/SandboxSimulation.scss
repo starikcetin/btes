@@ -1,4 +1,4 @@
-.sandbox-simulation-page {
+.page-sandbox-simulation {
   position: absolute;
   top: 55px;
   right: 0;
@@ -27,7 +27,7 @@
     }
   }
 
-  .sliding-panel {
+  &--sliding-panel {
     position: absolute;
     right: -180px;
     bottom: 100px;
@@ -39,7 +39,7 @@
       transition: 0.25s;
     }
 
-    &-handle {
+    &--handle {
       position: absolute;
       left: -49px;
       display: flex;
@@ -54,7 +54,7 @@
       border-radius: 5px 0 0 5px;
     }
 
-    &-body {
+    &--body {
       padding: 10px;
       border: 1px solid rgb(180, 180, 180);
       // border-radius: 5px 0 0 5px;

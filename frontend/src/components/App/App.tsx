@@ -9,7 +9,7 @@ import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
 
 const App: React.FC = () => {
   return (
-    <div className="App">
+    <div className="comp-app">
       <Navbar></Navbar>
       <Switch>
         <Route path="/sandbox">

@@ -1,25 +1,25 @@
-img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  opacity: 0.95;
-  object-fit: cover;
-}
-
-.main-page {
+.page-home {
   height: 70%;
   font-family: 'Lucida Console', Monaco, monospace;
-}
 
-.header {
-  font-size: 50px;
-  color: #fff;
-}
+  &--bg-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0.95;
+    object-fit: cover;
+  }
 
-.header-info {
-  font-size: 25px;
-  color: #e0e0e0;
+  &--header {
+    font-size: 50px;
+    color: #fff;
+  }
+
+  &--header-info {
+    font-size: 25px;
+    color: #e0e0e0;
+  }
 }

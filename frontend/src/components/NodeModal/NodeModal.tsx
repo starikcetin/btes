@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
 
-import './NodeModal.css';
+import './NodeModal.scss';
 import { empty } from '../../common/utils/empty';
 import { RootState } from '../../state/RootState';
 import { NodeData } from '../../state/simulation/NodeData';
@@ -38,7 +38,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
           <Tab
             eventKey="summary"
             title="Summary"
-            className="node-details-tab-content"
+            className="comp-node-modal--tab-content"
           >
             <Table striped>
               <colgroup>
@@ -72,7 +72,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
           <Tab
             eventKey="blockchain"
             title="Blockchain"
-            className="node-details-tab-content"
+            className="comp-node-modal--tab-content"
           >
             <Container>
               <Row>
@@ -82,7 +82,11 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
               </Row>
             </Container>
           </Tab>
-          <Tab eventKey="log" title="Log" className="node-details-tab-content">
+          <Tab
+            eventKey="log"
+            title="Log"
+            className="comp-node-modal--tab-content"
+          >
             <LogTable logs={node.logs} />
           </Tab>
         </Tabs>

@@ -35,15 +35,15 @@ const Sandbox: React.FC = () => {
   };
 
   return (
-    <div className="sandbox-page d-flex justify-content-center col-12">
-      <img className="sandbox-bg-img" src={background} alt="background" />
+    <div className="page-sandbox d-flex justify-content-center col-12">
+      <img className="page-sandbox--bg-img" src={background} alt="background" />
       <div className="row d-flex justify-content-center">
-        <div className="header d-flex justify-content-center align-items-center mt-3 col-12 text-center">
+        <div className="page-sandbox--header d-flex justify-content-center align-items-center mt-3 col-12 text-center">
           <span>
             <b>Welcome to SandBox Module</b>
           </span>
         </div>
-        <div className="header-info d-flex justify-content-center col-lg-8 col-12 text-center">
+        <div className="page-sandbox--header-info d-flex justify-content-center col-lg-8 col-12 text-center">
           <span>
             <i>
               In this module, you can create your own simulation without any
