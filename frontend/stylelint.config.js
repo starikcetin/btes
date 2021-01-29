@@ -11,9 +11,3 @@ module.exports = {
     'selector-max-id': null, // too intrusive
   },
 };
-
-/*
- * TODO: maybe integrate with prettier in the future. options:
- * https://github.com/prettier/stylelint-prettier     -->  conflicts with the the ordering plugin
- * https://github.com/hugomrdias/prettier-stylelint   -->  is the entry point, has a different ignore schema and cli
- */
