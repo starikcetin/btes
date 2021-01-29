@@ -36,7 +36,7 @@ const Sandbox: React.FC = () => {
 
   return (
     <div className="sandbox-page d-flex justify-content-center col-12">
-      <img className="sandbox_bg-img" src={background} alt="background" />
+      <img className="sandbox-bg-img" src={background} alt="background" />
       <div className="row d-flex justify-content-center">
         <div className="header d-flex justify-content-center align-items-center mt-3 col-12 text-center">
           <span>
