@@ -65,7 +65,7 @@ const SandboxSimulation: React.FC = () => {
   }, [connect, teardown]);
 
   return (
-    <div className="sandbox-simulation-page container-fluid">
+    <div className="page-sandbox-simulation container-fluid">
       {connected ? (
         <>
           <div className="row">
@@ -79,11 +79,11 @@ const SandboxSimulation: React.FC = () => {
                     launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
                   ></SimulationNode>
                 ))}
-                <div className="sliding-panel">
-                  <div className="sliding-panel-handle">
+                <div className="page-sandbox-simulation--sliding-panel">
+                  <div className="page-sandbox-simulation--sliding-panel--handle">
                     <FontAwesomeIcon icon={faNetworkWired} />
                   </div>
-                  <div className="sliding-panel-body">
+                  <div className="page-sandbox-simulation--sliding-panel--body">
                     Network Status: Online
                   </div>
                 </div>

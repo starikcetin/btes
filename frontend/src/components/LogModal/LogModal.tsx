@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 
-import './LogModal.scss';
 import { SimulationLog } from '../../state/simulation/SimulationLog';
 import LogTable from '../LogTable/LogTable';
 

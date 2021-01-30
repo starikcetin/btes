@@ -6,15 +6,15 @@ import background from './mainPageBackground.jpg';
 
 const Home: React.FC = () => {
   return (
-    <div className="main-page d-flex justify-content-center col-12">
-      <img src={background} alt="background" />
+    <div className="page-home d-flex justify-content-center col-12">
+      <img className="page-home--bg-img" src={background} alt="background" />
       <div className="row d-flex justify-content-center">
-        <div className="header d-flex justify-content-center align-items-center mt-3 col-12 text-center">
+        <div className="page-home--header d-flex justify-content-center align-items-center mt-3 col-12 text-center">
           <span>
             <b>Blockchain Technology For Everyone</b>
           </span>
         </div>
-        <div className="header-info d-flex justify-content-center col-lg-8 col-12 text-center">
+        <div className="page-home--header-info d-flex justify-content-center col-lg-8 col-12 text-center">
           <span>
             <i>
               BTES is an educational tool for learning Blockchain technology.

@@ -1,63 +1,63 @@
-.sandbox-simulation-page {
+.page-sandbox-simulation {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  overflow: hidden;
+
+  .row {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: block;
     overflow: hidden;
+
+    .d-flex {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: block;
+      overflow: hidden;
+    }
+  }
+
+  &--sliding-panel {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 55px;
-    bottom: 0;
+    right: -180px;
+    bottom: 100px;
+    width: 200px;
+    transition: 0.25s;
 
-    .row {
-        display: block;
-        overflow: hidden;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-
-        .d-flex {
-            display: block;
-            overflow: hidden;
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-        }
+    &:hover {
+      right: 0;
+      transition: 0.25s;
     }
 
-    .sliding-panel {
-        transition: 0.25s;
-        position: absolute;
-        bottom: 100px;
-        right: -180px;
-        width: 200px;
-
-        &:hover {
-            transition: 0.25s;
-            right: 0px;
-        }
-
-        &-handle {
-            padding: 10px;
-            border: 1px solid rgb(180, 180, 180);
-            border-radius: 5px 0 0 5px;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            justify-items: center;
-            align-items: center;
-            width: 50px;
-            left: -49px;
-            position: absolute;
-        }
-
-        &-body {
-            padding: 10px;
-            border: 1px solid rgb(180, 180, 180);
-            // border-radius: 5px 0 0 5px;
-        }
+    &--handle {
+      position: absolute;
+      left: -49px;
+      display: flex;
+      align-content: center;
+      align-items: center;
+      justify-content: center;
+      justify-items: center;
+      width: 50px;
+      height: 100%;
+      padding: 10px;
+      border: 1px solid rgb(180, 180, 180);
+      border-radius: 5px 0 0 5px;
     }
+
+    &--body {
+      padding: 10px;
+      border: 1px solid rgb(180, 180, 180);
+      // border-radius: 5px 0 0 5px;
+    }
+  }
 }

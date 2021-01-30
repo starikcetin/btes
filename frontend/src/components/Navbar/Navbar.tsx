@@ -5,7 +5,7 @@ import './Navbar.scss';
 
 const Navbar: React.FC = () => {
   return (
-    <div className="Navbar">
+    <div className="comp-navbar">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <Link to="/" className="navbar-brand">
           BTES

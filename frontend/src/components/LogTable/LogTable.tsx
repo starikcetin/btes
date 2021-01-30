@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 
-import './LogTable.scss';
 import { SimulationLog } from '../../state/simulation/SimulationLog';
 
 interface LogTableProps {

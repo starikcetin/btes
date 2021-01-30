@@ -42,7 +42,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   };
 
   return (
-    <div className="simulation-node">
+    <div className="comp-simulation-node">
       <ContextMenuTrigger id={contextMenuId} holdToDisplay={-1}>
         <Draggable
           onStop={updateNodePosition}
@@ -50,7 +50,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
           nodeRef={draggableNodeRef}
         >
           <div
-            className="node-card card position-absolute justify-content-center"
+            className="comp-simulation-node--node-card card position-absolute justify-content-center"
             onDoubleClick={handleDoubleClick}
             ref={draggableNodeRef}
           >
