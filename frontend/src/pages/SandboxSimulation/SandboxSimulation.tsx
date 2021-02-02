@@ -59,8 +59,10 @@ const SandboxSimulation: React.FC = () => {
 
   const createNode = ({ triggerEvent }: ItemParams) => {
     simulationBridge.sendSimulationCreateNode(simulationUid, {
-      positionX: triggerEvent.pageX,
-      positionY: triggerEvent.pageY - 50, // 50 is element height compensation
+      // `offsetX` and `offsetY` are experimental. API ref:
+      // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetX
+      positionX: triggerEvent.offsetX,
+      positionY: triggerEvent.offsetY,
     });
   };
 

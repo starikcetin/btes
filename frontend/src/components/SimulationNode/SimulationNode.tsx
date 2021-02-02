@@ -49,7 +49,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   };
 
   return (
-    <div className="comp-simulation-node">
+    <>
       <Draggable
         onStop={updateNodePosition}
         position={{ x: positionX, y: positionY }}
@@ -68,6 +68,6 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
       <Menu id={contextMenuId} theme={theme.light}>
         <Item onClick={handleDeleteNode}>Delete Node</Item>
       </Menu>
-    </div>
+    </>
   );
 };
