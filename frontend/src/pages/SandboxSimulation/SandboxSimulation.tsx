@@ -65,12 +65,16 @@ const SandboxSimulation: React.FC = () => {
   }, [connect, teardown]);
 
   return (
-    <div className="page-sandbox-simulation container-fluid">
+    <div className="page-sandbox-simulation">
       {connected ? (
         <>
-          <div className="row">
-            <ContextMenuTrigger id="rightClickArea" holdToDisplay={-1}>
-              <div className="d-flex position-absolute h-100 border w-100">
+          <div className="page-sandbox-simulation--board-container">
+            <ContextMenuTrigger
+              id="page-sandbox--board--right-click"
+              attributes={{ className: 'page-sandbox-simulation--board' }}
+              holdToDisplay={-1}
+            >
+              <div className="page-sandbox-simulation--board">
                 {nodes.map((node) => (
                   <SimulationNode
                     key={node.nodeUid}
@@ -79,22 +83,14 @@ const SandboxSimulation: React.FC = () => {
                     launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
                   ></SimulationNode>
                 ))}
-                <div className="page-sandbox-simulation--sliding-panel">
-                  <div className="page-sandbox-simulation--sliding-panel--handle">
-                    <FontAwesomeIcon icon={faNetworkWired} />
-                  </div>
-                  <div className="page-sandbox-simulation--sliding-panel--body">
-                    Network Status: Online
-                  </div>
-                </div>
               </div>
             </ContextMenuTrigger>
-            <ContextMenu id="rightClickArea">
-              <MenuItem onClick={createNode}>Create Node</MenuItem>
-              <MenuItem onClick={sendSimulationPingOnClick}>Send Ping</MenuItem>
-              <MenuItem onClick={showLogsOnClick}>Show Logs</MenuItem>
-            </ContextMenu>
           </div>
+          <ContextMenu id="page-sandbox--board--right-click">
+            <MenuItem onClick={createNode}>Create Node</MenuItem>
+            <MenuItem onClick={sendSimulationPingOnClick}>Send Ping</MenuItem>
+            <MenuItem onClick={showLogsOnClick}>Show Logs</MenuItem>
+          </ContextMenu>
           <NodeModal
             closeHandler={() => setViewingNodeUid(null)}
             simulationUid={simulationUid}
@@ -105,6 +101,14 @@ const SandboxSimulation: React.FC = () => {
             logs={logs}
             show={shouldShowLogs}
           />
+          <div className="page-sandbox-simulation--sliding-panel">
+            <div className="page-sandbox-simulation--sliding-panel--handle">
+              <FontAwesomeIcon icon={faNetworkWired} />
+            </div>
+            <div className="page-sandbox-simulation--sliding-panel--body">
+              Network Status: Online
+            </div>
+          </div>
         </>
       ) : (
         <div>

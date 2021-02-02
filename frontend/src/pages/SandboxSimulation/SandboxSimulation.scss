@@ -1,30 +1,26 @@
 .page-sandbox-simulation {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 
-  .row {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: block;
-    overflow: hidden;
+  &--board-container {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
 
-    .d-flex {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      display: block;
-      overflow: hidden;
-    }
+  &--board {
+    position: relative;
+    flex: 0 0 auto;
+    width: 1600px;
+    height: 800px;
+    border: 1px #ccc solid;
   }
 
   &--sliding-panel {
