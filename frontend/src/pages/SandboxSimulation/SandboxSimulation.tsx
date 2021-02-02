@@ -1,10 +1,17 @@
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import {
+  Item,
+  ItemParams,
+  Menu,
+  Separator,
+  theme,
+  useContextMenu,
+} from 'react-contexify';
 
 import './SandboxSimulation.scss';
 import { RootState } from '../../state/RootState';
@@ -21,6 +28,11 @@ const SandboxSimulation: React.FC = () => {
   const [connected, setConnected] = useState(false);
   const [shouldShowLogs, setShouldShowLogs] = useState(false);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
+
+  const boardContextMenuId = `page-sandbox-simulation--board-context-menu--${simulationUid}`;
+  const { show: showBoardContextMenu } = useContextMenu({
+    id: boardContextMenuId,
+  });
 
   const nodes = useSelector((state: RootState) =>
     Object.values(state.simulation[simulationUid]?.nodeMap || {})
@@ -45,15 +57,21 @@ const SandboxSimulation: React.FC = () => {
     simulationBridge.sendSimulationPing(simulationUid, { date: Date.now() });
   };
 
-  const createNode = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const createNode = ({ triggerEvent }: ItemParams) => {
     simulationBridge.sendSimulationCreateNode(simulationUid, {
-      positionX: event.pageX,
-      positionY: event.pageY - 50, // 50 is element height compensation
+      positionX: triggerEvent.pageX,
+      positionY: triggerEvent.pageY - 50, // 50 is element height compensation
     });
   };
 
   const showLogsOnClick = () => {
     setShouldShowLogs(true);
+  };
+
+  const onBoardContextMenu = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    showBoardContextMenu(event);
   };
 
   useEffect(() => {
@@ -69,28 +87,26 @@ const SandboxSimulation: React.FC = () => {
       {connected ? (
         <>
           <div className="page-sandbox-simulation--board-container">
-            <ContextMenuTrigger
-              id="page-sandbox--board--right-click"
-              attributes={{ className: 'page-sandbox-simulation--board' }}
-              holdToDisplay={-1}
+            <div
+              className="page-sandbox-simulation--board"
+              onContextMenu={onBoardContextMenu}
             >
-              <div className="page-sandbox-simulation--board">
-                {nodes.map((node) => (
-                  <SimulationNode
-                    key={node.nodeUid}
-                    simulationUid={simulationUid}
-                    data={node}
-                    launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
-                  ></SimulationNode>
-                ))}
-              </div>
-            </ContextMenuTrigger>
+              {nodes.map((node) => (
+                <SimulationNode
+                  key={node.nodeUid}
+                  simulationUid={simulationUid}
+                  data={node}
+                  launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
+                ></SimulationNode>
+              ))}
+            </div>
           </div>
-          <ContextMenu id="page-sandbox--board--right-click">
-            <MenuItem onClick={createNode}>Create Node</MenuItem>
-            <MenuItem onClick={sendSimulationPingOnClick}>Send Ping</MenuItem>
-            <MenuItem onClick={showLogsOnClick}>Show Logs</MenuItem>
-          </ContextMenu>
+          <Menu id={boardContextMenuId} theme={theme.light}>
+            <Item onClick={createNode}>Create Node</Item>
+            <Separator />
+            <Item onClick={sendSimulationPingOnClick}>Send Ping</Item>
+            <Item onClick={showLogsOnClick}>Show Logs</Item>
+          </Menu>
           <NodeModal
             closeHandler={() => setViewingNodeUid(null)}
             simulationUid={simulationUid}
