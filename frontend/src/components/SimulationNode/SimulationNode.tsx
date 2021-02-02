@@ -54,6 +54,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
         onStop={updateNodePosition}
         position={{ x: positionX, y: positionY }}
         nodeRef={draggableNodeRef}
+        bounds="parent"
       >
         <div
           className="comp-simulation-node--node-card card position-absolute justify-content-center"
