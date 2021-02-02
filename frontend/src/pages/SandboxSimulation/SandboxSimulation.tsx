@@ -5,6 +5,7 @@ import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import {
+  animation,
   Item,
   ItemParams,
   Menu,
@@ -103,7 +104,11 @@ const SandboxSimulation: React.FC = () => {
               ))}
             </div>
           </div>
-          <Menu id={boardContextMenuId} theme={theme.light}>
+          <Menu
+            id={boardContextMenuId}
+            theme={theme.light}
+            animation={animation.fade}
+          >
             <Item onClick={createNode}>Create Node</Item>
             <Separator />
             <Item onClick={sendSimulationPingOnClick}>Send Ping</Item>

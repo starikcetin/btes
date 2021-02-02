@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
-import { Item, Menu, theme, useContextMenu } from 'react-contexify';
+import { animation, Item, Menu, theme, useContextMenu } from 'react-contexify';
 
 import './SimulationNode.scss';
 // import nodeIcon from './pcIcon.png';
@@ -65,7 +65,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
           <p className="card-text text-center">{nodeUid}</p>
         </div>
       </Draggable>
-      <Menu id={contextMenuId} theme={theme.light}>
+      <Menu id={contextMenuId} theme={theme.light} animation={animation.fade}>
         <Item onClick={handleDeleteNode}>Delete Node</Item>
       </Menu>
     </>
