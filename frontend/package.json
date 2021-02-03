@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.0.0",
+  "description": "Frontend for BTES project",
   "private": true,
   "browserslist": {
     "production": [
@@ -126,10 +127,8 @@
   },
   "lint-staged": {
     "*": [
-      "eslint --fix"
-    ],
-    "*.{sass,scss,css}": [
-      "stylelint --fix"
+      "eslint --fix",
+      "stylelint --fix --allow-empty-input"
     ]
   }
 }
