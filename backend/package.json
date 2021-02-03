@@ -15,9 +15,9 @@
     "build": "run-s clean generate compile",
     "serve:dev": "run-s generate launch:dev",
     "serve:prod": "run-s build launch:prod",
-    "start:dev": "nodemon",
-    "start:prod": "run-s serve:prod",
-    "precommit": "lint-staged"
+    "start": "nodemon",
+    "precommit": "lint-staged",
+    "postinstall": "yarn generate"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
