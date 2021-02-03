@@ -1,37 +1,33 @@
 .page-sandbox-simulation {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 
-  .row {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: block;
-    overflow: hidden;
+  &--board-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
 
-    .d-flex {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      display: block;
-      overflow: hidden;
-    }
+  &--board {
+    position: relative;
+    flex: 0 0 auto;
+    width: 1600px;
+    height: 800px;
+    margin: auto;
+    border: 1px #ccc solid;
   }
 
   &--sliding-panel {
+    $width: 200px;
+
     position: absolute;
-    right: -180px;
+    right: -$width;
     bottom: 100px;
-    width: 200px;
+    width: $width;
+    background-color: #fff;
     transition: 0.25s;
 
     &:hover {
@@ -40,17 +36,21 @@
     }
 
     &--handle {
+      $width: 50px;
+
       position: absolute;
-      left: -49px;
+      left: -$width;
       display: flex;
       align-content: center;
       align-items: center;
       justify-content: center;
       justify-items: center;
-      width: 50px;
+      width: $width;
       height: 100%;
       padding: 10px;
+      background-color: #fff;
       border: 1px solid rgb(180, 180, 180);
+      border-right: 0;
       border-radius: 5px 0 0 5px;
     }
 
