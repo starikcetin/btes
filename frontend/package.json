@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.0.0",
+  "description": "Frontend for BTES project",
   "private": true,
   "browserslist": {
     "production": [
@@ -17,10 +18,8 @@
   "scripts": {
     "lint:check:eslint": "eslint .",
     "lint:check:stylelint": "stylelint . --report-needless-disables --report-invalid-scope-disables --report-descriptionless-disables",
-    "lint:fix:eslint": "yarn lint:check:eslint --fix",
-    "lint:fix:stylelint": "yarn lint:check:stylelint --fix",
     "lint:check": "run-p -lc --aggregate-output lint:check:*",
-    "lint:fix": "run-p -lc --aggregate-output lint:fix:*",
+    "lint:fix": "run-p -lc --aggregate-output \"lint:check:* --fix\"",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
@@ -128,10 +127,8 @@
   },
   "lint-staged": {
     "*": [
-      "eslint --fix"
-    ],
-    "*.{sass,scss,css}": [
-      "stylelint --fix"
+      "eslint --fix",
+      "stylelint --fix --allow-empty-input"
     ]
   }
 }

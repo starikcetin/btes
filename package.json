@@ -12,29 +12,16 @@
     "backend": "yarn workspace backend",
     "frontend": "yarn workspace frontend",
     "common": "yarn workspace common",
-    "start:backend": "yarn backend start:dev",
-    "start:frontend": "yarn frontend start",
-    "start": "run-p -l start:*",
-    "build:backend": "yarn backend build",
-    "build:frontend": "yarn frontend build",
-    "build": "run-p -l build:*",
-    "lint:check:backend": "yarn backend lint:check",
-    "lint:check:frontend": "yarn frontend lint:check",
-    "lint:check:common": "yarn common lint:check",
-    "lint:check": "run-p -l lint:check:*",
-    "lint:fix:backend": "yarn backend lint:fix",
-    "lint:fix:frontend": "yarn frontend lint:fix",
-    "lint:fix:common": "yarn common lint:fix",
-    "lint:fix": "run-p -l lint:fix:*",
-    "postinstall:backend": "yarn backend generate",
-    "postinstall": "run-p -l postinstall:*",
-    "precommit:backend": "yarn backend precommit",
-    "precommit:frontend": "yarn frontend precommit",
-    "precommit:common": "yarn common precommit",
-    "precommit": "run-s -l precommit:*"
+    "start": "wsrun -me --report start",
+    "build": "wsrun -mle --report build",
+    "lint:check": "wsrun -ml --report lint:check",
+    "lint:fix": "wsrun -ml --report lint:fix",
+    "postinstall": "wsrun -ml --report postinstall",
+    "precommit": "wsrun -mles --report precommit"
   },
   "devDependencies": {
-    "husky": "^4.3.6"
+    "husky": "^4.3.6",
+    "wsrun": "^5.2.4"
   },
   "husky": {
     "hooks": {
