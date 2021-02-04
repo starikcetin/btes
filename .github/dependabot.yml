@@ -3,7 +3,9 @@ updates:
 - package-ecosystem: npm
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
+    day: sunday
+    time: "05:00"
     timezone: Asia/Istanbul
   open-pull-requests-limit: 10
   reviewers:
