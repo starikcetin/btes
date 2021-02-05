@@ -12,5 +12,8 @@
     "insertPragma": false,
     "proseWrap": "preserve",
     "endOfLine": "lf",
-    "embeddedLanguageFormatting": "auto"
+    "embeddedLanguageFormatting": "auto",
+
+    // NOMERGE: this change was made to test the pr-labeler bot in starikcetin fork, it should never end up in the main repo
+    "foo": "bar"
 }
