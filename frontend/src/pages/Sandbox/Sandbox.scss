@@ -17,5 +17,8 @@
     font-size: 25px;
     color: #fff;
     text-shadow: 2px 2px #808080;
+
+    // NOMERGE: this change was made to test the pr-labeler bot in starikcetin fork, it should never end up in the main repo
+    border: 1px solid #000;
   }
 }
