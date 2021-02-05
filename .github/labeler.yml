@@ -1,5 +1,5 @@
 root:
-- all: ['!./{frontend,backend,common}/**']
+- any: ['!./{frontend,backend,common}/**']
 
 frontend:
   - ./frontend/**
