@@ -1,11 +1,11 @@
 root:
-- any: ['!./{frontend,backend,common}/**']
+- any: ['!{frontend,backend,common}/**']
 
 frontend:
-  - ./frontend/**
+  - frontend/**
 
 backend:
-  - ./backend/**
+  - backend/**
 
 common:
-  - ./common/**
+  - common/**
