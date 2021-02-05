@@ -16,7 +16,6 @@
     "build": "wsrun -mle --report build",
     "lint:check": "wsrun -ml --report lint:check",
     "lint:fix": "wsrun -ml --report lint:fix",
-    "postinstall": "wsrun -ml --report postinstall",
     "precommit": "wsrun -mles --report precommit"
   },
   "devDependencies": {
