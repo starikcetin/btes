@@ -66,6 +66,9 @@ export class SimulationNamespaceListener {
       socketEvents.simulation.updateNodePosition,
       this.handleSimulationUpdateNodePosition
     );
+
+    socket.on(socketEvents.simulation.undo, this.handleSimulationUndo);
+    socket.on(socketEvents.simulation.redo, this.handleSimulationRedo);
   };
 
   private readonly teardownSocket = (socket: Socket): void => {
@@ -200,5 +203,13 @@ export class SimulationNamespaceListener {
     body: SimulationNodePositionUpdatedPayload
   ) => {
     this.ns.emit(socketEvents.simulation.nodePositionUpdated, body);
+  };
+
+  private readonly handleSimulationUndo = () => {
+    this.actionHistoryKeeper.undo();
+  };
+
+  private readonly handleSimulationRedo = () => {
+    this.actionHistoryKeeper.redo();
   };
 }
