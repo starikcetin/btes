@@ -77,13 +77,42 @@ const SandboxSimulation: React.FC = () => {
     showBoardContextMenu(event);
   };
 
+  const handleUndo = useCallback(() => {
+    simulationBridge.sendSimulationUndo(simulationUid);
+  }, [simulationUid]);
+
+  const handleRedo = useCallback(() => {
+    simulationBridge.sendSimulationRedo(simulationUid);
+  }, [simulationUid]);
+
+  const handleKeyUp = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'z') {
+        handleUndo();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return false;
+      }
+
+      if (event.ctrlKey && event.key === 'y') {
+        handleRedo();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return false;
+      }
+    },
+    [handleRedo, handleUndo]
+  );
+
   useEffect(() => {
+    document.addEventListener('keyup', handleKeyUp);
     connect();
 
     return () => {
+      document.removeEventListener('keyup', handleKeyUp);
       teardown();
     };
-  }, [connect, teardown]);
+  }, [connect, handleKeyUp, teardown]);
 
   return (
     <div className="page-sandbox-simulation">
