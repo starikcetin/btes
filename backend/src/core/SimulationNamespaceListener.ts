@@ -165,12 +165,35 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationUpdateNodePosition = (
     body: SimulationUpdateNodePositionPayload
   ) => {
-    this.simulation.updateNodePosition(
-      body.nodeUid,
-      body.positionX,
-      body.positionY
-    );
-    this.sendSimulationNodePositionUpdated(body);
+    let prevPositionX: number;
+    let prevPositionY: number;
+
+    this.actionHistoryKeeper.registerAndExecute({
+      execute: () => {
+        const node = this.simulation.nodeMap[body.nodeUid];
+        prevPositionX = node.positionX;
+        prevPositionY = node.positionY;
+
+        this.simulation.updateNodePosition(
+          body.nodeUid,
+          body.positionX,
+          body.positionY
+        );
+        this.sendSimulationNodePositionUpdated(body);
+      },
+      undo: () => {
+        this.simulation.updateNodePosition(
+          body.nodeUid,
+          prevPositionX,
+          prevPositionY
+        );
+        this.sendSimulationNodePositionUpdated({
+          nodeUid: body.nodeUid,
+          positionX: prevPositionX,
+          positionY: prevPositionY,
+        });
+      },
+    });
   };
 
   private readonly sendSimulationNodePositionUpdated = (
