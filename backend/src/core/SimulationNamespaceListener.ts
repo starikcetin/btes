@@ -14,7 +14,6 @@ import { SimulationNodeDeletedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
-import { SimulationNode } from './SimulationNode';
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 
 export class SimulationNamespaceListener {
@@ -66,7 +65,6 @@ export class SimulationNamespaceListener {
       socketEvents.simulation.updateNodePosition,
       this.handleSimulationUpdateNodePosition
     );
-
     socket.on(socketEvents.simulation.undo, this.handleSimulationUndo);
     socket.on(socketEvents.simulation.redo, this.handleSimulationRedo);
   };
@@ -132,6 +130,7 @@ export class SimulationNamespaceListener {
     body: SimulationDeleteNodePayload
   ) => {
     let nodeSnapshot: SimulationNodeSnapshot;
+
     this.actionHistoryKeeper.registerAndExecute({
       execute: () => {
         nodeSnapshot = this.simulation.nodeMap[body.nodeUid].takeSnapshot();
