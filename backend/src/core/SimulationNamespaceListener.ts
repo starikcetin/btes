@@ -15,6 +15,7 @@ import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/S
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
 import { SimulationNode } from './SimulationNode';
+import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -127,8 +128,18 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationDeleteNode = (
     body: SimulationDeleteNodePayload
   ) => {
-    this.simulation.deleteNode(body.nodeUid);
-    this.sendSimulationNodeDeleted({ nodeUid: body.nodeUid });
+    let nodeSnapshot: SimulationNodeSnapshot;
+    this.actionHistoryKeeper.registerAndExecute({
+      execute: () => {
+        nodeSnapshot = this.simulation.nodeMap[body.nodeUid].takeSnapshot();
+        this.simulation.deleteNode(body.nodeUid);
+        this.sendSimulationNodeDeleted({ nodeUid: body.nodeUid });
+      },
+      undo: () => {
+        this.simulation.createNodeWithSnapshot(nodeSnapshot);
+        this.sendSimulationNodeCreated(nodeSnapshot);
+      },
+    });
   };
 
   private readonly sendSimulationNodeDeleted = (
