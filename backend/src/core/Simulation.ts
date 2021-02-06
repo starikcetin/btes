@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { nodeUidGenerator } from '../utils/uidGenerators';
 import { SimulationNode } from './SimulationNode';
 import { SimulationSnapshot } from '../common/SimulationSnapshot';
+import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -17,6 +18,15 @@ export class Simulation {
     positionY: number
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
+    const newNode = new SimulationNode(nodeUid, positionX, positionY);
+    this.nodeMap[nodeUid] = newNode;
+    return newNode;
+  };
+
+  public readonly createNodeWithSnapshot = (
+    nodeSnapshot: SimulationNodeSnapshot
+  ): SimulationNode => {
+    const { nodeUid, positionX, positionY } = nodeSnapshot;
     const newNode = new SimulationNode(nodeUid, positionX, positionY);
     this.nodeMap[nodeUid] = newNode;
     return newNode;
