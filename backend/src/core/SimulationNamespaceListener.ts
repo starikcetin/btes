@@ -13,14 +13,22 @@ import { SimulationNodeCreatedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
 import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
+import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
+import { SimulationNode } from './SimulationNode';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
   private readonly ns: Namespace;
+  private readonly actionHistoryKeeper: ActionHistoryKeeper;
 
-  constructor(simulation: Simulation, ns: Namespace) {
+  constructor(
+    simulation: Simulation,
+    ns: Namespace,
+    actionHistoryKeeper: ActionHistoryKeeper
+  ) {
     this.simulation = simulation;
     this.ns = ns;
+    this.actionHistoryKeeper = actionHistoryKeeper;
 
     ns.on(socketEvents.native.connect, (socket) => {
       this.setupSocket(socket);
@@ -91,9 +99,23 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationCreateNode = (
     body: SimulationCreateNodePayload
   ) => {
-    const newNode = this.simulation.createNode(body.positionX, body.positionY);
-    const nodeSnapshot = newNode.takeSnapshot();
-    this.sendSimulationNodeCreated(nodeSnapshot);
+    let nodeUid: string;
+
+    this.actionHistoryKeeper.registerAndExecute({
+      execute: () => {
+        const newNode = this.simulation.createNode(
+          body.positionX,
+          body.positionY
+        );
+        nodeUid = newNode.nodeUid;
+        const nodeSnapshot = newNode.takeSnapshot();
+        this.sendSimulationNodeCreated(nodeSnapshot);
+      },
+      undo: () => {
+        this.simulation.deleteNode(nodeUid);
+        this.sendSimulationNodeDeleted({ nodeUid });
+      },
+    });
   };
 
   private readonly sendSimulationNodeCreated = (
