@@ -4,10 +4,13 @@ export class ActionHistoryKeeper {
   private undoStack: UndoubleAction[] = [];
   private redoStack: UndoubleAction[] = [];
 
-  public registerAndExecute(action: UndoubleAction): void {
+  /**
+   * This method only registers the enevt to the undo stack.
+   * You must perform the first execution on the caller site!
+   */
+  public register(action: UndoubleAction): void {
     this.undoStack.push(action);
     this.redoStack = [];
-    action.execute();
   }
 
   public undo(): void {
@@ -21,7 +24,7 @@ export class ActionHistoryKeeper {
   public redo(): void {
     const toRedo = this.redoStack.pop();
     if (toRedo) {
-      toRedo.execute();
+      toRedo.redo();
       this.undoStack.push(toRedo);
     }
   }
