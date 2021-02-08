@@ -1,9 +1,13 @@
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Card } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
+import {
+  faNetworkWired,
+  faRedo,
+  faUndo,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   animation,
   Item,
@@ -77,31 +81,84 @@ const SandboxSimulation: React.FC = () => {
     showBoardContextMenu(event);
   };
 
+  const handleUndo = useCallback(() => {
+    simulationBridge.sendSimulationUndo(simulationUid);
+  }, [simulationUid]);
+
+  const handleRedo = useCallback(() => {
+    simulationBridge.sendSimulationRedo(simulationUid);
+  }, [simulationUid]);
+
+  const handleKeyUp = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'z') {
+        handleUndo();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return false;
+      }
+
+      if (event.ctrlKey && event.key === 'y') {
+        handleRedo();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return false;
+      }
+    },
+    [handleRedo, handleUndo]
+  );
+
   useEffect(() => {
+    document.addEventListener('keyup', handleKeyUp);
     connect();
 
     return () => {
+      document.removeEventListener('keyup', handleKeyUp);
       teardown();
     };
-  }, [connect, teardown]);
+  }, [connect, handleKeyUp, teardown]);
 
   return (
     <div className="page-sandbox-simulation">
       {connected ? (
         <>
-          <div className="page-sandbox-simulation--board-container">
-            <div
-              className="page-sandbox-simulation--board"
-              onContextMenu={onBoardContextMenu}
-            >
-              {nodes.map((node) => (
-                <SimulationNode
-                  key={node.nodeUid}
-                  simulationUid={simulationUid}
-                  data={node}
-                  launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
-                ></SimulationNode>
-              ))}
+          <div className="page-sandbox-simulation--body">
+            <div className="page-sandbox-simulation--toolbox bg-light border-bottom pl-2">
+              <ButtonToolbar>
+                <ButtonGroup className="mr-2">
+                  <Button
+                    onClick={handleUndo}
+                    variant="light"
+                    className="rounded-0"
+                    title="Undo"
+                  >
+                    <FontAwesomeIcon icon={faUndo} />
+                  </Button>
+                  <Button
+                    onClick={handleRedo}
+                    variant="light"
+                    className="rounded-0"
+                    title="Redo"
+                  >
+                    <FontAwesomeIcon icon={faRedo} />
+                  </Button>
+                </ButtonGroup>
+              </ButtonToolbar>
+            </div>
+            <div className="page-sandbox-simulation--board-container">
+              <div
+                className="page-sandbox-simulation--board"
+                onContextMenu={onBoardContextMenu}
+              >
+                {nodes.map((node) => (
+                  <SimulationNode
+                    key={node.nodeUid}
+                    simulationUid={simulationUid}
+                    data={node}
+                    launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
+                  ></SimulationNode>
+                ))}
+              </div>
             </div>
           </div>
           <Menu

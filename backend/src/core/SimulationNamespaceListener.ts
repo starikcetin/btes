@@ -14,7 +14,9 @@ import { SimulationNodeDeletedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
-import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
+import { SimulationCreateNodeCommand } from './commands/SimulationCreateNodeCommand';
+import { SimulationDeleteNodeCommand } from './commands/SimulationDeleteNodeCommand';
+import { SimulationUpdateNodePositionCommand } from './commands/SimulationUpdateNodePositionCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -101,52 +103,38 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationCreateNode = (
     body: SimulationCreateNodePayload
   ) => {
-    let nodeUid: string;
+    const createCommand = new SimulationCreateNodeCommand(
+      this.simulation,
+      this,
+      body
+    );
 
-    this.actionHistoryKeeper.registerAndExecute({
-      execute: () => {
-        const newNode = this.simulation.createNode(
-          body.positionX,
-          body.positionY
-        );
-        nodeUid = newNode.nodeUid;
-        const nodeSnapshot = newNode.takeSnapshot();
-        this.sendSimulationNodeCreated(nodeSnapshot);
-      },
-      undo: () => {
-        this.simulation.deleteNode(nodeUid);
-        this.sendSimulationNodeDeleted({ nodeUid });
-      },
-    });
+    this.actionHistoryKeeper.register(createCommand);
+    createCommand.execute();
   };
 
-  private readonly sendSimulationNodeCreated = (
+  public readonly sendSimulationNodeCreated = (
     body: SimulationNodeCreatedPayload
-  ) => {
+  ): void => {
     this.ns.emit(socketEvents.simulation.nodeCreated, body);
   };
 
   private readonly handleSimulationDeleteNode = (
     body: SimulationDeleteNodePayload
   ) => {
-    let nodeSnapshot: SimulationNodeSnapshot;
+    const createCommand = new SimulationDeleteNodeCommand(
+      this.simulation,
+      this,
+      body
+    );
 
-    this.actionHistoryKeeper.registerAndExecute({
-      execute: () => {
-        nodeSnapshot = this.simulation.nodeMap[body.nodeUid].takeSnapshot();
-        this.simulation.deleteNode(body.nodeUid);
-        this.sendSimulationNodeDeleted({ nodeUid: body.nodeUid });
-      },
-      undo: () => {
-        this.simulation.createNodeWithSnapshot(nodeSnapshot);
-        this.sendSimulationNodeCreated(nodeSnapshot);
-      },
-    });
+    this.actionHistoryKeeper.register(createCommand);
+    createCommand.execute();
   };
 
-  private readonly sendSimulationNodeDeleted = (
+  public readonly sendSimulationNodeDeleted = (
     body: SimulationNodeDeletedPayload
-  ) => {
+  ): void => {
     this.ns.emit(socketEvents.simulation.nodeDeleted, body);
   };
 
@@ -167,40 +155,19 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationUpdateNodePosition = (
     body: SimulationUpdateNodePositionPayload
   ) => {
-    let prevPositionX: number;
-    let prevPositionY: number;
+    const createCommand = new SimulationUpdateNodePositionCommand(
+      this.simulation,
+      this,
+      body
+    );
 
-    this.actionHistoryKeeper.registerAndExecute({
-      execute: () => {
-        const node = this.simulation.nodeMap[body.nodeUid];
-        prevPositionX = node.positionX;
-        prevPositionY = node.positionY;
-
-        this.simulation.updateNodePosition(
-          body.nodeUid,
-          body.positionX,
-          body.positionY
-        );
-        this.sendSimulationNodePositionUpdated(body);
-      },
-      undo: () => {
-        this.simulation.updateNodePosition(
-          body.nodeUid,
-          prevPositionX,
-          prevPositionY
-        );
-        this.sendSimulationNodePositionUpdated({
-          nodeUid: body.nodeUid,
-          positionX: prevPositionX,
-          positionY: prevPositionY,
-        });
-      },
-    });
+    this.actionHistoryKeeper.register(createCommand);
+    createCommand.execute();
   };
 
-  private readonly sendSimulationNodePositionUpdated = (
+  public readonly sendSimulationNodePositionUpdated = (
     body: SimulationNodePositionUpdatedPayload
-  ) => {
+  ): void => {
     this.ns.emit(socketEvents.simulation.nodePositionUpdated, body);
   };
 

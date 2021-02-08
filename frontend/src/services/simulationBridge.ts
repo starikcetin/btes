@@ -130,6 +130,14 @@ class SimulationBridge {
     this.emit(simulationUid, socketEvents.simulation.updateNodePosition, body);
   }
 
+  public sendSimulationUndo(simulationUid: string) {
+    this.emit(simulationUid, socketEvents.simulation.undo, null);
+  }
+
+  public sendSimulationRedo(simulationUid: string) {
+    this.emit(simulationUid, socketEvents.simulation.redo, null);
+  }
+
   private setupNewConnection(simulationUid: string, socket: Socket) {
     store.dispatch(simulationSlice.actions.setup({ simulationUid }));
     this.uidtoSocketMap[simulationUid] = socket;
