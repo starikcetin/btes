@@ -25,7 +25,7 @@
     "express-ping": "^1.4.0",
     "lodash": "^4.17.20",
     "socket.io": "^3.0.4",
-    "swagger-ui-express": "^4.1.4",
+    "swagger-ui-express": "^4.1.6",
     "tsoa": "^3.5.1"
   },
   "devDependencies": {
