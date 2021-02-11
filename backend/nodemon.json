@@ -1,6 +1,6 @@
 {
     "exec": "yarn serve:dev",
     "watch": ["src"],
-    "ignore": ["src/__gen"],
+    "ignore": ["src/__gen/**"],
     "ext": "ts"
 }
