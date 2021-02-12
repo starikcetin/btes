@@ -18,7 +18,7 @@ export class Simulation {
     positionY: number
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
-    const newNode = new SimulationNode(nodeUid, positionX, positionY);
+    const newNode = new SimulationNode(nodeUid, positionX, positionY, [], []);
     this.nodeMap[nodeUid] = newNode;
     return newNode;
   };
@@ -26,9 +26,16 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
-    const { nodeUid, positionX, positionY } = nodeSnapshot;
-    const newNode = new SimulationNode(nodeUid, positionX, positionY);
-    this.nodeMap[nodeUid] = newNode;
+    const newNode = new SimulationNode(
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.positionX,
+      nodeSnapshot.positionY,
+      nodeSnapshot.connectedNodeUids.map((nodeUid) => this.nodeMap[nodeUid]),
+      nodeSnapshot.receivedMessages
+    );
+
+    this.nodeMap[nodeSnapshot.nodeUid] = newNode;
+
     return newNode;
   };
 

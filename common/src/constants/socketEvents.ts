@@ -17,5 +17,9 @@ export const socketEvents = {
     nodePositionUpdated: 'simulation-node-position-updated',
     undo: 'simulation-undo',
     redo: 'simulation-redo',
+    nodeBroadcastMessage: 'simulation-node-broadcast-message',
+    nodeSendMessage: 'simulation-node-send-message',
+    nodeMessageSent: 'simulation-node-message-sent',
+    nodeMessageReceived: 'simulation-node-message-received',
   },
 } as const;

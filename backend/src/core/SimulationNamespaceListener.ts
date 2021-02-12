@@ -17,6 +17,10 @@ import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
 import { SimulationCreateNodeCommand } from './commands/SimulationCreateNodeCommand';
 import { SimulationDeleteNodeCommand } from './commands/SimulationDeleteNodeCommand';
 import { SimulationUpdateNodePositionCommand } from './commands/SimulationUpdateNodePositionCommand';
+import { SimulationNodeBroadcastMessagePayload } from '../common/socketPayloads/SimulationNodeBroadcastMessagePayload';
+import { SimulationNodeBroadcastMessageCommand } from './commands/SimulationNodeBroadcastMessageCommand';
+import { SimulationNodeMessageReceivedPayload } from '../common/socketPayloads/SimulationNodeMessageReceivedPayload';
+import { SimulationNodeMessageSentPayload } from '../common/socketPayloads/SimulationNodeMessageSentPayload';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -69,6 +73,10 @@ export class SimulationNamespaceListener {
     );
     socket.on(socketEvents.simulation.undo, this.handleSimulationUndo);
     socket.on(socketEvents.simulation.redo, this.handleSimulationRedo);
+    socket.on(
+      socketEvents.simulation.nodeBroadcastMessage,
+      this.handleSimulationNodeBroadcastMessage
+    );
   };
 
   private readonly teardownSocket = (socket: Socket): void => {
@@ -177,5 +185,30 @@ export class SimulationNamespaceListener {
 
   private readonly handleSimulationRedo = () => {
     this.actionHistoryKeeper.redo();
+  };
+
+  private readonly handleSimulationNodeBroadcastMessage = (
+    body: SimulationNodeBroadcastMessagePayload
+  ) => {
+    const createCommand = new SimulationNodeBroadcastMessageCommand(
+      this.simulation,
+      this,
+      body
+    );
+
+    this.actionHistoryKeeper.register(createCommand);
+    createCommand.execute();
+  };
+
+  public readonly sendSimulationNodeMessageReceived = (
+    body: SimulationNodeMessageReceivedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.nodeMessageReceived, body);
+  };
+
+  public readonly sendSimulationNodeMessageSent = (
+    body: SimulationNodeMessageSentPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.nodeMessageSent, body);
   };
 }
