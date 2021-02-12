@@ -18,7 +18,7 @@ export const socketEvents = {
     undo: 'simulation-undo',
     redo: 'simulation-redo',
     nodeBroadcastMessage: 'simulation-node-broadcast-message',
-    nodeSendMessage: 'simulation-node-send-message',
+    nodeUnicastMessage: 'simulation-node-unicast-message',
     nodeMessageSent: 'simulation-node-message-sent',
     nodeMessageReceived: 'simulation-node-message-received',
   },

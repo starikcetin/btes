@@ -21,6 +21,8 @@ import { SimulationNodeBroadcastMessagePayload } from '../common/socketPayloads/
 import { SimulationNodeBroadcastMessageCommand } from './commands/SimulationNodeBroadcastMessageCommand';
 import { SimulationNodeMessageReceivedPayload } from '../common/socketPayloads/SimulationNodeMessageReceivedPayload';
 import { SimulationNodeMessageSentPayload } from '../common/socketPayloads/SimulationNodeMessageSentPayload';
+import { SimulationNodeUnicastMessagePayload } from '../common/socketPayloads/SimulationNodeUnicastMessagePayload';
+import { SimulationNodeUnicastMessageCommand } from './commands/SimulationNodeUnicastMessageCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -76,6 +78,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.nodeBroadcastMessage,
       this.handleSimulationNodeBroadcastMessage
+    );
+    socket.on(
+      socketEvents.simulation.nodeUnicastMessage,
+      this.handleSimulationNodeUnicastMessage
     );
   };
 
@@ -191,6 +197,19 @@ export class SimulationNamespaceListener {
     body: SimulationNodeBroadcastMessagePayload
   ) => {
     const createCommand = new SimulationNodeBroadcastMessageCommand(
+      this.simulation,
+      this,
+      body
+    );
+
+    this.actionHistoryKeeper.register(createCommand);
+    createCommand.execute();
+  };
+
+  private readonly handleSimulationNodeUnicastMessage = (
+    body: SimulationNodeUnicastMessagePayload
+  ) => {
+    const createCommand = new SimulationNodeUnicastMessageCommand(
       this.simulation,
       this,
       body
