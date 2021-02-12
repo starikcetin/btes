@@ -8,3 +8,4 @@ class UidGenerator {
 
 export const simulationUidGenerator = new UidGenerator();
 export const nodeUidGenerator = new UidGenerator();
+export const messageUidGenerator = new UidGenerator();

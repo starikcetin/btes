@@ -4,6 +4,7 @@ import { Simulation } from '../Simulation';
 import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
 import { SimulationNode } from '../SimulationNode';
 import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { messageUidGenerator } from '../../utils/uidGenerators';
 
 export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
   private readonly simulation: Simulation;
@@ -62,7 +63,7 @@ export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
 
   public readonly execute = (): void => {
     this.message = {
-      messageUid: 'foo',
+      messageUid: messageUidGenerator.next().toString(),
       body: this.eventPayload.messageBody,
     };
 
