@@ -54,6 +54,28 @@ export class Simulation {
     node.updatePosition(positionX, positionY);
   };
 
+  public readonly connectNodes = (
+    firstNodeUid: string,
+    secondNodeUid: string
+  ): void => {
+    const firstNode = this.nodeMap[firstNodeUid];
+    const secondNode = this.nodeMap[secondNodeUid];
+
+    firstNode.addConnection(secondNode);
+    secondNode.addConnection(firstNode);
+  };
+
+  public readonly disconnectNodes = (
+    firstNodeUid: string,
+    secondNodeUid: string
+  ): void => {
+    const firstNode = this.nodeMap[firstNodeUid];
+    const secondNode = this.nodeMap[secondNodeUid];
+
+    firstNode.removeConnection(secondNode);
+    secondNode.removeConnection(firstNode);
+  };
+
   public readonly takeSnapshot = (): SimulationSnapshot => {
     const nodeSnapshots = _.mapValues(this.nodeMap, (node) =>
       node.takeSnapshot()

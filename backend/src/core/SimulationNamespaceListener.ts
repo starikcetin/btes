@@ -23,6 +23,12 @@ import { SimulationNodeMessageReceivedPayload } from '../common/socketPayloads/S
 import { SimulationNodeMessageSentPayload } from '../common/socketPayloads/SimulationNodeMessageSentPayload';
 import { SimulationNodeUnicastMessagePayload } from '../common/socketPayloads/SimulationNodeUnicastMessagePayload';
 import { SimulationNodeUnicastMessageCommand } from './commands/SimulationNodeUnicastMessageCommand';
+import { SimulationConnectNodesPayload } from '../common/socketPayloads/SimulationConnectNodesPayload';
+import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/SimulationDisconnectNodesPayload';
+import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
+import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/SimulationNodesDisconnectedPayload';
+import { SimulationConnectNodesCommand } from './commands/SimulationConnectNodesCommand';
+import { SimulationDisconnectNodesCommand } from './commands/SimulationDisconnectNodesCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -82,6 +88,14 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.nodeUnicastMessage,
       this.handleSimulationNodeUnicastMessage
+    );
+    socket.on(
+      socketEvents.simulation.connectNodes,
+      this.handleSimulationConnectNodes
+    );
+    socket.on(
+      socketEvents.simulation.disconnectNodes,
+      this.handleSimulationDisconnectNodes
     );
   };
 
@@ -229,5 +243,43 @@ export class SimulationNamespaceListener {
     body: SimulationNodeMessageSentPayload
   ): void => {
     this.ns.emit(socketEvents.simulation.nodeMessageSent, body);
+  };
+
+  private readonly handleSimulationConnectNodes = (
+    body: SimulationConnectNodesPayload
+  ) => {
+    const createCommand = new SimulationConnectNodesCommand(
+      this.simulation,
+      this,
+      body
+    );
+
+    this.actionHistoryKeeper.register(createCommand);
+    createCommand.execute();
+  };
+
+  private readonly handleSimulationDisconnectNodes = (
+    body: SimulationDisconnectNodesPayload
+  ) => {
+    const createCommand = new SimulationDisconnectNodesCommand(
+      this.simulation,
+      this,
+      body
+    );
+
+    this.actionHistoryKeeper.register(createCommand);
+    createCommand.execute();
+  };
+
+  public readonly sendSimulationNodesConnected = (
+    body: SimulationNodesConnectedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.nodesConnected, body);
+  };
+
+  public readonly sendSimulationNodesDisconnected = (
+    body: SimulationNodesDisconnectedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.nodesDisconnected, body);
   };
 }

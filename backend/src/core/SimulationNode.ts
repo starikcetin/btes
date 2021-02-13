@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNodeMessage } from '../common/SimulationNodeMessage';
 
@@ -62,6 +64,14 @@ export class SimulationNode {
     return this._receivedMessages.some(
       (m) => m.messageUid === message.messageUid
     );
+  };
+
+  public readonly addConnection = (otherNode: SimulationNode): void => {
+    this._connectedNodes.push(otherNode);
+  };
+
+  public readonly removeConnection = (otherNode: SimulationNode): void => {
+    _.remove(this._connectedNodes, otherNode);
   };
 
   public readonly takeSnapshot = (): SimulationNodeSnapshot => {

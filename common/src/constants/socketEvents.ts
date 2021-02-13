@@ -21,5 +21,9 @@ export const socketEvents = {
     nodeUnicastMessage: 'simulation-node-unicast-message',
     nodeMessageSent: 'simulation-node-message-sent',
     nodeMessageReceived: 'simulation-node-message-received',
+    connectNodes: 'simulation-connect-nodes',
+    disconnectNodes: 'simulation-disconnect-nodes',
+    nodesConnected: 'simulation-nodes-connected',
+    nodesDisconnected: 'simulation-nodes-disconnected',
   },
 } as const;
