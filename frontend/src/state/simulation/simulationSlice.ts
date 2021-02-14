@@ -145,8 +145,15 @@ export const simulationSlice = createSlice({
       const firstNode = sim.nodeMap[payload.firstNodeUid];
       const secondNode = sim.nodeMap[payload.secondNodeUid];
 
-      _.remove(firstNode.connectedNodeUids, secondNode.nodeUid);
-      _.remove(secondNode.connectedNodeUids, firstNode.nodeUid);
+      firstNode.connectedNodeUids = _.without(
+        firstNode.connectedNodeUids,
+        secondNode.nodeUid
+      );
+
+      secondNode.connectedNodeUids = _.without(
+        secondNode.connectedNodeUids,
+        firstNode.nodeUid
+      );
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);
