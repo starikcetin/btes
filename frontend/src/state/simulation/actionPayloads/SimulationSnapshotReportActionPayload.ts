@@ -1,6 +1,6 @@
 import { SimulationSnapshot } from '../../../common/SimulationSnapshot';
 
-export interface SimulationSnapshotReportPayload {
+export interface SimulationSnapshotReportActionPayload {
   simulationUid: string;
   snapshot: SimulationSnapshot;
 }

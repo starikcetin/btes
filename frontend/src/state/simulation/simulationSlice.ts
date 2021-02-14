@@ -4,10 +4,10 @@ import _ from 'lodash';
 import { SimulationPongActionPayload } from './actionPayloads/SimulationPongActionPayload';
 import { SimulationSetupActionPayload } from './actionPayloads/SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
-import { SimulationNodeCreatedPayload } from './actionPayloads/SimulationNodePayload';
-import { SimulationTeardownPayload } from './actionPayloads/SimulationTeardownPayload';
-import { SimulationNodeDeletedPayload } from './actionPayloads/SimulaitonNodeDeletedPayload';
-import { SimulationSnapshotReportPayload } from './actionPayloads/SimulationSnapshotReportPayload';
+import { SimulationNodeCreatedActionPayload } from './actionPayloads/SimulationNodeCreatedActionPayload';
+import { SimulationTeardownActionPayload } from './actionPayloads/SimulationTeardownActionPayload';
+import { SimulationNodeDeletedActionPayload } from './actionPayloads/SimulaitonNodeDeletedActionPayload';
+import { SimulationSnapshotReportActionPayload } from './actionPayloads/SimulationSnapshotReportActionPayload';
 import { SimulationNodePositionUpdatedActionPayload } from './actionPayloads/SimulationNodePositionUpdatedActionPayload';
 import { SimulationLogActionPayload } from './actionPayloads/SimulationLogActionPayload';
 import { SimulationLogNodeActionPayload } from './actionPayloads/SimulationLogNodeActionPayload';
@@ -54,7 +54,7 @@ export const simulationSlice = createSlice({
     },
     nodeCreated: (
       state,
-      { payload }: PayloadAction<SimulationNodeCreatedPayload>
+      { payload }: PayloadAction<SimulationNodeCreatedActionPayload>
     ) => {
       const sim = state[payload.simulationUid];
 
@@ -79,20 +79,20 @@ export const simulationSlice = createSlice({
     },
     teardown: (
       state,
-      { payload }: PayloadAction<SimulationTeardownPayload>
+      { payload }: PayloadAction<SimulationTeardownActionPayload>
     ) => {
       // state[payload.simulationUid] = undefined;
       delete state[payload.simulationUid];
     },
     nodeDeleted: (
       state,
-      { payload }: PayloadAction<SimulationNodeDeletedPayload>
+      { payload }: PayloadAction<SimulationNodeDeletedActionPayload>
     ) => {
       delete state[payload.simulationUid].nodeMap[payload.nodeUid];
     },
     snapshotReport: (
       state,
-      { payload }: PayloadAction<SimulationSnapshotReportPayload>
+      { payload }: PayloadAction<SimulationSnapshotReportActionPayload>
     ) => {
       const { simulationUid, snapshot } = payload;
 
