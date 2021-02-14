@@ -53,30 +53,26 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
     return _.without(allNodeUids, ...connectedNodeUids, nodeUid || '');
   }, itemwiseEqual);
 
-  // re-generate notConnectedNodeSelectOptions when notConnectedNodeUids change
   useEffect(() => {
-    if (
-      false ===
-      itemwiseEqual(
-        targetNodeSelectOptions.map((o) => o.value),
-        unconnectedNodeUids
-      )
-    ) {
+    const isUnconnectedSelectOptionsOutdated = !itemwiseEqual(
+      targetNodeSelectOptions.map((o) => o.value),
+      unconnectedNodeUids
+    );
+
+    if (isUnconnectedSelectOptionsOutdated) {
       const options = makeOtherNodeUidSelectOptions(unconnectedNodeUids);
       setTargetNodeSelectOptions(options);
     }
   }, [targetNodeSelectOptions, unconnectedNodeUids]);
 
-  // validate the current selection of notConnectedNodeSelectValue when
-  // notConnectedNodeSelectOptions change
   useEffect(() => {
-    if (
-      null !== targetNodeSelectValue &&
-      false ===
-        targetNodeSelectOptions.some(
-          (opt) => opt.value === targetNodeSelectValue.value
-        )
-    ) {
+    const isUnconnectedSelectValueInvalid =
+      targetNodeSelectValue &&
+      !targetNodeSelectOptions.some(
+        (opt) => opt.value === targetNodeSelectValue.value
+      );
+
+    if (isUnconnectedSelectValueInvalid) {
       setTargetNodeSelectValue(null);
     }
   }, [targetNodeSelectOptions, targetNodeSelectValue]);
@@ -130,33 +126,44 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th>Node UID</th>
-                    <th>Actions</th>
+                    <th className="w-50">Node UID</th>
+                    <th className="w-50">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {connectedNodeUids.map((nodeUid) => (
-                    <tr key={nodeUid}>
-                      <td>{nodeUid}</td>
-                      <td>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          type="button"
-                          onClick={() => disconnect(nodeUid)}
-                        >
-                          Disconnect
-                        </Button>
-                      </td>
+                  {connectedNodeUids.length === 0 ? (
+                    <tr>
+                      <td colSpan={2}>No connections yet.</td>
                     </tr>
-                  ))}
+                  ) : (
+                    connectedNodeUids.map((nodeUid) => (
+                      <tr key={nodeUid}>
+                        <td>{nodeUid}</td>
+                        <td>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            type="button"
+                            onClick={() => disconnect(nodeUid)}
+                          >
+                            Disconnect
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </Table>
             </Col>
           </Row>
         </Col>
         <Col>
-          <Form>
+          <Form
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
             <Form.Group controlId="exampleForm.ControlSelect1">
               <Form.Label>Other Node</Form.Label>
               <Select
