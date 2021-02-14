@@ -14,6 +14,8 @@ import {
 } from '../common/utils/socketLogUtils';
 import { socketEvents } from '../common/constants/socketEvents';
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
+import { SimulationConnectNodesPayload } from '../common/socketPayloads/SimulationConnectNodesPayload';
+import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/SimulationDisconnectNodesPayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -136,6 +138,20 @@ class SimulationBridge {
 
   public sendSimulationRedo(simulationUid: string) {
     this.emit(simulationUid, socketEvents.simulation.redo, null);
+  }
+
+  public sendSimulationConnectNodes(
+    simulationUid: string,
+    body: SimulationConnectNodesPayload
+  ) {
+    this.emit(simulationUid, socketEvents.simulation.connectNodes, body);
+  }
+
+  public sendSimulationDisconnectNodes(
+    simulationUid: string,
+    body: SimulationDisconnectNodesPayload
+  ) {
+    this.emit(simulationUid, socketEvents.simulation.disconnectNodes, body);
   }
 
   private setupNewConnection(simulationUid: string, socket: Socket) {

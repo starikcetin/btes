@@ -11,6 +11,8 @@ import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPaylo
 import { SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
 import { SimulationLogActionPayload } from './SimulationLogActionPayload';
 import { SimulationLogNodeActionPayload } from './SimulationLogNodeActionPayload';
+import { SimulationNodesConnectedActionPayload } from './SimulationNodesConnectedActionPayload';
+import { SimulationNodesDisconnectedActionPayload } from './SimulationNodesDisconnectedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -123,6 +125,28 @@ export const simulationSlice = createSlice({
       const node = sim.nodeMap[payload.nodeUid];
       node.positionX = payload.positionX;
       node.positionY = payload.positionY;
+    },
+    nodesConnected: (
+      state,
+      { payload }: PayloadAction<SimulationNodesConnectedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+      const firstNode = sim.nodeMap[payload.firstNodeUid];
+      const secondNode = sim.nodeMap[payload.secondNodeUid];
+
+      firstNode.connectedNodeUids.push(secondNode.nodeUid);
+      secondNode.connectedNodeUids.push(firstNode.nodeUid);
+    },
+    nodesDisconnected: (
+      state,
+      { payload }: PayloadAction<SimulationNodesDisconnectedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+      const firstNode = sim.nodeMap[payload.firstNodeUid];
+      const secondNode = sim.nodeMap[payload.secondNodeUid];
+
+      _.remove(firstNode.connectedNodeUids, secondNode.nodeUid);
+      _.remove(secondNode.connectedNodeUids, firstNode.nodeUid);
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);

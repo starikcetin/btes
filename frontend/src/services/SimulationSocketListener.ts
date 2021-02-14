@@ -10,6 +10,8 @@ import { SimulationNodeDeletedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { SimulationNodePositionUpdatedPayload } from '../../../common/src/socketPayloads/SimulationNodePositionUpdatedPayload';
 import { SimulationLogActionPayload } from '../state/simulation/SimulationLogActionPayload';
+import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
+import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/SimulationNodesDisconnectedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -34,6 +36,14 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.nodePositionUpdated,
       this.handleSimulationNodePositionUpdated
+    );
+    socket.on(
+      socketEvents.simulation.nodesConnected,
+      this.handleSimulationNodesConnected
+    );
+    socket.on(
+      socketEvents.simulation.nodesDisconnected,
+      this.handleSimulationNodesDisconnected
     );
 
     socket.onAny(this.handleAny);
@@ -139,6 +149,52 @@ export class SimulationSocketListener {
     this.dispatchLogNodeEvent(
       body.nodeUid,
       socketEvents.simulation.nodePositionUpdated,
+      body
+    );
+  };
+
+  private readonly handleSimulationNodesConnected = (
+    body: SimulationNodesConnectedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.nodesConnected({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+
+    this.dispatchLogNodeEvent(
+      body.firstNodeUid,
+      socketEvents.simulation.nodesConnected,
+      body
+    );
+
+    this.dispatchLogNodeEvent(
+      body.secondNodeUid,
+      socketEvents.simulation.nodesConnected,
+      body
+    );
+  };
+
+  private readonly handleSimulationNodesDisconnected = (
+    body: SimulationNodesDisconnectedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.nodesDisconnected({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+
+    this.dispatchLogNodeEvent(
+      body.firstNodeUid,
+      socketEvents.simulation.nodesDisconnected,
+      body
+    );
+
+    this.dispatchLogNodeEvent(
+      body.secondNodeUid,
+      socketEvents.simulation.nodesDisconnected,
       body
     );
   };

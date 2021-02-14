@@ -5,6 +5,7 @@ export interface NodeData {
   nodeUid: string;
   positionX: number;
   positionY: number;
+  connectedNodeUids: string[];
 
   // local-only state
   readonly logs: SimulationLog[];
