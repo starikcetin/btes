@@ -44,6 +44,10 @@ export class SimulationDeleteNodeCommand implements UndoubleAction {
     }
 
     this.simulation.createNodeWithSnapshot(this.createdNodeSnapshot);
-    this.socketEventEmitter.sendSimulationNodeCreated(this.createdNodeSnapshot);
+
+    this.socketEventEmitter.sendSimulationNodeCreated({
+      nodeUid: this.createdNodeSnapshot.nodeUid,
+      nodeSnapshot: this.createdNodeSnapshot,
+    });
   };
 }

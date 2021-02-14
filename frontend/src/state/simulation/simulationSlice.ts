@@ -75,7 +75,7 @@ export const simulationSlice = createSlice({
         );
       }
 
-      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload };
+      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload.nodeSnapshot };
     },
     teardown: (
       state,

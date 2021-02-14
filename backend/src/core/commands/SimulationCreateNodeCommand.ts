@@ -29,20 +29,34 @@ export class SimulationCreateNodeCommand implements UndoubleAction {
     );
     this.createdNodeUid = newNode.nodeUid;
     this.createdNodeSnapshot = newNode.takeSnapshot();
-    this.socketEventEmitter.sendSimulationNodeCreated(this.createdNodeSnapshot);
+
+    this.socketEventEmitter.sendSimulationNodeCreated({
+      nodeUid: newNode.nodeUid,
+      nodeSnapshot: this.createdNodeSnapshot,
+    });
   };
 
   public readonly redo = (): void => {
-    if (undefined === this.createdNodeSnapshot) {
+    if (
+      undefined === this.createdNodeSnapshot ||
+      undefined === this.createdNodeUid
+    ) {
       throw new Error('redo invoked before execute!');
     }
 
     this.simulation.createNodeWithSnapshot(this.createdNodeSnapshot);
-    this.socketEventEmitter.sendSimulationNodeCreated(this.createdNodeSnapshot);
+
+    this.socketEventEmitter.sendSimulationNodeCreated({
+      nodeUid: this.createdNodeUid,
+      nodeSnapshot: this.createdNodeSnapshot,
+    });
   };
 
   public readonly undo = (): void => {
-    if (undefined === this.createdNodeUid) {
+    if (
+      undefined === this.createdNodeUid ||
+      undefined === this.createdNodeUid
+    ) {
       throw new Error('undo invoked before execute!');
     }
 
