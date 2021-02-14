@@ -4,7 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 import { empty } from '../../common/utils/empty';
 import { RootState } from '../../state/RootState';
-import { NodeData } from '../../state/simulation/NodeData';
+import { NodeData } from '../../state/simulation/data/NodeData';
 
 interface NodeNetworkDashboardProps {
   simulationUid: string;

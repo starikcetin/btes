@@ -1,4 +1,4 @@
-import { SocketEventDirection } from './SocketEventDirection';
+import { SocketEventDirection } from '../data/SocketEventDirection';
 
 export interface SimulationLogNodeActionPayload {
   readonly simulationUid: string;

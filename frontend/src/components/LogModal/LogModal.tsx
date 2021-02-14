@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 
-import { SimulationLog } from '../../state/simulation/SimulationLog';
+import { SimulationLog } from '../../state/simulation/data/SimulationLog';
 import LogTable from '../LogTable/LogTable';
 
 interface LogModalProps {

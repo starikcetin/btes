@@ -5,7 +5,7 @@ import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
 import './NodeModal.scss';
 import { empty } from '../../common/utils/empty';
 import { RootState } from '../../state/RootState';
-import { NodeData } from '../../state/simulation/NodeData';
+import { NodeData } from '../../state/simulation/data/NodeData';
 import LogTable from '../LogTable/LogTable';
 import NodeNetworkDashboard from '../NodeNetworkDashboard/NodeNetworkDashboard';
 

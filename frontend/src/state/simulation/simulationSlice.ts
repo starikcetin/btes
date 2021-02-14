@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
-import { SimulationPongActionPayload } from './SimulationPongActionPayload';
-import { SimulationSetupActionPayload } from './SimulationSetupActionPayload';
+import { SimulationPongActionPayload } from './actionPayloads/SimulationPongActionPayload';
+import { SimulationSetupActionPayload } from './actionPayloads/SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
-import { SimulationNodeCreatedPayload } from './SimulationNodePayload';
-import { SimulationTeardownPayload } from './SimulationTeardownPayload';
-import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
-import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
-import { SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
-import { SimulationLogActionPayload } from './SimulationLogActionPayload';
-import { SimulationLogNodeActionPayload } from './SimulationLogNodeActionPayload';
-import { SimulationNodesConnectedActionPayload } from './SimulationNodesConnectedActionPayload';
-import { SimulationNodesDisconnectedActionPayload } from './SimulationNodesDisconnectedActionPayload';
+import { SimulationNodeCreatedPayload } from './actionPayloads/SimulationNodePayload';
+import { SimulationTeardownPayload } from './actionPayloads/SimulationTeardownPayload';
+import { SimulationNodeDeletedPayload } from './actionPayloads/SimulaitonNodeDeletedPayload';
+import { SimulationSnapshotReportPayload } from './actionPayloads/SimulationSnapshotReportPayload';
+import { SimulationNodePositionUpdatedActionPayload } from './actionPayloads/SimulationNodePositionUpdatedActionPayload';
+import { SimulationLogActionPayload } from './actionPayloads/SimulationLogActionPayload';
+import { SimulationLogNodeActionPayload } from './actionPayloads/SimulationLogNodeActionPayload';
+import { SimulationNodesConnectedActionPayload } from './actionPayloads/SimulationNodesConnectedActionPayload';
+import { SimulationNodesDisconnectedActionPayload } from './actionPayloads/SimulationNodesDisconnectedActionPayload';
 
 const initialState: SimulationSliceState = {};
 

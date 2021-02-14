@@ -4,7 +4,7 @@ import { animation, Item, Menu, theme, useContextMenu } from 'react-contexify';
 
 import './SimulationNode.scss';
 // import nodeIcon from './pcIcon.png';
-import { NodeData } from '../../state/simulation/NodeData';
+import { NodeData } from '../../state/simulation/data/NodeData';
 import { simulationBridge } from '../../services/simulationBridge';
 
 interface SimulationNodeProps {
