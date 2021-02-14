@@ -30,13 +30,13 @@ export class SimulationNode {
     nodeUid: string,
     positionX: number,
     positionY: number,
-    connectedNodeUids: SimulationNode[],
+    connectedNodes: SimulationNode[],
     receivedMessages: SimulationNodeMessage[]
   ) {
     this.nodeUid = nodeUid;
     this._positionX = positionX;
     this._positionY = positionY;
-    this._connectedNodes = [...connectedNodeUids];
+    this._connectedNodes = [...connectedNodes];
     this._receivedMessages = [...receivedMessages];
   }
 
