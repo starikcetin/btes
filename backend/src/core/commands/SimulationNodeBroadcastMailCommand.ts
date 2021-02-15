@@ -1,22 +1,22 @@
-import { SimulationNodeBroadcastMessagePayload } from '../../common/socketPayloads/SimulationNodeBroadcastMessagePayload';
-import { SimulationNodeMessage } from '../../common/SimulationNodeMessage';
+import { SimulationNodeBroadcastMailPayload } from '../../common/socketPayloads/SimulationNodeBroadcastMailPayload';
+import { SimulationNodeMail } from '../../common/SimulationNodeMail';
 import { Simulation } from '../Simulation';
 import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
 import { SimulationNode } from '../SimulationNode';
 import { UndoubleAction } from '../undoRedo/UndoubleAction';
-import { messageUidGenerator } from '../../utils/uidGenerators';
+import { mailUidGenerator } from '../../utils/uidGenerators';
 
-export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
+export class SimulationNodeBroadcastMailCommand implements UndoubleAction {
   private readonly simulation: Simulation;
   private readonly socketEventEmitter: SimulationNamespaceListener;
-  private readonly eventPayload: SimulationNodeBroadcastMessagePayload;
+  private readonly eventPayload: SimulationNodeBroadcastMailPayload;
 
-  private message: SimulationNodeMessage | undefined;
+  private mail: SimulationNodeMail | undefined;
 
   constructor(
     simulation: Simulation,
     socketEventEmitter: SimulationNamespaceListener,
-    eventPayload: SimulationNodeBroadcastMessagePayload
+    eventPayload: SimulationNodeBroadcastMailPayload
   ) {
     this.simulation = simulation;
     this.socketEventEmitter = socketEventEmitter;
@@ -25,49 +25,49 @@ export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
 
   private readonly broadcast = (
     senderNode: SimulationNode,
-    message: SimulationNodeMessage
+    mail: SimulationNodeMail
   ) => {
-    const recipientNodes = senderNode.advertiseMessage(message);
+    const recipientNodes = senderNode.advertiseMail(mail);
 
     recipientNodes.forEach((recipientNode) => {
-      this.socketEventEmitter.sendSimulationNodeMessageSent({
+      this.socketEventEmitter.sendSimulationNodeMailSent({
         senderNodeUid: senderNode.nodeUid,
         recipientNodeUid: recipientNode.nodeUid,
-        message,
+        mail,
       });
 
       // TODO: wait for latency here
 
-      recipientNode.recordReceivedMessage(message);
-      this.socketEventEmitter.sendSimulationNodeMessageReceived({
+      recipientNode.recordReceivedMail(mail);
+      this.socketEventEmitter.sendSimulationNodeMailReceived({
         senderNodeUid: senderNode.nodeUid,
         recipientNodeUid: recipientNode.nodeUid,
-        message,
+        mail,
       });
 
       // propagating broadcast: recipients in turn broadcast to their own connected nodes.
-      // this propagates the message through the mesh network, just like a real blockchain.
+      // this propagates the mail through the mesh network, just like a real blockchain.
       // ---
       // TODO: make this optional in the socket event, so we can turn it off and step through
       // when we need to do so in the lessons.
       // Tarık, 2021-02-15 04:37
-      this.broadcast(recipientNode, message);
+      this.broadcast(recipientNode, mail);
     });
   };
 
   private readonly perform = () => {
-    if (!this.message) {
+    if (!this.mail) {
       throw new Error('perform is called before execute!');
     }
 
     const senderNode = this.simulation.nodeMap[this.eventPayload.senderNodeUid];
-    this.broadcast(senderNode, this.message);
+    this.broadcast(senderNode, this.mail);
   };
 
   public readonly execute = (): void => {
-    this.message = {
-      messageUid: messageUidGenerator.next().toString(),
-      body: this.eventPayload.messageBody,
+    this.mail = {
+      mailUid: mailUidGenerator.next().toString(),
+      body: this.eventPayload.mailBody,
       originNodeUid: this.eventPayload.senderNodeUid,
     };
 
@@ -77,7 +77,7 @@ export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
   public readonly redo = this.perform;
 
   public readonly undo = (): void => {
-    // TODO: undo broadcast message
+    // TODO: undo broadcast mail
     throw new Error('Method not implemented.');
   };
 }

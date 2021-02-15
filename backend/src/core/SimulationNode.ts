@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
-import { SimulationNodeMessage } from '../common/SimulationNodeMessage';
+import { SimulationNodeMail } from '../common/SimulationNodeMail';
 
 export class SimulationNode {
   public readonly nodeUid: string;
@@ -21,9 +21,9 @@ export class SimulationNode {
     return [...this._connectedNodes];
   }
 
-  private _receivedMessages: SimulationNodeMessage[];
-  public get receivedMessages(): ReadonlyArray<SimulationNodeMessage> {
-    return [...this._receivedMessages];
+  private _receivedMails: SimulationNodeMail[];
+  public get receivedMails(): ReadonlyArray<SimulationNodeMail> {
+    return [...this._receivedMails];
   }
 
   constructor(
@@ -31,13 +31,13 @@ export class SimulationNode {
     positionX: number,
     positionY: number,
     connectedNodes: SimulationNode[],
-    receivedMessages: SimulationNodeMessage[]
+    receivedMails: SimulationNodeMail[]
   ) {
     this.nodeUid = nodeUid;
     this._positionX = positionX;
     this._positionY = positionY;
     this._connectedNodes = [...connectedNodes];
-    this._receivedMessages = [...receivedMessages];
+    this._receivedMails = [...receivedMails];
   }
 
   public readonly teardown = (): void => {
@@ -49,32 +49,23 @@ export class SimulationNode {
     this._positionY = y;
   };
 
-  public readonly recordReceivedMessage = (
-    message: SimulationNodeMessage
-  ): void => {
-    this._receivedMessages.push(message);
+  public readonly recordReceivedMail = (mail: SimulationNodeMail): void => {
+    this._receivedMails.push(mail);
   };
 
-  public readonly forgetReceivedMessage = (
-    message: SimulationNodeMessage
-  ): void => {
-    _.remove(
-      this._receivedMessages,
-      (m) => m.messageUid === message.messageUid
-    );
+  public readonly forgetReceivedMail = (mail: SimulationNodeMail): void => {
+    _.remove(this._receivedMails, (m) => m.mailUid === mail.mailUid);
   };
 
-  /** Returns connected nodes that don't have this message received already. */
-  public readonly advertiseMessage = (
-    message: SimulationNodeMessage
+  /** Returns connected nodes that don't have this mail received already. */
+  public readonly advertiseMail = (
+    mail: SimulationNodeMail
   ): ReadonlyArray<SimulationNode> => {
-    return this._connectedNodes.filter((node) => node.hasMessage(message));
+    return this._connectedNodes.filter((node) => node.hasMail(mail));
   };
 
-  public readonly hasMessage = (message: SimulationNodeMessage): boolean => {
-    return this._receivedMessages.some(
-      (m) => m.messageUid === message.messageUid
-    );
+  public readonly hasMail = (mail: SimulationNodeMail): boolean => {
+    return this._receivedMails.some((m) => m.mailUid === mail.mailUid);
   };
 
   public readonly addConnection = (otherNode: SimulationNode): void => {
@@ -91,7 +82,7 @@ export class SimulationNode {
       positionX: this._positionX,
       positionY: this._positionY,
       connectedNodeUids: this._connectedNodes.map((node) => node.nodeUid),
-      receivedMessages: [...this._receivedMessages],
+      receivedMails: [...this._receivedMails],
     };
   };
 }

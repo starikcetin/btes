@@ -17,12 +17,12 @@ import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
 import { SimulationCreateNodeCommand } from './commands/SimulationCreateNodeCommand';
 import { SimulationDeleteNodeCommand } from './commands/SimulationDeleteNodeCommand';
 import { SimulationUpdateNodePositionCommand } from './commands/SimulationUpdateNodePositionCommand';
-import { SimulationNodeBroadcastMessagePayload } from '../common/socketPayloads/SimulationNodeBroadcastMessagePayload';
-import { SimulationNodeBroadcastMessageCommand } from './commands/SimulationNodeBroadcastMessageCommand';
-import { SimulationNodeMessageReceivedPayload } from '../common/socketPayloads/SimulationNodeMessageReceivedPayload';
-import { SimulationNodeMessageSentPayload } from '../common/socketPayloads/SimulationNodeMessageSentPayload';
-import { SimulationNodeUnicastMessagePayload } from '../common/socketPayloads/SimulationNodeUnicastMessagePayload';
-import { SimulationNodeUnicastMessageCommand } from './commands/SimulationNodeUnicastMessageCommand';
+import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/SimulationNodeBroadcastMailPayload';
+import { SimulationNodeBroadcastMailCommand } from './commands/SimulationNodeBroadcastMailCommand';
+import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
+import { SimulationNodeMailSentPayload } from '../common/socketPayloads/SimulationNodeMailSentPayload';
+import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
+import { SimulationNodeUnicastMailCommand } from './commands/SimulationNodeUnicastMailCommand';
 import { SimulationConnectNodesPayload } from '../common/socketPayloads/SimulationConnectNodesPayload';
 import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/SimulationDisconnectNodesPayload';
 import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
@@ -82,12 +82,12 @@ export class SimulationNamespaceListener {
     socket.on(socketEvents.simulation.undo, this.handleSimulationUndo);
     socket.on(socketEvents.simulation.redo, this.handleSimulationRedo);
     socket.on(
-      socketEvents.simulation.nodeBroadcastMessage,
-      this.handleSimulationNodeBroadcastMessage
+      socketEvents.simulation.nodeBroadcastMail,
+      this.handleSimulationNodeBroadcastMail
     );
     socket.on(
-      socketEvents.simulation.nodeUnicastMessage,
-      this.handleSimulationNodeUnicastMessage
+      socketEvents.simulation.nodeUnicastMail,
+      this.handleSimulationNodeUnicastMail
     );
     socket.on(
       socketEvents.simulation.connectNodes,
@@ -207,10 +207,10 @@ export class SimulationNamespaceListener {
     this.actionHistoryKeeper.redo();
   };
 
-  private readonly handleSimulationNodeBroadcastMessage = (
-    body: SimulationNodeBroadcastMessagePayload
+  private readonly handleSimulationNodeBroadcastMail = (
+    body: SimulationNodeBroadcastMailPayload
   ) => {
-    const createCommand = new SimulationNodeBroadcastMessageCommand(
+    const createCommand = new SimulationNodeBroadcastMailCommand(
       this.simulation,
       this,
       body
@@ -220,10 +220,10 @@ export class SimulationNamespaceListener {
     createCommand.execute();
   };
 
-  private readonly handleSimulationNodeUnicastMessage = (
-    body: SimulationNodeUnicastMessagePayload
+  private readonly handleSimulationNodeUnicastMail = (
+    body: SimulationNodeUnicastMailPayload
   ) => {
-    const createCommand = new SimulationNodeUnicastMessageCommand(
+    const createCommand = new SimulationNodeUnicastMailCommand(
       this.simulation,
       this,
       body
@@ -233,16 +233,16 @@ export class SimulationNamespaceListener {
     createCommand.execute();
   };
 
-  public readonly sendSimulationNodeMessageReceived = (
-    body: SimulationNodeMessageReceivedPayload
+  public readonly sendSimulationNodeMailReceived = (
+    body: SimulationNodeMailReceivedPayload
   ): void => {
-    this.ns.emit(socketEvents.simulation.nodeMessageReceived, body);
+    this.ns.emit(socketEvents.simulation.nodeMailReceived, body);
   };
 
-  public readonly sendSimulationNodeMessageSent = (
-    body: SimulationNodeMessageSentPayload
+  public readonly sendSimulationNodeMailSent = (
+    body: SimulationNodeMailSentPayload
   ): void => {
-    this.ns.emit(socketEvents.simulation.nodeMessageSent, body);
+    this.ns.emit(socketEvents.simulation.nodeMailSent, body);
   };
 
   private readonly handleSimulationConnectNodes = (

@@ -31,7 +31,7 @@ export class Simulation {
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,
       nodeSnapshot.connectedNodeUids.map((nodeUid) => this.nodeMap[nodeUid]),
-      nodeSnapshot.receivedMessages
+      nodeSnapshot.receivedMails
     );
 
     this.nodeMap[nodeSnapshot.nodeUid] = newNode;

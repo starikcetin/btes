@@ -1,22 +1,22 @@
-import { SimulationNodeUnicastMessagePayload } from '../../common/socketPayloads/SimulationNodeUnicastMessagePayload';
-import { SimulationNodeMessage } from '../../common/SimulationNodeMessage';
+import { SimulationNodeUnicastMailPayload } from '../../common/socketPayloads/SimulationNodeUnicastMailPayload';
+import { SimulationNodeMail } from '../../common/SimulationNodeMail';
 import { Simulation } from '../Simulation';
 import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
 import { SimulationNode } from '../SimulationNode';
 import { UndoubleAction } from '../undoRedo/UndoubleAction';
-import { messageUidGenerator } from '../../utils/uidGenerators';
+import { mailUidGenerator } from '../../utils/uidGenerators';
 
-export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
+export class SimulationNodeUnicastMailCommand implements UndoubleAction {
   private readonly simulation: Simulation;
   private readonly socketEventEmitter: SimulationNamespaceListener;
-  private readonly eventPayload: SimulationNodeUnicastMessagePayload;
+  private readonly eventPayload: SimulationNodeUnicastMailPayload;
 
-  private message: SimulationNodeMessage | undefined;
+  private mail: SimulationNodeMail | undefined;
 
   constructor(
     simulation: Simulation,
     socketEventEmitter: SimulationNamespaceListener,
-    eventPayload: SimulationNodeUnicastMessagePayload
+    eventPayload: SimulationNodeUnicastMailPayload
   ) {
     this.simulation = simulation;
     this.socketEventEmitter = socketEventEmitter;
@@ -26,26 +26,26 @@ export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
   private readonly unicast = (
     senderNode: SimulationNode,
     recipientNode: SimulationNode,
-    message: SimulationNodeMessage
+    mail: SimulationNodeMail
   ) => {
-    this.socketEventEmitter.sendSimulationNodeMessageSent({
+    this.socketEventEmitter.sendSimulationNodeMailSent({
       senderNodeUid: senderNode.nodeUid,
       recipientNodeUid: recipientNode.nodeUid,
-      message,
+      mail,
     });
 
     // TODO: wait for latency here
 
-    recipientNode.recordReceivedMessage(message);
-    this.socketEventEmitter.sendSimulationNodeMessageReceived({
+    recipientNode.recordReceivedMail(mail);
+    this.socketEventEmitter.sendSimulationNodeMailReceived({
       senderNodeUid: senderNode.nodeUid,
       recipientNodeUid: recipientNode.nodeUid,
-      message,
+      mail,
     });
   };
 
   private readonly perform = () => {
-    if (!this.message) {
+    if (!this.mail) {
       throw new Error('perform is called before execute!');
     }
 
@@ -54,13 +54,13 @@ export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
       this.eventPayload.recipientNodeUid
     ];
 
-    this.unicast(senderNode, recipientNode, this.message);
+    this.unicast(senderNode, recipientNode, this.mail);
   };
 
   public readonly execute = (): void => {
-    this.message = {
-      messageUid: messageUidGenerator.next().toString(),
-      body: this.eventPayload.messageBody,
+    this.mail = {
+      mailUid: mailUidGenerator.next().toString(),
+      body: this.eventPayload.mailBody,
       originNodeUid: this.eventPayload.senderNodeUid,
     };
 
@@ -70,7 +70,7 @@ export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
   public readonly redo = this.perform;
 
   public readonly undo = (): void => {
-    // todo: undo unicast message
+    // todo: undo unicast mail
     throw new Error('Method not implemented.');
   };
 }
