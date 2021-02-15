@@ -49,8 +49,19 @@ export class SimulationNode {
     this._positionY = y;
   };
 
-  public readonly receiveMessage = (message: SimulationNodeMessage): void => {
+  public readonly recordReceivedMessage = (
+    message: SimulationNodeMessage
+  ): void => {
     this._receivedMessages.push(message);
+  };
+
+  public readonly forgetReceivedMessage = (
+    message: SimulationNodeMessage
+  ): void => {
+    _.remove(
+      this._receivedMessages,
+      (m) => m.messageUid === message.messageUid
+    );
   };
 
   /** Returns connected nodes that don't have this message received already. */

@@ -28,8 +28,6 @@ export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
     recipientNode: SimulationNode,
     message: SimulationNodeMessage
   ) => {
-    recipientNode.receiveMessage(message);
-
     this.socketEventEmitter.sendSimulationNodeMessageSent({
       senderNodeUid: senderNode.nodeUid,
       recipientNodeUid: recipientNode.nodeUid,
@@ -38,6 +36,7 @@ export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
 
     // TODO: wait for latency here
 
+    recipientNode.recordReceivedMessage(message);
     this.socketEventEmitter.sendSimulationNodeMessageReceived({
       senderNodeUid: senderNode.nodeUid,
       recipientNodeUid: recipientNode.nodeUid,
@@ -62,6 +61,7 @@ export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
     this.message = {
       messageUid: messageUidGenerator.next().toString(),
       body: this.eventPayload.messageBody,
+      originNodeUid: this.eventPayload.senderNodeUid,
     };
 
     this.perform();
@@ -70,6 +70,7 @@ export class SimulationNodeUnicastMessageCommand implements UndoubleAction {
   public readonly redo = this.perform;
 
   public readonly undo = (): void => {
+    // todo: undo unicast message
     throw new Error('Method not implemented.');
   };
 }

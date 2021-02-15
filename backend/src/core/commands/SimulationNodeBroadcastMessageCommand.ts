@@ -30,8 +30,6 @@ export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
     const recipientNodes = senderNode.advertiseMessage(message);
 
     recipientNodes.forEach((recipientNode) => {
-      recipientNode.receiveMessage(message);
-
       this.socketEventEmitter.sendSimulationNodeMessageSent({
         senderNodeUid: senderNode.nodeUid,
         recipientNodeUid: recipientNode.nodeUid,
@@ -40,14 +38,19 @@ export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
 
       // TODO: wait for latency here
 
+      recipientNode.recordReceivedMessage(message);
       this.socketEventEmitter.sendSimulationNodeMessageReceived({
         senderNodeUid: senderNode.nodeUid,
         recipientNodeUid: recipientNode.nodeUid,
         message,
       });
 
-      // contagious broadcast: recipients in turn broadcast to their own connected nodes.
+      // propagating broadcast: recipients in turn broadcast to their own connected nodes.
       // this propagates the message through the mesh network, just like a real blockchain.
+      // ---
+      // TODO: make this optional in the socket event, so we can turn it off and step through
+      // when we need to do so in the lessons.
+      // Tarık, 2021-02-15 04:37
       this.broadcast(recipientNode, message);
     });
   };
@@ -65,6 +68,7 @@ export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
     this.message = {
       messageUid: messageUidGenerator.next().toString(),
       body: this.eventPayload.messageBody,
+      originNodeUid: this.eventPayload.senderNodeUid,
     };
 
     this.perform();
@@ -73,6 +77,7 @@ export class SimulationNodeBroadcastMessageCommand implements UndoubleAction {
   public readonly redo = this.perform;
 
   public readonly undo = (): void => {
+    // TODO: undo broadcast message
     throw new Error('Method not implemented.');
   };
 }
