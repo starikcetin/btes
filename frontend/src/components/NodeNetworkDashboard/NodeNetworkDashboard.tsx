@@ -77,14 +77,11 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
     });
   };
 
-  const makeOtherNodeUidSelectOptions = (otherNodeUids: string[]) => {
-    return otherNodeUids.map((otherNodeUid) => {
-      return {
-        value: otherNodeUid,
-        label: otherNodeUid,
-      };
-    });
-  };
+  const makeTargetNodeSelectOptions = (targetNodeUids: string[]) =>
+    targetNodeUids.map((targetNodeUid) => ({
+      value: targetNodeUid,
+      label: targetNodeUid,
+    }));
 
   return (
     <Container>
@@ -136,10 +133,10 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
               e.stopPropagation();
             }}
           >
-            <Form.Group controlId="exampleForm.ControlSelect1">
-              <Form.Label>Other Node</Form.Label>
+            <Form.Group>
+              <Form.Label>Target Node</Form.Label>
               <SaneSelect
-                options={makeOtherNodeUidSelectOptions(unconnectedNodeUids)}
+                options={makeTargetNodeSelectOptions(unconnectedNodeUids)}
                 onChange={(val) => setTargetNodeSelectValue(val)}
               />
             </Form.Group>
