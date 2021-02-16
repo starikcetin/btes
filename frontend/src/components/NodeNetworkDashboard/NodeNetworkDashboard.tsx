@@ -9,14 +9,14 @@
 // * calculate total latencies to connected nodes
 
 import _ from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap';
-import Select from 'react-select';
 
 import { RootState } from '../../state/RootState';
 import { simulationBridge } from '../../services/simulationBridge';
 import { itemwiseEqual } from '../../utils/itemwiseEqual';
+import { SaneSelect } from '../SaneSelect/SaneSelect';
 
 type TargetNodeSelectOptionType = { value: string; label: string };
 
@@ -33,10 +33,6 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
     setTargetNodeSelectValue,
   ] = useState<TargetNodeSelectOptionType | null>(null);
 
-  const [targetNodeSelectOptions, setTargetNodeSelectOptions] = useState<
-    TargetNodeSelectOptionType[]
-  >([]);
-
   const connectedNodeUids = useSelector((state: RootState) =>
     nodeUid
       ? state.simulation[simulationUid].nodeMap[nodeUid].connectedNodeUids
@@ -52,30 +48,6 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
 
     return _.without(allNodeUids, ...connectedNodeUids, nodeUid || '');
   }, itemwiseEqual);
-
-  useEffect(() => {
-    const isUnconnectedSelectOptionsOutdated = !itemwiseEqual(
-      targetNodeSelectOptions.map((o) => o.value),
-      unconnectedNodeUids
-    );
-
-    if (isUnconnectedSelectOptionsOutdated) {
-      const options = makeOtherNodeUidSelectOptions(unconnectedNodeUids);
-      setTargetNodeSelectOptions(options);
-    }
-  }, [targetNodeSelectOptions, unconnectedNodeUids]);
-
-  useEffect(() => {
-    const isUnconnectedSelectValueInvalid =
-      targetNodeSelectValue &&
-      !targetNodeSelectOptions.some(
-        (opt) => opt.value === targetNodeSelectValue.value
-      );
-
-    if (isUnconnectedSelectValueInvalid) {
-      setTargetNodeSelectValue(null);
-    }
-  }, [targetNodeSelectOptions, targetNodeSelectValue]);
 
   const disconnect = (otherNodeUid: string) => {
     if (null === nodeUid) {
@@ -166,10 +138,9 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
           >
             <Form.Group controlId="exampleForm.ControlSelect1">
               <Form.Label>Other Node</Form.Label>
-              <Select
-                options={targetNodeSelectOptions}
-                value={targetNodeSelectValue}
-                onChange={(val, act) => setTargetNodeSelectValue(val)}
+              <SaneSelect
+                options={makeOtherNodeUidSelectOptions(unconnectedNodeUids)}
+                onChange={(val) => setTargetNodeSelectValue(val)}
               />
             </Form.Group>
             <Button
