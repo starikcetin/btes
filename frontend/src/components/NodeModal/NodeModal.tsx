@@ -8,6 +8,7 @@ import { RootState } from '../../state/RootState';
 import { NodeData } from '../../state/simulation/data/NodeData';
 import LogTable from '../LogTable/LogTable';
 import NodeNetworkDashboard from '../NodeNetworkDashboard/NodeNetworkDashboard';
+import { NodeMailsDashboard } from '../NodeMailsDashboard/NodeMailsDashboard';
 
 interface NodeModalProps {
   closeHandler: () => void;
@@ -76,6 +77,16 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
             className="comp-node-modal--tab-network"
           >
             <NodeNetworkDashboard
+              simulationUid={simulationUid}
+              nodeUid={nodeUid}
+            />
+          </Tab>
+          <Tab
+            eventKey="mails"
+            title="Mails"
+            className="comp-node-modal--tab-mails"
+          >
+            <NodeMailsDashboard
               simulationUid={simulationUid}
               nodeUid={nodeUid}
             />

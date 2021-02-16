@@ -1,0 +1,10 @@
+.comp-node-mails-dashboard {
+  &--body-textarea {
+    // specificity hack: scss double ampersand. repeats the selector two times.
+    // note: vscode info is wrong, this is the result: .class.class
+    &#{&} {
+      height: 120px;
+      resize: none;
+    }
+  }
+}
