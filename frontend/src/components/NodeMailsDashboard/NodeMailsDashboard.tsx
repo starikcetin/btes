@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import './NodeMailsDashboard.scss';
 import { RootState } from '../../state/RootState';
 import { SaneSelect } from '../SaneSelect/SaneSelect';
+import { simulationBridge } from '../../services/simulationBridge';
 
 interface NodeMailsDashboardProps {
   simulationUid: string;
@@ -40,13 +41,37 @@ export const NodeMailsDashboard: React.FC<NodeMailsDashboardProps> = (
 
   const canSend = isBroadcast || null !== recipientNodeUid;
 
-  const send = () => {
-    console.log('send message', {
-      isBroadcast,
-      shouldPropagate,
-      recipientNodeUid,
-      mailBody,
-    });
+  const sendMail = () => {
+    if (null === nodeUid) {
+      console.error(`sendMail is called, but nodeUid is ${nodeUid}!`);
+      return;
+    }
+
+    if (undefined === mailBody) {
+      console.error(`sendMail is called, but mailBody is ${mailBody}!`);
+      return;
+    }
+
+    if (isBroadcast) {
+      simulationBridge.sendSimulationBroadcastMail(simulationUid, {
+        senderNodeUid: nodeUid,
+        mailBody,
+        // TODO: shouldPropagate
+      });
+    } else {
+      if (null === recipientNodeUid) {
+        console.error(
+          `sendMail is called, but recipientNodeUid is ${recipientNodeUid}!`
+        );
+        return;
+      }
+
+      simulationBridge.sendSimulationUnicastMail(simulationUid, {
+        senderNodeUid: nodeUid,
+        recipientNodeUid: recipientNodeUid,
+        mailBody,
+      });
+    }
   };
 
   return (
@@ -114,7 +139,7 @@ export const NodeMailsDashboard: React.FC<NodeMailsDashboardProps> = (
                 <Button
                   variant="success"
                   type="button"
-                  onClick={send}
+                  onClick={sendMail}
                   disabled={!canSend}
                 >
                   Send
