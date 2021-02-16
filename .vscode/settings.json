@@ -3,7 +3,6 @@
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
-    "source.fixAll.stylelint": true
   },
 
   "eslint.packageManager": "yarn",
@@ -24,8 +23,14 @@
   // style
   "[scss]": {
     "editor.defaultFormatter": "stylelint.vscode-stylelint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": true,
+    },
   },
   "[css]": {
     "editor.defaultFormatter": "stylelint.vscode-stylelint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": true,
+    },
   },
 }
