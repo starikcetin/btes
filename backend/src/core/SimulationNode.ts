@@ -61,7 +61,7 @@ export class SimulationNode {
   public readonly advertiseMail = (
     mail: SimulationNodeMail
   ): ReadonlyArray<SimulationNode> => {
-    return this._connectedNodes.filter((node) => node.hasMail(mail));
+    return this._connectedNodes.filter((node) => !node.hasMail(mail));
   };
 
   public readonly hasMail = (mail: SimulationNodeMail): boolean => {
