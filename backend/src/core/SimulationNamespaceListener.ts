@@ -176,7 +176,6 @@ export class SimulationNamespaceListener {
   ) => {
     const command = new SimulationNodeBroadcastMailCommand(
       this.simulation,
-      this.socketEmitter,
       body
     );
 
