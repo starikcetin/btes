@@ -54,8 +54,16 @@ export class SimulationNode {
     this._positionY = y;
   };
 
-  public readonly recordMail = (mail: SimulationNodeMail): void => {
+  public readonly receiveMail = (
+    senderNodeUid: string,
+    mail: SimulationNodeMail
+  ): void => {
     this._receivedMails.push(mail);
+    this.socketEmitter.sendSimulationNodeMailReceived({
+      senderNodeUid: senderNodeUid,
+      recipientNodeUid: this.nodeUid,
+      mail,
+    });
   };
 
   public readonly forgetMail = (mail: SimulationNodeMail): void => {
@@ -72,6 +80,21 @@ export class SimulationNode {
 
   public readonly removeConnection = (otherNode: SimulationNode): void => {
     _.remove(this._connectedNodes, otherNode);
+  };
+
+  public readonly sendUnicastMail = (
+    recipient: SimulationNode,
+    mail: SimulationNodeMail
+  ): void => {
+    this.socketEmitter.sendSimulationNodeMailSent({
+      senderNodeUid: this.nodeUid,
+      recipientNodeUid: recipient.nodeUid,
+      mail,
+    });
+
+    // TODO: wait for latency here
+
+    recipient.receiveMail(this.nodeUid, mail);
   };
 
   public readonly takeSnapshot = (): SimulationNodeSnapshot => {

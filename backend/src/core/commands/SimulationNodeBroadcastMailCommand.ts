@@ -42,12 +42,7 @@ export class SimulationNodeBroadcastMailCommand implements SimulationCommand {
       recipientNode.hasMail(mail);
 
     if (!didReceiveMailBefore) {
-      recipientNode.recordMail(mail);
-      this.socketEventEmitter.sendSimulationNodeMailReceived({
-        senderNodeUid: senderNode.nodeUid,
-        recipientNodeUid: recipientNode.nodeUid,
-        mail,
-      });
+      recipientNode.receiveMail(senderNode.nodeUid, mail);
 
       // propagating broadcast: recipients in turn broadcast to their own connected nodes.
       // this propagates the mail through the mesh network, just like a real blockchain.

@@ -186,12 +186,7 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationNodeUnicastMail = (
     body: SimulationNodeUnicastMailPayload
   ) => {
-    const command = new SimulationNodeUnicastMailCommand(
-      this.simulation,
-      this.socketEmitter,
-      body
-    );
-
+    const command = new SimulationNodeUnicastMailCommand(this.simulation, body);
     command.execute();
   };
 
