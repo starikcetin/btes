@@ -3,11 +3,10 @@ import { SimulationNodeMail } from '../../common/SimulationNodeMail';
 import { Simulation } from '../Simulation';
 import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { SimulationNode } from '../SimulationNode';
-import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
+import { SimulationCommand } from '../SimulationCommand';
 import { mailUidGenerator } from '../../utils/uidGenerators';
 
-export class SimulationNodeUnicastMailCommand
-  implements UndoableSimulationCommand {
+export class SimulationNodeUnicastMailCommand implements SimulationCommand {
   private readonly simulation: Simulation;
   private readonly socketEventEmitter: SimulationNamespaceEmitter;
   private readonly eventPayload: SimulationNodeUnicastMailPayload;
@@ -66,12 +65,5 @@ export class SimulationNodeUnicastMailCommand
     };
 
     this.perform();
-  };
-
-  public readonly redo = this.perform;
-
-  public readonly undo = (): void => {
-    // todo: undo unicast mail
-    throw new Error('Method not implemented.');
   };
 }

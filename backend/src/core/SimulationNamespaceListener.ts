@@ -174,27 +174,25 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationNodeBroadcastMail = (
     body: SimulationNodeBroadcastMailPayload
   ) => {
-    const createCommand = new SimulationNodeBroadcastMailCommand(
+    const command = new SimulationNodeBroadcastMailCommand(
       this.simulation,
       this.socketEmitter,
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
-    createCommand.execute();
+    command.execute();
   };
 
   private readonly handleSimulationNodeUnicastMail = (
     body: SimulationNodeUnicastMailPayload
   ) => {
-    const createCommand = new SimulationNodeUnicastMailCommand(
+    const command = new SimulationNodeUnicastMailCommand(
       this.simulation,
       this.socketEmitter,
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
-    createCommand.execute();
+    command.execute();
   };
 
   private readonly handleSimulationConnectNodes = (

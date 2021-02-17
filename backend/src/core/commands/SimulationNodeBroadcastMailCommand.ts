@@ -3,11 +3,10 @@ import { SimulationNodeMail } from '../../common/SimulationNodeMail';
 import { Simulation } from '../Simulation';
 import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { SimulationNode } from '../SimulationNode';
-import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 import { mailUidGenerator } from '../../utils/uidGenerators';
+import { SimulationCommand } from '../SimulationCommand';
 
-export class SimulationNodeBroadcastMailCommand
-  implements UndoableSimulationCommand {
+export class SimulationNodeBroadcastMailCommand implements SimulationCommand {
   private readonly simulation: Simulation;
   private readonly socketEventEmitter: SimulationNamespaceEmitter;
   private readonly eventPayload: SimulationNodeBroadcastMailPayload;
@@ -91,12 +90,5 @@ export class SimulationNodeBroadcastMailCommand
     };
 
     this.perform();
-  };
-
-  public readonly redo = this.perform;
-
-  public readonly undo = (): void => {
-    // TODO: undo broadcast mail
-    throw new Error('Method not implemented.');
   };
 }
