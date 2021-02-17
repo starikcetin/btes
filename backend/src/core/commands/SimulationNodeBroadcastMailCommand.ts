@@ -3,10 +3,11 @@ import { SimulationNodeMail } from '../../common/SimulationNodeMail';
 import { Simulation } from '../Simulation';
 import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { SimulationNode } from '../SimulationNode';
-import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 import { mailUidGenerator } from '../../utils/uidGenerators';
 
-export class SimulationNodeBroadcastMailCommand implements UndoubleAction {
+export class SimulationNodeBroadcastMailCommand
+  implements UndoableSimulationCommand {
   private readonly simulation: Simulation;
   private readonly socketEventEmitter: SimulationNamespaceEmitter;
   private readonly eventPayload: SimulationNodeBroadcastMailPayload;

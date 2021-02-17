@@ -1,8 +1,9 @@
 import { SimulationUpdateNodePositionPayload } from '../../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import { Simulation } from '../Simulation';
-import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 
-export class SimulationUpdateNodePositionCommand implements UndoubleAction {
+export class SimulationUpdateNodePositionCommand
+  implements UndoableSimulationCommand {
   private readonly simulation: Simulation;
   private readonly eventPayload: SimulationUpdateNodePositionPayload;
 

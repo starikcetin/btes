@@ -2,7 +2,7 @@ import { Namespace } from 'socket.io';
 import { Simulation } from './Simulation';
 import { fatalAssert } from '../utils/fatalAssert';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
-import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
+import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 
 class SimulationManager {
@@ -18,7 +18,7 @@ class SimulationManager {
   } = {};
 
   public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
-    const actionHistoryKeeper = new ActionHistoryKeeper();
+    const actionHistoryKeeper = new CommandHistoryManager();
     const emitter = new SimulationNamespaceEmitter(ns);
     const newSimulation = new Simulation(emitter, simulationUid);
     const listener = new SimulationNamespaceListener(

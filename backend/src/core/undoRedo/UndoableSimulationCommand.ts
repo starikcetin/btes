@@ -1,4 +1,4 @@
-export interface UndoubleAction {
+export interface UndoableSimulationCommand {
   /** Perform the action for the first time. */
   execute(): void;
 

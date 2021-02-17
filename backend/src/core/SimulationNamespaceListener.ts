@@ -8,7 +8,7 @@ import { SimulationDeleteNodePayload } from '../common/socketPayloads/Simulation
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
 import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import { Simulation } from './Simulation';
-import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
+import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationCreateNodeCommand } from './commands/SimulationCreateNodeCommand';
 import { SimulationDeleteNodeCommand } from './commands/SimulationDeleteNodeCommand';
 import { SimulationUpdateNodePositionCommand } from './commands/SimulationUpdateNodePositionCommand';
@@ -25,13 +25,13 @@ import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
   private readonly ns: Namespace;
-  private readonly actionHistoryKeeper: ActionHistoryKeeper;
+  private readonly actionHistoryKeeper: CommandHistoryManager;
   private readonly socketEmitter: SimulationNamespaceEmitter;
 
   constructor(
     simulation: Simulation,
     ns: Namespace,
-    actionHistoryKeeper: ActionHistoryKeeper,
+    actionHistoryKeeper: CommandHistoryManager,
     socketEmitter: SimulationNamespaceEmitter
   ) {
     this.simulation = simulation;

@@ -1,8 +1,9 @@
 import { SimulationDisconnectNodesPayload } from '../../common/socketPayloads/SimulationDisconnectNodesPayload';
 import { Simulation } from '../Simulation';
-import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 
-export class SimulationDisconnectNodesCommand implements UndoubleAction {
+export class SimulationDisconnectNodesCommand
+  implements UndoableSimulationCommand {
   private readonly simulation: Simulation;
   private readonly eventPayload: SimulationDisconnectNodesPayload;
 
