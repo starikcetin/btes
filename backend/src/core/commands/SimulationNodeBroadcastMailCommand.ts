@@ -23,22 +23,26 @@ export class SimulationNodeBroadcastMailCommand implements UndoubleAction {
     this.eventPayload = eventPayload;
   }
 
-  private readonly broadcast = (
+  private readonly send = (
     senderNode: SimulationNode,
+    recipientNode: SimulationNode,
     mail: SimulationNodeMail
   ) => {
-    const recipientNodes = senderNode.advertiseMail(mail);
+    this.socketEventEmitter.sendSimulationNodeMailSent({
+      senderNodeUid: senderNode.nodeUid,
+      recipientNodeUid: recipientNode.nodeUid,
+      mail,
+    });
 
-    recipientNodes.forEach((recipientNode) => {
-      this.socketEventEmitter.sendSimulationNodeMailSent({
-        senderNodeUid: senderNode.nodeUid,
-        recipientNodeUid: recipientNode.nodeUid,
-        mail,
-      });
+    // TODO: wait for latency here
 
-      // TODO: wait for latency here
+    // only record & propagate if we did not receive the mail before.
+    const didReceiveMailBefore =
+      recipientNode.nodeUid === mail.originNodeUid ||
+      recipientNode.hasMail(mail);
 
-      recipientNode.recordReceivedMail(mail);
+    if (!didReceiveMailBefore) {
+      recipientNode.recordMail(mail);
       this.socketEventEmitter.sendSimulationNodeMailReceived({
         senderNodeUid: senderNode.nodeUid,
         recipientNodeUid: recipientNode.nodeUid,
@@ -52,7 +56,21 @@ export class SimulationNodeBroadcastMailCommand implements UndoubleAction {
       // when we need to do so in the lessons.
       // Tarık, 2021-02-15 04:37
       this.broadcast(recipientNode, mail);
-    });
+    }
+  };
+
+  private readonly broadcast = (
+    senderNode: SimulationNode,
+    mail: SimulationNodeMail
+  ) => {
+    // prepare network messages
+    const recipientNodes = senderNode.connectedNodes;
+    const senders = recipientNodes.map((recipientNode) =>
+      this.send.bind(this, senderNode, recipientNode, mail)
+    );
+
+    // send network messages
+    senders.forEach((sender) => sender.call(this));
   };
 
   private readonly perform = () => {

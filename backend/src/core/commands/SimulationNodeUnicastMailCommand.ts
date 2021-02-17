@@ -36,7 +36,7 @@ export class SimulationNodeUnicastMailCommand implements UndoubleAction {
 
     // TODO: wait for latency here
 
-    recipientNode.recordReceivedMail(mail);
+    recipientNode.recordMail(mail);
     this.socketEventEmitter.sendSimulationNodeMailReceived({
       senderNodeUid: senderNode.nodeUid,
       recipientNodeUid: recipientNode.nodeUid,

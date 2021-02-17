@@ -49,19 +49,12 @@ export class SimulationNode {
     this._positionY = y;
   };
 
-  public readonly recordReceivedMail = (mail: SimulationNodeMail): void => {
+  public readonly recordMail = (mail: SimulationNodeMail): void => {
     this._receivedMails.push(mail);
   };
 
-  public readonly forgetReceivedMail = (mail: SimulationNodeMail): void => {
+  public readonly forgetMail = (mail: SimulationNodeMail): void => {
     _.remove(this._receivedMails, (m) => m.mailUid === mail.mailUid);
-  };
-
-  /** Returns connected nodes that don't have this mail received already. */
-  public readonly advertiseMail = (
-    mail: SimulationNodeMail
-  ): ReadonlyArray<SimulationNode> => {
-    return this._connectedNodes.filter((node) => !node.hasMail(mail));
   };
 
   public readonly hasMail = (mail: SimulationNodeMail): boolean => {
