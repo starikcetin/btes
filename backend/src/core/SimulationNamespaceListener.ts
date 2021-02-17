@@ -124,7 +124,6 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationCreateNodeCommand(
       this.simulation,
-      this.socketEmitter,
       body
     );
 
@@ -137,7 +136,6 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationDeleteNodeCommand(
       this.simulation,
-      this.socketEmitter,
       body
     );
 
@@ -158,7 +156,6 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationUpdateNodePositionCommand(
       this.simulation,
-      this.socketEmitter,
       body
     );
 
@@ -205,7 +202,6 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationConnectNodesCommand(
       this.simulation,
-      this.socketEmitter,
       body
     );
 
@@ -218,7 +214,6 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationDisconnectNodesCommand(
       this.simulation,
-      this.socketEmitter,
       body
     );
 

@@ -34,6 +34,12 @@ export class Simulation {
       []
     );
     this.nodeMap[nodeUid] = newNode;
+
+    this.socketEmitter.sendSimulationNodeCreated({
+      nodeUid: newNode.nodeUid,
+      nodeSnapshot: newNode.takeSnapshot(),
+    });
+
     return newNode;
   };
 
@@ -51,6 +57,11 @@ export class Simulation {
 
     this.nodeMap[nodeSnapshot.nodeUid] = newNode;
 
+    this.socketEmitter.sendSimulationNodeCreated({
+      nodeUid: newNode.nodeUid,
+      nodeSnapshot,
+    });
+
     return newNode;
   };
 
@@ -58,6 +69,10 @@ export class Simulation {
     const node = this.nodeMap[nodeUid];
     node.teardown();
     delete this.nodeMap[nodeUid];
+
+    this.socketEmitter.sendSimulationNodeDeleted({
+      nodeUid,
+    });
   };
 
   public readonly updateNodePosition = (
@@ -67,6 +82,12 @@ export class Simulation {
   ): void => {
     const node = this.nodeMap[nodeUid];
     node.updatePosition(positionX, positionY);
+
+    this.socketEmitter.sendSimulationNodePositionUpdated({
+      nodeUid,
+      positionX,
+      positionY,
+    });
   };
 
   public readonly connectNodes = (
@@ -78,6 +99,11 @@ export class Simulation {
 
     firstNode.addConnection(secondNode);
     secondNode.addConnection(firstNode);
+
+    this.socketEmitter.sendSimulationNodesConnected({
+      firstNodeUid,
+      secondNodeUid,
+    });
   };
 
   public readonly disconnectNodes = (
@@ -89,6 +115,11 @@ export class Simulation {
 
     firstNode.removeConnection(secondNode);
     secondNode.removeConnection(firstNode);
+
+    this.socketEmitter.sendSimulationNodesDisconnected({
+      firstNodeUid,
+      secondNodeUid,
+    });
   };
 
   public readonly takeSnapshot = (): SimulationSnapshot => {
