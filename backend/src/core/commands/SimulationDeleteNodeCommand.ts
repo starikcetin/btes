@@ -1,19 +1,19 @@
 import { SimulationNodeSnapshot } from '../../common/SimulationNodeSnapshot';
 import { SimulationDeleteNodePayload } from '../../common/socketPayloads/SimulationDeleteNodePayload';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
+import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { UndoubleAction } from '../undoRedo/UndoubleAction';
 
 export class SimulationDeleteNodeCommand implements UndoubleAction {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
+  private readonly socketEventEmitter: SimulationNamespaceEmitter;
   private readonly eventPayload: SimulationDeleteNodePayload;
 
   private createdNodeSnapshot: SimulationNodeSnapshot | undefined;
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
+    socketEventEmitter: SimulationNamespaceEmitter,
     eventPayload: SimulationDeleteNodePayload
   ) {
     this.simulation = simulation;

@@ -1,12 +1,12 @@
 import { SimulationCreateNodePayload } from '../../common/socketPayloads/SimulationCreateNodePayload';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
+import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { UndoubleAction } from '../undoRedo/UndoubleAction';
 import { SimulationNodeSnapshot } from '../../common/SimulationNodeSnapshot';
 
 export class SimulationCreateNodeCommand implements UndoubleAction {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
+  private readonly socketEventEmitter: SimulationNamespaceEmitter;
   private readonly eventPayload: SimulationCreateNodePayload;
 
   private createdNodeUid: string | undefined;
@@ -14,7 +14,7 @@ export class SimulationCreateNodeCommand implements UndoubleAction {
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
+    socketEventEmitter: SimulationNamespaceEmitter,
     eventPayload: SimulationCreateNodePayload
   ) {
     this.simulation = simulation;

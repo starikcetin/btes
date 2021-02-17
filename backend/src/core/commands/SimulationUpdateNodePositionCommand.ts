@@ -1,11 +1,11 @@
 import { SimulationUpdateNodePositionPayload } from '../../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
+import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { UndoubleAction } from '../undoRedo/UndoubleAction';
 
 export class SimulationUpdateNodePositionCommand implements UndoubleAction {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
+  private readonly socketEventEmitter: SimulationNamespaceEmitter;
   private readonly eventPayload: SimulationUpdateNodePositionPayload;
 
   private previousPositionX: number | undefined;
@@ -13,7 +13,7 @@ export class SimulationUpdateNodePositionCommand implements UndoubleAction {
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
+    socketEventEmitter: SimulationNamespaceEmitter,
     eventPayload: SimulationUpdateNodePositionPayload
   ) {
     this.simulation = simulation;

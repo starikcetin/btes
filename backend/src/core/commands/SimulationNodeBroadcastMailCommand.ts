@@ -1,21 +1,21 @@
 import { SimulationNodeBroadcastMailPayload } from '../../common/socketPayloads/SimulationNodeBroadcastMailPayload';
 import { SimulationNodeMail } from '../../common/SimulationNodeMail';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
+import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { SimulationNode } from '../SimulationNode';
 import { UndoubleAction } from '../undoRedo/UndoubleAction';
 import { mailUidGenerator } from '../../utils/uidGenerators';
 
 export class SimulationNodeBroadcastMailCommand implements UndoubleAction {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
+  private readonly socketEventEmitter: SimulationNamespaceEmitter;
   private readonly eventPayload: SimulationNodeBroadcastMailPayload;
 
   private mail: SimulationNodeMail | undefined;
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
+    socketEventEmitter: SimulationNamespaceEmitter,
     eventPayload: SimulationNodeBroadcastMailPayload
   ) {
     this.simulation = simulation;
