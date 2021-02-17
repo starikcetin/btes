@@ -1,24 +1,19 @@
 import { SimulationCreateNodePayload } from '../../common/socketPayloads/SimulationCreateNodePayload';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
-import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 import { SimulationNodeSnapshot } from '../../common/SimulationNodeSnapshot';
 
-export class SimulationCreateNodeCommand implements UndoubleAction {
+export class SimulationCreateNodeCommand implements UndoableSimulationCommand {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
   private readonly eventPayload: SimulationCreateNodePayload;
 
-  private createdNodeUid: string | undefined;
   private createdNodeSnapshot: SimulationNodeSnapshot | undefined;
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
     eventPayload: SimulationCreateNodePayload
   ) {
     this.simulation = simulation;
-    this.socketEventEmitter = socketEventEmitter;
     this.eventPayload = eventPayload;
   }
 
@@ -27,42 +22,23 @@ export class SimulationCreateNodeCommand implements UndoubleAction {
       this.eventPayload.positionX,
       this.eventPayload.positionY
     );
-    this.createdNodeUid = newNode.nodeUid;
-    this.createdNodeSnapshot = newNode.takeSnapshot();
 
-    this.socketEventEmitter.sendSimulationNodeCreated({
-      nodeUid: newNode.nodeUid,
-      nodeSnapshot: this.createdNodeSnapshot,
-    });
+    this.createdNodeSnapshot = newNode.takeSnapshot();
   };
 
   public readonly redo = (): void => {
-    if (
-      undefined === this.createdNodeSnapshot ||
-      undefined === this.createdNodeUid
-    ) {
+    if (undefined === this.createdNodeSnapshot) {
       throw new Error('redo invoked before execute!');
     }
 
     this.simulation.createNodeWithSnapshot(this.createdNodeSnapshot);
-
-    this.socketEventEmitter.sendSimulationNodeCreated({
-      nodeUid: this.createdNodeUid,
-      nodeSnapshot: this.createdNodeSnapshot,
-    });
   };
 
   public readonly undo = (): void => {
-    if (
-      undefined === this.createdNodeUid ||
-      undefined === this.createdNodeUid
-    ) {
+    if (undefined === this.createdNodeSnapshot) {
       throw new Error('undo invoked before execute!');
     }
 
-    this.simulation.deleteNode(this.createdNodeUid);
-    this.socketEventEmitter.sendSimulationNodeDeleted({
-      nodeUid: this.createdNodeUid,
-    });
+    this.simulation.deleteNode(this.createdNodeSnapshot.nodeUid);
   };
 }

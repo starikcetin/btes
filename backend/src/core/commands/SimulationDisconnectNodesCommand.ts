@@ -1,20 +1,17 @@
 import { SimulationDisconnectNodesPayload } from '../../common/socketPayloads/SimulationDisconnectNodesPayload';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
-import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 
-export class SimulationDisconnectNodesCommand implements UndoubleAction {
+export class SimulationDisconnectNodesCommand
+  implements UndoableSimulationCommand {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
   private readonly eventPayload: SimulationDisconnectNodesPayload;
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
     eventPayload: SimulationDisconnectNodesPayload
   ) {
     this.simulation = simulation;
-    this.socketEventEmitter = socketEventEmitter;
     this.eventPayload = eventPayload;
   }
 
@@ -23,7 +20,6 @@ export class SimulationDisconnectNodesCommand implements UndoubleAction {
       this.eventPayload.firstNodeUid,
       this.eventPayload.secondNodeUid
     );
-    this.socketEventEmitter.sendSimulationNodesDisconnected(this.eventPayload);
   };
 
   public readonly execute = this.perform;
@@ -34,6 +30,5 @@ export class SimulationDisconnectNodesCommand implements UndoubleAction {
       this.eventPayload.firstNodeUid,
       this.eventPayload.secondNodeUid
     );
-    this.socketEventEmitter.sendSimulationNodesConnected(this.eventPayload);
   };
 }

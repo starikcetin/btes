@@ -1,14 +1,14 @@
-import { UndoubleAction } from './UndoubleAction';
+import { UndoableSimulationCommand } from './UndoableSimulationCommand';
 
-export class ActionHistoryKeeper {
-  private undoStack: UndoubleAction[] = [];
-  private redoStack: UndoubleAction[] = [];
+export class CommandHistoryManager {
+  private undoStack: UndoableSimulationCommand[] = [];
+  private redoStack: UndoableSimulationCommand[] = [];
 
   /**
-   * This method only registers the enevt to the undo stack.
+   * This method only registers the event to the undo stack.
    * You must perform the first execution on the caller site!
    */
-  public register(action: UndoubleAction): void {
+  public register(action: UndoableSimulationCommand): void {
     this.undoStack.push(action);
     this.redoStack = [];
   }

@@ -1,31 +1,24 @@
 import { SimulationNodeSnapshot } from '../../common/SimulationNodeSnapshot';
 import { SimulationDeleteNodePayload } from '../../common/socketPayloads/SimulationDeleteNodePayload';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
-import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 
-export class SimulationDeleteNodeCommand implements UndoubleAction {
+export class SimulationDeleteNodeCommand implements UndoableSimulationCommand {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
   private readonly eventPayload: SimulationDeleteNodePayload;
 
   private createdNodeSnapshot: SimulationNodeSnapshot | undefined;
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
     eventPayload: SimulationDeleteNodePayload
   ) {
     this.simulation = simulation;
-    this.socketEventEmitter = socketEventEmitter;
     this.eventPayload = eventPayload;
   }
 
   private readonly perform = (): void => {
     this.simulation.deleteNode(this.eventPayload.nodeUid);
-    this.socketEventEmitter.sendSimulationNodeDeleted({
-      nodeUid: this.eventPayload.nodeUid,
-    });
   };
 
   public readonly execute = (): void => {
@@ -44,10 +37,5 @@ export class SimulationDeleteNodeCommand implements UndoubleAction {
     }
 
     this.simulation.createNodeWithSnapshot(this.createdNodeSnapshot);
-
-    this.socketEventEmitter.sendSimulationNodeCreated({
-      nodeUid: this.createdNodeSnapshot.nodeUid,
-      nodeSnapshot: this.createdNodeSnapshot,
-    });
   };
 }

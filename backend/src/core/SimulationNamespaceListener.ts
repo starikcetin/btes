@@ -8,41 +8,36 @@ import { SimulationDeleteNodePayload } from '../common/socketPayloads/Simulation
 import { SimulationRequestSnapshotPayload } from '../common/socketPayloads/SimulationRequestStatePayload';
 import { SimulationUpdateNodePositionPayload } from '../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import { Simulation } from './Simulation';
-import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
-import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';
-import { SimulationNodeDeletedPayload } from '../common/socketPayloads/SimulationNodeDeletedPayload';
-import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
-import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
-import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
+import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationCreateNodeCommand } from './commands/SimulationCreateNodeCommand';
 import { SimulationDeleteNodeCommand } from './commands/SimulationDeleteNodeCommand';
 import { SimulationUpdateNodePositionCommand } from './commands/SimulationUpdateNodePositionCommand';
 import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/SimulationNodeBroadcastMailPayload';
 import { SimulationNodeBroadcastMailCommand } from './commands/SimulationNodeBroadcastMailCommand';
-import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
-import { SimulationNodeMailSentPayload } from '../common/socketPayloads/SimulationNodeMailSentPayload';
 import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
 import { SimulationNodeUnicastMailCommand } from './commands/SimulationNodeUnicastMailCommand';
 import { SimulationConnectNodesPayload } from '../common/socketPayloads/SimulationConnectNodesPayload';
 import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/SimulationDisconnectNodesPayload';
-import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
-import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/SimulationNodesDisconnectedPayload';
 import { SimulationConnectNodesCommand } from './commands/SimulationConnectNodesCommand';
 import { SimulationDisconnectNodesCommand } from './commands/SimulationDisconnectNodesCommand';
+import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
   private readonly ns: Namespace;
-  private readonly actionHistoryKeeper: ActionHistoryKeeper;
+  private readonly actionHistoryKeeper: CommandHistoryManager;
+  private readonly socketEmitter: SimulationNamespaceEmitter;
 
   constructor(
     simulation: Simulation,
     ns: Namespace,
-    actionHistoryKeeper: ActionHistoryKeeper
+    actionHistoryKeeper: CommandHistoryManager,
+    socketEmitter: SimulationNamespaceEmitter
   ) {
     this.simulation = simulation;
     this.ns = ns;
     this.actionHistoryKeeper = actionHistoryKeeper;
+    this.socketEmitter = socketEmitter;
 
     ns.on(socketEvents.native.connect, (socket) => {
       this.setupSocket(socket);
@@ -118,14 +113,10 @@ export class SimulationNamespaceListener {
   };
 
   private readonly handleSimulationPing = (body: SimulationPingPayload) => {
-    this.sendSimulationPong({
+    this.socketEmitter.sendSimulationPong({
       pingDate: body.date,
       pongDate: Date.now(),
     });
-  };
-
-  private readonly sendSimulationPong = (body: SimulationPongPayload) => {
-    this.ns.emit(socketEvents.simulation.pong, body);
   };
 
   private readonly handleSimulationCreateNode = (
@@ -133,18 +124,11 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationCreateNodeCommand(
       this.simulation,
-      this,
       body
     );
 
     this.actionHistoryKeeper.register(createCommand);
     createCommand.execute();
-  };
-
-  public readonly sendSimulationNodeCreated = (
-    body: SimulationNodeCreatedPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodeCreated, body);
   };
 
   private readonly handleSimulationDeleteNode = (
@@ -152,18 +136,11 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationDeleteNodeCommand(
       this.simulation,
-      this,
       body
     );
 
     this.actionHistoryKeeper.register(createCommand);
     createCommand.execute();
-  };
-
-  public readonly sendSimulationNodeDeleted = (
-    body: SimulationNodeDeletedPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodeDeleted, body);
   };
 
   private readonly handleSimulationRequestSnapshot = (
@@ -171,13 +148,7 @@ export class SimulationNamespaceListener {
     body: SimulationRequestSnapshotPayload
   ) => {
     const snapshot = this.simulation.takeSnapshot();
-    this.sendSimulationSnapshotReport({ snapshot });
-  };
-
-  private readonly sendSimulationSnapshotReport = (
-    body: SimulationSnapshotReportPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.snapshotReport, body);
+    this.socketEmitter.sendSimulationSnapshotReport({ snapshot });
   };
 
   private readonly handleSimulationUpdateNodePosition = (
@@ -185,18 +156,11 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationUpdateNodePositionCommand(
       this.simulation,
-      this,
       body
     );
 
     this.actionHistoryKeeper.register(createCommand);
     createCommand.execute();
-  };
-
-  public readonly sendSimulationNodePositionUpdated = (
-    body: SimulationNodePositionUpdatedPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodePositionUpdated, body);
   };
 
   private readonly handleSimulationUndo = () => {
@@ -210,39 +174,19 @@ export class SimulationNamespaceListener {
   private readonly handleSimulationNodeBroadcastMail = (
     body: SimulationNodeBroadcastMailPayload
   ) => {
-    const createCommand = new SimulationNodeBroadcastMailCommand(
+    const command = new SimulationNodeBroadcastMailCommand(
       this.simulation,
-      this,
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
-    createCommand.execute();
+    command.execute();
   };
 
   private readonly handleSimulationNodeUnicastMail = (
     body: SimulationNodeUnicastMailPayload
   ) => {
-    const createCommand = new SimulationNodeUnicastMailCommand(
-      this.simulation,
-      this,
-      body
-    );
-
-    this.actionHistoryKeeper.register(createCommand);
-    createCommand.execute();
-  };
-
-  public readonly sendSimulationNodeMailReceived = (
-    body: SimulationNodeMailReceivedPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodeMailReceived, body);
-  };
-
-  public readonly sendSimulationNodeMailSent = (
-    body: SimulationNodeMailSentPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodeMailSent, body);
+    const command = new SimulationNodeUnicastMailCommand(this.simulation, body);
+    command.execute();
   };
 
   private readonly handleSimulationConnectNodes = (
@@ -250,7 +194,6 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationConnectNodesCommand(
       this.simulation,
-      this,
       body
     );
 
@@ -263,23 +206,10 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationDisconnectNodesCommand(
       this.simulation,
-      this,
       body
     );
 
     this.actionHistoryKeeper.register(createCommand);
     createCommand.execute();
-  };
-
-  public readonly sendSimulationNodesConnected = (
-    body: SimulationNodesConnectedPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodesConnected, body);
-  };
-
-  public readonly sendSimulationNodesDisconnected = (
-    body: SimulationNodesDisconnectedPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodesDisconnected, body);
   };
 }

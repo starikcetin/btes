@@ -1,4 +1,6 @@
-export interface UndoubleAction {
+import { SimulationCommand } from '../SimulationCommand';
+
+export interface UndoableSimulationCommand extends SimulationCommand {
   /** Perform the action for the first time. */
   execute(): void;
 

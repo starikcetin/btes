@@ -2,7 +2,8 @@ import { Namespace } from 'socket.io';
 import { Simulation } from './Simulation';
 import { fatalAssert } from '../utils/fatalAssert';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
-import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
+import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
+import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 
 class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -12,18 +13,25 @@ class SimulationManager {
     [simulaitonUid: string]: SimulationNamespaceListener;
   } = {};
 
+  private readonly emitterMap: {
+    [simulaitonUid: string]: SimulationNamespaceEmitter;
+  } = {};
+
   public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
-    const newSimulation = new Simulation(simulationUid);
-    const actionHistoryKeeper = new ActionHistoryKeeper();
+    const actionHistoryKeeper = new CommandHistoryManager();
+    const emitter = new SimulationNamespaceEmitter(ns);
+    const newSimulation = new Simulation(emitter, simulationUid);
     const listener = new SimulationNamespaceListener(
       newSimulation,
       ns,
-      actionHistoryKeeper
+      actionHistoryKeeper,
+      emitter
     );
 
     this.simulationMap[simulationUid] = newSimulation;
     this.nsMap[simulationUid] = ns;
     this.listenerMap[simulationUid] = listener;
+    this.emitterMap[simulationUid] = emitter;
   };
 
   public readonly checkSimulationExists = (simulationUid: string): boolean => {

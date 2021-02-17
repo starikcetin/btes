@@ -1,11 +1,10 @@
 import { SimulationUpdateNodePositionPayload } from '../../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import { Simulation } from '../Simulation';
-import { SimulationNamespaceListener } from '../SimulationNamespaceListener';
-import { UndoubleAction } from '../undoRedo/UndoubleAction';
+import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 
-export class SimulationUpdateNodePositionCommand implements UndoubleAction {
+export class SimulationUpdateNodePositionCommand
+  implements UndoableSimulationCommand {
   private readonly simulation: Simulation;
-  private readonly socketEventEmitter: SimulationNamespaceListener;
   private readonly eventPayload: SimulationUpdateNodePositionPayload;
 
   private previousPositionX: number | undefined;
@@ -13,11 +12,9 @@ export class SimulationUpdateNodePositionCommand implements UndoubleAction {
 
   constructor(
     simulation: Simulation,
-    socketEventEmitter: SimulationNamespaceListener,
     eventPayload: SimulationUpdateNodePositionPayload
   ) {
     this.simulation = simulation;
-    this.socketEventEmitter = socketEventEmitter;
     this.eventPayload = eventPayload;
   }
 
@@ -26,9 +23,6 @@ export class SimulationUpdateNodePositionCommand implements UndoubleAction {
       this.eventPayload.nodeUid,
       this.eventPayload.positionX,
       this.eventPayload.positionY
-    );
-    this.socketEventEmitter.sendSimulationNodePositionUpdated(
-      this.eventPayload
     );
   };
 
@@ -55,11 +49,5 @@ export class SimulationUpdateNodePositionCommand implements UndoubleAction {
       this.previousPositionX,
       this.previousPositionY
     );
-
-    this.socketEventEmitter.sendSimulationNodePositionUpdated({
-      nodeUid: this.eventPayload.nodeUid,
-      positionX: this.previousPositionX,
-      positionY: this.previousPositionY,
-    });
   };
 }
