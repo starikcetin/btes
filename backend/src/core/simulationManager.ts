@@ -18,9 +18,9 @@ class SimulationManager {
   } = {};
 
   public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
-    const newSimulation = new Simulation(simulationUid);
     const actionHistoryKeeper = new ActionHistoryKeeper();
     const emitter = new SimulationNamespaceEmitter(ns);
+    const newSimulation = new Simulation(emitter, simulationUid);
     const listener = new SimulationNamespaceListener(
       newSimulation,
       ns,

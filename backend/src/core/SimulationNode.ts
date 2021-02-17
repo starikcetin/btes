@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNodeMail } from '../common/SimulationNodeMail';
+import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 
 export class SimulationNode {
   public readonly nodeUid: string;
@@ -26,13 +27,17 @@ export class SimulationNode {
     return [...this._receivedMails];
   }
 
+  private readonly socketEmitter: SimulationNamespaceEmitter;
+
   constructor(
+    socketEmitter: SimulationNamespaceEmitter,
     nodeUid: string,
     positionX: number,
     positionY: number,
     connectedNodes: SimulationNode[],
     receivedMails: SimulationNodeMail[]
   ) {
+    this.socketEmitter = socketEmitter;
     this.nodeUid = nodeUid;
     this._positionX = positionX;
     this._positionY = positionY;

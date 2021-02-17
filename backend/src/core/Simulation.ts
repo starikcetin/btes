@@ -4,12 +4,19 @@ import { nodeUidGenerator } from '../utils/uidGenerators';
 import { SimulationNode } from './SimulationNode';
 import { SimulationSnapshot } from '../common/SimulationSnapshot';
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
+import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 
 export class Simulation {
   public readonly simulationUid: string;
   public readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
 
-  constructor(simulationUid: string) {
+  private readonly socketEmitter: SimulationNamespaceEmitter;
+
+  constructor(
+    socketEmitter: SimulationNamespaceEmitter,
+    simulationUid: string
+  ) {
+    this.socketEmitter = socketEmitter;
     this.simulationUid = simulationUid;
   }
 
@@ -18,7 +25,14 @@ export class Simulation {
     positionY: number
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
-    const newNode = new SimulationNode(nodeUid, positionX, positionY, [], []);
+    const newNode = new SimulationNode(
+      this.socketEmitter,
+      nodeUid,
+      positionX,
+      positionY,
+      [],
+      []
+    );
     this.nodeMap[nodeUid] = newNode;
     return newNode;
   };
@@ -27,6 +41,7 @@ export class Simulation {
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
     const newNode = new SimulationNode(
+      this.socketEmitter,
       nodeSnapshot.nodeUid,
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,
