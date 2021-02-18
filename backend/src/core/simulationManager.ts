@@ -4,6 +4,7 @@ import { fatalAssert } from '../utils/fatalAssert';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
 import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
+import { NodeConnectionMap } from './network/NodeConnectionMap';
 
 class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -20,7 +21,8 @@ class SimulationManager {
   public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
     const actionHistoryKeeper = new CommandHistoryManager();
     const emitter = new SimulationNamespaceEmitter(ns);
-    const newSimulation = new Simulation(emitter, simulationUid);
+    const connMap = new NodeConnectionMap(emitter);
+    const newSimulation = new Simulation(emitter, connMap, simulationUid);
     const listener = new SimulationNamespaceListener(
       newSimulation,
       ns,

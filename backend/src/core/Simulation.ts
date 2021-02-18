@@ -5,18 +5,22 @@ import { SimulationNode } from './SimulationNode';
 import { SimulationSnapshot } from '../common/SimulationSnapshot';
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
+import { NodeConnectionMap } from './network/NodeConnectionMap';
 
 export class Simulation {
   public readonly simulationUid: string;
   public readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
 
   private readonly socketEmitter: SimulationNamespaceEmitter;
+  private readonly connectionMap: NodeConnectionMap;
 
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
+    connectionMap: NodeConnectionMap,
     simulationUid: string
   ) {
     this.socketEmitter = socketEmitter;
+    this.connectionMap = connectionMap;
     this.simulationUid = simulationUid;
   }
 
@@ -27,10 +31,10 @@ export class Simulation {
     const nodeUid = nodeUidGenerator.next().toString();
     const newNode = new SimulationNode(
       this.socketEmitter,
+      this.connectionMap,
       nodeUid,
       positionX,
       positionY,
-      [],
       []
     );
     this.nodeMap[nodeUid] = newNode;
@@ -48,10 +52,10 @@ export class Simulation {
   ): SimulationNode => {
     const newNode = new SimulationNode(
       this.socketEmitter,
+      this.connectionMap,
       nodeSnapshot.nodeUid,
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,
-      nodeSnapshot.connectedNodeUids.map((nodeUid) => this.nodeMap[nodeUid]),
       nodeSnapshot.receivedMails
     );
 
@@ -97,13 +101,7 @@ export class Simulation {
     const firstNode = this.nodeMap[firstNodeUid];
     const secondNode = this.nodeMap[secondNodeUid];
 
-    firstNode.addConnection(secondNode);
-    secondNode.addConnection(firstNode);
-
-    this.socketEmitter.sendSimulationNodesConnected({
-      firstNodeUid,
-      secondNodeUid,
-    });
+    this.connectionMap.connect(firstNode, secondNode);
   };
 
   public readonly disconnectNodes = (
@@ -113,13 +111,7 @@ export class Simulation {
     const firstNode = this.nodeMap[firstNodeUid];
     const secondNode = this.nodeMap[secondNodeUid];
 
-    firstNode.removeConnection(secondNode);
-    secondNode.removeConnection(firstNode);
-
-    this.socketEmitter.sendSimulationNodesDisconnected({
-      firstNodeUid,
-      secondNodeUid,
-    });
+    this.connectionMap.disconnect(firstNode, secondNode);
   };
 
   public readonly takeSnapshot = (): SimulationSnapshot => {

@@ -3,9 +3,12 @@ import _ from 'lodash';
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNodeMail } from '../common/SimulationNodeMail';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
+import { NodeConnectionMap } from './network/NodeConnectionMap';
 
 export class SimulationNode {
   public readonly nodeUid: string;
+
+  private readonly connectionMap: NodeConnectionMap;
 
   private _positionX: number;
   public get positionX(): number {
@@ -17,31 +20,30 @@ export class SimulationNode {
     return this._positionY;
   }
 
-  private _connectedNodes: SimulationNode[];
-  public get connectedNodes(): ReadonlyArray<SimulationNode> {
-    return [...this._connectedNodes];
-  }
-
   private _receivedMails: SimulationNodeMail[];
   public get receivedMails(): ReadonlyArray<SimulationNodeMail> {
     return [...this._receivedMails];
+  }
+
+  private get connections() {
+    return this.connectionMap.getAll(this);
   }
 
   private readonly socketEmitter: SimulationNamespaceEmitter;
 
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
+    connectionMap: NodeConnectionMap,
     nodeUid: string,
     positionX: number,
     positionY: number,
-    connectedNodes: SimulationNode[],
     receivedMails: SimulationNodeMail[]
   ) {
     this.socketEmitter = socketEmitter;
+    this.connectionMap = connectionMap;
     this.nodeUid = nodeUid;
     this._positionX = positionX;
     this._positionY = positionY;
-    this._connectedNodes = [...connectedNodes];
     this._receivedMails = [...receivedMails];
   }
 
@@ -91,18 +93,17 @@ export class SimulationNode {
     return this._receivedMails.some((m) => m.mailUid === mail.mailUid);
   };
 
-  public readonly addConnection = (otherNode: SimulationNode): void => {
-    this._connectedNodes.push(otherNode);
-  };
-
-  public readonly removeConnection = (otherNode: SimulationNode): void => {
-    _.remove(this._connectedNodes, otherNode);
-  };
-
   public readonly sendUnicastMail = (
-    recipient: SimulationNode,
+    recipientNodeUid: string,
     mail: SimulationNodeMail
   ): void => {
+    const connection = this.connectionMap.getWithAssert(
+      this.nodeUid,
+      recipientNodeUid
+    );
+
+    const recipient = connection.getOtherNode(this.nodeUid);
+
     this.socketEmitter.sendSimulationNodeMailSent({
       senderNodeUid: this.nodeUid,
       recipientNodeUid: recipient.nodeUid,
@@ -115,7 +116,9 @@ export class SimulationNode {
   };
 
   public readonly sendBroadcastMail = (mail: SimulationNodeMail): void => {
-    for (const recipientNode of this.connectedNodes) {
+    for (const connection of this.connections) {
+      const recipientNode = connection.getOtherNode(this.nodeUid);
+
       this.socketEmitter.sendSimulationNodeMailSent({
         senderNodeUid: this.nodeUid,
         recipientNodeUid: recipientNode.nodeUid,
@@ -133,7 +136,6 @@ export class SimulationNode {
       nodeUid: this.nodeUid,
       positionX: this._positionX,
       positionY: this._positionY,
-      connectedNodeUids: this._connectedNodes.map((node) => node.nodeUid),
       receivedMails: [...this._receivedMails],
     };
   };

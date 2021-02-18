@@ -24,10 +24,7 @@ export class SimulationNodeUnicastMailCommand implements SimulationCommand {
     };
 
     const senderNode = this.simulation.nodeMap[this.eventPayload.senderNodeUid];
-    const recipientNode = this.simulation.nodeMap[
-      this.eventPayload.recipientNodeUid
-    ];
 
-    senderNode.sendUnicastMail(recipientNode, mail);
+    senderNode.sendUnicastMail(this.eventPayload.recipientNodeUid, mail);
   };
 }

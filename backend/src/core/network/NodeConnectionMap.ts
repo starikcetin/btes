@@ -2,13 +2,20 @@ import { hasValue } from '../../common/utils/hasValue';
 import { fatalAssert } from '../../utils/fatalAssert';
 import { SimulationNode } from '../SimulationNode';
 import { NodeConnection } from './NodeConnection';
+import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 
 export class NodeConnectionMap {
+  private readonly socketEmitter: SimulationNamespaceEmitter;
+
   private _connectionMap: {
     [firstNodeUid: string]: {
       [secondNodeUid: string]: NodeConnection | undefined;
     };
   } = {};
+
+  constructor(socketEmitter: SimulationNamespaceEmitter) {
+    this.socketEmitter = socketEmitter;
+  }
 
   /** Creates a connection between given two nodes */
   public readonly connect = (
@@ -25,6 +32,11 @@ export class NodeConnectionMap {
 
     const newConn = new NodeConnection(firstNode, secondNode, latencyInMs);
     this.register(firstNode.nodeUid, secondNode.nodeUid, newConn);
+
+    this.socketEmitter.sendSimulationNodesConnected({
+      firstNodeUid: firstNode.nodeUid,
+      secondNodeUid: secondNode.nodeUid,
+    });
   };
 
   /** Destroys the connection between given two nodes */
@@ -40,9 +52,14 @@ export class NodeConnectionMap {
     }
 
     this.unregister(firstNode.nodeUid, secondNode.nodeUid);
+
+    this.socketEmitter.sendSimulationNodesDisconnected({
+      firstNodeUid: firstNode.nodeUid,
+      secondNodeUid: secondNode.nodeUid,
+    });
   };
 
-  /** @returns the connection between given two nodes */
+  /** @returns the connection between given two nodes if they are connected; `undefined` otherwise */
   public readonly get = (
     firstNodeUid: string,
     secondNodeUid: string
@@ -54,6 +71,25 @@ export class NodeConnectionMap {
 
     fatalAssert(firstValue === secondValue, 'Connection map desync!');
     return firstValue;
+  };
+
+  /**
+   * @returns the connection between given two nodes
+   * @throws if no connection is found between the nodes
+   */
+  public readonly getWithAssert = (
+    firstNodeUid: string,
+    secondNodeUid: string
+  ): NodeConnection => {
+    const conn = this.get(firstNodeUid, secondNodeUid);
+
+    if (!conn) {
+      throw new Error(
+        `Nodes are not conected yet: ${firstNodeUid} ${secondNodeUid}`
+      );
+    }
+
+    return conn;
   };
 
   /** @returns all connections the given node participates in */

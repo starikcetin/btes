@@ -22,4 +22,7 @@ export class NodeConnection {
   public readonly setLatencyInMs = (ms: number): void => {
     this._latencyInMs = ms;
   };
+
+  public getOtherNode = (nodeUid: string): SimulationNode =>
+    nodeUid === this.firstNode.nodeUid ? this.secondNode : this.firstNode;
 }
