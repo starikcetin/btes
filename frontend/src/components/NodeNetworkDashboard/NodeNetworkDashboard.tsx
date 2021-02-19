@@ -1,13 +1,3 @@
-// show the current connections
-// disconnect a connected node
-// connect to a node
-
-// TODO: latency:
-// * show latency
-// * adjust own latency
-// * show latencies of connected nodes
-// * calculate total latencies to connected nodes
-
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';

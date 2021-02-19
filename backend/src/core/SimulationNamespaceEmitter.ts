@@ -1,4 +1,5 @@
 import { Namespace } from 'socket.io';
+
 import { socketEvents } from '../common/constants/socketEvents';
 import { SimulationPongPayload } from '../common/socketPayloads/SimulationPongPayload';
 import { SimulationNodeCreatedPayload } from '../common/socketPayloads/SimulationNodeCreatedPayload';

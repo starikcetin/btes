@@ -25,18 +25,18 @@ import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
   private readonly ns: Namespace;
-  private readonly actionHistoryKeeper: CommandHistoryManager;
+  private readonly commandHistoryManager: CommandHistoryManager;
   private readonly socketEmitter: SimulationNamespaceEmitter;
 
   constructor(
     simulation: Simulation,
     ns: Namespace,
-    actionHistoryKeeper: CommandHistoryManager,
+    commandHistoryManager: CommandHistoryManager,
     socketEmitter: SimulationNamespaceEmitter
   ) {
     this.simulation = simulation;
     this.ns = ns;
-    this.actionHistoryKeeper = actionHistoryKeeper;
+    this.commandHistoryManager = commandHistoryManager;
     this.socketEmitter = socketEmitter;
 
     ns.on(socketEvents.native.connect, (socket) => {
@@ -127,7 +127,7 @@ export class SimulationNamespaceListener {
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
+    this.commandHistoryManager.register(createCommand);
     createCommand.execute();
   };
 
@@ -139,7 +139,7 @@ export class SimulationNamespaceListener {
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
+    this.commandHistoryManager.register(createCommand);
     createCommand.execute();
   };
 
@@ -159,16 +159,16 @@ export class SimulationNamespaceListener {
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
+    this.commandHistoryManager.register(createCommand);
     createCommand.execute();
   };
 
   private readonly handleSimulationUndo = () => {
-    this.actionHistoryKeeper.undo();
+    this.commandHistoryManager.undo();
   };
 
   private readonly handleSimulationRedo = () => {
-    this.actionHistoryKeeper.redo();
+    this.commandHistoryManager.redo();
   };
 
   private readonly handleSimulationNodeBroadcastMail = (
@@ -197,7 +197,7 @@ export class SimulationNamespaceListener {
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
+    this.commandHistoryManager.register(createCommand);
     createCommand.execute();
   };
 
@@ -209,7 +209,7 @@ export class SimulationNamespaceListener {
       body
     );
 
-    this.actionHistoryKeeper.register(createCommand);
+    this.commandHistoryManager.register(createCommand);
     createCommand.execute();
   };
 }

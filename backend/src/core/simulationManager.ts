@@ -19,21 +19,27 @@ class SimulationManager {
   } = {};
 
   public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
-    const actionHistoryKeeper = new CommandHistoryManager();
-    const emitter = new SimulationNamespaceEmitter(ns);
-    const connMap = new NodeConnectionMap(emitter);
-    const newSimulation = new Simulation(emitter, connMap, simulationUid);
-    const listener = new SimulationNamespaceListener(
-      newSimulation,
-      ns,
-      actionHistoryKeeper,
-      emitter
+    const commandHistoryManager = new CommandHistoryManager();
+    const socketEmitter = new SimulationNamespaceEmitter(ns);
+    const connectionMap = new NodeConnectionMap(socketEmitter);
+
+    const simulation = new Simulation(
+      socketEmitter,
+      connectionMap,
+      simulationUid
     );
 
-    this.simulationMap[simulationUid] = newSimulation;
+    const listener = new SimulationNamespaceListener(
+      simulation,
+      ns,
+      commandHistoryManager,
+      socketEmitter
+    );
+
+    this.simulationMap[simulationUid] = simulation;
     this.nsMap[simulationUid] = ns;
     this.listenerMap[simulationUid] = listener;
-    this.emitterMap[simulationUid] = emitter;
+    this.emitterMap[simulationUid] = socketEmitter;
   };
 
   public readonly checkSimulationExists = (simulationUid: string): boolean => {
