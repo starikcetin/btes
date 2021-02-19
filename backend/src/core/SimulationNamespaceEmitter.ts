@@ -7,7 +7,6 @@ import { SimulationNodeDeletedPayload } from '../common/socketPayloads/Simulatio
 import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/SimulationNodePositionUpdatedPayload';
 import { SimulationSnapshotReportPayload } from '../common/socketPayloads/SimulationSnapshotReportPayload';
 import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
-import { SimulationNodeMailSentPayload } from '../common/socketPayloads/SimulationNodeMailSentPayload';
 import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
 import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/SimulationNodesDisconnectedPayload';
 
@@ -50,12 +49,6 @@ export class SimulationNamespaceEmitter {
     body: SimulationNodeMailReceivedPayload
   ): void => {
     this.ns.emit(socketEvents.simulation.nodeMailReceived, body);
-  };
-
-  public readonly sendSimulationNodeMailSent = (
-    body: SimulationNodeMailSentPayload
-  ): void => {
-    this.ns.emit(socketEvents.simulation.nodeMailSent, body);
   };
 
   public readonly sendSimulationNodesConnected = (

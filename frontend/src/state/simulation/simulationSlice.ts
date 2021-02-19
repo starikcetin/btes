@@ -14,7 +14,6 @@ import { SimulationLogNodeActionPayload } from './actionPayloads/SimulationLogNo
 import { SimulationNodesConnectedActionPayload } from './actionPayloads/SimulationNodesConnectedActionPayload';
 import { SimulationNodesDisconnectedActionPayload } from './actionPayloads/SimulationNodesDisconnectedActionPayload';
 import { SimulationNodeMailReceivedActionPayload } from './actionPayloads/SimulationNodeMailReceivedActionPayload';
-import { SimulationNodeMailSentActionPayload } from './actionPayloads/SimulationNodeMailSentActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -184,17 +183,6 @@ export const simulationSlice = createSlice({
       const recipientNode = sim.nodeMap[payload.recipientNodeUid];
 
       recipientNode.receivedMails.push(payload.mail);
-    },
-    nodeMailSent: (
-      state,
-      { payload }: PayloadAction<SimulationNodeMailSentActionPayload>
-    ) => {
-      console.log('nodeMailSent', payload);
-
-      // const sim = state[payload.simulationUid];
-      // const senderNode = sim.nodeMap[payload.senderNodeUid];
-
-      // TODO: ? nodeMailSent
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);

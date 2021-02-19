@@ -19,7 +19,6 @@ export const socketEvents = {
     redo: 'simulation-redo',
     nodeBroadcastMail: 'simulation-node-broadcast-mail',
     nodeUnicastMail: 'simulation-node-unicast-mail',
-    nodeMailSent: 'simulation-node-mail-sent',
     nodeMailReceived: 'simulation-node-mail-received',
     connectNodes: 'simulation-connect-nodes',
     disconnectNodes: 'simulation-disconnect-nodes',

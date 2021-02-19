@@ -12,7 +12,6 @@ import { SimulationNodePositionUpdatedPayload } from '../../../common/src/socket
 import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
 import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/SimulationNodesDisconnectedPayload';
 import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
-import { SimulationNodeMailSentPayload } from '../common/socketPayloads/SimulationNodeMailSentPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -45,10 +44,6 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.nodesDisconnected,
       this.handleSimulationNodesDisconnected
-    );
-    socket.on(
-      socketEvents.simulation.nodeMailSent,
-      this.handleSimulationNodeMailSent
     );
     socket.on(
       socketEvents.simulation.nodeMailReceived,
@@ -221,23 +216,6 @@ export class SimulationSocketListener {
     this.dispatchLogNodeEvent(
       body.recipientNodeUid,
       socketEvents.simulation.nodeMailReceived,
-      body
-    );
-  };
-
-  private readonly handleSimulationNodeMailSent = (
-    body: SimulationNodeMailSentPayload
-  ) => {
-    store.dispatch(
-      simulationSlice.actions.nodeMailSent({
-        simulationUid: this.simulationUid,
-        ...body,
-      })
-    );
-
-    this.dispatchLogNodeEvent(
-      body.senderNodeUid,
-      socketEvents.simulation.nodeMailSent,
       body
     );
   };

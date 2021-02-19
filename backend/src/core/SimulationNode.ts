@@ -105,12 +105,6 @@ export class SimulationNode {
 
     const recipient = connection.getOtherNode(this.nodeUid);
 
-    this.socketEmitter.sendSimulationNodeMailSent({
-      senderNodeUid: this.nodeUid,
-      recipientNodeUid: recipient.nodeUid,
-      mail,
-    });
-
     // TODO: wait for latency here
 
     recipient.receiveMail(this.nodeUid, mail, false);
@@ -122,12 +116,6 @@ export class SimulationNode {
   ): void => {
     for (const connection of this.connections) {
       const recipientNode = connection.getOtherNode(this.nodeUid);
-
-      this.socketEmitter.sendSimulationNodeMailSent({
-        senderNodeUid: this.nodeUid,
-        recipientNodeUid: recipientNode.nodeUid,
-        mail,
-      });
 
       // TODO: wait for latency here
 
