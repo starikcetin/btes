@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 
-import { SimulationLog } from '../../state/simulation/SimulationLog';
+import { SimulationLog } from '../../state/simulation/data/SimulationLog';
 
 interface LogTableProps {
   logs: SimulationLog[];

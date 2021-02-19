@@ -2,7 +2,9 @@ import { Namespace } from 'socket.io';
 import { Simulation } from './Simulation';
 import { fatalAssert } from '../utils/fatalAssert';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
-import { ActionHistoryKeeper } from './undoRedo/ActionHistoryKeeper';
+import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
+import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
+import { NodeConnectionMap } from './network/NodeConnectionMap';
 
 class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -12,18 +14,32 @@ class SimulationManager {
     [simulaitonUid: string]: SimulationNamespaceListener;
   } = {};
 
+  private readonly emitterMap: {
+    [simulaitonUid: string]: SimulationNamespaceEmitter;
+  } = {};
+
   public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
-    const newSimulation = new Simulation(simulationUid);
-    const actionHistoryKeeper = new ActionHistoryKeeper();
-    const listener = new SimulationNamespaceListener(
-      newSimulation,
-      ns,
-      actionHistoryKeeper
+    const commandHistoryManager = new CommandHistoryManager();
+    const socketEmitter = new SimulationNamespaceEmitter(ns);
+    const connectionMap = new NodeConnectionMap(socketEmitter);
+
+    const simulation = new Simulation(
+      socketEmitter,
+      connectionMap,
+      simulationUid
     );
 
-    this.simulationMap[simulationUid] = newSimulation;
+    const listener = new SimulationNamespaceListener(
+      simulation,
+      ns,
+      commandHistoryManager,
+      socketEmitter
+    );
+
+    this.simulationMap[simulationUid] = simulation;
     this.nsMap[simulationUid] = ns;
     this.listenerMap[simulationUid] = listener;
+    this.emitterMap[simulationUid] = socketEmitter;
   };
 
   public readonly checkSimulationExists = (simulationUid: string): boolean => {

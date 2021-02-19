@@ -5,8 +5,10 @@ import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
 import './NodeModal.scss';
 import { empty } from '../../common/utils/empty';
 import { RootState } from '../../state/RootState';
-import { NodeData } from '../../state/simulation/NodeData';
+import { NodeData } from '../../state/simulation/data/NodeData';
 import LogTable from '../LogTable/LogTable';
+import NodeNetworkDashboard from '../NodeNetworkDashboard/NodeNetworkDashboard';
+import { NodeMailsDashboard } from '../NodeMailsDashboard/NodeMailsDashboard';
 
 interface NodeModalProps {
   closeHandler: () => void;
@@ -68,6 +70,26 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
                 </tr>
               </tbody>
             </Table>
+          </Tab>
+          <Tab
+            eventKey="network"
+            title="Network"
+            className="comp-node-modal--tab-network"
+          >
+            <NodeNetworkDashboard
+              simulationUid={simulationUid}
+              nodeUid={nodeUid}
+            />
+          </Tab>
+          <Tab
+            eventKey="mails"
+            title="Mails"
+            className="comp-node-modal--tab-mails"
+          >
+            <NodeMailsDashboard
+              simulationUid={simulationUid}
+              nodeUid={nodeUid}
+            />
           </Tab>
           <Tab
             eventKey="blockchain"

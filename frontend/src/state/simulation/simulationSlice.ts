@@ -1,16 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
-import { SimulationPongActionPayload } from './SimulationPongActionPayload';
-import { SimulationSetupActionPayload } from './SimulationSetupActionPayload';
+import { SimulationPongActionPayload } from './actionPayloads/SimulationPongActionPayload';
+import { SimulationSetupActionPayload } from './actionPayloads/SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
-import { SimulationNodeCreatedPayload } from './SimulationNodePayload';
-import { SimulationTeardownPayload } from './SimulationTeardownPayload';
-import { SimulationNodeDeletedPayload } from './SimulaitonNodeDeletedPayload';
-import { SimulationSnapshotReportPayload } from './SimulationSnapshotReportPayload';
-import { SimulationNodePositionUpdatedActionPayload } from './SimulationNodePositionUpdatedActionPayload';
-import { SimulationLogActionPayload } from './SimulationLogActionPayload';
-import { SimulationLogNodeActionPayload } from './SimulationLogNodeActionPayload';
+import { SimulationNodeCreatedActionPayload } from './actionPayloads/SimulationNodeCreatedActionPayload';
+import { SimulationTeardownActionPayload } from './actionPayloads/SimulationTeardownActionPayload';
+import { SimulationNodeDeletedActionPayload } from './actionPayloads/SimulaitonNodeDeletedActionPayload';
+import { SimulationSnapshotReportActionPayload } from './actionPayloads/SimulationSnapshotReportActionPayload';
+import { SimulationNodePositionUpdatedActionPayload } from './actionPayloads/SimulationNodePositionUpdatedActionPayload';
+import { SimulationLogActionPayload } from './actionPayloads/SimulationLogActionPayload';
+import { SimulationLogNodeActionPayload } from './actionPayloads/SimulationLogNodeActionPayload';
+import { SimulationNodesConnectedActionPayload } from './actionPayloads/SimulationNodesConnectedActionPayload';
+import { SimulationNodesDisconnectedActionPayload } from './actionPayloads/SimulationNodesDisconnectedActionPayload';
+import { SimulationNodeMailReceivedActionPayload } from './actionPayloads/SimulationNodeMailReceivedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -35,6 +38,9 @@ export const simulationSlice = createSlice({
         pongs: [],
         nodeMap: {},
         logs: [],
+        connectionMap: {
+          connectionMap: {},
+        },
       };
     },
     pong: (state, { payload }: PayloadAction<SimulationPongActionPayload>) => {
@@ -52,7 +58,7 @@ export const simulationSlice = createSlice({
     },
     nodeCreated: (
       state,
-      { payload }: PayloadAction<SimulationNodeCreatedPayload>
+      { payload }: PayloadAction<SimulationNodeCreatedActionPayload>
     ) => {
       const sim = state[payload.simulationUid];
 
@@ -73,24 +79,24 @@ export const simulationSlice = createSlice({
         );
       }
 
-      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload };
+      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload.nodeSnapshot };
     },
     teardown: (
       state,
-      { payload }: PayloadAction<SimulationTeardownPayload>
+      { payload }: PayloadAction<SimulationTeardownActionPayload>
     ) => {
       // state[payload.simulationUid] = undefined;
       delete state[payload.simulationUid];
     },
     nodeDeleted: (
       state,
-      { payload }: PayloadAction<SimulationNodeDeletedPayload>
+      { payload }: PayloadAction<SimulationNodeDeletedActionPayload>
     ) => {
       delete state[payload.simulationUid].nodeMap[payload.nodeUid];
     },
     snapshotReport: (
       state,
-      { payload }: PayloadAction<SimulationSnapshotReportPayload>
+      { payload }: PayloadAction<SimulationSnapshotReportActionPayload>
     ) => {
       const { simulationUid, snapshot } = payload;
 
@@ -113,6 +119,7 @@ export const simulationSlice = createSlice({
           logs: old.nodeMap[node.nodeUid]?.logs || [],
           ...node,
         })),
+        connectionMap: snapshot.connectionMap,
       };
     },
     nodePositionUpdated: (
@@ -123,6 +130,59 @@ export const simulationSlice = createSlice({
       const node = sim.nodeMap[payload.nodeUid];
       node.positionX = payload.positionX;
       node.positionY = payload.positionY;
+    },
+    nodesConnected: (
+      state,
+      { payload }: PayloadAction<SimulationNodesConnectedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      // Maybe we should add some safety checks here to validate state.
+      // Just like the ones implemented in connect method of NodeConnectionMap in the backend.
+
+      sim.connectionMap.connectionMap[payload.firstNodeUid] =
+        sim.connectionMap.connectionMap[payload.firstNodeUid] || {};
+
+      sim.connectionMap.connectionMap[payload.secondNodeUid] =
+        sim.connectionMap.connectionMap[payload.secondNodeUid] || {};
+
+      sim.connectionMap.connectionMap[payload.firstNodeUid][
+        payload.secondNodeUid
+      ] = payload.connectionSnapshot;
+
+      sim.connectionMap.connectionMap[payload.secondNodeUid][
+        payload.firstNodeUid
+      ] = payload.connectionSnapshot;
+    },
+    nodesDisconnected: (
+      state,
+      { payload }: PayloadAction<SimulationNodesDisconnectedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      // Maybe we should add some safety checks here to validate state.
+      // Just like the ones implemented in disconnect method of NodeConnectionMap in the backend.
+
+      if (sim.connectionMap.connectionMap[payload.firstNodeUid]) {
+        delete sim.connectionMap.connectionMap[payload.firstNodeUid][
+          payload.secondNodeUid
+        ];
+      }
+
+      if (sim.connectionMap.connectionMap[payload.secondNodeUid]) {
+        delete sim.connectionMap.connectionMap[payload.secondNodeUid][
+          payload.firstNodeUid
+        ];
+      }
+    },
+    nodeMailReceived: (
+      state,
+      { payload }: PayloadAction<SimulationNodeMailReceivedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+      const recipientNode = sim.nodeMap[payload.recipientNodeUid];
+
+      recipientNode.receivedMails.push(payload.mail);
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);

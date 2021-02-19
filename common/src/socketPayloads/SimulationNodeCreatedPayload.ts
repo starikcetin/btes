@@ -1,5 +1,6 @@
+import { SimulationNodeSnapshot } from '../SimulationNodeSnapshot';
+
 export interface SimulationNodeCreatedPayload {
   nodeUid: string;
-  positionX: number;
-  positionY: number;
+  nodeSnapshot: SimulationNodeSnapshot;
 }
