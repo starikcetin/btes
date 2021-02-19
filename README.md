@@ -28,6 +28,7 @@ Monorepo for Blockchain Technology Education Software project.
 |`yarn build`|Builds the project in production config.|
 |`yarn lint:check`|Lints the project and outputs the result, but doesn't fix anything.|
 |`yarn lint:fix`|Lints the project and tries to automatically the fix errors.|
+|`yarn kill`|Kills processes that currently occupy the ports defined in `.env` files of the packages.|
 
 # Packages
 |Name|Path|Description|
