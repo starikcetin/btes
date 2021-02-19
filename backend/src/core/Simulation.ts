@@ -121,6 +121,7 @@ export class Simulation {
     return {
       simulationUid: this.simulationUid,
       nodeMap: nodeSnapshots,
+      connectionMap: this.connectionMap.takeSnapshot(),
     };
   };
 }

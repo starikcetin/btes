@@ -1,8 +1,11 @@
+import _ from 'lodash';
+
 import { hasValue } from '../../common/utils/hasValue';
 import { fatalAssert } from '../../utils/fatalAssert';
 import { SimulationNode } from '../SimulationNode';
 import { NodeConnection } from './NodeConnection';
 import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
+import { NodeConnectionMapSnapshot } from '../../common/NodeConnectionMapSnapshot';
 
 export class NodeConnectionMap {
   private readonly socketEmitter: SimulationNamespaceEmitter;
@@ -130,5 +133,16 @@ export class NodeConnectionMap {
   private unregister = (firstNodeUid: string, secondNodeUid: string) => {
     delete this._connectionMap[firstNodeUid][secondNodeUid];
     delete this._connectionMap[secondNodeUid][firstNodeUid];
+  };
+
+  public readonly takeSnapshot = (): NodeConnectionMapSnapshot => {
+    return {
+      connectionMap: _.mapValues(this._connectionMap, (secondNodeConnMap) =>
+        _.chain(secondNodeConnMap)
+          .filter(hasValue)
+          .mapValues((connection) => connection.takeSnapshot())
+          .value()
+      ),
+    };
   };
 }

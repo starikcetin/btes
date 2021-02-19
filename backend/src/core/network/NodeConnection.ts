@@ -1,4 +1,5 @@
 import { SimulationNode } from '../SimulationNode';
+import { NodeConnectionSnapshot } from '../../common/NodeConnectionSnapshot';
 
 export class NodeConnection {
   public readonly firstNode: SimulationNode;
@@ -25,4 +26,12 @@ export class NodeConnection {
 
   public getOtherNode = (nodeUid: string): SimulationNode =>
     nodeUid === this.firstNode.nodeUid ? this.secondNode : this.firstNode;
+
+  public readonly takeSnapshot = (): NodeConnectionSnapshot => {
+    return {
+      firstNodeUid: this.firstNode.nodeUid,
+      secondNodeUid: this.secondNode.nodeUid,
+      latencyInMs: this._latencyInMs,
+    };
+  };
 }
