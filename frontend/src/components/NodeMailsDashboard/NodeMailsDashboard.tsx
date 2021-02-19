@@ -63,7 +63,7 @@ export const NodeMailsDashboard: React.FC<NodeMailsDashboardProps> = (
       simulationBridge.sendSimulationBroadcastMail(simulationUid, {
         senderNodeUid: nodeUid,
         mailBody,
-        // TODO: shouldPropagate
+        shouldPropagate,
       });
     } else {
       if (null === recipientNodeUid) {

@@ -59,7 +59,7 @@ export class SimulationNode {
   public readonly receiveMail = (
     senderNodeUid: string,
     mail: SimulationNodeMail,
-    isBroadcast: boolean
+    shouldPropagate: boolean
   ): void => {
     // no-op if we already have the mail
     if (this.hasMail(mail)) {
@@ -81,12 +81,8 @@ export class SimulationNode {
 
     // propagating broadcast: recipients in turn broadcast to their own connected nodes.
     // this propagates the mail through the mesh network, just like a real blockchain.
-    // ---
-    // TODO: make this optional in the socket event, so we can turn it off and step through
-    // when we need to do so in the lessons.
-    // Tarık, 2021-02-15 04:37
-    if (isBroadcast) {
-      this.sendBroadcastMail(mail);
+    if (shouldPropagate) {
+      this.sendBroadcastMail(mail, shouldPropagate);
     }
   };
 
@@ -120,7 +116,10 @@ export class SimulationNode {
     recipient.receiveMail(this.nodeUid, mail, false);
   };
 
-  public readonly sendBroadcastMail = (mail: SimulationNodeMail): void => {
+  public readonly sendBroadcastMail = (
+    mail: SimulationNodeMail,
+    shouldPropagate: boolean
+  ): void => {
     for (const connection of this.connections) {
       const recipientNode = connection.getOtherNode(this.nodeUid);
 
@@ -132,7 +131,7 @@ export class SimulationNode {
 
       // TODO: wait for latency here
 
-      recipientNode.receiveMail(this.nodeUid, mail, true);
+      recipientNode.receiveMail(this.nodeUid, mail, shouldPropagate);
     }
   };
 

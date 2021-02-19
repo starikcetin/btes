@@ -26,6 +26,6 @@ export class SimulationNodeBroadcastMailCommand implements SimulationCommand {
     };
 
     const senderNode = this.simulation.nodeMap[this.eventPayload.senderNodeUid];
-    senderNode.sendBroadcastMail(this.mail);
+    senderNode.sendBroadcastMail(this.mail, this.eventPayload.shouldPropagate);
   };
 }
