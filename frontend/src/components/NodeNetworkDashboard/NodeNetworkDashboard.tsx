@@ -101,19 +101,21 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    <th className="w-50">Node UID</th>
+                    <th className="w-25">Node UID</th>
+                    <th className="w-25">Latency (ms)</th>
                     <th className="w-50">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {connectedNodeUids.length === 0 ? (
                     <tr>
-                      <td colSpan={2}>No connections yet.</td>
+                      <td colSpan={3}>No connections yet.</td>
                     </tr>
                   ) : (
                     connectedNodeUids.map((nodeUid) => (
                       <tr key={nodeUid}>
                         <td>{nodeUid}</td>
+                        <td>{connectionMap[nodeUid].latencyInMs}</td>
                         <td>
                           <Button
                             variant="danger"
