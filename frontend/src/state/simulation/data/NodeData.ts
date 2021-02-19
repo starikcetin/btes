@@ -6,7 +6,6 @@ export interface NodeData {
   nodeUid: string;
   positionX: number;
   positionY: number;
-  connectedNodeUids: string[];
   receivedMails: SimulationNodeMail[];
 
   // local-only state

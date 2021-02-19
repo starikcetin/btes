@@ -17,6 +17,7 @@ import { RootState } from '../../state/RootState';
 import { simulationBridge } from '../../services/simulationBridge';
 import { itemwiseEqual } from '../../utils/itemwiseEqual';
 import { SaneSelect } from '../SaneSelect/SaneSelect';
+import { hasValue } from '../../common/utils/hasValue';
 
 type TargetNodeSelectOptionType = { value: string; label: string };
 
@@ -33,21 +34,26 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
     setTargetNodeSelectValue,
   ] = useState<TargetNodeSelectOptionType | null>(null);
 
-  const connectedNodeUids = useSelector((state: RootState) =>
-    nodeUid
-      ? state.simulation[simulationUid].nodeMap[nodeUid].connectedNodeUids
-      : []
-  );
+  const connectionMap = useSelector((state: RootState) => {
+    return nodeUid
+      ? state.simulation[simulationUid].connectionMap.connectionMap[nodeUid]
+      : {};
+  });
 
-  const unconnectedNodeUids = useSelector((state: RootState) => {
-    const allNodeUids = Object.keys(state.simulation[simulationUid].nodeMap);
-
-    const connectedNodeUids = nodeUid
-      ? state.simulation[simulationUid].nodeMap[nodeUid].connectedNodeUids
-      : [];
-
-    return _.without(allNodeUids, ...connectedNodeUids, nodeUid || '');
+  const allNodeUids = useSelector((state: RootState) => {
+    return Object.keys(state.simulation[simulationUid].nodeMap);
   }, itemwiseEqual);
+
+  const connectedNodeUids = _.chain(connectionMap)
+    .pickBy(hasValue)
+    .keys()
+    .value();
+
+  const unconnectedNodeUids = _.without(
+    allNodeUids,
+    ...connectedNodeUids,
+    nodeUid || ''
+  );
 
   const disconnect = (otherNodeUid: string) => {
     if (null === nodeUid) {

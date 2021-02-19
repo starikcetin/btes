@@ -66,6 +66,11 @@ export class SimulationNode {
       return;
     }
 
+    // ignore if we are the origin
+    if (this.nodeUid === mail.originNodeUid) {
+      return;
+    }
+
     this._receivedMails.push(mail);
 
     this.socketEmitter.sendSimulationNodeMailReceived({

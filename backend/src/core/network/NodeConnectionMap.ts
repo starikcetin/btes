@@ -39,6 +39,7 @@ export class NodeConnectionMap {
     this.socketEmitter.sendSimulationNodesConnected({
       firstNodeUid: firstNode.nodeUid,
       secondNodeUid: secondNode.nodeUid,
+      connectionSnapshot: newConn.takeSnapshot(),
     });
   };
 
@@ -139,7 +140,7 @@ export class NodeConnectionMap {
     return {
       connectionMap: _.mapValues(this._connectionMap, (secondNodeConnMap) =>
         _.chain(secondNodeConnMap)
-          .filter(hasValue)
+          .pickBy(hasValue)
           .mapValues((connection) => connection.takeSnapshot())
           .value()
       ),

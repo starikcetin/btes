@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
@@ -6,6 +7,7 @@ import './NodeMailsDashboard.scss';
 import { RootState } from '../../state/RootState';
 import { SaneSelect } from '../SaneSelect/SaneSelect';
 import { simulationBridge } from '../../services/simulationBridge';
+import { hasValue } from '../../common/utils/hasValue';
 
 interface NodeMailsDashboardProps {
   simulationUid: string;
@@ -27,11 +29,16 @@ export const NodeMailsDashboard: React.FC<NodeMailsDashboardProps> = (
       : [];
   });
 
-  const recipientNodeUids = useSelector((state: RootState) => {
+  const connections = useSelector((state: RootState) => {
     return nodeUid
-      ? state.simulation[simulationUid].nodeMap[nodeUid].connectedNodeUids
+      ? state.simulation[simulationUid].connectionMap.connectionMap[nodeUid]
       : [];
   });
+
+  const connectedNodeUids = _.chain(connections)
+    .pickBy(hasValue)
+    .keys()
+    .value();
 
   const makeRecipientNodeSelectOptions = (recipientNodeUids: string[]) =>
     recipientNodeUids.map((recipientNodeUid) => ({
@@ -128,7 +135,7 @@ export const NodeMailsDashboard: React.FC<NodeMailsDashboardProps> = (
                 <Form.Group hidden={isBroadcast}>
                   <Form.Label>Recipient Node</Form.Label>
                   <SaneSelect
-                    options={makeRecipientNodeSelectOptions(recipientNodeUids)}
+                    options={makeRecipientNodeSelectOptions(connectedNodeUids)}
                     onChange={(opt) => setRecipientNodeUid(opt?.value || null)}
                   />
                 </Form.Group>

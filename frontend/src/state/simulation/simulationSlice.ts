@@ -39,6 +39,9 @@ export const simulationSlice = createSlice({
         pongs: [],
         nodeMap: {},
         logs: [],
+        connectionMap: {
+          connectionMap: {},
+        },
       };
     },
     pong: (state, { payload }: PayloadAction<SimulationPongActionPayload>) => {
@@ -117,6 +120,7 @@ export const simulationSlice = createSlice({
           logs: old.nodeMap[node.nodeUid]?.logs || [],
           ...node,
         })),
+        connectionMap: snapshot.connectionMap,
       };
     },
     nodePositionUpdated: (
@@ -133,29 +137,44 @@ export const simulationSlice = createSlice({
       { payload }: PayloadAction<SimulationNodesConnectedActionPayload>
     ) => {
       const sim = state[payload.simulationUid];
-      const firstNode = sim.nodeMap[payload.firstNodeUid];
-      const secondNode = sim.nodeMap[payload.secondNodeUid];
 
-      firstNode.connectedNodeUids.push(secondNode.nodeUid);
-      secondNode.connectedNodeUids.push(firstNode.nodeUid);
+      // Maybe we should add some safety checks here to validate state.
+      // Just like the ones implemented in connect method of NodeConnectionMap in the backend.
+
+      sim.connectionMap.connectionMap[payload.firstNodeUid] =
+        sim.connectionMap.connectionMap[payload.firstNodeUid] || {};
+
+      sim.connectionMap.connectionMap[payload.secondNodeUid] =
+        sim.connectionMap.connectionMap[payload.secondNodeUid] || {};
+
+      sim.connectionMap.connectionMap[payload.firstNodeUid][
+        payload.secondNodeUid
+      ] = payload.connectionSnapshot;
+
+      sim.connectionMap.connectionMap[payload.secondNodeUid][
+        payload.firstNodeUid
+      ] = payload.connectionSnapshot;
     },
     nodesDisconnected: (
       state,
       { payload }: PayloadAction<SimulationNodesDisconnectedActionPayload>
     ) => {
       const sim = state[payload.simulationUid];
-      const firstNode = sim.nodeMap[payload.firstNodeUid];
-      const secondNode = sim.nodeMap[payload.secondNodeUid];
 
-      firstNode.connectedNodeUids = _.without(
-        firstNode.connectedNodeUids,
-        secondNode.nodeUid
-      );
+      // Maybe we should add some safety checks here to validate state.
+      // Just like the ones implemented in disconnect method of NodeConnectionMap in the backend.
 
-      secondNode.connectedNodeUids = _.without(
-        secondNode.connectedNodeUids,
-        firstNode.nodeUid
-      );
+      if (sim.connectionMap.connectionMap[payload.firstNodeUid]) {
+        delete sim.connectionMap.connectionMap[payload.firstNodeUid][
+          payload.secondNodeUid
+        ];
+      }
+
+      if (sim.connectionMap.connectionMap[payload.secondNodeUid]) {
+        delete sim.connectionMap.connectionMap[payload.secondNodeUid][
+          payload.firstNodeUid
+        ];
+      }
     },
     nodeMailReceived: (
       state,
