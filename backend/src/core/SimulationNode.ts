@@ -4,11 +4,13 @@ import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNodeMail } from '../common/SimulationNodeMail';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
+import { ControlledTimerService } from './network/ControlledTimerService';
 
 export class SimulationNode {
   public readonly nodeUid: string;
 
   private readonly connectionMap: NodeConnectionMap;
+  private readonly timerService: ControlledTimerService;
 
   private _positionX: number;
   public get positionX(): number {
@@ -34,6 +36,7 @@ export class SimulationNode {
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
     connectionMap: NodeConnectionMap,
+    timerService: ControlledTimerService,
     nodeUid: string,
     positionX: number,
     positionY: number,
@@ -41,6 +44,7 @@ export class SimulationNode {
   ) {
     this.socketEmitter = socketEmitter;
     this.connectionMap = connectionMap;
+    this.timerService = timerService;
     this.nodeUid = nodeUid;
     this._positionX = positionX;
     this._positionY = positionY;
@@ -105,9 +109,12 @@ export class SimulationNode {
 
     const recipient = connection.getOtherNode(this.nodeUid);
 
-    // TODO: wait for latency here
-
-    recipient.receiveMail(this.nodeUid, mail, false);
+    this.timerService.createTimer({
+      waitTimeInMs: connection.latencyInMs,
+      onDone: () => {
+        recipient.receiveMail(this.nodeUid, mail, false);
+      },
+    });
   };
 
   public readonly sendBroadcastMail = (
@@ -117,9 +124,12 @@ export class SimulationNode {
     for (const connection of this.connections) {
       const recipientNode = connection.getOtherNode(this.nodeUid);
 
-      // TODO: wait for latency here
-
-      recipientNode.receiveMail(this.nodeUid, mail, shouldPropagate);
+      this.timerService.createTimer({
+        waitTimeInMs: connection.latencyInMs,
+        onDone: () => {
+          recipientNode.receiveMail(this.nodeUid, mail, shouldPropagate);
+        },
+      });
     }
   };
 

@@ -6,6 +6,7 @@ import { SimulationSnapshot } from '../common/SimulationSnapshot';
 import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
+import { ControlledTimerService } from './network/ControlledTimerService';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -13,14 +14,17 @@ export class Simulation {
 
   private readonly socketEmitter: SimulationNamespaceEmitter;
   private readonly connectionMap: NodeConnectionMap;
+  private readonly timerService: ControlledTimerService;
 
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
     connectionMap: NodeConnectionMap,
+    timerService: ControlledTimerService,
     simulationUid: string
   ) {
     this.socketEmitter = socketEmitter;
     this.connectionMap = connectionMap;
+    this.timerService = timerService;
     this.simulationUid = simulationUid;
   }
 
@@ -32,6 +36,7 @@ export class Simulation {
     const newNode = new SimulationNode(
       this.socketEmitter,
       this.connectionMap,
+      this.timerService,
       nodeUid,
       positionX,
       positionY,
@@ -53,6 +58,7 @@ export class Simulation {
     const newNode = new SimulationNode(
       this.socketEmitter,
       this.connectionMap,
+      this.timerService,
       nodeSnapshot.nodeUid,
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,
