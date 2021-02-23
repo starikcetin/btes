@@ -21,22 +21,26 @@ import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/Simul
 import { SimulationConnectNodesCommand } from './commands/SimulationConnectNodesCommand';
 import { SimulationDisconnectNodesCommand } from './commands/SimulationDisconnectNodesCommand';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
+import { NodeConnectionMap } from './network/NodeConnectionMap';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
   private readonly ns: Namespace;
   private readonly commandHistoryManager: CommandHistoryManager;
+  private readonly connectionMap: NodeConnectionMap;
   private readonly socketEmitter: SimulationNamespaceEmitter;
 
   constructor(
     simulation: Simulation,
     ns: Namespace,
     commandHistoryManager: CommandHistoryManager,
+    connectionMap: NodeConnectionMap,
     socketEmitter: SimulationNamespaceEmitter
   ) {
     this.simulation = simulation;
     this.ns = ns;
     this.commandHistoryManager = commandHistoryManager;
+    this.connectionMap = connectionMap;
     this.socketEmitter = socketEmitter;
 
     ns.on(socketEvents.native.connect, (socket) => {
@@ -136,6 +140,7 @@ export class SimulationNamespaceListener {
   ) => {
     const createCommand = new SimulationDeleteNodeCommand(
       this.simulation,
+      this.connectionMap,
       body
     );
 

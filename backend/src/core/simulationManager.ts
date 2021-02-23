@@ -5,6 +5,7 @@ import { SimulationNamespaceListener } from './SimulationNamespaceListener';
 import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
+import { ControlledTimerService } from './network/ControlledTimerService';
 
 class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -22,10 +23,12 @@ class SimulationManager {
     const commandHistoryManager = new CommandHistoryManager();
     const socketEmitter = new SimulationNamespaceEmitter(ns);
     const connectionMap = new NodeConnectionMap(socketEmitter);
+    const timerService = new ControlledTimerService();
 
     const simulation = new Simulation(
       socketEmitter,
       connectionMap,
+      timerService,
       simulationUid
     );
 
@@ -33,6 +36,7 @@ class SimulationManager {
       simulation,
       ns,
       commandHistoryManager,
+      connectionMap,
       socketEmitter
     );
 
@@ -40,6 +44,8 @@ class SimulationManager {
     this.nsMap[simulationUid] = ns;
     this.listenerMap[simulationUid] = listener;
     this.emitterMap[simulationUid] = socketEmitter;
+
+    timerService.begin();
   };
 
   public readonly checkSimulationExists = (simulationUid: string): boolean => {
