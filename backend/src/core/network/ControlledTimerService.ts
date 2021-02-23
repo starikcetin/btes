@@ -43,7 +43,7 @@ export class ControlledTimerService {
     config: ControlledTimerConfig
   ): ControlledTimer => {
     const newTimer = new ControlledTimer(config, this.cleanupTimer);
-    this.activeTimers.push();
+    this.activeTimers.push(newTimer);
     return newTimer;
   };
 
