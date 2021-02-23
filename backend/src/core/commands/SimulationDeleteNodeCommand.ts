@@ -48,12 +48,6 @@ export class SimulationDeleteNodeCommand implements UndoableSimulationCommand {
     }
 
     this.simulation.createNodeWithSnapshot(this.deletedNodeSnapshot);
-    for (const connection of this.deletedNodeConnections) {
-      this.connectionMap.connect(
-        connection.firstNode,
-        connection.secondNode,
-        connection.latencyInMs
-      );
-    }
+    this.deletedNodeConnections.forEach(this.connectionMap.add);
   };
 }

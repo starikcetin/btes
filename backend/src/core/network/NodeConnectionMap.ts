@@ -20,27 +20,55 @@ export class NodeConnectionMap {
     this.socketEmitter = socketEmitter;
   }
 
+  /** Adds the given connection */
+  public readonly add = (connection: NodeConnection): void => {
+    const firstNodeUid = connection.firstNode.nodeUid;
+    const secondNodeUid = connection.secondNode.nodeUid;
+
+    if (this.has(firstNodeUid, secondNodeUid)) {
+      console.warn(
+        `Ignoring add: A connection between ${firstNodeUid} and ${secondNodeUid} already exists`
+      );
+      return;
+    }
+
+    this.register(firstNodeUid, secondNodeUid, connection);
+
+    this.socketEmitter.sendSimulationNodesConnected({
+      firstNodeUid,
+      secondNodeUid,
+      connectionSnapshot: connection.takeSnapshot(),
+    });
+  };
+
+  /** Removes the given connection */
+  public readonly remove = (connection: NodeConnection): void => {
+    const firstNodeUid = connection.firstNode.nodeUid;
+    const secondNodeUid = connection.secondNode.nodeUid;
+
+    if (!this.has(firstNodeUid, secondNodeUid)) {
+      console.warn(
+        `Ignoring remove: No connection found between ${firstNodeUid} and ${secondNodeUid}`
+      );
+      return;
+    }
+
+    this.unregister(firstNodeUid, secondNodeUid);
+
+    this.socketEmitter.sendSimulationNodesDisconnected({
+      firstNodeUid,
+      secondNodeUid,
+    });
+  };
+
   /** Creates a connection between given two nodes */
   public readonly connect = (
     firstNode: SimulationNode,
     secondNode: SimulationNode,
     latencyInMs = 10
   ): void => {
-    if (this.has(firstNode.nodeUid, secondNode.nodeUid)) {
-      console.warn(
-        `Ignoring createConnection: A connection between ${firstNode.nodeUid} and ${secondNode.nodeUid} already exists`
-      );
-      return;
-    }
-
     const newConn = new NodeConnection(firstNode, secondNode, latencyInMs);
-    this.register(firstNode.nodeUid, secondNode.nodeUid, newConn);
-
-    this.socketEmitter.sendSimulationNodesConnected({
-      firstNodeUid: firstNode.nodeUid,
-      secondNodeUid: secondNode.nodeUid,
-      connectionSnapshot: newConn.takeSnapshot(),
-    });
+    this.add(newConn);
   };
 
   /** Destroys the connection between given two nodes */
@@ -50,7 +78,7 @@ export class NodeConnectionMap {
   ): void => {
     if (!this.has(firstNodeUid, secondNodeUid)) {
       console.warn(
-        `Ignoring removeConnection: No connection found between ${firstNodeUid} and ${secondNodeUid}`
+        `Ignoring disconnect: No connection found between ${firstNodeUid} and ${secondNodeUid}`
       );
       return;
     }
