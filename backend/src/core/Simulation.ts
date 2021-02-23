@@ -114,10 +114,7 @@ export class Simulation {
     firstNodeUid: string,
     secondNodeUid: string
   ): void => {
-    const firstNode = this.nodeMap[firstNodeUid];
-    const secondNode = this.nodeMap[secondNodeUid];
-
-    this.connectionMap.disconnect(firstNode, secondNode);
+    this.connectionMap.disconnect(firstNodeUid, secondNodeUid);
   };
 
   public readonly takeSnapshot = (): SimulationSnapshot => {

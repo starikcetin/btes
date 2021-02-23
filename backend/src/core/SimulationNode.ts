@@ -28,7 +28,7 @@ export class SimulationNode {
   }
 
   private get connections() {
-    return this.connectionMap.getAll(this);
+    return this.connectionMap.getAll(this.nodeUid);
   }
 
   private readonly socketEmitter: SimulationNamespaceEmitter;

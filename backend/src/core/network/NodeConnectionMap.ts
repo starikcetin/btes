@@ -45,22 +45,32 @@ export class NodeConnectionMap {
 
   /** Destroys the connection between given two nodes */
   public readonly disconnect = (
-    firstNode: SimulationNode,
-    secondNode: SimulationNode
+    firstNodeUid: string,
+    secondNodeUid: string
   ): void => {
-    if (!this.has(firstNode.nodeUid, secondNode.nodeUid)) {
+    if (!this.has(firstNodeUid, secondNodeUid)) {
       console.warn(
-        `Ignoring removeConnection: No connection found between ${firstNode.nodeUid} and ${secondNode.nodeUid}`
+        `Ignoring removeConnection: No connection found between ${firstNodeUid} and ${secondNodeUid}`
       );
       return;
     }
 
-    this.unregister(firstNode.nodeUid, secondNode.nodeUid);
+    this.unregister(firstNodeUid, secondNodeUid);
 
     this.socketEmitter.sendSimulationNodesDisconnected({
-      firstNodeUid: firstNode.nodeUid,
-      secondNodeUid: secondNode.nodeUid,
+      firstNodeUid: firstNodeUid,
+      secondNodeUid: secondNodeUid,
     });
+  };
+
+  /** Destroys all connections that given nodeUid is participating in */
+  public readonly disconnectAll = (nodeUid: string): void => {
+    const filteredMap = this.getNodeMapFiltered(nodeUid);
+    const otherNodeUids = Object.keys(filteredMap);
+
+    for (const otherNodeUid of otherNodeUids) {
+      this.disconnect(nodeUid, otherNodeUid);
+    }
   };
 
   /** @returns the connection between given two nodes if they are connected; `undefined` otherwise */
@@ -97,8 +107,8 @@ export class NodeConnectionMap {
   };
 
   /** @returns all connections the given node participates in */
-  public readonly getAll = (node: SimulationNode): NodeConnection[] => {
-    return Object.values(this._connectionMap[node.nodeUid]).filter(hasValue);
+  public readonly getAll = (nodeUid: string): NodeConnection[] => {
+    return Object.values(this.getNodeMapFiltered(nodeUid));
   };
 
   /** @returns whether a connection exists between the given two nodes */
@@ -134,6 +144,13 @@ export class NodeConnectionMap {
   private unregister = (firstNodeUid: string, secondNodeUid: string) => {
     delete this._connectionMap[firstNodeUid][secondNodeUid];
     delete this._connectionMap[secondNodeUid][firstNodeUid];
+  };
+
+  private getNodeMapFiltered = (
+    firstNodeUid: string
+  ): { [secondNodeUid: string]: NodeConnection } => {
+    const rawMap = this._connectionMap[firstNodeUid];
+    return _.pickBy(rawMap, hasValue);
   };
 
   public readonly takeSnapshot = (): NodeConnectionMapSnapshot => {

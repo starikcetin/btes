@@ -36,6 +36,7 @@ class SimulationManager {
       simulation,
       ns,
       commandHistoryManager,
+      connectionMap,
       socketEmitter
     );
 
