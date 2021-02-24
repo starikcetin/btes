@@ -125,6 +125,7 @@ export class Simulation {
       simulationUid: this.simulationUid,
       nodeMap: nodeSnapshots,
       connectionMap: this.connectionMap.takeSnapshot(),
+      timerService: this.timerService.takeSnapshot(),
     };
   };
 }

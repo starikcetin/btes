@@ -49,6 +49,8 @@ export class SimulationSocketListener {
       socketEvents.simulation.nodeMailReceived,
       this.handleSimulationNodeMailReceived
     );
+    socket.on(socketEvents.simulation.paused, this.handleSimulationPaused);
+    socket.on(socketEvents.simulation.resumed, this.handleSimulationResumed);
 
     socket.onAny(this.handleAny);
   }
@@ -217,6 +219,22 @@ export class SimulationSocketListener {
       body.recipientNodeUid,
       socketEvents.simulation.nodeMailReceived,
       body
+    );
+  };
+
+  private readonly handleSimulationPaused = () => {
+    store.dispatch(
+      simulationSlice.actions.paused({
+        simulationUid: this.simulationUid,
+      })
+    );
+  };
+
+  private readonly handleSimulationResumed = () => {
+    store.dispatch(
+      simulationSlice.actions.resumed({
+        simulationUid: this.simulationUid,
+      })
     );
   };
 

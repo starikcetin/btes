@@ -14,6 +14,8 @@ import { SimulationLogNodeActionPayload } from './actionPayloads/SimulationLogNo
 import { SimulationNodesConnectedActionPayload } from './actionPayloads/SimulationNodesConnectedActionPayload';
 import { SimulationNodesDisconnectedActionPayload } from './actionPayloads/SimulationNodesDisconnectedActionPayload';
 import { SimulationNodeMailReceivedActionPayload } from './actionPayloads/SimulationNodeMailReceivedActionPayload';
+import { SimulationPausedActionPayload } from './actionPayloads/SimulationPausedActionPayload';
+import { SimulationResumedActionPayload } from './actionPayloads/SimulationResumedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -40,6 +42,9 @@ export const simulationSlice = createSlice({
         logs: [],
         connectionMap: {
           connectionMap: {},
+        },
+        timerService: {
+          isPaused: false,
         },
       };
     },
@@ -120,6 +125,7 @@ export const simulationSlice = createSlice({
           ...node,
         })),
         connectionMap: snapshot.connectionMap,
+        timerService: snapshot.timerService,
       };
     },
     nodePositionUpdated: (
@@ -183,6 +189,38 @@ export const simulationSlice = createSlice({
       const recipientNode = sim.nodeMap[payload.recipientNodeUid];
 
       recipientNode.receivedMails.push(payload.mail);
+    },
+    paused: (
+      state,
+      { payload }: PayloadAction<SimulationPausedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `paused`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      sim.timerService.isPaused = true;
+    },
+    resumed: (
+      state,
+      { payload }: PayloadAction<SimulationResumedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `resumed`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      sim.timerService.isPaused = false;
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);

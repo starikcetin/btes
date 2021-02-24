@@ -5,6 +5,8 @@ import { Button, ButtonGroup, ButtonToolbar } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faNetworkWired,
+  faPause,
+  faPlay,
   faRedo,
   faUndo,
 } from '@fortawesome/free-solid-svg-icons';
@@ -45,6 +47,11 @@ const SandboxSimulation: React.FC = () => {
 
   const logs = useSelector((state: RootState) =>
     Object.values(state.simulation[simulationUid]?.logs || [])
+  );
+
+  const isPaused = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid]?.timerService.isPaused || false
   );
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
@@ -89,6 +96,14 @@ const SandboxSimulation: React.FC = () => {
     simulationBridge.sendSimulationRedo(simulationUid);
   }, [simulationUid]);
 
+  const handlePauseOrResume = useCallback(() => {
+    if (isPaused) {
+      simulationBridge.sendSimulationResume(simulationUid);
+    } else {
+      simulationBridge.sendSimulationPause(simulationUid);
+    }
+  }, [isPaused, simulationUid]);
+
   const handleKeyUp = useCallback(
     (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === 'z') {
@@ -125,7 +140,7 @@ const SandboxSimulation: React.FC = () => {
           <div className="page-sandbox-simulation--body">
             <div className="page-sandbox-simulation--toolbox bg-light border-bottom pl-2">
               <ButtonToolbar>
-                <ButtonGroup className="mr-2">
+                <ButtonGroup className="mr-4">
                   <Button
                     onClick={handleUndo}
                     variant="light"
@@ -141,6 +156,16 @@ const SandboxSimulation: React.FC = () => {
                     title="Redo"
                   >
                     <FontAwesomeIcon icon={faRedo} />
+                  </Button>
+                </ButtonGroup>
+                <ButtonGroup className="mr-4">
+                  <Button
+                    onClick={handlePauseOrResume}
+                    variant="light"
+                    className="rounded-0"
+                    title={isPaused ? 'Resume' : 'Pause'}
+                  >
+                    <FontAwesomeIcon icon={isPaused ? faPlay : faPause} />
                   </Button>
                 </ButtonGroup>
               </ButtonToolbar>

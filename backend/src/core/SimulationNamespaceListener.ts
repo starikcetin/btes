@@ -1,4 +1,5 @@
 import { Socket, Namespace } from 'socket.io';
+
 import { SimulationPingPayload } from '../common/socketPayloads/SimulationPingPayload';
 import { SimulationCreateNodePayload } from '../common/socketPayloads/SimulationCreateNodePayload';
 import { socketEvents } from '../common/constants/socketEvents';
@@ -22,12 +23,14 @@ import { SimulationConnectNodesCommand } from './commands/SimulationConnectNodes
 import { SimulationDisconnectNodesCommand } from './commands/SimulationDisconnectNodesCommand';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
+import { ControlledTimerService } from './network/ControlledTimerService';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
   private readonly ns: Namespace;
   private readonly commandHistoryManager: CommandHistoryManager;
   private readonly connectionMap: NodeConnectionMap;
+  private readonly timerService: ControlledTimerService;
   private readonly socketEmitter: SimulationNamespaceEmitter;
 
   constructor(
@@ -35,12 +38,14 @@ export class SimulationNamespaceListener {
     ns: Namespace,
     commandHistoryManager: CommandHistoryManager,
     connectionMap: NodeConnectionMap,
+    timerService: ControlledTimerService,
     socketEmitter: SimulationNamespaceEmitter
   ) {
     this.simulation = simulation;
     this.ns = ns;
     this.commandHistoryManager = commandHistoryManager;
     this.connectionMap = connectionMap;
+    this.timerService = timerService;
     this.socketEmitter = socketEmitter;
 
     ns.on(socketEvents.native.connect, (socket) => {
@@ -96,6 +101,8 @@ export class SimulationNamespaceListener {
       socketEvents.simulation.disconnectNodes,
       this.handleSimulationDisconnectNodes
     );
+    socket.on(socketEvents.simulation.pause, this.handleSimulationPause);
+    socket.on(socketEvents.simulation.resume, this.handleSimulationResume);
   };
 
   private readonly teardownSocket = (socket: Socket): void => {
@@ -216,5 +223,13 @@ export class SimulationNamespaceListener {
 
     this.commandHistoryManager.register(createCommand);
     createCommand.execute();
+  };
+
+  private readonly handleSimulationPause = () => {
+    this.timerService.pause();
+  };
+
+  private readonly handleSimulationResume = () => {
+    this.timerService.resume();
   };
 }

@@ -170,6 +170,14 @@ class SimulationBridge {
     this.emit(simulationUid, socketEvents.simulation.nodeUnicastMail, body);
   }
 
+  public sendSimulationPause(simulationUid: string) {
+    this.emit(simulationUid, socketEvents.simulation.pause, null);
+  }
+
+  public sendSimulationResume(simulationUid: string) {
+    this.emit(simulationUid, socketEvents.simulation.resume, null);
+  }
+
   private setupNewConnection(simulationUid: string, socket: Socket) {
     store.dispatch(simulationSlice.actions.setup({ simulationUid }));
     this.uidtoSocketMap[simulationUid] = socket;
