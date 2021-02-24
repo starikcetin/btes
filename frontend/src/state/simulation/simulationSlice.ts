@@ -194,13 +194,33 @@ export const simulationSlice = createSlice({
       state,
       { payload }: PayloadAction<SimulationPausedActionPayload>
     ) => {
-      // TODO: implement
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `paused`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      sim.timerService.isPaused = true;
     },
     resumed: (
       state,
       { payload }: PayloadAction<SimulationResumedActionPayload>
     ) => {
-      // TODO: implement
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `resumed`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      sim.timerService.isPaused = false;
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);
