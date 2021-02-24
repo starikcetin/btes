@@ -70,4 +70,11 @@
       // border-radius: 5px 0 0 5px;
     }
   }
+
+  &--time-scale {
+    // specificity hack: apply the class twice
+    &#{&} {
+      width: 125px;
+    }
+  }
 }

@@ -16,6 +16,7 @@ import { SimulationNodesDisconnectedActionPayload } from './actionPayloads/Simul
 import { SimulationNodeMailReceivedActionPayload } from './actionPayloads/SimulationNodeMailReceivedActionPayload';
 import { SimulationPausedActionPayload } from './actionPayloads/SimulationPausedActionPayload';
 import { SimulationResumedActionPayload } from './actionPayloads/SimulationResumedActionPayload';
+import { SimulationTimeScaleChangedActionPayload } from './actionPayloads/SimulationTimeScaleChangedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -45,6 +46,7 @@ export const simulationSlice = createSlice({
         },
         timerService: {
           isPaused: false,
+          timeScale: 1,
         },
       };
     },
@@ -222,6 +224,23 @@ export const simulationSlice = createSlice({
 
       sim.timerService.isPaused = false;
     },
+    timeScaleChanged: (
+      state,
+      { payload }: PayloadAction<SimulationTimeScaleChangedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `timeScaleChanged`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      sim.timerService.timeScale = payload.timeScale;
+    },
+
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);
     },

@@ -28,5 +28,7 @@ export const socketEvents = {
     resume: 'simulation-resume',
     paused: 'simulation-paused',
     resumed: 'simulation-resumed',
+    changeTimeScale: 'simulation-change-time-scale',
+    timeScaleChanged: 'simulation-time-scale-changed',
   },
 } as const;

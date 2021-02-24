@@ -18,6 +18,7 @@ import { SimulationConnectNodesPayload } from '../common/socketPayloads/Simulati
 import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/SimulationDisconnectNodesPayload';
 import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/SimulationNodeBroadcastMailPayload';
 import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
+import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -168,6 +169,13 @@ class SimulationBridge {
     body: SimulationNodeUnicastMailPayload
   ) {
     this.emit(simulationUid, socketEvents.simulation.nodeUnicastMail, body);
+  }
+
+  public sendSimulationChangeTimeScale(
+    simulationUid: string,
+    body: SimulationChangeTimeScalePayload
+  ) {
+    this.emit(simulationUid, socketEvents.simulation.changeTimeScale, body);
   }
 
   public sendSimulationPause(simulationUid: string) {

@@ -24,6 +24,7 @@ import { SimulationDisconnectNodesCommand } from './commands/SimulationDisconnec
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
+import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -103,6 +104,10 @@ export class SimulationNamespaceListener {
     );
     socket.on(socketEvents.simulation.pause, this.handleSimulationPause);
     socket.on(socketEvents.simulation.resume, this.handleSimulationResume);
+    socket.on(
+      socketEvents.simulation.changeTimeScale,
+      this.handleSimulationChangeTimeScale
+    );
   };
 
   private readonly teardownSocket = (socket: Socket): void => {
@@ -231,5 +236,11 @@ export class SimulationNamespaceListener {
 
   private readonly handleSimulationResume = () => {
     this.timerService.resume();
+  };
+
+  private readonly handleSimulationChangeTimeScale = (
+    body: SimulationChangeTimeScalePayload
+  ) => {
+    this.timerService.setTimeScale(body.timeScale);
   };
 }
