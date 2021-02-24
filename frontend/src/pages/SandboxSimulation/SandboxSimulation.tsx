@@ -1,13 +1,20 @@
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, ButtonGroup, ButtonToolbar } from 'react-bootstrap';
+import {
+  Button,
+  ButtonGroup,
+  ButtonToolbar,
+  FormControl,
+  InputGroup,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faNetworkWired,
   faPause,
   faPlay,
   faRedo,
+  faTachometerAlt,
   faUndo,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -26,6 +33,7 @@ import NodeModal from '../../components/NodeModal/NodeModal';
 import { simulationBridge } from '../../services/simulationBridge';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 import LogModal from '../../components/LogModal/LogModal';
+import { hasValue } from '../../common/utils/hasValue';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -52,6 +60,12 @@ const SandboxSimulation: React.FC = () => {
   const isPaused = useSelector(
     (state: RootState) =>
       state.simulation[simulationUid]?.timerService.isPaused || false
+  );
+
+  const timeScale = useSelector((state: RootState) =>
+    hasValue(state.simulation[simulationUid]?.timerService.timeScale)
+      ? state.simulation[simulationUid]?.timerService.timeScale
+      : 1
   );
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
@@ -103,6 +117,20 @@ const SandboxSimulation: React.FC = () => {
       simulationBridge.sendSimulationPause(simulationUid);
     }
   }, [isPaused, simulationUid]);
+
+  const handleTimeScaleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let newValue = Number.parseFloat(e.target.value);
+      if (!Number.isFinite(newValue) || newValue < 0) {
+        newValue = 0;
+      }
+
+      simulationBridge.sendSimulationChangeTimeScale(simulationUid, {
+        timeScale: newValue,
+      });
+    },
+    [simulationUid]
+  );
 
   const handleKeyUp = useCallback(
     (event: KeyboardEvent) => {
@@ -168,6 +196,22 @@ const SandboxSimulation: React.FC = () => {
                     <FontAwesomeIcon icon={isPaused ? faPlay : faPause} />
                   </Button>
                 </ButtonGroup>
+                <InputGroup
+                  className="rounded-0 mr-4 page-sandbox-simulation--time-scale"
+                  title="Time Scale"
+                >
+                  <InputGroup.Prepend>
+                    <InputGroup.Text>
+                      <FontAwesomeIcon icon={faTachometerAlt} />
+                    </InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <FormControl
+                    type="number"
+                    min={0}
+                    value={timeScale}
+                    onChange={handleTimeScaleInputChange}
+                  />
+                </InputGroup>
               </ButtonToolbar>
             </div>
             <div className="page-sandbox-simulation--board-container">
