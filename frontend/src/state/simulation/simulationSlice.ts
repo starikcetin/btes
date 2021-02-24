@@ -43,6 +43,9 @@ export const simulationSlice = createSlice({
         connectionMap: {
           connectionMap: {},
         },
+        timerService: {
+          isPaused: false,
+        },
       };
     },
     pong: (state, { payload }: PayloadAction<SimulationPongActionPayload>) => {
@@ -122,6 +125,7 @@ export const simulationSlice = createSlice({
           ...node,
         })),
         connectionMap: snapshot.connectionMap,
+        timerService: snapshot.timerService,
       };
     },
     nodePositionUpdated: (
