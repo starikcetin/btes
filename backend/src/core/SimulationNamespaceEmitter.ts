@@ -62,4 +62,12 @@ export class SimulationNamespaceEmitter {
   ): void => {
     this.ns.emit(socketEvents.simulation.nodesDisconnected, body);
   };
+
+  public readonly sendSimulationPaused = (): void => {
+    this.ns.emit(socketEvents.simulation.paused);
+  };
+
+  public readonly sendSimulationResumed = (): void => {
+    this.ns.emit(socketEvents.simulation.resumed);
+  };
 }

@@ -1,4 +1,5 @@
 import { Namespace } from 'socket.io';
+
 import { Simulation } from './Simulation';
 import { fatalAssert } from '../utils/fatalAssert';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
@@ -23,7 +24,7 @@ class SimulationManager {
     const commandHistoryManager = new CommandHistoryManager();
     const socketEmitter = new SimulationNamespaceEmitter(ns);
     const connectionMap = new NodeConnectionMap(socketEmitter);
-    const timerService = new ControlledTimerService();
+    const timerService = new ControlledTimerService(socketEmitter);
 
     const simulation = new Simulation(
       socketEmitter,
@@ -37,6 +38,7 @@ class SimulationManager {
       ns,
       commandHistoryManager,
       connectionMap,
+      timerService,
       socketEmitter
     );
 

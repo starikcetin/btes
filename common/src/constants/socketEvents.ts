@@ -24,5 +24,9 @@ export const socketEvents = {
     disconnectNodes: 'simulation-disconnect-nodes',
     nodesConnected: 'simulation-nodes-connected',
     nodesDisconnected: 'simulation-nodes-disconnected',
+    pause: 'simulation-pause',
+    resume: 'simulation-resume',
+    paused: 'simulation-paused',
+    resumed: 'simulation-resumed',
   },
 } as const;

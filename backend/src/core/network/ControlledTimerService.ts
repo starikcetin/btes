@@ -1,13 +1,21 @@
 import _ from 'lodash';
+
+import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 import { ControlledTimer } from './ControlledTimer';
 import { ControlledTimerConfig } from './ControlledTimerConfig';
 
 export class ControlledTimerService {
+  private readonly socketEmitter: SimulationNamespaceEmitter;
+
   private readonly activeTimers: ControlledTimer[] = [];
   private readonly rawTickPeriodInMs = 10;
 
   private currentTicker?: NodeJS.Timeout;
   private timeScale = 1;
+
+  constructor(socketEmitter: SimulationNamespaceEmitter) {
+    this.socketEmitter = socketEmitter;
+  }
 
   private get scaledTickPeriodInMs() {
     return this.rawTickPeriodInMs * this.timeScale;
@@ -22,10 +30,14 @@ export class ControlledTimerService {
     if (undefined !== this.currentTicker) {
       clearInterval(this.currentTicker);
     }
+
+    this.socketEmitter.sendSimulationPaused();
   };
 
   public readonly resume = (): void => {
     this.currentTicker = setInterval(this.tick, this.rawTickPeriodInMs);
+
+    this.socketEmitter.sendSimulationResumed();
   };
 
   /**
