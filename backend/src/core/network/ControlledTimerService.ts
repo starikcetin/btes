@@ -51,6 +51,10 @@ export class ControlledTimerService {
    */
   public readonly setTimeScale = (timeScale: number): void => {
     this.timeScale = timeScale;
+
+    this.socketEmitter.sendSimulationTimeScaleChanged({
+      timeScale: this.timeScale,
+    });
   };
 
   public readonly createTimer = (
@@ -80,6 +84,7 @@ export class ControlledTimerService {
   public readonly takeSnapshot = (): ControlledTimerServiceSnapshot => {
     return {
       isPaused: null === this.currentTicker,
+      timeScale: this.timeScale,
     };
   };
 }
