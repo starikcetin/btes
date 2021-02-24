@@ -96,13 +96,13 @@ const SandboxSimulation: React.FC = () => {
     simulationBridge.sendSimulationRedo(simulationUid);
   }, [simulationUid]);
 
-  const handleResume = useCallback(() => {
-    simulationBridge.sendSimulationResume(simulationUid);
-  }, [simulationUid]);
-
-  const handlePause = useCallback(() => {
-    simulationBridge.sendSimulationPause(simulationUid);
-  }, [simulationUid]);
+  const handlePauseOrResume = useCallback(() => {
+    if (isPaused) {
+      simulationBridge.sendSimulationResume(simulationUid);
+    } else {
+      simulationBridge.sendSimulationPause(simulationUid);
+    }
+  }, [isPaused, simulationUid]);
 
   const handleKeyUp = useCallback(
     (event: KeyboardEvent) => {
@@ -160,22 +160,12 @@ const SandboxSimulation: React.FC = () => {
                 </ButtonGroup>
                 <ButtonGroup className="mr-4">
                   <Button
-                    hidden={isPaused}
-                    onClick={handlePause}
+                    onClick={handlePauseOrResume}
                     variant="light"
                     className="rounded-0"
-                    title="Pause"
+                    title={isPaused ? 'Resume' : 'Pause'}
                   >
-                    <FontAwesomeIcon icon={faPause} />
-                  </Button>
-                  <Button
-                    hidden={!isPaused}
-                    onClick={handleResume}
-                    variant="light"
-                    className="rounded-0"
-                    title="Resume"
-                  >
-                    <FontAwesomeIcon icon={faPlay} />
+                    <FontAwesomeIcon icon={isPaused ? faPlay : faPause} />
                   </Button>
                 </ButtonGroup>
               </ButtonToolbar>
