@@ -12,6 +12,7 @@ import { SimulationNodePositionUpdatedPayload } from '../common/socketPayloads/S
 import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
 import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/SimulationNodesDisconnectedPayload';
 import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
+import { SimulationTimeScaleChangedPayload } from '../common/socketPayloads/SimulationTimeScaleChangedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -51,6 +52,10 @@ export class SimulationSocketListener {
     );
     socket.on(socketEvents.simulation.paused, this.handleSimulationPaused);
     socket.on(socketEvents.simulation.resumed, this.handleSimulationResumed);
+    socket.on(
+      socketEvents.simulation.timeScaleChanged,
+      this.handleSimulationTimeScaleChanged
+    );
 
     socket.onAny(this.handleAny);
   }
@@ -234,6 +239,17 @@ export class SimulationSocketListener {
     store.dispatch(
       simulationSlice.actions.resumed({
         simulationUid: this.simulationUid,
+      })
+    );
+  };
+
+  private readonly handleSimulationTimeScaleChanged = (
+    body: SimulationTimeScaleChangedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.timeScaleChanged({
+        simulationUid: this.simulationUid,
+        ...body,
       })
     );
   };
