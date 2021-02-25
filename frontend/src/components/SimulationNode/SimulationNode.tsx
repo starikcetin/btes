@@ -27,6 +27,11 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   });
 
   const updateNodePosition = (event: DraggableEvent, data: DraggableData) => {
+    //this condition prevent to trigger this function when user does not move the node,
+    // not trigger when doubleClick
+    //TODO not clever solution, search new one
+    if (positionX === data.x && positionY === data.y) return;
+    //Send new position of the node
     simulationBridge.sendSimulationUpdateNodePosition(simulationUid, {
       nodeUid,
       positionX: data.x,
