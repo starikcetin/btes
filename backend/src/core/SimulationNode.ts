@@ -5,6 +5,7 @@ import { SimulationNodeMail } from '../common/SimulationNodeMail';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
+import { BlockchainBlock } from './BlockchainBlock';
 
 export class SimulationNode {
   public readonly nodeUid: string;
@@ -33,6 +34,8 @@ export class SimulationNode {
 
   private readonly socketEmitter: SimulationNamespaceEmitter;
 
+  private readonly blockchainBlock: BlockchainBlock;
+
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
     connectionMap: NodeConnectionMap,
@@ -49,6 +52,39 @@ export class SimulationNode {
     this._positionX = positionX;
     this._positionY = positionY;
     this._receivedMails = [...receivedMails];
+    this.blockchainBlock = {
+      name: '34ec7g',
+      children: [
+        {
+          name: '32380',
+          children: [
+            {
+              name: 'e21c6',
+              children: [
+                {
+                  name: 'a6877',
+                  children: [
+                    {
+                      name: 'b1416',
+                      children: [
+                        {
+                          name: '904e2',
+                          children: [],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  name: '2f8b1',
+                  children: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
   }
 
   public readonly teardown = (): void => {
@@ -139,6 +175,7 @@ export class SimulationNode {
       positionX: this._positionX,
       positionY: this._positionY,
       receivedMails: [...this._receivedMails],
+      blockchainBlock: this.blockchainBlock,
     };
   };
 }
