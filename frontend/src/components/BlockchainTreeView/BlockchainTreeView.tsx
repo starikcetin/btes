@@ -5,20 +5,17 @@ import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
 
 import './BlockchainTreeView.scss';
 import { RootState } from '../../state/RootState';
-import { SimulationNodeBlockchainBlockSnapshot } from '../../common/SimulationNodeBlockchainBlockSnapshot';
+import { BlockchainBlock } from '../../common/BlockchainBlock';
 
 interface BlockchainTreeViewProps {
   simulationUid: string;
   nodeUid: string | null;
 }
 
-function format(
-  rootBlock: SimulationNodeBlockchainBlockSnapshot,
-  isRoot = true
-): RawNodeDatum {
+function format(rootBlock: BlockchainBlock): RawNodeDatum {
   return {
-    name: rootBlock.name,
-    children: rootBlock.children?.map((child) => format(child, false)),
+    name: rootBlock.hash,
+    children: rootBlock.children?.map((child) => format(child)),
   };
 }
 
@@ -30,12 +27,16 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
   const rootBlock = useSelector((state: RootState) => {
     return nodeUid
       ? state.simulation[simulationUid].nodeMap[nodeUid].blockchainBlock
-      : [];
+      : null;
   });
 
   return (
     <div className="d-flex justify-content-center align-items-center border comp-blockchain-tree-view">
-      <Tree data={format(rootBlock as SimulationNodeBlockchainBlockSnapshot)} />
+      {null === rootBlock ? (
+        <p>This node has no blockchain data yet.</p>
+      ) : (
+        <Tree data={format(rootBlock)} />
+      )}
     </div>
   );
 };

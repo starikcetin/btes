@@ -1,10 +1,10 @@
 import { SimulationNodeMail } from './SimulationNodeMail';
-import { SimulationNodeBlockchainBlockSnapshot } from './SimulationNodeBlockchainBlockSnapshot';
+import { BlockchainBlock } from './BlockchainBlock';
 
 export interface SimulationNodeSnapshot {
   readonly nodeUid: string;
   readonly positionX: number;
   readonly positionY: number;
   readonly receivedMails: SimulationNodeMail[];
-  readonly blockchainBlock: SimulationNodeBlockchainBlockSnapshot;
+  readonly blockchainBlock: BlockchainBlock;
 }
