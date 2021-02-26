@@ -1,9 +1,10 @@
 import React from 'react';
-import './BlockchainTreeView.scss';
 import Tree from 'react-d3-tree';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../state/RootState';
 import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
+
+import './BlockchainTreeView.scss';
+import { RootState } from '../../state/RootState';
 import { SimulationNodeBlockchainBlockSnapshot } from '../../common/SimulationNodeBlockchainBlockSnapshot';
 
 interface BlockchainTreeViewProps {
@@ -20,7 +21,10 @@ function format(
     children: rootBlock.children?.map((child) => format(child, false)),
   };
 }
-export default function BlockchainTreeView(props: BlockchainTreeViewProps) {
+
+export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
+  props
+) => {
   const { simulationUid, nodeUid } = props;
 
   const rootBlock = useSelector((state: RootState) => {
@@ -34,4 +38,4 @@ export default function BlockchainTreeView(props: BlockchainTreeViewProps) {
       <Tree data={format(rootBlock as SimulationNodeBlockchainBlockSnapshot)} />
     </div>
   );
-}
+};

@@ -9,7 +9,7 @@ import { NodeData } from '../../state/simulation/data/NodeData';
 import LogTable from '../LogTable/LogTable';
 import NodeNetworkDashboard from '../NodeNetworkDashboard/NodeNetworkDashboard';
 import { NodeMailsDashboard } from '../NodeMailsDashboard/NodeMailsDashboard';
-import BlockchainTreeView from '../BlockchainTreeView/BlockchainTreeView';
+import { BlockchainTreeView } from '../BlockchainTreeView/BlockchainTreeView';
 
 interface NodeModalProps {
   closeHandler: () => void;
