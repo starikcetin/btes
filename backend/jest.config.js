@@ -1,4 +1,6 @@
-const name = 'backend';
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+const name = require('./package.json').name;
 
 module.exports = {
   name,

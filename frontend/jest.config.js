@@ -1,4 +1,6 @@
-const name = 'frontend';
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+const name = require('./package.json').name;
 
 module.exports = {
   name,
