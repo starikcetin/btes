@@ -1,4 +1,8 @@
+const name = 'backend';
+
 module.exports = {
+  name,
+  displayName: name,
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],

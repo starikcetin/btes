@@ -1,4 +1,8 @@
+const name = 'common';
+
 module.exports = {
+  name,
+  displayName: name,
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],

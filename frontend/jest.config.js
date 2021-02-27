@@ -1,4 +1,8 @@
+const name = 'frontend';
+
 module.exports = {
+  name,
+  displayName: name,
   roots: ['<rootDir>/src'],
   collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
   setupFiles: ['react-app-polyfill/jsdom'],
