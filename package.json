@@ -21,7 +21,7 @@
     "sync-lock:root": "node scripts/yarn-sync.js",
     "sync-lock": "yarn sync-lock:root && wsrun -ml --report sync-lock",
     "upgrade-minor": "yarn upgrade --caret && yarn sync-lock && yarn install",
-    "test": "node scripts/test.js"
+    "test": "jest"
   },
   "devDependencies": {
     "husky": "^4.3.8",
