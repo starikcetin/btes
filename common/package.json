@@ -8,7 +8,8 @@
     "lint:fix": "yarn lint:check --fix",
     "precommit": "lint-staged",
     "sync-lock": "node scripts/yarn-sync.js --workspace",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "yarn test --coverage"
   },
   "dependencies": {},
   "devDependencies": {
