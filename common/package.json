@@ -6,19 +6,20 @@
   "scripts": {
     "lint:check": "eslint .",
     "lint:fix": "yarn lint:check --fix",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "sync-lock": "node scripts/yarn-sync.js --workspace"
   },
   "dependencies": {},
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.4.0",
-    "@typescript-eslint/parser": "^4.4.0",
-    "eslint": "^7.20.0",
-    "eslint-config-prettier": "^6.12.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
+    "eslint": "^7.21.0",
+    "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "lint-staged": "^10.4.0",
+    "lint-staged": "^10.5.4",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.1.2",
-    "typescript": "^4.0.3"
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.2"
   },
   "lint-staged": {
     "*": [
