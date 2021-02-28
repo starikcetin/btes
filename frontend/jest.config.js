@@ -5,20 +5,23 @@ const name = require('./package.json').name;
 module.exports = {
   name,
   displayName: name,
-  roots: ['<rootDir>/src'],
-  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
+  rootDir: '..',
+  roots: [`<rootDir>/${name}/src`],
+  collectCoverageFrom: [
+    `${name}/src/**/*.{js,jsx,ts,tsx}`,
+    `!${name}/src/**/*.d.ts`,
+  ],
   setupFiles: ['react-app-polyfill/jsdom'],
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+  setupFilesAfterEnv: [`<rootDir>/${name}/src/setupTests.ts`],
   testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-    '<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}',
+    `<rootDir>/${name}/src/**/__tests__/**/*.{js,jsx,ts,tsx}`,
+    `<rootDir>/${name}/src/**/*.{spec,test}.{js,jsx,ts,tsx}`,
   ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { cwd: __dirname }],
-    '^.+\\.css$': '<rootDir>/config/jest/cssTransform.js',
-    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)':
-      '<rootDir>/config/jest/fileTransform.js',
+    '^.+\\.css$': `<rootDir>/${name}/config/jest/cssTransform.js`,
+    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': `<rootDir>/${name}/config/jest/fileTransform.js`,
   },
   transformIgnorePatterns: [
     '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
