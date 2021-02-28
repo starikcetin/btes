@@ -105,12 +105,12 @@ export const socketLoggerMiddleware = (
   next();
 };
 
-const wrapEmit = (
+const wrapEmit = <TReturn, TEvent extends string | Symbol>(
   isNs: boolean,
-  event: string,
+  event: TEvent,
   socketOrNsp: Socket | Namespace,
   args: any[],
-  realEmit: (event: string, ...args: any[]) => boolean
+  realEmit: (event: TEvent, ...args: any[]) => TReturn
 ) => {
   switch (event) {
     case 'connection':
