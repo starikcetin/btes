@@ -15,7 +15,7 @@ module.exports = {
   ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { cwd: __dirname }],
     '^.+\\.css$': '<rootDir>/config/jest/cssTransform.js',
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)':
       '<rootDir>/config/jest/fileTransform.js',
