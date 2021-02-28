@@ -1,3 +1,13 @@
+/*
+ * Original: https://gist.github.com/bartvanandel/0418571bad30a3199afdaa1d5e3dbe25
+ * 
+ * Changes:
+ * 1. overwrites the `package.json`
+ * 2. ouput package names are valid (i.e. don't have `@versionX.X.X` part)
+ * 3. appends a trailing newline when outputting `package.json`
+ * 4. if `--workspace` flag is provided, looks for `yarn.lock` at the parent directory
+ */
+
 const fs = require('fs');
 
 const isFromWorkspace = process.argv.includes("--workspace");
@@ -143,7 +153,7 @@ const main = () => {
   if (changeCount > 0) {
     const outFilename = 'package.json';
     console.log('Writing changes to:', outFilename);
-    fs.writeFileSync(outFilename, JSON.stringify(packageJson, null, 2));
+    fs.writeFileSync(outFilename, JSON.stringify(packageJson, null, 2) + "\n");
   } else {
     console.log('No changes');
   }
