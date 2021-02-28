@@ -6,7 +6,8 @@
   "scripts": {
     "lint:check": "eslint .",
     "lint:fix": "yarn lint:check --fix",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "sync-lock": "node scripts/yarn-sync.js --workspace"
   },
   "dependencies": {},
   "devDependencies": {

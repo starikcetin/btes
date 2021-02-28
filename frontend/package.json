@@ -24,7 +24,8 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "precommit": "lint-staged",
-    "kill": "dotenv cross-var kill-port %PORT%"
+    "kill": "dotenv cross-var kill-port %PORT%",
+    "sync-lock": "node scripts/yarn-sync.js --workspace"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
