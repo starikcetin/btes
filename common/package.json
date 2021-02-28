@@ -7,18 +7,23 @@
     "lint:check": "eslint .",
     "lint:fix": "yarn lint:check --fix",
     "precommit": "lint-staged",
-    "sync-lock": "node scripts/yarn-sync.js --workspace"
+    "sync-lock": "node scripts/yarn-sync.js --workspace",
+    "test": "jest",
+    "test:coverage": "yarn test --coverage"
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/jest": "^26.0.20",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^26.6.3",
     "lint-staged": "^10.5.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
+    "ts-jest": "^26.5.2",
     "typescript": "^4.2.2"
   },
   "lint-staged": {
