@@ -17,6 +17,7 @@ import { SimulationNodeMailReceivedActionPayload } from './actionPayloads/Simula
 import { SimulationPausedActionPayload } from './actionPayloads/SimulationPausedActionPayload';
 import { SimulationResumedActionPayload } from './actionPayloads/SimulationResumedActionPayload';
 import { SimulationTimeScaleChangedActionPayload } from './actionPayloads/SimulationTimeScaleChangedActionPayload';
+import { SimulationConnectionLatencyChangedActionPayload } from './actionPayloads/SimulationConnectionLatencyChangedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -240,7 +241,39 @@ export const simulationSlice = createSlice({
 
       sim.timerService.timeScale = payload.timeScale;
     },
+    connectionLatencyChanged: (
+      state,
+      {
+        payload,
+      }: PayloadAction<SimulationConnectionLatencyChangedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
 
+      if (!sim) {
+        console.warn(
+          'Ignoring `connectionLatencyChanged`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      const { firstNodeUid, secondNodeUid, latencyInMs } = payload;
+      const connMap = sim.connectionMap.connectionMap;
+
+      if (
+        !connMap[firstNodeUid][secondNodeUid] ||
+        !connMap[secondNodeUid][firstNodeUid]
+      ) {
+        console.warn(
+          'Ignoring `connectionLatencyChanged`: no connection found between nodes. Payload:',
+          payload
+        );
+        return;
+      }
+
+      connMap[firstNodeUid][secondNodeUid].latencyInMs = latencyInMs;
+      connMap[secondNodeUid][firstNodeUid].latencyInMs = latencyInMs;
+    },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);
     },
