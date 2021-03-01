@@ -18,15 +18,17 @@ Monorepo for Blockchain Technology Education Software project.
 # Commands
 ⚠ Any command that is not listed in this section is not intended for manual use.
 
-|Command|Description|
-|-|-|
-|`yarn start`|Launches the development servers.|
-|`yarn build`|Builds the project in production config.|
-|`yarn lint:check`|Lints the project and outputs the result, but doesn't fix anything.|
-|`yarn lint:fix`|Lints the project and tries to automatically the fix errors.|
-|`yarn kill`|Kills processes that currently occupy the ports defined in `.env` files of the packages.|
-|`yarn test`|Runs unit tests.|
-|`yarn test:coverage`|Runs unit tests and collects coverage.|
+|Safe?|Command|Description|
+|-|-|-|
+|✅|`start`|Launches the development servers.|
+|✅|`build`|Builds the project in production config.|
+|✅|`lint:check`|Lints the project and outputs the result, but doesn't fix anything.|
+|⚠|`lint:fix`|Lints the project and tries to automatically the fix errors.|
+|⚠|`kill`|Kills processes that currently occupy the ports defined in `.env` files of the packages.|
+|✅|`test`|Runs unit tests.|
+|✅|`test:coverage`|Runs unit tests and collects coverage.|
+|⛔|`sync-lock`|Syncs versions from `yarn.lock` to `package.json` files.|
+|⛔|`upgrade-minor`|Upgrades all dependencies with [caret range](https://stackoverflow.com/a/22345808/6301627). Overwrites both `package.json` and `yarn.lock`.|
 
 # Packages
 |Name|Path|Description|
