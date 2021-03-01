@@ -19,6 +19,7 @@ import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/Simul
 import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/SimulationNodeBroadcastMailPayload';
 import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
 import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
+import { SimulationConnectionChangeLatencyPayload } from '../common/socketPayloads/SimulationConnectionChangeLatencyPayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -184,6 +185,17 @@ class SimulationBridge {
 
   public sendSimulationResume(simulationUid: string) {
     this.emit(simulationUid, socketEvents.simulation.resume, null);
+  }
+
+  public sendSimulationConnectionChangeLatency(
+    simulationUid: string,
+    body: SimulationConnectionChangeLatencyPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.connectionChangeLatency,
+      body
+    );
   }
 
   private setupNewConnection(simulationUid: string, socket: Socket) {
