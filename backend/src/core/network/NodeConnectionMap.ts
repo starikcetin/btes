@@ -67,7 +67,13 @@ export class NodeConnectionMap {
     secondNode: SimulationNode,
     latencyInMs = 10
   ): void => {
-    const newConn = new NodeConnection(firstNode, secondNode, latencyInMs);
+    const newConn = new NodeConnection(
+      this.socketEmitter,
+      firstNode,
+      secondNode,
+      latencyInMs
+    );
+
     this.add(newConn);
   };
 

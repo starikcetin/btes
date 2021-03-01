@@ -10,6 +10,7 @@ import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/Simu
 import { SimulationNodesConnectedPayload } from '../common/socketPayloads/SimulationNodesConnectedPayload';
 import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/SimulationNodesDisconnectedPayload';
 import { SimulationTimeScaleChangedPayload } from '../common/socketPayloads/SimulationTimeScaleChangedPayload';
+import { SimulationConnectionLatencyChangedPayload } from '../common/socketPayloads/SimulationConnectionLatencyChangedPayload';
 
 export class SimulationNamespaceEmitter {
   private readonly ns: Namespace;
@@ -76,5 +77,11 @@ export class SimulationNamespaceEmitter {
     body: SimulationTimeScaleChangedPayload
   ): void => {
     this.ns.emit(socketEvents.simulation.timeScaleChanged, body);
+  };
+
+  public readonly sendSimulationConnectionLatencyChanged = (
+    body: SimulationConnectionLatencyChangedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.connectionLatencyChanged, body);
   };
 }
