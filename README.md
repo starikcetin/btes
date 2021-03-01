@@ -19,7 +19,7 @@ Monorepo for Blockchain Technology Education Software project.
 ⚠ Any command that is not listed in this section is not intended for manual use.
 
 |Safe?|Command|Description|
-|-|-|-|
+|:-:|-|-|
 |✅|`start`|Launches the development servers.|
 |✅|`build`|Builds the project in production config.|
 |✅|`lint:check`|Lints the project and outputs the result, but doesn't fix anything.|
@@ -32,7 +32,7 @@ Monorepo for Blockchain Technology Education Software project.
 
 # Packages
 |Name|Path|Description|
-|-|-|-|
+|:-|-|-|
 |`frontend`|`/frontend`|Frontend of the BTES project.|
 |`backend`|`/backend`|Backend of the BTES project.|
 |`common`|`/common`|Shared code between other packages of the BTES project.|
