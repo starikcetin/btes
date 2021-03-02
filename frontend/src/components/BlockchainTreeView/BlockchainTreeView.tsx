@@ -26,7 +26,8 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
 
   const rootBlock = useSelector((state: RootState) => {
     return nodeUid
-      ? state.simulation[simulationUid].nodeMap[nodeUid].blockchainBlock
+      ? state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp
+          .blockchainBlock
       : null;
   });
 

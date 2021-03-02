@@ -7,6 +7,8 @@ import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
+import { NodeBlockchainApp } from './NodeBlockchainApp';
+import { dummyBlockchain } from '../utils/dummyBlockchain';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -33,10 +35,15 @@ export class Simulation {
     positionY: number
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
+
+    // TODO: dummyBlockchain is passed to NodeBlockchainApp here
+    const blockchainApp = new NodeBlockchainApp(dummyBlockchain);
+
     const newNode = new SimulationNode(
       this.socketEmitter,
       this.connectionMap,
       this.timerService,
+      blockchainApp,
       nodeUid,
       positionX,
       positionY,
@@ -55,10 +62,15 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
+    const blockchainApp = new NodeBlockchainApp(
+      nodeSnapshot.blockchainApp.blockchainBlock
+    );
+
     const newNode = new SimulationNode(
       this.socketEmitter,
       this.connectionMap,
       this.timerService,
+      blockchainApp,
       nodeSnapshot.nodeUid,
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,

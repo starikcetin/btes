@@ -1,6 +1,6 @@
 import { SimulationNodeMail } from '../../../common/SimulationNodeMail';
 import { SimulationLog } from './SimulationLog';
-import { BlockchainBlock } from '../../../common/BlockchainBlock';
+import { NodeBlockchainAppData } from './NodeBlockchainAppData';
 
 export interface NodeData {
   // synced state
@@ -8,7 +8,7 @@ export interface NodeData {
   positionX: number;
   positionY: number;
   receivedMails: SimulationNodeMail[];
-  blockchainBlock: BlockchainBlock;
+  blockchainApp: NodeBlockchainAppData;
 
   // local-only state
   readonly logs: SimulationLog[];
