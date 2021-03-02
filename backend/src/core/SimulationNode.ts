@@ -5,7 +5,7 @@ import { SimulationNodeMail } from '../common/SimulationNodeMail';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
-import { NodeBlockchainApp } from './NodeBlockchainApp';
+import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 
 export class SimulationNode {
   public readonly nodeUid: string;

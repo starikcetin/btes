@@ -1,5 +1,5 @@
-import { BlockchainBlock } from '../common/BlockchainBlock';
-import { NodeBlockchainAppSnapshot } from '../common/NodeBlockchainAppSnapshot';
+import { BlockchainBlock } from '../../common/BlockchainBlock';
+import { NodeBlockchainAppSnapshot } from '../../common/NodeBlockchainAppSnapshot';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
