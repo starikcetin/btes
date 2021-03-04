@@ -2,28 +2,29 @@ import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { NodeBlockchainAppSnapshot } from '../../common/blockchain/NodeBlockchainAppSnapshot';
 import { BlockchainWallet } from './BlockchainWallet';
 import { BlockchainTransactionEngine } from './BlockchainTransactionEngine';
+import { BlockchainBlockDatabase } from './BlockchainBlockDatabase';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
-  private readonly blockchainBlock: BlockchainBlock;
   private readonly wallet: BlockchainWallet;
   private readonly transactionEngine: BlockchainTransactionEngine;
+  private readonly blockDatabase: BlockchainBlockDatabase;
 
   constructor(
-    blockchainBlock: BlockchainBlock,
     wallet: BlockchainWallet,
-    transactionEngine: BlockchainTransactionEngine
+    transactionEngine: BlockchainTransactionEngine,
+    blockDatabase: BlockchainBlockDatabase
   ) {
-    this.blockchainBlock = blockchainBlock;
     this.wallet = wallet;
     this.transactionEngine = transactionEngine;
+    this.blockDatabase = blockDatabase;
   }
 
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
     return {
-      blockchainBlock: this.blockchainBlock,
       wallet: this.wallet.takeSnapshot(),
       transactionEngine: this.transactionEngine.takeSnapshot(),
+      blockDatabase: this.blockDatabase.takeSnapshot(),
     };
   };
 }
