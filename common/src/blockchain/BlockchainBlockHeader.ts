@@ -1,21 +1,15 @@
 /** https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch09.asciidoc#block-header */
 export interface BlockchainBlockHeader {
-  // TODO: we can get away with not implementing this
-  /**
-   * A version number to track software/protocol upgrades
+  /*
+   * Omitted fields:
+   * - version (number): A version number to track software/protocol upgrades
+   * - merkleRoot (string): A hash of the root of the merkle tree of this block’s transactions
    */
-  readonly version: number;
 
   /**
    * A reference to the hash of the previous (parent) block in the chain
    */
   readonly previousHash: string;
-
-  // TODO: we can get away with not implementing this
-  /**
-   * A hash of the root of the merkle tree of this block’s transactions
-   */
-  readonly merkleRoot: string;
 
   /**
    * The approximate creation time of this block (seconds from Unix Epoch)
