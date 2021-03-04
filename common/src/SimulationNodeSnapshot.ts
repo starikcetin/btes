@@ -1,5 +1,5 @@
 import { SimulationNodeMail } from './SimulationNodeMail';
-import { NodeBlockchainAppSnapshot } from './NodeBlockchainAppSnapshot';
+import { NodeBlockchainAppSnapshot } from './blockchain/NodeBlockchainAppSnapshot';
 
 export interface SimulationNodeSnapshot {
   readonly nodeUid: string;

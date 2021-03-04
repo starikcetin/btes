@@ -5,7 +5,7 @@ import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
 
 import './BlockchainTreeView.scss';
 import { RootState } from '../../state/RootState';
-import { BlockchainBlock } from '../../common/BlockchainBlock';
+import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 
 interface BlockchainTreeViewProps {
   simulationUid: string;

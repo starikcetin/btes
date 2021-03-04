@@ -1,4 +1,4 @@
-import { BlockchainBlock } from '../common/BlockchainBlock';
+import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
 
 export const dummyBlockchain: BlockchainBlock = {
   hash: '34ec7g',

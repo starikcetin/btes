@@ -1,4 +1,4 @@
-import { BlockchainTransactionEngineSnapshot } from '../../common/BlockchainTransactionEngineSnapshot';
+import { BlockchainTransactionEngineSnapshot } from '../../common/blockchain/BlockchainTransactionEngineSnapshot';
 
 export class BlockchainTransactionEngine {
   public readonly takeSnapshot = (): BlockchainTransactionEngineSnapshot => {

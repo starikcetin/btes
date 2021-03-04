@@ -1,4 +1,4 @@
-import { BlockchainWalletSnapshot } from '../../common/BlockchainWalletSnapshot';
+import { BlockchainWalletSnapshot } from '../../common/blockchain/BlockchainWalletSnapshot';
 import { BlockchainKeyPair } from './BlockchainKeyPair';
 
 /**

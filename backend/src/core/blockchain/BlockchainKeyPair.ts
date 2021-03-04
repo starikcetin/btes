@@ -1,6 +1,6 @@
 import NodeRSA from 'node-rsa';
 
-import { BlockchainKeyPairSnapshot } from '../../common/BlockchainKeyPairSnapshot';
+import { BlockchainKeyPairSnapshot } from '../../common/blockchain/BlockchainKeyPairSnapshot';
 
 export class BlockchainKeyPair {
   private readonly nodeRsa: NodeRSA;
