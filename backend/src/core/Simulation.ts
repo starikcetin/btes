@@ -11,6 +11,7 @@ import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 import { dummyBlockchain } from '../utils/dummyBlockchain';
 import { BlockchainWallet } from './blockchain/BlockchainWallet';
 import { BlockchainTransactionEngine } from './blockchain/BlockchainTransactionEngine';
+import { BlockchainBlockDatabase } from './blockchain/BlockchainBlockDatabase';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -44,11 +45,15 @@ export class Simulation {
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
     const blockchainTransactionEngine = new BlockchainTransactionEngine();
 
-    // TODO: dummyBlockchain is passed to NodeBlockchainApp here
+    // TODO: dummyBlockchain is here
+    const blockchainBlockDatabase = new BlockchainBlockDatabase(
+      dummyBlockchain
+    );
+
     const blockchainApp = new NodeBlockchainApp(
-      dummyBlockchain,
       blockchainWallet,
-      blockchainTransactionEngine
+      blockchainTransactionEngine,
+      blockchainBlockDatabase
     );
 
     const newNode = new SimulationNode(
@@ -83,10 +88,14 @@ export class Simulation {
     // TODO: initialize with snapshot
     const blockchainTransactionEngine = new BlockchainTransactionEngine();
 
+    const blockchainBlockDatabase = new BlockchainBlockDatabase(
+      nodeSnapshot.blockchainApp.blockDatabase.blocks
+    );
+
     const blockchainApp = new NodeBlockchainApp(
-      nodeSnapshot.blockchainApp.blockchainBlock,
       blockchainWallet,
-      blockchainTransactionEngine
+      blockchainTransactionEngine,
+      blockchainBlockDatabase
     );
 
     const newNode = new SimulationNode(
