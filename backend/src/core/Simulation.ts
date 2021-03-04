@@ -9,6 +9,8 @@ import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
 import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 import { dummyBlockchain } from '../utils/dummyBlockchain';
+import { BlockchainWallet } from './blockchain/BlockchainWallet';
+import { BlockchainTransactionEngine } from './blockchain/BlockchainTransactionEngine';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -36,8 +38,18 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
+    // TODO: this should not be here
+    const blockchainKeypairBitLength = 5;
+
+    const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
+    const blockchainTransactionEngine = new BlockchainTransactionEngine();
+
     // TODO: dummyBlockchain is passed to NodeBlockchainApp here
-    const blockchainApp = new NodeBlockchainApp(dummyBlockchain);
+    const blockchainApp = new NodeBlockchainApp(
+      dummyBlockchain,
+      blockchainWallet,
+      blockchainTransactionEngine
+    );
 
     const newNode = new SimulationNode(
       this.socketEmitter,
@@ -62,8 +74,19 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
+    // TODO: this should not be here
+    const blockchainKeypairBitLength = 5;
+
+    // TODO: initialize with snapshot
+    const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
+
+    // TODO: initialize with snapshot
+    const blockchainTransactionEngine = new BlockchainTransactionEngine();
+
     const blockchainApp = new NodeBlockchainApp(
-      nodeSnapshot.blockchainApp.blockchainBlock
+      nodeSnapshot.blockchainApp.blockchainBlock,
+      blockchainWallet,
+      blockchainTransactionEngine
     );
 
     const newNode = new SimulationNode(
