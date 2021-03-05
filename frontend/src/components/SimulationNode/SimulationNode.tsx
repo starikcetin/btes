@@ -11,6 +11,7 @@ interface SimulationNodeProps {
   simulationUid: string;
   data: NodeData;
   launchHandler: (nodeUid: string) => void;
+  forceRerender: () => void;
 }
 
 export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
@@ -18,6 +19,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     simulationUid,
     data: { nodeUid, positionY, positionX },
     launchHandler,
+    forceRerender,
   } = props;
   const draggableNodeRef = useRef<HTMLDivElement>(null);
 
@@ -55,12 +57,15 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
         position={{ x: positionX, y: positionY }}
         nodeRef={draggableNodeRef}
         bounds="parent"
+        onDrag={forceRerender}
       >
         <div
           className="comp-simulation-node--node-card card position-absolute justify-content-center"
           onDoubleClick={handleDoubleClick}
           ref={draggableNodeRef}
           onContextMenu={onContextMenu}
+          //TODO better id can be given
+          id={simulationUid + '-' + nodeUid}
         >
           <span className="alert-info">NODE</span>
           <p className="card-text text-center">{nodeUid}</p>

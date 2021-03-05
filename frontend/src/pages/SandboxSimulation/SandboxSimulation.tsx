@@ -34,6 +34,7 @@ import { simulationBridge } from '../../services/simulationBridge';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 import LogModal from '../../components/LogModal/LogModal';
 import { hasValue } from '../../common/utils/hasValue';
+import SimulationNodeArrow from '../../components/SimulationNodeArrow/SimulationNodeArrow';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -66,6 +67,10 @@ const SandboxSimulation: React.FC = () => {
     hasValue(state.simulation[simulationUid]?.timerService.timeScale)
       ? state.simulation[simulationUid]?.timerService.timeScale
       : 1
+  );
+
+  const connectionsMap = useSelector(
+    (state: RootState) => state.simulation[simulationUid]?.connectionMap
   );
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
@@ -161,6 +166,10 @@ const SandboxSimulation: React.FC = () => {
     };
   }, [connect, handleKeyUp, teardown]);
 
+  //Sticky arrows between nodes
+  const [, setRender] = useState({});
+  const forceRerender = () => setRender({});
+
   return (
     <div className="page-sandbox-simulation">
       {connected ? (
@@ -225,8 +234,21 @@ const SandboxSimulation: React.FC = () => {
                     simulationUid={simulationUid}
                     data={node}
                     launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
+                    forceRerender={forceRerender}
                   ></SimulationNode>
                 ))}
+                //TODO more efficient loop(double connection created probably)
+                {Object.values(
+                  connectionsMap?.connectionMap
+                ).map((connections) =>
+                  Object.values(connections).map((connection) => (
+                    <SimulationNodeArrow
+                      startRef={connection.firstNodeUid}
+                      endRef={connection.secondNodeUid}
+                      simulationUid={simulationUid}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </div>
