@@ -1,13 +1,15 @@
 import React from 'react';
 import Xarrow from 'react-xarrows';
 
-interface SimulationNodeArrowProps {
+interface SimulationNodeConnectionProps {
   startRef: string;
   endRef: string;
   simulationUid: string;
 }
 
-const SimulationNodeArrow: React.FC<SimulationNodeArrowProps> = (props) => {
+const SimulationNodeConnection: React.FC<SimulationNodeConnectionProps> = (
+  props
+) => {
   const { startRef, endRef, simulationUid } = props;
   return (
     <div>
@@ -24,4 +26,4 @@ const SimulationNodeArrow: React.FC<SimulationNodeArrowProps> = (props) => {
   );
 };
 
-export default SimulationNodeArrow;
+export default SimulationNodeConnection;
