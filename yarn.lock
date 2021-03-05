@@ -9244,10 +9244,20 @@ lodash.debounce@^4.0.8:
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
 
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
+
+lodash.pick@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
+  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -12070,6 +12080,15 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.1:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-xarrows@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/react-xarrows/-/react-xarrows-1.5.2.tgz#c774c67a9c37a1def3437675ff756976bcdb6695"
+  integrity sha512-L0ATT5yfgoWYm8+bQU3sn9ry2zrxi8eSXisfnNJ5Uy5r/UT/5rDdgif+YPipWRd9KSSmQOIMwB+LXpvrQQ/3TA==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    lodash.pick "^4.4.0"
+    prop-types "^15.7.2"
 
 react@^16.14.0:
   version "16.14.0"
