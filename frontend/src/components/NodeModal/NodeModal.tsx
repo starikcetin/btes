@@ -9,6 +9,7 @@ import { NodeData } from '../../state/simulation/data/NodeData';
 import LogTable from '../LogTable/LogTable';
 import NodeNetworkDashboard from '../NodeNetworkDashboard/NodeNetworkDashboard';
 import { NodeMailsDashboard } from '../NodeMailsDashboard/NodeMailsDashboard';
+import { BlockchainTreeView } from '../BlockchainTreeView/BlockchainTreeView';
 
 interface NodeModalProps {
   closeHandler: () => void;
@@ -99,7 +100,10 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
             <Container>
               <Row>
                 <Col>
-                  <p>Blockchain</p>
+                  <BlockchainTreeView
+                    simulationUid={simulationUid}
+                    nodeUid={nodeUid}
+                  />
                 </Col>
               </Row>
             </Container>

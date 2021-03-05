@@ -25,6 +25,8 @@ import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
 import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
+import { SimulationConnectionChangeLatencyPayload } from '../common/socketPayloads/SimulationConnectionChangeLatencyPayload';
+import { SimulationConnectionChangeLatencyCommand } from './commands/SimulationConnectionChangeLatencyCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -107,6 +109,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.changeTimeScale,
       this.handleSimulationChangeTimeScale
+    );
+    socket.on(
+      socketEvents.simulation.connectionChangeLatency,
+      this.handleConnectionChangeLatency
     );
   };
 
@@ -242,5 +248,17 @@ export class SimulationNamespaceListener {
     body: SimulationChangeTimeScalePayload
   ) => {
     this.timerService.setTimeScale(body.timeScale);
+  };
+
+  private readonly handleConnectionChangeLatency = (
+    body: SimulationConnectionChangeLatencyPayload
+  ) => {
+    const command = new SimulationConnectionChangeLatencyCommand(
+      this.connectionMap,
+      body
+    );
+
+    this.commandHistoryManager.register(command);
+    command.execute();
   };
 }

@@ -17,7 +17,12 @@
     "lint:check": "wsrun -ml --report lint:check",
     "lint:fix": "wsrun -ml --report lint:fix",
     "precommit": "wsrun -mles --report precommit",
-    "kill": "wsrun -ml --report kill"
+    "kill": "wsrun -ml --report kill",
+    "sync-lock:root": "node scripts/yarn-sync.js",
+    "sync-lock": "yarn sync-lock:root && wsrun -ml --report sync-lock",
+    "upgrade-minor": "yarn upgrade --caret && yarn sync-lock && yarn install",
+    "test": "jest",
+    "test:coverage": "yarn test --coverage"
   },
   "devDependencies": {
     "husky": "^4.3.8",

@@ -1,7 +1,10 @@
 import { SimulationNode } from '../SimulationNode';
 import { NodeConnectionSnapshot } from '../../common/NodeConnectionSnapshot';
+import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';
 
 export class NodeConnection {
+  private readonly socketEmitter: SimulationNamespaceEmitter;
+
   public readonly firstNode: SimulationNode;
   public readonly secondNode: SimulationNode;
 
@@ -11,10 +14,12 @@ export class NodeConnection {
   }
 
   constructor(
+    socketEmitter: SimulationNamespaceEmitter,
     firstNode: SimulationNode,
     secondNode: SimulationNode,
     latencyInMs: number
   ) {
+    this.socketEmitter = socketEmitter;
     this.firstNode = firstNode;
     this.secondNode = secondNode;
     this._latencyInMs = latencyInMs;
@@ -22,6 +27,12 @@ export class NodeConnection {
 
   public readonly setLatencyInMs = (ms: number): void => {
     this._latencyInMs = ms;
+
+    this.socketEmitter.sendSimulationConnectionLatencyChanged({
+      firstNodeUid: this.firstNode.nodeUid,
+      secondNodeUid: this.secondNode.nodeUid,
+      latencyInMs: this._latencyInMs,
+    });
   };
 
   public getOtherNode = (nodeUid: string): SimulationNode =>

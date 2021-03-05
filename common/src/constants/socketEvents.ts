@@ -30,5 +30,7 @@ export const socketEvents = {
     resumed: 'simulation-resumed',
     changeTimeScale: 'simulation-change-time-scale',
     timeScaleChanged: 'simulation-time-scale-changed',
+    connectionChangeLatency: 'simulation-connection-change-latency',
+    connectionLatencyChanged: 'simulation-connection-latency-changed',
   },
 } as const;
