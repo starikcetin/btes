@@ -237,17 +237,17 @@ const SandboxSimulation: React.FC = () => {
                     forceRerender={forceRerender}
                   ></SimulationNode>
                 ))}
-                //TODO more efficient loop(double connection created probably)
-                {Object.values(
-                  connectionsMap?.connectionMap
-                ).map((connections) =>
-                  Object.values(connections).map((connection) => (
-                    <SimulationNodeArrow
-                      startRef={connection.firstNodeUid}
-                      endRef={connection.secondNodeUid}
-                      simulationUid={simulationUid}
-                    />
-                  ))
+
+                {Object.values(connectionsMap?.connectionMap).map(
+                  (connections) =>
+                    //TODO more efficient loop(double connection created probably)
+                    Object.values(connections).map((connection) => (
+                      <SimulationNodeArrow
+                        startRef={connection.firstNodeUid}
+                        endRef={connection.secondNodeUid}
+                        simulationUid={simulationUid}
+                      />
+                    ))
                 )}
               </div>
             </div>
