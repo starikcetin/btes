@@ -1,5 +1,9 @@
 import React, { useRef } from 'react';
-import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
+import Draggable, {
+  DraggableData,
+  DraggableEvent,
+  DraggableEventHandler,
+} from 'react-draggable';
 import { animation, Item, Menu, theme, useContextMenu } from 'react-contexify';
 
 import './SimulationNode.scss';
@@ -12,7 +16,7 @@ interface SimulationNodeProps {
   simulationUid: string;
   data: NodeData;
   launchHandler: (nodeUid: string) => void;
-  forceRerender: () => void;
+  onDrag: DraggableEventHandler;
 }
 
 export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
@@ -20,8 +24,9 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     simulationUid,
     data: { nodeUid, positionY, positionX },
     launchHandler,
-    forceRerender,
+    onDrag,
   } = props;
+
   const draggableNodeRef = useRef<HTMLDivElement>(null);
 
   const contextMenuId = `comp-simulation-node--context-menu--${simulationUid}-${nodeUid}`;
@@ -63,7 +68,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
         position={{ x: positionX, y: positionY }}
         nodeRef={draggableNodeRef}
         bounds="parent"
-        onDrag={forceRerender}
+        onDrag={onDrag}
       >
         <div
           className="comp-simulation-node--node-card card position-absolute justify-content-center"

@@ -245,7 +245,7 @@ const SandboxSimulation: React.FC = () => {
                     simulationUid={simulationUid}
                     data={node}
                     launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
-                    forceRerender={forceRerender}
+                    onDrag={forceRerender}
                   ></SimulationNode>
                 ))}
 
