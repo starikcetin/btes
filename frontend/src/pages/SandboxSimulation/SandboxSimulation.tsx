@@ -73,7 +73,7 @@ const SandboxSimulation: React.FC = () => {
       : 1
   );
 
-  const allConnections = useSelector((state: RootState) => {
+  const allUniqueNodeConnections = useSelector((state: RootState) => {
     const allConnections =
       state.simulation[simulationUid]?.connectionMap.connectionMap || {};
 
@@ -247,8 +247,7 @@ const SandboxSimulation: React.FC = () => {
                     onDrag={forceUpdate}
                   ></SimulationNode>
                 ))}
-
-                {allConnections.map((connection) => (
+                {allUniqueNodeConnections.map((connection) => (
                   <SimulationNodeConnection
                     connection={connection}
                     simulationUid={simulationUid}
