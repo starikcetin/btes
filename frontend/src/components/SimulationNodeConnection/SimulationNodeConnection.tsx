@@ -1,22 +1,23 @@
 import React from 'react';
 import Xarrow from 'react-xarrows';
 
+import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
+
 interface SimulationNodeConnectionProps {
-  startRef: string;
-  endRef: string;
   simulationUid: string;
+  connection: NodeConnectionData;
 }
 
-const SimulationNodeConnection: React.FC<SimulationNodeConnectionProps> = (
+export const SimulationNodeConnection: React.FC<SimulationNodeConnectionProps> = (
   props
 ) => {
-  const { startRef, endRef, simulationUid } = props;
+  const { connection, simulationUid } = props;
+
   return (
     <div>
-      {console.log(simulationUid, startRef, endRef)}
       <Xarrow
-        start={simulationUid + '-' + startRef}
-        end={simulationUid + '-' + endRef}
+        start={simulationUid + '-' + connection.firstNodeUid}
+        end={simulationUid + '-' + connection.secondNodeUid}
         headSize={0}
         path={'smooth'}
         curveness={0.4}
@@ -25,5 +26,3 @@ const SimulationNodeConnection: React.FC<SimulationNodeConnectionProps> = (
     </div>
   );
 };
-
-export default SimulationNodeConnection;

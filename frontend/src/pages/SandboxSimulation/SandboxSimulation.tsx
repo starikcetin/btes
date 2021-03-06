@@ -35,7 +35,7 @@ import { simulationBridge } from '../../services/simulationBridge';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 import LogModal from '../../components/LogModal/LogModal';
 import { hasValue } from '../../common/utils/hasValue';
-import SimulationNodeConnection from '../../components/SimulationNodeConnection/SimulationNodeConnection';
+import { SimulationNodeConnection } from '../../components/SimulationNodeConnection/SimulationNodeConnection';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -251,8 +251,7 @@ const SandboxSimulation: React.FC = () => {
 
                 {allConnections.map((connection) => (
                   <SimulationNodeConnection
-                    startRef={connection.firstNodeUid}
-                    endRef={connection.secondNodeUid}
+                    connection={connection}
                     simulationUid={simulationUid}
                   />
                 ))}
