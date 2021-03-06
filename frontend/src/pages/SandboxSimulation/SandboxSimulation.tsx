@@ -26,6 +26,7 @@ import {
   theme,
   useContextMenu,
 } from 'react-contexify';
+import _ from 'lodash';
 
 import './SandboxSimulation.scss';
 import { RootState } from '../../state/RootState';
@@ -69,9 +70,19 @@ const SandboxSimulation: React.FC = () => {
       : 1
   );
 
-  const connectionsMap = useSelector(
-    (state: RootState) => state.simulation[simulationUid]?.connectionMap
-  );
+  const allConnections = useSelector((state: RootState) => {
+    const allConnections =
+      state.simulation[simulationUid]?.connectionMap.connectionMap || {};
+
+    const uniqueConnections = _.chain(allConnections)
+      .flatMap((x) => _.values(x))
+      .uniqBy((x) =>
+        _.chain([x.firstNodeUid, x.secondNodeUid]).sort().join().value()
+      )
+      .value();
+
+    return uniqueConnections;
+  });
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
 
@@ -238,17 +249,13 @@ const SandboxSimulation: React.FC = () => {
                   ></SimulationNode>
                 ))}
 
-                {Object.values(connectionsMap?.connectionMap).map(
-                  (connections) =>
-                    //TODO more efficient loop(double connection created probably)
-                    Object.values(connections).map((connection) => (
-                      <SimulationNodeConnection
-                        startRef={connection.firstNodeUid}
-                        endRef={connection.secondNodeUid}
-                        simulationUid={simulationUid}
-                      />
-                    ))
-                )}
+                {allConnections.map((connection) => (
+                  <SimulationNodeConnection
+                    startRef={connection.firstNodeUid}
+                    endRef={connection.secondNodeUid}
+                    simulationUid={simulationUid}
+                  />
+                ))}
               </div>
             </div>
           </div>
