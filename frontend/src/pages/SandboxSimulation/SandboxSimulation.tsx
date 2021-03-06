@@ -27,6 +27,7 @@ import {
   useContextMenu,
 } from 'react-contexify';
 import _ from 'lodash';
+import useForceUpdate from 'use-force-update';
 
 import './SandboxSimulation.scss';
 import { RootState } from '../../state/RootState';
@@ -42,6 +43,8 @@ interface SandboxSimulationParamTypes {
 }
 
 const SandboxSimulation: React.FC = () => {
+  const forceUpdate = useForceUpdate();
+
   const [connected, setConnected] = useState(false);
   const [shouldShowLogs, setShouldShowLogs] = useState(false);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
@@ -177,10 +180,6 @@ const SandboxSimulation: React.FC = () => {
     };
   }, [connect, handleKeyUp, teardown]);
 
-  //Sticky arrows between nodes
-  const [, setRender] = useState({});
-  const forceRerender = () => setRender({});
-
   return (
     <div className="page-sandbox-simulation">
       {connected ? (
@@ -245,7 +244,7 @@ const SandboxSimulation: React.FC = () => {
                     simulationUid={simulationUid}
                     data={node}
                     launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
-                    onDrag={forceRerender}
+                    onDrag={forceUpdate}
                   ></SimulationNode>
                 ))}
 
