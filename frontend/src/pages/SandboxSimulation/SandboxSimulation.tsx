@@ -26,6 +26,8 @@ import {
   theme,
   useContextMenu,
 } from 'react-contexify';
+import _ from 'lodash';
+import useForceUpdate from 'use-force-update';
 
 import './SandboxSimulation.scss';
 import { RootState } from '../../state/RootState';
@@ -34,12 +36,15 @@ import { simulationBridge } from '../../services/simulationBridge';
 import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 import LogModal from '../../components/LogModal/LogModal';
 import { hasValue } from '../../common/utils/hasValue';
+import { SimulationNodeConnection } from '../../components/SimulationNodeConnection/SimulationNodeConnection';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
 }
 
 const SandboxSimulation: React.FC = () => {
+  const forceUpdate = useForceUpdate();
+
   const [connected, setConnected] = useState(false);
   const [shouldShowLogs, setShouldShowLogs] = useState(false);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
@@ -67,6 +72,20 @@ const SandboxSimulation: React.FC = () => {
       ? state.simulation[simulationUid]?.timerService.timeScale
       : 1
   );
+
+  const allUniqueNodeConnections = useSelector((state: RootState) => {
+    const allConnections =
+      state.simulation[simulationUid]?.connectionMap.connectionMap || {};
+
+    const uniqueConnections = _.chain(allConnections)
+      .flatMap((x) => _.values(x))
+      .uniqBy((x) =>
+        _.chain([x.firstNodeUid, x.secondNodeUid]).sort().join().value()
+      )
+      .value();
+
+    return uniqueConnections;
+  });
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
 
@@ -225,7 +244,14 @@ const SandboxSimulation: React.FC = () => {
                     simulationUid={simulationUid}
                     data={node}
                     launchHandler={(nodeUid) => setViewingNodeUid(nodeUid)}
+                    onDrag={forceUpdate}
                   ></SimulationNode>
+                ))}
+                {allUniqueNodeConnections.map((connection) => (
+                  <SimulationNodeConnection
+                    connection={connection}
+                    simulationUid={simulationUid}
+                  />
                 ))}
               </div>
             </div>

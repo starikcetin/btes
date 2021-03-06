@@ -1,16 +1,22 @@
 import React, { useRef } from 'react';
-import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
+import Draggable, {
+  DraggableData,
+  DraggableEvent,
+  DraggableEventHandler,
+} from 'react-draggable';
 import { animation, Item, Menu, theme, useContextMenu } from 'react-contexify';
 
 import './SimulationNode.scss';
 // import nodeIcon from './pcIcon.png';
 import { NodeData } from '../../state/simulation/data/NodeData';
 import { simulationBridge } from '../../services/simulationBridge';
+import { nodeCardIdFormatter } from '../../utils/nodeIdFormatters';
 
 interface SimulationNodeProps {
   simulationUid: string;
   data: NodeData;
   launchHandler: (nodeUid: string) => void;
+  onDrag: DraggableEventHandler;
 }
 
 export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
@@ -18,7 +24,9 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     simulationUid,
     data: { nodeUid, positionY, positionX },
     launchHandler,
+    onDrag,
   } = props;
+
   const draggableNodeRef = useRef<HTMLDivElement>(null);
 
   const contextMenuId = `comp-simulation-node--context-menu--${simulationUid}-${nodeUid}`;
@@ -60,12 +68,14 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
         position={{ x: positionX, y: positionY }}
         nodeRef={draggableNodeRef}
         bounds="parent"
+        onDrag={onDrag}
       >
         <div
           className="comp-simulation-node--node-card card position-absolute justify-content-center"
           onDoubleClick={handleDoubleClick}
           ref={draggableNodeRef}
           onContextMenu={onContextMenu}
+          id={nodeCardIdFormatter(simulationUid, nodeUid)}
         >
           <span className="alert-info">NODE</span>
           <p className="card-text text-center">{nodeUid}</p>
