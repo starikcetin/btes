@@ -6,6 +6,7 @@ import './SimulationNode.scss';
 // import nodeIcon from './pcIcon.png';
 import { NodeData } from '../../state/simulation/data/NodeData';
 import { simulationBridge } from '../../services/simulationBridge';
+import { nodeCardIdFormatter } from '../../utils/nodeIdFormatters';
 
 interface SimulationNodeProps {
   simulationUid: string;
@@ -69,8 +70,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
           onDoubleClick={handleDoubleClick}
           ref={draggableNodeRef}
           onContextMenu={onContextMenu}
-          //TODO better id can be given
-          id={simulationUid + '-' + nodeUid}
+          id={nodeCardIdFormatter(simulationUid, nodeUid)}
         >
           <span className="alert-info">NODE</span>
           <p className="card-text text-center">{nodeUid}</p>

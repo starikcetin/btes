@@ -2,6 +2,7 @@ import React from 'react';
 import Xarrow from 'react-xarrows';
 
 import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
+import { nodeCardIdFormatter } from '../../utils/nodeIdFormatters';
 
 interface SimulationNodeConnectionProps {
   simulationUid: string;
@@ -16,8 +17,8 @@ export const SimulationNodeConnection: React.FC<SimulationNodeConnectionProps> =
   return (
     <div>
       <Xarrow
-        start={simulationUid + '-' + connection.firstNodeUid}
-        end={simulationUid + '-' + connection.secondNodeUid}
+        start={nodeCardIdFormatter(simulationUid, connection.firstNodeUid)}
+        end={nodeCardIdFormatter(simulationUid, connection.secondNodeUid)}
         headSize={0}
         path={'smooth'}
         curveness={0.4}
