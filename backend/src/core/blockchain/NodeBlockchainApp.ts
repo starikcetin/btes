@@ -1,4 +1,3 @@
-import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { NodeBlockchainAppSnapshot } from '../../common/blockchain/NodeBlockchainAppSnapshot';
 import { BlockchainWallet } from './BlockchainWallet';
 import { BlockchainTransactionEngine } from './BlockchainTransactionEngine';
