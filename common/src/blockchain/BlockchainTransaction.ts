@@ -26,4 +26,10 @@ export interface BlockchainTransaction {
    * `tx_out`
    */
   readonly outputs: BlockchainTransactionOutput[];
+
+  /**
+   * Indicates if this transaction is coinbase.
+   * Not in the actual protocol, intended for ease of development.
+   */
+  readonly isCoinbase: boolean;
 }

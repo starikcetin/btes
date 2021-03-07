@@ -3,12 +3,14 @@
  */
 export interface BlockchainTransactionOutPoint {
   /**
+   * `hash`
    * The hash of the referenced transaction.
    */
-  readonly hash: string;
+  readonly txHash: string;
 
   /**
+   * `index`
    * The index of the specific output in the transaction. The first output is 0, etc.
    */
-  readonly index: number;
+  readonly outputIndex: number;
 }

@@ -2,12 +2,13 @@ import { BlockchainTransaction } from './BlockchainTransaction';
 
 export interface BlockchainTransactionEngineSnapshot {
   /**
-   * transaction pool = memory pool = mempool
+   * `transaction pool` = `memory pool` = `mempool`
    */
-  readonly transactionPool: BlockchainTransaction[];
+  readonly mempool: BlockchainTransaction[];
 
   /**
+   * `orphan transactions pool`
    * https://cryptoservices.github.io/fde/2018/12/14/bitcoin-orphan-TX-CVE.html
    */
-  readonly orphanTransactionsPool: BlockchainTransaction[];
+  readonly orphanage: BlockchainTransaction[];
 }

@@ -86,8 +86,8 @@ export class Simulation {
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
 
     const blockchainTransactionEngine = new BlockchainTransactionEngine(
-      nodeSnapshot.blockchainApp.transactionEngine.transactionPool,
-      nodeSnapshot.blockchainApp.transactionEngine.orphanTransactionsPool
+      nodeSnapshot.blockchainApp.transactionEngine.mempool,
+      nodeSnapshot.blockchainApp.transactionEngine.orphanage
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
