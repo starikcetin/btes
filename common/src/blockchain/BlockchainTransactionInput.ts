@@ -1,31 +1,27 @@
+import { BlockchainTransactionOutPoint } from './BlockchainTransactionOutPoint';
 import { BlockchainUnlockingScript } from './BlockchainUnlockingScript';
 
 /**
+ * https://en.bitcoin.it/wiki/Protocol_documentation#tx
  * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch06.asciidoc#transaction-inputs
  */
 export interface BlockchainTransactionInput {
-  /**
-   * `txid`.
-   * A transaction ID, referencing the transaction that contains the UTXO being spent.
+  /*
+   * Omitted fields:
+   * - sequence (number): Transaction version as defined by the sender. Intended for "replacement" of transactions when information is updated before inclusion into a block.
+   *
+   * Implied fields:
+   * - script length (number): this is the length of unlockingScript
    */
-  readonly outputSouceTransactionId: string;
 
   /**
-   * `vout`.
-   * An output index (vout), identifying which UTXO (unspent transaction output) from that transaction is referenced (first one is zero).
+   * The previous output transaction reference, as an OutPoint structure.
    */
-  readonly outputIndex: number;
+  readonly previousOutput: BlockchainTransactionOutPoint;
 
   /**
-   * `scriptSig`.
+   * `scriptSig` = `signature script`
+   * Computational Script for confirming transaction authorization
    */
   readonly unlockingScript: BlockchainUnlockingScript;
-
-  // TODO: We might get away with not implementing sequence numbers at all.
-  /**
-   * `sequence`
-   * https://bitcoin.stackexchange.com/q/2025
-   * > Currently, sequence numbers are mainly used for signaling RBF - replace-by-fee - that allows you to resend a transaction with a higher fee.
-   */
-  readonly sequenceNumber: number;
 }
