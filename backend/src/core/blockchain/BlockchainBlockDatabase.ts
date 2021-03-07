@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { BlockchainBlockDatabaseSnapshot } from '../../common/blockchain/BlockchainBlockDatabaseSnapshot';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { hash } from '../../utils/hash';
@@ -13,10 +15,12 @@ export type BlockchainBlockValidity = 'valid' | 'orphan' | 'invalid';
  * 10. Verify Merkle hash
  *     16.1.6. Using the referenced output transactions to get input values, check that each input value, as well as the sum, are in legal money range
  *       18.3.2.6. Using the referenced output transactions to get input values, check that each input value, as well as the sum, are in legal money range
+ * 5. Block timestamp must not be more than two hours in the future
  */
 
 /**
  * Not sure:
+ * 12. Check that nBits value matches the difficulty rules
  * 13. Reject if timestamp is the median time of the last 11 blocks or before
  * 14. For certain old blocks (i.e. on initial block download) check that hash matches known values
  *     16.1.4. Verify crypto signatures for each input; reject if any are bad
@@ -24,11 +28,8 @@ export type BlockchainBlockValidity = 'valid' | 'orphan' | 'invalid';
  */
 
 /**
- * 5. Block timestamp must not be more than two hours in the future
- * 6. First transaction must be coinbase (i.e. only 1 input, with hash=0, n=-1), the rest must not be
- * 7. For each transaction, apply "tx" checks 2-4
- * 11. Check if prev block (matching prev hash) is in main branch or side branches. If not, add this to orphan blocks, then query peer we got this from for 1st missing orphan block in prev chain; done with block
- * 12. Check that nBits value matches the difficulty rules
+ * TODO:
+ *
  * 15. Add block into the tree. There are three cases: 1. block further extends the main branch; 2. block extends a side branch but does not add enough difficulty to make it become the new main branch; 3. block extends a side branch and makes it the new main branch.
  * 16. For case 1, adding to main branch:
  *   16.1. For all but the coinbase transaction, apply the following:
@@ -81,17 +82,19 @@ export class BlockchainBlockDatabase {
   public readonly receiveBlock = (
     block: BlockchainBlock
   ): BlockchainBlockValidity => {
-    const isValid = this.isBlockValid(block);
+    const validity = this.isBlockValid(block);
 
     // TODO: implement registering
 
-    return isValid;
+    return validity;
   };
 
   private readonly isBlockValid = (
     block: BlockchainBlock
   ): BlockchainBlockValidity => {
-    const headerHash = hash(block.header);
+    const { transactions, header } = block;
+
+    const headerHash = hash(header);
 
     // 2. Reject if duplicate of block we have in any of the three categories (main, side, orphan)
     if (this.findRegularBlock(headerHash) || this.findOrphanBlock(headerHash)) {
@@ -99,19 +102,45 @@ export class BlockchainBlockDatabase {
     }
 
     // 3. Transaction list must be non-empty
-    if (block.transactions.length === 0) {
+    if (transactions.length === 0) {
       return 'invalid';
     }
 
     // 4. Block hash must satisfy claimed nBits proof of work
-    if (countLeadingZeroes(headerHash) !== block.header.leadingZeroCount) {
+    if (countLeadingZeroes(headerHash) !== header.leadingZeroCount) {
       return 'invalid';
+    }
+
+    // 6. First transaction must be coinbase, the rest must not be
+    if (!transactions[0].isCoinbase) {
+      return 'invalid';
+    }
+
+    if (_.drop(transactions, 1).some((tx) => tx.isCoinbase)) {
+      return 'invalid';
+    }
+
+    // 7. For each transaction, apply "tx" checks 2-4
+    // > Tx checks 1, 3, and 4 are not implemented, so only tx check #2 remains
+    // > Tx check 2: Make sure neither in or out lists are empty
+    for (const tx of transactions) {
+      if (tx.inputs.length === 0 || tx.outputs.length === 0) {
+        return 'invalid';
+      }
+    }
+
+    // 11. Check if prev block (matching prev hash) is in main branch or side branches. If not, add this to orphan blocks,
+    // TODO: then query peer we got this from for 1st missing orphan block in prev chain
+    // done with block
+    if (!this.findRegularBlock(header.previousHash)) {
+      return 'orphan';
     }
 
     // all check passed
     return 'valid';
   };
 
+  /** Finds a block in main or side branches */
   private readonly findRegularBlock = (
     blockHeaderHash: string
   ): BlockchainBlock | null =>
