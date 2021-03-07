@@ -4,6 +4,7 @@ import { BlockchainTransactionEngineSnapshot } from '../../common/blockchain/Blo
 import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
 import { BlockchainTransactionOutput } from '../../common/blockchain/BlockchainTransactionOutput';
 import { BlockchainTransactionInput } from '../../common/blockchain/BlockchainTransactionInput';
+import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
 
 export type BlockchainTransactionValidity = 'invalid' | 'orphan' | 'valid';
 
@@ -133,30 +134,30 @@ export class BlockchainTransactionEngine {
 
   private readonly findOrphansReferencingTransaction = (
     transaction: BlockchainTransaction
-  ) => {
+  ): BlockchainTransaction[] => {
     // TODO: implement
     return [];
   };
 
   private readonly isOutputReferencedInPool = (
     input: BlockchainTransactionInput
-  ) => {
-    for (const txInPool of this.transactionPool) {
-      for (const inputInPool of txInPool.inputs) {
-        if (this.isUsingTheSameOutput(input, inputInPool)) {
-          return true;
-        }
-      }
-    }
+  ): boolean => {
+    return this.transactionPool.some((txInPool) =>
+      txInPool.inputs.some((inputInPool) =>
+        this.areOutPointsEquivalent(
+          inputInPool.previousOutput,
+          input.previousOutput
+        )
+      )
+    );
   };
 
-  private readonly isUsingTheSameOutput = (
-    inputA: BlockchainTransactionInput,
-    inputB: BlockchainTransactionInput
-  ) => {
+  private readonly areOutPointsEquivalent = (
+    outPointA: BlockchainTransactionOutPoint,
+    outPointB: BlockchainTransactionOutPoint
+  ): boolean => {
     return (
-      inputA.outputTransactionId === inputB.outputTransactionId &&
-      inputA.outputIndex === inputB.outputIndex
+      outPointA.hash === outPointB.hash && outPointA.index === outPointB.index
     );
   };
 
