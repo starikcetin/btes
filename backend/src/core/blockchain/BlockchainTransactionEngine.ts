@@ -21,6 +21,14 @@ export class BlockchainTransactionEngine {
     this.orphanage = orphanage;
   }
 
+  /*
+   * TODO:
+   *
+   * 18. "Add to wallet if mine"
+   *
+   * 19. Relay transaction to peers
+   *
+   */
   public readonly receiveTx = (
     tx: BlockchainTransaction
   ): BlockchainTransactionValidity => {
@@ -71,22 +79,6 @@ export class BlockchainTransactionEngine {
      * 16. Verify the scriptPubKey accepts for each input; reject if any are bad
      */
 
-    /*
-     * TODO:
-     *
-     * 11. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1),
-     *     it must have at least COINBASE_MATURITY (100) confirmations; else reject this transaction
-     * > Did not implement coinbase tx or blocks database yet (confirmation = blocks after).
-     *
-     * 14. Reject if the sum of input values < sum of output values
-     * > Need blocks db to calculate sum of inputs.
-     *
-     * 18. "Add to wallet if mine"
-     *
-     * 19. Relay transaction to peers
-     *
-     */
-
     const txHash = hash(tx);
 
     // 2. Make sure neither in or out lists are empty
@@ -126,6 +118,20 @@ export class BlockchainTransactionEngine {
       }
     }
 
+    // 11. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1),
+    //     it must have at least COINBASE_MATURITY (100) confirmations; else reject this transaction
+    for (const input of tx.inputs) {
+      const referencedTx = this.getTx(input.previousOutput.txHash);
+
+      if (!referencedTx) {
+        return 'invalid';
+      }
+
+      if (referencedTx.isCoinbase && !this.isCoinbaseMatureEnough(txHash)) {
+        return 'invalid';
+      }
+    }
+
     // 12. For each input, if the referenced output does not exist (e.g. never existed or has already been spent),
     //     reject this transaction[6]
     for (const input of tx.inputs) {
@@ -134,8 +140,47 @@ export class BlockchainTransactionEngine {
       }
     }
 
+    // 14. Reject if the sum of input values < sum of output values
+    // > Need blocks db to calculate sum of inputs.
+    const sumOfInputs = this.getSumOfInputs(tx);
+    const sumOfOutputs = _.sumBy(tx.outputs, (o) => o.value);
+
+    if (sumOfInputs < sumOfOutputs) {
+      return 'invalid';
+    }
+
     // all checks passed
     return 'valid';
+  };
+
+  private readonly getSumOfInputs = (tx: BlockchainTransaction): number => {
+    // TODO: implement
+    return Number.POSITIVE_INFINITY;
+  };
+
+  private readonly isCoinbaseMatureEnough = (txHash: string): boolean => {
+    // TODO: implement
+    return true;
+  };
+
+  /**
+   * Finds the tx in the mempool or in the blockchain.
+   */
+  private readonly getTx = (txHash: string): BlockchainTransaction | null => {
+    return this.getTxFromMempool(txHash) || this.getTxFromBlockchain(txHash);
+  };
+
+  private readonly getTxFromMempool = (
+    txHash: string
+  ): BlockchainTransaction | null => {
+    return this.mempool.find((tx) => hash(tx) === txHash) || null;
+  };
+
+  private readonly getTxFromBlockchain = (
+    txHash: string
+  ): BlockchainTransaction | null => {
+    // TODO: implement
+    return null;
   };
 
   private readonly isReferencingExistingUtxo = (
