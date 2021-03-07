@@ -27,8 +27,18 @@ export class BlockchainTransactionEngine {
 
     if (validity === 'orphan') {
       this.orphanTransactionsPool.push(transaction);
-    } else if (validity === 'valid') {
+    }
+
+    if (validity === 'valid') {
+      // 17. Add to transaction pool[7]
       this.transactionPool.push(transaction);
+
+      // 20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one)
+      //     recursively on that orphan
+      this.findOrphansReferencingTransaction(transaction).forEach((orphan) => {
+        _.remove(this.orphanTransactionsPool, orphan);
+        this.receiveTransaction(orphan);
+      });
     }
 
     return validity;
@@ -61,13 +71,6 @@ export class BlockchainTransactionEngine {
      */
 
     /*
-     * Done somewhere else:
-     *
-     * 17. Add to transaction pool[7]
-     * > receiveTransaction method
-     */
-
-    /*
      * TODO:
      *
      * 5. Make sure none of the inputs have hash=0, n=-1 (coinbase transactions)
@@ -83,14 +86,12 @@ export class BlockchainTransactionEngine {
      * > Did not implement blocks database yet.
      *
      * 14. Reject if the sum of input values < sum of output values
-     * > Need blocks db to calculate sum of outputs.
+     * > Need blocks db to calculate sum of inputs.
      *
      * 18. "Add to wallet if mine"
      *
      * 19. Relay transaction to peers
      *
-     * 20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one)
-     *     recursively on that orphan
      */
 
     // 2. Make sure neither in or out lists are empty
@@ -128,6 +129,13 @@ export class BlockchainTransactionEngine {
 
     // all checks passed
     return 'valid';
+  };
+
+  private readonly findOrphansReferencingTransaction = (
+    transaction: BlockchainTransaction
+  ) => {
+    // TODO: implement
+    return [];
   };
 
   private readonly isOutputReferencedInPool = (
