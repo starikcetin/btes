@@ -141,7 +141,6 @@ export class BlockchainTransactionEngine {
     }
 
     // 14. Reject if the sum of input values < sum of output values
-    // > Need blocks db to calculate sum of inputs.
     const sumOfInputs = this.getSumOfInputs(tx);
     const sumOfOutputs = _.sumBy(tx.outputs, (o) => o.value);
 
@@ -155,6 +154,7 @@ export class BlockchainTransactionEngine {
 
   private readonly getSumOfInputs = (tx: BlockchainTransaction): number => {
     // TODO: implement
+    // Need blocks db to calculate sum of inputs.
     return Number.POSITIVE_INFINITY;
   };
 
