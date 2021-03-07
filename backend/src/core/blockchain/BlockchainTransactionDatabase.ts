@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { BlockchainTransactionEngineSnapshot } from '../../common/blockchain/BlockchainTransactionEngineSnapshot';
+import { BlockchainTransactionDatabaseSnapshot } from '../../common/blockchain/BlockchainTransactionDatabaseSnapshot';
 import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
 import { BlockchainTransactionInput } from '../../common/blockchain/BlockchainTransactionInput';
 import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
@@ -8,8 +8,8 @@ import { hash } from '../../utils/hash';
 
 export type BlockchainTransactionValidity = 'invalid' | 'orphan' | 'valid';
 
-// See BlockchainTransactionEngineSnapshot for member jsdocs.
-export class BlockchainTransactionEngine {
+// See BlockchainTransactionDatabaseSnapshot for member jsdocs.
+export class BlockchainTransactionDatabase {
   private readonly mempool: BlockchainTransaction[];
   private readonly orphanage: BlockchainTransaction[];
 
@@ -257,7 +257,7 @@ export class BlockchainTransactionEngine {
     return false;
   };
 
-  public readonly takeSnapshot = (): BlockchainTransactionEngineSnapshot => {
+  public readonly takeSnapshot = (): BlockchainTransactionDatabaseSnapshot => {
     return {
       mempool: this.mempool,
       orphanage: this.orphanage,

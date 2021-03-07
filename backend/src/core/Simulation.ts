@@ -10,7 +10,7 @@ import { ControlledTimerService } from './network/ControlledTimerService';
 import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 import { dummyBlockchain } from '../utils/dummyBlockchain';
 import { BlockchainWallet } from './blockchain/BlockchainWallet';
-import { BlockchainTransactionEngine } from './blockchain/BlockchainTransactionEngine';
+import { BlockchainTransactionDatabase } from './blockchain/BlockchainTransactionDatabase';
 import { BlockchainBlockDatabase } from './blockchain/BlockchainBlockDatabase';
 
 export class Simulation {
@@ -43,7 +43,10 @@ export class Simulation {
     const blockchainKeypairBitLength = 5;
 
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
-    const blockchainTransactionEngine = new BlockchainTransactionEngine([], []);
+    const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
+      [],
+      []
+    );
 
     // TODO: dummyBlockchain is here
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
@@ -52,7 +55,7 @@ export class Simulation {
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
-      blockchainTransactionEngine,
+      blockchainTransactionDatabase,
       blockchainBlockDatabase
     );
 
@@ -85,9 +88,9 @@ export class Simulation {
     // TODO: initialize with snapshot
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
 
-    const blockchainTransactionEngine = new BlockchainTransactionEngine(
-      nodeSnapshot.blockchainApp.transactionEngine.mempool,
-      nodeSnapshot.blockchainApp.transactionEngine.orphanage
+    const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
+      nodeSnapshot.blockchainApp.transactionDatabase.mempool,
+      nodeSnapshot.blockchainApp.transactionDatabase.orphanage
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
@@ -96,7 +99,7 @@ export class Simulation {
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
-      blockchainTransactionEngine,
+      blockchainTransactionDatabase,
       blockchainBlockDatabase
     );
 

@@ -1,6 +1,6 @@
 import { BlockchainTransaction } from './BlockchainTransaction';
 
-export interface BlockchainTransactionEngineSnapshot {
+export interface BlockchainTransactionDatabaseSnapshot {
   /**
    * `transaction pool` = `memory pool` = `mempool`
    */
