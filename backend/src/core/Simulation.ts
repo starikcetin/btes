@@ -48,10 +48,7 @@ export class Simulation {
       []
     );
 
-    // TODO: dummyBlockchain is here
-    const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      dummyBlockchain
-    );
+    const blockchainBlockDatabase = new BlockchainBlockDatabase([], []);
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
@@ -94,7 +91,8 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      nodeSnapshot.blockchainApp.blockDatabase.blocks
+      nodeSnapshot.blockchainApp.blockDatabase.blocks,
+      nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
     );
 
     const blockchainApp = new NodeBlockchainApp(

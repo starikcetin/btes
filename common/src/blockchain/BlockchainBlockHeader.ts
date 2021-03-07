@@ -8,6 +8,12 @@ export interface BlockchainBlockHeader {
    * - version (number): A version number to track software/protocol upgrades
    * - merkleRoot (string): Hash of the root of the merkle tree of this block’s transactions
    * - txn_count (number): Number of transaction entries, this value is always 0
+   *
+   *
+   * Alternatively implemented fields:
+   *
+   * - difficultyTarget = bits (number): https://en.bitcoin.it/wiki/Difficulty A packed representation for the actual hexadecimal target
+   *   Replacement: leadingZeroCount
    */
 
   /**
@@ -22,10 +28,11 @@ export interface BlockchainBlockHeader {
   readonly timestamp: number;
 
   /**
-   * `bits`
-   * The Proof-of-Work algorithm difficulty target for this block
+   * The count of leading zeroes in the hash.
+   *
+   * Intended as an easier to implement alternative for the `difficultyTarget` field in the real Bitcoin protocol.
    */
-  readonly difficultyTarget: number;
+  readonly leadingZeroCount: number;
 
   /**
    * A counter used for the Proof-of-Work algorithm
