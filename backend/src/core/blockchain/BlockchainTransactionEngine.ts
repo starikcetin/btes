@@ -74,9 +74,6 @@ export class BlockchainTransactionEngine {
      * > Did not implement coinbase tx yet.
      * > Instead of `hash=0, n=-1`, we can actually have a `isCoinbase` boolean field.
      *
-     * 9. For each input, if the referenced output exists in any other tx in the pool, reject this transaction.[5]
-     * > Waiting for clarification: https://bitcoin.stackexchange.com/questions/103342
-     *
      * 11. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1),
      *     it must have at least COINBASE_MATURITY (100) confirmations; else reject this transaction
      * > Did not implement coinbase tx or blocks database yet (confirmation = blocks after).
@@ -104,9 +101,18 @@ export class BlockchainTransactionEngine {
     // 8. Reject if we already have matching tx in the pool, or in a block in the main branch
     if (
       this.isTransactionAlreadyInPool(transaction) ||
-      this.isTransactionAlreadyInBlockchain(transaction)
+      this.isTransactionAlreadyInBlockchainMainBranch(transaction)
     ) {
       return 'invalid';
+    }
+
+    // 9. For each input, if the referenced output exists in any other tx in the pool, reject this transaction.[5]
+    // > Clarification: https://bitcoin.stackexchange.com/questions/103342
+    // > The output referenced by the input must not be referenced by another input of a transaction already in the pool.
+    for (const input of transaction.inputs) {
+      if (this.isOutputReferencedInPool(input)) {
+        return 'invalid';
+      }
     }
 
     // 10. For each input, look in the main branch and the transaction pool to find the referenced output transaction.
@@ -122,6 +128,28 @@ export class BlockchainTransactionEngine {
 
     // all checks passed
     return 'valid';
+  };
+
+  private readonly isOutputReferencedInPool = (
+    input: BlockchainTransactionInput
+  ) => {
+    for (const txInPool of this.transactionPool) {
+      for (const inputInPool of txInPool.inputs) {
+        if (this.isUsingTheSameOutput(input, inputInPool)) {
+          return true;
+        }
+      }
+    }
+  };
+
+  private readonly isUsingTheSameOutput = (
+    inputA: BlockchainTransactionInput,
+    inputB: BlockchainTransactionInput
+  ) => {
+    return (
+      inputA.outputTransactionId === inputB.outputTransactionId &&
+      inputA.outputIndex === inputB.outputIndex
+    );
   };
 
   private readonly isTransactionOrphan = (
@@ -157,19 +185,19 @@ export class BlockchainTransactionEngine {
     b: BlockchainTransaction
   ): boolean => {
     return (
-      _.isEmpty(_.xorWith(a.inputs, b.inputs, this.areInputsEquaivalent)) &&
-      _.isEmpty(_.xorWith(a.outputs, b.outputs, this.areOutputsEquaivalent))
+      _.isEmpty(_.xorWith(a.inputs, b.inputs, this.areInputsEquivalent)) &&
+      _.isEmpty(_.xorWith(a.outputs, b.outputs, this.areOutputsEquivalent))
     );
   };
 
-  private readonly isTransactionAlreadyInBlockchain = (
+  private readonly isTransactionAlreadyInBlockchainMainBranch = (
     transaction: BlockchainTransaction
   ): boolean => {
     // TODO: implement
     return false;
   };
 
-  private readonly areInputsEquaivalent = (
+  private readonly areInputsEquivalent = (
     a: BlockchainTransactionInput,
     b: BlockchainTransactionInput
   ): boolean => {
@@ -177,7 +205,7 @@ export class BlockchainTransactionEngine {
     return false;
   };
 
-  private readonly areOutputsEquaivalent = (
+  private readonly areOutputsEquivalent = (
     a: BlockchainTransactionOutput,
     b: BlockchainTransactionOutput
   ): boolean => {
