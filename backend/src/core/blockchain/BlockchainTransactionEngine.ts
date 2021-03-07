@@ -4,7 +4,7 @@ import { BlockchainTransactionEngineSnapshot } from '../../common/blockchain/Blo
 import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
 import { BlockchainTransactionInput } from '../../common/blockchain/BlockchainTransactionInput';
 import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
-import { hash } from './blockchainUtils';
+import { hash } from '../../utils/hash';
 
 export type BlockchainTransactionValidity = 'invalid' | 'orphan' | 'valid';
 
