@@ -10,7 +10,7 @@ export class Tree<TData> {
   };
 
   /** Returns whether given array has a node with given id. */
-  public static readonly includes = <TData>(
+  public static readonly includesId = <TData>(
     nodes: TreeNode<TData>[],
     nodeId: string
   ): boolean => {
@@ -35,18 +35,18 @@ export class Tree<TData> {
   public readonly createNode = (
     id: string,
     data: TData,
-    parentId: string | null
+    parent: TreeNode<TData> | null
   ): TreeNode<TData> => {
     const node = new TreeNode<TData>(id, data);
-    this.addNode(node, parentId);
+    this.addNode(node, parent);
     return node;
   };
 
   public readonly addNode = (
     node: TreeNode<TData>,
-    parentId: string | null
+    parent: TreeNode<TData> | null
   ): void => {
-    if (parentId === null) {
+    if (parent === null) {
       if (this._root !== null) {
         throw new Error(
           'Trying to add a parentless node, but the tree already has a root!'
@@ -56,12 +56,6 @@ export class Tree<TData> {
       this._root = node;
       this._heads.push(node);
     } else {
-      const parent = this.getNode(parentId);
-
-      if (parent === null) {
-        throw new Error('Parent node not found!');
-      }
-
       if (parent.children.length > 0) {
         this.registerForkPoint(parent);
       }
@@ -69,7 +63,7 @@ export class Tree<TData> {
       parent.addChild(node);
       node.setParent(parent);
 
-      this.updateHeadsAfterAdd(parentId, node);
+      this.updateHeadsAfterAdd(parent.id, node);
     }
   };
 
@@ -89,11 +83,11 @@ export class Tree<TData> {
   };
 
   public readonly isForkPoint = (nodeId: string): boolean => {
-    return Tree.includes(this._forkPoints, nodeId);
+    return Tree.includesId(this._forkPoints, nodeId);
   };
 
   public readonly isHeadNode = (nodeId: string): boolean => {
-    return Tree.includes(this._heads, nodeId);
+    return Tree.includesId(this._heads, nodeId);
   };
 
   /** 0 based distance of the given node from the first fork point or root. */
@@ -132,7 +126,7 @@ export class Tree<TData> {
 
   /** Adds a node to fork points array if it is not already there. */
   private readonly registerForkPoint = (forkPoint: TreeNode<TData>): void => {
-    if (!Tree.includes(this._forkPoints, forkPoint.id)) {
+    if (!Tree.includesId(this._forkPoints, forkPoint.id)) {
       this._forkPoints.push(forkPoint);
     }
   };
@@ -147,7 +141,7 @@ export class Tree<TData> {
     startNodes: TreeNode<TData>[],
     ignoreForksPoints: TreeNode<TData>[]
   ): TreeNode<TData> | null => {
-    const visitedForkPoints = ignoreForksPoints;
+    const nextIgnoreForkPoints = ignoreForksPoints;
     const nextHeads: TreeNode<TData>[] = [];
 
     for (const startNode of startNodes) {
@@ -164,10 +158,10 @@ export class Tree<TData> {
         }
 
         // do not visit the same fork point more than once
-        if (!Tree.includes(visitedForkPoints, stopNode.id)) {
-          visitedForkPoints.push(stopNode);
+        if (!Tree.includesId(nextIgnoreForkPoints, stopNode.id)) {
+          nextIgnoreForkPoints.push(stopNode);
 
-          if (!Tree.includes(nextHeads, stopNode.id)) {
+          if (!Tree.includesId(nextHeads, stopNode.id)) {
             nextHeads.push(stopNode.parent);
           }
         }
@@ -179,7 +173,7 @@ export class Tree<TData> {
 
     return nextHeads.length === 0
       ? null
-      : this.searchBackMultiple(targetId, nextHeads, visitedForkPoints);
+      : this.searchBackMultiple(targetId, nextHeads, nextIgnoreForkPoints);
   };
 
   /** Searches backwards from `start` until it hits the target, a fork point, or the tree root. */

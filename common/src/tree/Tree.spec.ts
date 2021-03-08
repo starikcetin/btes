@@ -11,7 +11,7 @@ const data: NodeDataType = {
   b: 'foobar',
 };
 
-function makeComplexTree(): Tree<NodeDataType> {
+function makeComplexTree() {
   /*
    *                 c1 -> c2 -> c3
    *                /
@@ -26,30 +26,48 @@ function makeComplexTree(): Tree<NodeDataType> {
 
   const tree = new Tree<NodeDataType>();
 
-  tree.createNode('a1', data, null);
-  tree.createNode('a2', data, 'a1');
-  tree.createNode('a3', data, 'a2');
-  tree.createNode('a4', data, 'a3');
-  tree.createNode('a5', data, 'a4');
-  tree.createNode('a6', data, 'a5');
+  const a1 = tree.createNode('a1', data, null);
+  const a2 = tree.createNode('a2', data, a1);
+  const a3 = tree.createNode('a3', data, a2);
+  const a4 = tree.createNode('a4', data, a3);
+  const a5 = tree.createNode('a5', data, a4);
+  const a6 = tree.createNode('a6', data, a5);
+  const b1 = tree.createNode('b1', data, a2);
+  const b2 = tree.createNode('b2', data, b1);
+  const b3 = tree.createNode('b3', data, b2);
+  const c1 = tree.createNode('c1', data, b2);
+  const c2 = tree.createNode('c2', data, c1);
+  const c3 = tree.createNode('c3', data, c2);
+  const d1 = tree.createNode('d1', data, a3);
+  const d2 = tree.createNode('d2', data, d1);
+  const d3 = tree.createNode('d3', data, d2);
+  const e1 = tree.createNode('e1', data, d1);
+  const e2 = tree.createNode('e2', data, e1);
+  const e3 = tree.createNode('e3', data, e2);
 
-  tree.createNode('b1', data, 'a2');
-  tree.createNode('b2', data, 'b1');
-  tree.createNode('b3', data, 'b2');
-
-  tree.createNode('c1', data, 'b2');
-  tree.createNode('c2', data, 'c1');
-  tree.createNode('c3', data, 'c2');
-
-  tree.createNode('d1', data, 'a3');
-  tree.createNode('d2', data, 'd1');
-  tree.createNode('d3', data, 'd2');
-
-  tree.createNode('e1', data, 'd1');
-  tree.createNode('e2', data, 'e1');
-  tree.createNode('e3', data, 'e2');
-
-  return tree;
+  return {
+    tree,
+    nodes: {
+      a1,
+      a2,
+      a3,
+      a4,
+      a5,
+      a6,
+      b1,
+      b2,
+      b3,
+      c1,
+      c2,
+      c3,
+      d1,
+      d2,
+      d3,
+      e1,
+      e2,
+      e3,
+    },
+  };
 }
 
 it('returns uniq nodes', () => {
@@ -75,6 +93,17 @@ it('returns uniq nodes', () => {
   expect(r4).toContain(nodeA);
   expect(r4).toContain(nodeB);
   expect(r4).toContain(nodeC);
+});
+
+it('determines if node array includes id', () => {
+  const nodeA = new TreeNode<NodeDataType>('nodeA', data);
+  const nodeB = new TreeNode<NodeDataType>('nodeB', data);
+  const nodeC = new TreeNode<NodeDataType>('nodeC', data);
+  const array = [nodeA, nodeB];
+
+  expect(Tree.includesId(array, nodeA.id)).toBe(true);
+  expect(Tree.includesId(array, nodeB.id)).toBe(true);
+  expect(Tree.includesId(array, nodeC.id)).toBe(false);
 });
 
 it('has correct empty state', () => {
@@ -129,7 +158,7 @@ it('adds root node', () => {
 });
 
 it('gets node', () => {
-  const tree = makeComplexTree();
+  const tree = makeComplexTree().tree;
 
   const findAndAssertId = (nodeId: string) => {
     const foundNode = tree.getNode(nodeId);
@@ -176,7 +205,7 @@ it('registers fork points', () => {
    *                 e1 -> e2 -> e3
    */
 
-  const tree = makeComplexTree();
+  const tree = makeComplexTree().tree;
   const forkPointIds = tree.forkPoints.map((n) => n.id);
 
   expect(forkPointIds).toHaveLength(4);
@@ -194,7 +223,7 @@ it('registers fork points', () => {
 });
 
 it('registers root', () => {
-  const tree = makeComplexTree();
+  const tree = makeComplexTree().tree;
 
   expect(tree.root).not.toBeNull();
 
@@ -220,7 +249,7 @@ it('registers heads', () => {
    *                 e1 -> e2 -> e3
    */
 
-  const tree = makeComplexTree();
+  const tree = makeComplexTree().tree;
   const headIds = tree.heads.map((n) => n.id);
 
   expect(headIds).toHaveLength(5);
@@ -252,7 +281,7 @@ it('finds root or fork points', () => {
    *                 e1 -> e2 -> e3
    */
 
-  const tree = makeComplexTree();
+  const tree = makeComplexTree().tree;
 
   const getForkOrRoot = (id: string) => {
     const node = tree.getNode(id);
@@ -292,13 +321,6 @@ it('rejects parentless node if tree has root', () => {
   expect(() => tree.createNode('parentless', data, null)).toThrow();
 });
 
-it('rejects node if parent not found', () => {
-  const tree = new Tree<NodeDataType>();
-  tree.createNode('root-node', data, null);
-
-  expect(() => tree.createNode('foobar', data, 'unknown-parent')).toThrow();
-});
-
 it('calculates heights from fork points or root', () => {
   /*
    *                 c1 -> c2 -> c3
@@ -311,7 +333,7 @@ it('calculates heights from fork points or root', () => {
    *                \
    *                 e1 -> e2 -> e3
    */
-  const tree = makeComplexTree();
+  const tree = makeComplexTree().tree;
 
   const getHeightFromForkOrRoot = (id: string) => {
     const node = tree.getNode(id);
