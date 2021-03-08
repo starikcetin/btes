@@ -81,21 +81,7 @@ export class Tree<TData> {
   public readonly getForkPointOrRoot = (
     node: TreeNode<TData>
   ): TreeNode<TData> => {
-    let currentNode = node;
-
-    // eslint-disable-next-line no-constant-condition
-    while (
-      !this.isRootNode(currentNode.id) &&
-      !this.isForkPoint(currentNode.id)
-    ) {
-      if (null === currentNode.parent) {
-        throw new Error('A node has no parent, but is not the root node!');
-      }
-
-      currentNode = currentNode.parent;
-    }
-
-    return currentNode;
+    return this._getForkPointOrRootWithHeight(node).forkPointOrRoot;
   };
 
   public readonly isRootNode = (nodeId: string): boolean => {
@@ -108,6 +94,40 @@ export class Tree<TData> {
 
   public readonly isHeadNode = (nodeId: string): boolean => {
     return Tree.includes(this._heads, nodeId);
+  };
+
+  /** 0 based distance of the given node from the first fork point or root. */
+  public readonly getNodeHeightFromForkPointOrRoot = (
+    node: TreeNode<TData>
+  ): number => {
+    return this._getForkPointOrRootWithHeight(node).height;
+  };
+
+  /**
+   * Returns,
+   * 1. The first fork point in this node's ancestors, or the root point if no fork points are found
+   * 2. The 0-based height of the given node relative to the fork point or root
+   */
+  private readonly _getForkPointOrRootWithHeight = (
+    node: TreeNode<TData>
+  ): { forkPointOrRoot: TreeNode<TData>; height: number } => {
+    let count = 0;
+    let currentNode = node;
+
+    // eslint-disable-next-line no-constant-condition
+    while (
+      !this.isRootNode(currentNode.id) &&
+      !this.isForkPoint(currentNode.id)
+    ) {
+      if (null === currentNode.parent) {
+        throw new Error('A node has no parent, but is not the root node!');
+      }
+
+      count++;
+      currentNode = currentNode.parent;
+    }
+
+    return { height: count, forkPointOrRoot: currentNode };
   };
 
   /** Adds a node to fork points array if it is not already there. */

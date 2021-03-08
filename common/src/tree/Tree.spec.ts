@@ -298,3 +298,48 @@ it('rejects node if parent not found', () => {
 
   expect(() => tree.createNode('foobar', data, 'unknown-parent')).toThrow();
 });
+
+it('calculates heights from fork points or root', () => {
+  /*
+   *                 c1 -> c2 -> c3
+   *                /
+   *         b1 -> b2 -> b3
+   *        /
+   * a1 -> a2 -> a3 -> a4 -> a5 -> a6
+   *              \
+   *               d1 -> d2 -> d3
+   *                \
+   *                 e1 -> e2 -> e3
+   */
+  const tree = makeComplexTree();
+
+  const getHeightFromForkOrRoot = (id: string) => {
+    const node = tree.getNode(id);
+    if (!node) {
+      throw Error('node should not be null!');
+    }
+    return tree.getNodeHeightFromForkPointOrRoot(node);
+  };
+
+  expect(getHeightFromForkOrRoot('a1')).toBe(0);
+  expect(getHeightFromForkOrRoot('a2')).toBe(0);
+  expect(getHeightFromForkOrRoot('a3')).toBe(0);
+  expect(getHeightFromForkOrRoot('a4')).toBe(1);
+  expect(getHeightFromForkOrRoot('a5')).toBe(2);
+  expect(getHeightFromForkOrRoot('a6')).toBe(3);
+  expect(getHeightFromForkOrRoot('b1')).toBe(1);
+  expect(getHeightFromForkOrRoot('b2')).toBe(0);
+  expect(getHeightFromForkOrRoot('b3')).toBe(1);
+  expect(getHeightFromForkOrRoot('c1')).toBe(1);
+  expect(getHeightFromForkOrRoot('c2')).toBe(2);
+  expect(getHeightFromForkOrRoot('c3')).toBe(3);
+  expect(getHeightFromForkOrRoot('d1')).toBe(0);
+  expect(getHeightFromForkOrRoot('d2')).toBe(1);
+  expect(getHeightFromForkOrRoot('d3')).toBe(2);
+  expect(getHeightFromForkOrRoot('e1')).toBe(1);
+  expect(getHeightFromForkOrRoot('e2')).toBe(2);
+  expect(getHeightFromForkOrRoot('e3')).toBe(3);
+
+  const outsiderNode = new TreeNode<NodeDataType>('outsider', data);
+  expect(() => tree.getNodeHeightFromForkPointOrRoot(outsiderNode)).toThrow();
+});
