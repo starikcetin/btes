@@ -1,3 +1,5 @@
+import { TreeNodeJsonObject } from './TreeNodeJsonObject';
+
 export class TreeNode<TData> {
   private _parent: TreeNode<TData> | null = null;
   public get parent(): TreeNode<TData> | null {
@@ -34,11 +36,32 @@ export class TreeNode<TData> {
     return count;
   }
 
+  /**
+   * Sets the parent directly.
+   * If you are calling this outside the `Tree` class, make sure you know what you are doing.
+   */
   public readonly setParent = (parent: TreeNode<TData>): void => {
     this._parent = parent;
   };
 
+  /**
+   * Adds a child directly.
+   * If you are calling this outside the `Tree` class, make sure you know what you are doing.
+   */
   public readonly addChild = (node: TreeNode<TData>): void => {
     this._children.push(node);
+  };
+
+  /**
+   * Returns a JSON serializable version of this tree with a nested object data structure.
+   * `data` field will be directly included, so YOU need to make sure `TData` is JSON
+   * seiralizable as well.
+   */
+  public readonly toJsonObject = (): TreeNodeJsonObject<TData> => {
+    return {
+      id: this.id,
+      data: this.data,
+      children: this.children.map((c) => c.toJsonObject()),
+    };
   };
 }

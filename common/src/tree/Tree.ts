@@ -1,7 +1,69 @@
+/*
+ * TODO:
+ *
+ * 1. If a `TreeNode` with children is added usin `add` method, internal state will get
+ *    garbled (heads will not be properly updated). Do we even want an `add` method?
+ *    Perhaps `create` is enough.
+ *
+ * 2. If we decide to keep the `add` method and support adding nodes with children,
+ *    `importTreeNodeJsonObject` logic can be moved to the `TreeNode` class as a
+ *    `TreeNode.fromJsonObject` static method. Then we can use that to construct the
+ *    node chain, and import all of them at once via root node in `Tree.importTreeJsonObject`.
+ *    That way we can get rid of the weird looking `importTreeNodeJsonObject` method as well.
+ */
+
 import _ from 'lodash';
+
+import { TreeJsonObject } from './TreeJsonObject';
 import { TreeNode } from './TreeNode';
+import { TreeNodeJsonObject } from './TreeNodeJsonObject';
 
 export class Tree<TData> {
+  /**
+   * Creates a new tree using the given `TreeJsonObject`.
+   */
+  public static readonly fromJsonObject = <TData>(
+    treeJsonObject: TreeJsonObject<TData>
+  ): Tree<TData> => {
+    const tree = new Tree<TData>();
+    tree.importTreeJsonObject(treeJsonObject, null);
+    return tree;
+  };
+
+  /**
+   * Imports the given `TreeJsonObject` into this tree at `mountPoint`.
+   * @param nodeJsonObject The `TreeJsonObject` to be imported.
+   * @param mountPoint Will be the parent of the imported tree. If `null`, root of the given `treeJsonObject` will be imported as the root of this tree.
+   */
+  public readonly importTreeJsonObject = (
+    treeJsonObject: TreeJsonObject<TData>,
+    mountPoint: TreeNode<TData> | null
+  ): void => {
+    if (null !== treeJsonObject.root) {
+      this.importTreeNodeJsonObject(treeJsonObject.root, mountPoint);
+    }
+  };
+
+  /**
+   * Imports the given `TreeNodeJsonObject` with all its descendants into this tree at `mountPoint`.
+   * @param nodeJsonObject The `TreeNodeJsonObject` to be imported along with all its descendants.
+   * @param mountPoint Will be the parent of the imported tree. If `null`, given `nodeJsonObject` will be imported as the root of this tree.
+   */
+  public readonly importTreeNodeJsonObject = (
+    nodeJsonObject: TreeNodeJsonObject<TData>,
+    mountPoint: TreeNode<TData> | null
+  ): void => {
+    const current = this.createNode(
+      nodeJsonObject.id,
+      nodeJsonObject.data,
+      mountPoint
+    );
+
+    for (const child of nodeJsonObject.children) {
+      this.importTreeNodeJsonObject(child, current);
+    }
+  };
+
   /** Returns nodes from given array that are unique by id. */
   public static readonly uniq = <TData>(
     nodes: TreeNode<TData>[]
@@ -95,6 +157,17 @@ export class Tree<TData> {
     node: TreeNode<TData>
   ): number => {
     return this._getForkPointOrRootWithHeight(node).height;
+  };
+
+  /**
+   * Returns a JSON serializable version of this tree with a nested object data structure.
+   * `data` fields of all nodes will be directly included, so YOU need to make sure `TData`
+   * is JSON seiralizable as well.
+   */
+  public readonly toJsonObject = (): TreeJsonObject<TData> => {
+    return {
+      root: this.root?.toJsonObject() || null,
+    };
   };
 
   /**
