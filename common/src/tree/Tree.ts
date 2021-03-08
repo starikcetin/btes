@@ -63,7 +63,7 @@ export class Tree<TData> {
       }
 
       if (parent.children.length > 0) {
-        this.registerBurst(parent);
+        this.registerForkPoint(parent);
       }
 
       parent.addChild(node);
@@ -110,8 +110,8 @@ export class Tree<TData> {
     return Tree.includes(this._heads, nodeId);
   };
 
-  /** Adds a node to bursts array if it is not already there. */
-  private readonly registerBurst = (forkPoint: TreeNode<TData>): void => {
+  /** Adds a node to fork points array if it is not already there. */
+  private readonly registerForkPoint = (forkPoint: TreeNode<TData>): void => {
     if (!Tree.includes(this._forkPoints, forkPoint.id)) {
       this._forkPoints.push(forkPoint);
     }
