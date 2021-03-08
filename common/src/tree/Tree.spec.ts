@@ -1,5 +1,6 @@
 import { Tree } from './Tree';
 import { TreeNode } from './TreeNode';
+import { TreeJsonObject } from './TreeJsonObject';
 
 interface NodeDataType {
   a: number;
@@ -68,6 +69,10 @@ function makeComplexTree() {
       e3,
     },
   };
+}
+
+function idsOf<TData>(nodes: ReadonlyArray<TreeNode<TData>>) {
+  return nodes.map((n) => n.id);
 }
 
 it('returns uniq nodes', () => {
@@ -364,4 +369,23 @@ it('calculates heights from fork points or root', () => {
 
   const outsiderNode = new TreeNode<NodeDataType>('outsider', data);
   expect(() => tree.getNodeHeightFromForkPointOrRoot(outsiderNode)).toThrow();
+});
+
+it('converts to json object', () => {
+  const tree = makeComplexTree().tree;
+  expect(tree.toJsonObject()).toMatchSnapshot();
+});
+
+it('makes tree from json object', () => {
+  const treeA = makeComplexTree().tree;
+  const jsonObjA = treeA.toJsonObject();
+
+  const treeB = Tree.fromJsonObject(jsonObjA);
+  const jsonObjB = treeB.toJsonObject();
+
+  expect(jsonObjA).toStrictEqual(jsonObjB);
+
+  expect(idsOf(treeA.forkPoints)).toIncludeSameMembers(idsOf(treeB.forkPoints));
+  expect(idsOf(treeA.heads)).toIncludeSameMembers(idsOf(treeB.heads));
+  expect(treeA.root?.id).toBe(treeB.root?.id);
 });

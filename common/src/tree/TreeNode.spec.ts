@@ -1,4 +1,5 @@
 import { TreeNode } from './TreeNode';
+import { TreeNodeJsonObject } from './TreeNodeJsonObject';
 
 interface NodeDataType {
   a: number;
@@ -112,4 +113,40 @@ it('counts height', () => {
   expect(root.height).toBe(0);
   expect(firstChild.height).toBe(1);
   expect(secondChild.height).toBe(2);
+});
+
+it('converts to JSON object', () => {
+  const parentId = 'parent-id';
+  const childAId = 'child-a-id';
+  const childBId = 'child-b-id';
+
+  const parent = new TreeNode(parentId, data);
+  const childA = new TreeNode(childAId, data);
+  const childB = new TreeNode(childBId, data);
+
+  childA.setParent(parent);
+  parent.addChild(childA);
+  childB.setParent(parent);
+  parent.addChild(childB);
+
+  const expectedJsonObject: TreeNodeJsonObject<NodeDataType> = {
+    id: parentId,
+    data,
+    children: [
+      {
+        id: childAId,
+        data,
+        children: [],
+      },
+      {
+        id: childBId,
+        data,
+        children: [],
+      },
+    ],
+  };
+
+  const jsonObject = parent.toJsonObject();
+
+  expect(jsonObject).toStrictEqual(expectedJsonObject);
 });
