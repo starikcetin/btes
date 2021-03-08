@@ -1,0 +1,95 @@
+import { TreeNode } from './TreeNode';
+
+interface NodeDataType {
+  a: number;
+  b: string;
+}
+
+const data: NodeDataType = {
+  a: 1,
+  b: 'foobar',
+};
+
+it('sets parent correctly', () => {
+  const parent = new TreeNode('parent-id', data);
+  const child = new TreeNode('child-id', data);
+
+  expect(parent.parent).toBeNull();
+  expect(parent.hasParent).toBe(false);
+  expect(child.parent).toBeNull();
+  expect(child.hasParent).toBe(false);
+
+  child.setParent(parent);
+
+  expect(parent.parent).toBeNull();
+  expect(parent.hasParent).toBe(false);
+  expect(child.parent).toBe(parent);
+  expect(child.hasParent).toBe(true);
+});
+
+it('adds children correctly', () => {
+  const parent = new TreeNode('parent-id', data);
+  const childA = new TreeNode('child-a-id', data);
+  const childB = new TreeNode('child-b-id', data);
+
+  expect(childA.children.length).toBe(0);
+  expect(childB.children.length).toBe(0);
+  expect(parent.children.length).toBe(0);
+
+  parent.addChild(childA);
+
+  expect(childA.children.length).toBe(0);
+  expect(childB.children.length).toBe(0);
+  expect(parent.children.length).toBe(1);
+  expect(parent.children).toContain(childA);
+
+  parent.addChild(childB);
+
+  expect(childA.children.length).toBe(0);
+  expect(childB.children.length).toBe(0);
+  expect(parent.children.length).toBe(2);
+  expect(parent.children).toContain(childA);
+  expect(parent.children).toContain(childB);
+});
+
+it('retains data', () => {
+  const parent = new TreeNode('parent-id', data);
+  const childA = new TreeNode('child-a-id', data);
+  const childB = new TreeNode('child-b-id', data);
+
+  expect(parent.data).toBe(data);
+  expect(childA.data).toBe(data);
+  expect(childB.data).toBe(data);
+
+  childA.setParent(parent);
+  parent.addChild(childA);
+  childB.setParent(parent);
+  parent.addChild(childB);
+
+  expect(parent.data).toBe(data);
+  expect(childA.data).toBe(data);
+  expect(childB.data).toBe(data);
+});
+
+it('retains id', () => {
+  const parentId = 'parent-id';
+  const childAId = 'child-a-id';
+  const childBId = 'child-b-id';
+
+  const parent = new TreeNode(parentId, data);
+  const childA = new TreeNode(childAId, data);
+  const childB = new TreeNode(childBId, data);
+
+  expect(parent.id).toBe(parentId);
+  expect(childA.id).toBe(childAId);
+  expect(childB.id).toBe(childBId);
+
+  childA.setParent(parent);
+  parent.addChild(childA);
+  childB.setParent(parent);
+  parent.addChild(childB);
+
+  expect(parent.id).toBe(parentId);
+  expect(childA.id).toBe(childAId);
+  expect(childB.id).toBe(childBId);
+});
