@@ -9,6 +9,14 @@ export class Tree<TData> {
     return _.uniqBy(nodes, (n) => n.id);
   };
 
+  /** Returns whether given array has a node with given id. */
+  public static readonly includes = <TData>(
+    nodes: TreeNode<TData>[],
+    nodeId: string
+  ): boolean => {
+    return nodes.some((n) => n.id === nodeId);
+  };
+
   private _root: TreeNode<TData> | null = null;
   public get root(): TreeNode<TData> | null {
     return this._root;
@@ -25,8 +33,8 @@ export class Tree<TData> {
   }
 
   public readonly createNode = (
-    data: TData,
     id: string,
+    data: TData,
     parentId: string | null
   ): TreeNode<TData> => {
     const node = new TreeNode<TData>(id, data);
@@ -66,7 +74,7 @@ export class Tree<TData> {
   };
 
   public readonly getNode = (nodeId: string): TreeNode<TData> | null => {
-    return this.searchBackMultiple(nodeId, this._heads);
+    return this.searchBackMultiple(nodeId, this._heads, []);
   };
 
   /** Returns the first fork point in this node's ancestors, or the root point if no fork points are found. */
@@ -75,15 +83,16 @@ export class Tree<TData> {
   ): TreeNode<TData> => {
     let currentNode = node;
 
+    // eslint-disable-next-line no-constant-condition
     while (
       !this.isRootNode(currentNode.id) &&
-      !this.isSpreadNode(currentNode.id)
+      !this.isForkPoint(currentNode.id)
     ) {
-      if (null === node.parent) {
+      if (null === currentNode.parent) {
         throw new Error('A node has no parent, but is not the root node!');
       }
 
-      currentNode = node.parent;
+      currentNode = currentNode.parent;
     }
 
     return currentNode;
@@ -93,47 +102,64 @@ export class Tree<TData> {
     return this._root !== null && this._root.id === nodeId;
   };
 
-  public readonly isSpreadNode = (nodeId: string): boolean => {
-    return this._forkPoints.some((n) => n.id === nodeId);
+  public readonly isForkPoint = (nodeId: string): boolean => {
+    return Tree.includes(this._forkPoints, nodeId);
   };
 
   public readonly isHeadNode = (nodeId: string): boolean => {
-    return this._heads.some((n) => n.id === nodeId);
+    return Tree.includes(this._heads, nodeId);
   };
 
   /** Adds a node to bursts array if it is not already there. */
   private readonly registerBurst = (forkPoint: TreeNode<TData>): void => {
-    if (_.findIndex(this._forkPoints, (n) => n.id === forkPoint.id) === -1) {
+    if (!Tree.includes(this._forkPoints, forkPoint.id)) {
       this._forkPoints.push(forkPoint);
     }
   };
 
   /**
    * Searches backwards from all `startNodes` until a node with `targetId` is found.
+   * Does not search beyond fork points given in `ignoreForkPoints`.
    * @returns target node if found, `null` otherwise
    */
   private readonly searchBackMultiple = (
     targetId: string,
-    startNodes: TreeNode<TData>[]
+    startNodes: TreeNode<TData>[],
+    ignoreForksPoints: TreeNode<TData>[]
   ): TreeNode<TData> | null => {
+    const visitedForkPoints = ignoreForksPoints;
     const nextHeads: TreeNode<TData>[] = [];
 
     for (const startNode of startNodes) {
-      const searchResult = this.searchBackUntilForkOrRoot(targetId, startNode);
+      const { stopType, stopNode } = this.searchBackUntilForkOrRoot(
+        targetId,
+        startNode
+      );
 
-      if (searchResult.stopType === 'target') {
-        return searchResult.stopNode;
-      } else if (searchResult.stopType === 'fork') {
-        nextHeads.push(searchResult.stopNode);
+      if (stopType === 'target') {
+        return stopNode;
+      } else if (stopType === 'fork') {
+        if (null === stopNode.parent) {
+          throw new Error('A node has no parent, but is not the root node!');
+        }
+
+        // do not visit the same fork point more than once
+        if (!Tree.includes(visitedForkPoints, stopNode.id)) {
+          visitedForkPoints.push(stopNode);
+
+          if (!Tree.includes(nextHeads, stopNode.id)) {
+            nextHeads.push(stopNode.parent);
+          }
+        }
       }
-      // else if (searchResult.stopType === 'root') {
+      // else if (stopType === 'root') {
       //   // there is nothing to search for beyond the root node, ignore
       // }
     }
 
     return nextHeads.length === 0
       ? null
-      : this.searchBackMultiple(targetId, Tree.uniq(nextHeads));
+      : this.searchBackMultiple(targetId, nextHeads, visitedForkPoints);
   };
 
   /** Searches backwards from `start` until it hits the target, a fork point, or the tree root. */
@@ -145,20 +171,20 @@ export class Tree<TData> {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      if (this.isSpreadNode(currentNode.id)) {
-        return { stopType: 'fork', stopNode: currentNode };
+      if (currentNode.id === targetId) {
+        return { stopType: 'target', stopNode: currentNode };
       }
 
       if (this.isRootNode(currentNode.id)) {
         return { stopType: 'root', stopNode: currentNode };
       }
 
-      if (currentNode.id === targetId) {
-        return { stopType: 'target', stopNode: currentNode };
-      }
-
       if (null === currentNode.parent) {
         throw new Error('A node has no parent, but is not the root node!');
+      }
+
+      if (this.isForkPoint(currentNode.id)) {
+        return { stopType: 'fork', stopNode: currentNode };
       }
 
       currentNode = currentNode.parent;
@@ -169,9 +195,7 @@ export class Tree<TData> {
     parentId: string,
     childNode: TreeNode<TData>
   ) => {
-    const removed = _.remove(this._heads, (n) => n.id === parentId);
-    if (removed.length > 0) {
-      this._heads.push(childNode);
-    }
+    _.remove(this._heads, (n) => n.id === parentId);
+    this._heads.push(childNode);
   };
 }
