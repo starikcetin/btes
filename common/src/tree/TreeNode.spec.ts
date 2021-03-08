@@ -93,3 +93,23 @@ it('retains id', () => {
   expect(childA.id).toBe(childAId);
   expect(childB.id).toBe(childBId);
 });
+
+it('counts height', () => {
+  const root = new TreeNode('a', data);
+  const firstChild = new TreeNode('b', data);
+  const secondChild = new TreeNode('c', data);
+
+  expect(root.height).toBe(0);
+  expect(firstChild.height).toBe(0);
+  expect(secondChild.height).toBe(0);
+
+  firstChild.setParent(root);
+  root.addChild(firstChild);
+
+  secondChild.setParent(firstChild);
+  firstChild.addChild(secondChild);
+
+  expect(root.height).toBe(0);
+  expect(firstChild.height).toBe(1);
+  expect(secondChild.height).toBe(2);
+});

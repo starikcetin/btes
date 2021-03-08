@@ -21,6 +21,19 @@ export class TreeNode<TData> {
     this.data = data;
   }
 
+  /** 0-based distance from the root */
+  public get height(): number {
+    let count = 0;
+    let currentNode = this.parent;
+
+    while (currentNode !== null) {
+      count++;
+      currentNode = currentNode.parent;
+    }
+
+    return count;
+  }
+
   public readonly setParent = (parent: TreeNode<TData>): void => {
     this._parent = parent;
   };
