@@ -1,6 +1,23 @@
 import { TreeNodeJsonObject } from './TreeNodeJsonObject';
 
 export class TreeNode<TData> {
+  /**
+   * Constructs a `TreeNode` with all its descendants using the given `TreeNodeJsonObject`.
+   */
+  public static fromJsonObject = <TData>(
+    jsonObject: TreeNodeJsonObject<TData>
+  ): TreeNode<TData> => {
+    const current = new TreeNode<TData>(jsonObject.id, jsonObject.data);
+
+    for (const childJsonObject of jsonObject.children) {
+      const child = TreeNode.fromJsonObject(childJsonObject);
+      child.setParent(current);
+      current.addChild(child);
+    }
+
+    return current;
+  };
+
   private _parent: TreeNode<TData> | null = null;
   public get parent(): TreeNode<TData> | null {
     return this._parent;

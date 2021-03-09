@@ -150,3 +150,44 @@ it('converts to JSON object', () => {
 
   expect(jsonObject).toStrictEqual(expectedJsonObject);
 });
+
+it('converts from JSON object', () => {
+  const parentId = 'parent-id';
+  const childAId = 'child-a-id';
+  const childBId = 'child-b-id';
+
+  const jsonObject: TreeNodeJsonObject<NodeDataType> = {
+    id: parentId,
+    data,
+    children: [
+      {
+        id: childAId,
+        data,
+        children: [],
+      },
+      {
+        id: childBId,
+        data,
+        children: [],
+      },
+    ],
+  };
+
+  const parent = TreeNode.fromJsonObject(jsonObject);
+  expect(parent.id).toBe(parentId);
+  expect(parent.data).toStrictEqual(data);
+  expect(parent.parent).toBeNull();
+  expect(parent.children).toHaveLength(2);
+
+  const childA = parent.children[0];
+  expect(childA.id).toBe(childAId);
+  expect(childA.data).toStrictEqual(data);
+  expect(childA.parent).toBe(parent);
+  expect(childA.children).toHaveLength(0);
+
+  const childB = parent.children[1];
+  expect(childB.id).toBe(childBId);
+  expect(childB.data).toStrictEqual(data);
+  expect(childB.parent).toBe(parent);
+  expect(childB.children).toHaveLength(0);
+});
