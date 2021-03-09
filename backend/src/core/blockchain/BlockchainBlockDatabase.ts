@@ -1,3 +1,5 @@
+// TODO: how to handle the genesis block? ideally we should ask during simulation init and include it by default in all nodes.
+
 import _ from 'lodash';
 
 import { Tree } from '../../common/tree/Tree';
@@ -5,6 +7,7 @@ import { BlockchainBlockDatabaseSnapshot } from '../../common/blockchain/Blockch
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { hash } from '../../utils/hash';
 import { countLeadingZeroes } from '../../utils/countLeading';
+import { TreeNode } from '../../common/tree/TreeNode';
 
 export type BlockchainBlockValidity = 'valid' | 'orphan' | 'invalid';
 
@@ -28,49 +31,6 @@ export type BlockchainBlockValidity = 'valid' | 'orphan' | 'invalid';
  *       18.3.2.4. Verify crypto signatures for each input; reject if any are bad
  */
 
-/**
- * TODO:
- *
- * 15. Add block into the tree. There are three cases: 1. block further extends the main branch; 2. block extends a side branch but does not add enough difficulty to make it become the new main branch; 3. block extends a side branch and makes it the new main branch.
- * 16. For case 1, adding to main branch:
- *   16.1. For all but the coinbase transaction, apply the following:
- *     16.1.1. For each input, look in the main branch to find the referenced output transaction. Reject if the output transaction is missing for any input.
- *     16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
- *     16.1.3. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1), it must have at least COINBASE_MATURITY (100) confirmations; else reject.
- *     16.1.5. For each input, if the referenced output has already been spent by a transaction in the main branch, reject
- *     16.1.7. Reject if the sum of input values < sum of output values
- *   16.2. Reject if coinbase value > sum of block creation fee and transaction fees
- *   16.3. (If we have not rejected):
- *   16.4. For each transaction, "Add to wallet if mine"
- *   16.5. For each transaction in the block, delete any matching transaction from the transaction pool
- *   16.6. Relay block to our peers
- *   16.7. If we rejected, the block is not counted as part of the main branch
- * 17. For case 2, adding to a side branch, we don't do anything.
- * 18. For case 3, a side branch becoming the main branch:
- *   18.1. Find the fork block on the main branch which this side branch forks off of
- *   18.2. Redefine the main branch to only go up to this fork block
- *   18.3. For each block on the side branch, from the child of the fork block to the leaf, add to the main branch:
- *     18.3.1. Do "branch" checks 3-11
- *     18.3.2. For all but the coinbase transaction, apply the following:
- *       18.3.2.1. For each input, look in the main branch to find the referenced output transaction. Reject if the output transaction is missing for any input.
- *       18.3.2.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
- *       18.3.2.3. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1), it must have at least COINBASE_MATURITY (100) confirmations; else reject.
- *       18.3.2.5. For each input, if the referenced output has already been spent by a transaction in the main branch, reject
- *       18.3.2.7. Reject if the sum of input values < sum of output values
- *     18.3.3. Reject if coinbase value > sum of block creation fee and transaction fees
- *     18.3.4. (If we have not rejected):
- *     18.3.5. For each transaction, "Add to wallet if mine"
- *   18.4. If we reject at any point, leave the main branch as what it was originally, done with block
- *   18.5. For each block in the old main branch, from the leaf down to the child of the fork block:
- *     18.5.1. For each non-coinbase transaction in the block:
- *       18.5.1.1. Apply "tx" checks 2-9, except in step 8, only look in the transaction pool for duplicates, not the main branch
- *       18.5.1.2. Add to transaction pool if accepted, else go on to next transaction
- *   18.6. For each block in the new main branch, from the child of the fork node to the leaf:
- *       18.6.1. For each transaction in the block, delete any matching transaction from the transaction pool
- *   18.7. Relay block to our peers
- * 19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
- */
-
 export class BlockchainBlockDatabase {
   private readonly blocks: Tree<BlockchainBlock>;
   private readonly orphanBlocks: BlockchainBlock[];
@@ -84,8 +44,77 @@ export class BlockchainBlockDatabase {
     block: BlockchainBlock
   ): BlockchainBlockValidity => {
     const validity = this.isBlockValid(block);
+    const headerHash = hash(block.header);
 
-    // TODO: implement registering
+    if (validity === 'orphan') {
+      this.orphanBlocks.push(block);
+
+      // TODO:
+      // 11.b. then query peer we got this from for 1st missing orphan block in prev chain; done with block
+    } else if (validity === 'valid') {
+      // 15. Add block into the tree. There are three cases:
+      const parentNode = this.blocks.getNode(block.header.previousHash);
+
+      if (null === parentNode) {
+        throw new Error('Block is not orphan, but could not find the parent!');
+      }
+
+      const addType = this.getAddType(parentNode);
+
+      if (addType === 'main-extend') {
+        // TODO:
+        //   a. block further extends the main branch;
+        //     16. For case 1, adding to main branch:
+        //       16.1. For all but the coinbase transaction, apply the following:
+        //         16.1.1. For each input, look in the main branch to find the referenced output transaction. Reject if the output transaction is missing for any input.
+        //         16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
+        //         16.1.3. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1), it must have at least COINBASE_MATURITY (100) confirmations; else reject.
+        //         16.1.5. For each input, if the referenced output has already been spent by a transaction in the main branch, reject
+        //         16.1.7. Reject if the sum of input values < sum of output values
+        //       16.2. Reject if coinbase value > sum of block creation fee and transaction fees
+        //       16.3. (If we have not rejected):
+        //       16.4. For each transaction, "Add to wallet if mine"
+        //       16.5. For each transaction in the block, delete any matching transaction from the transaction pool
+        //       16.6. Relay block to our peers
+        //       16.7. If we rejected, the block is not counted as part of the main branch
+      }
+
+      if (addType === 'side-extend') {
+        //   b. block extends a side branch but does not add enough difficulty to make it become the new main branch;
+        //     17. For case 2, adding to a side branch, we don't do anything.
+        this.blocks.createNode(headerHash, block, parentNode);
+      }
+
+      if (addType === 'promote') {
+        // TODO:
+        //   c. block extends a side branch and makes it the new main branch.
+        //     18. For case 3, a side branch becoming the main branch:
+        //       18.1. Find the fork block on the main branch which this side branch forks off of
+        //       18.2. Redefine the main branch to only go up to this fork block
+        //       18.3. For each block on the side branch, from the child of the fork block to the leaf, add to the main branch:
+        //         18.3.1. Do "branch" checks 3-11
+        //         18.3.2. For all but the coinbase transaction, apply the following:
+        //           18.3.2.1. For each input, look in the main branch to find the referenced output transaction. Reject if the output transaction is missing for any input.
+        //           18.3.2.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
+        //           18.3.2.3. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1), it must have at least COINBASE_MATURITY (100) confirmations; else reject.
+        //           18.3.2.5. For each input, if the referenced output has already been spent by a transaction in the main branch, reject
+        //           18.3.2.7. Reject if the sum of input values < sum of output values
+        //         18.3.3. Reject if coinbase value > sum of block creation fee and transaction fees
+        //         18.3.4. (If we have not rejected):
+        //         18.3.5. For each transaction, "Add to wallet if mine"
+        //       18.4. If we reject at any point, leave the main branch as what it was originally, done with block
+        //       18.5. For each block in the old main branch, from the leaf down to the child of the fork block:
+        //         18.5.1. For each non-coinbase transaction in the block:
+        //           18.5.1.1. Apply "tx" checks 2-9, except in step 8, only look in the transaction pool for duplicates, not the main branch
+        //           18.5.1.2. Add to transaction pool if accepted, else go on to next transaction
+        //       18.6. For each block in the new main branch, from the child of the fork node to the leaf:
+        //           18.6.1. For each transaction in the block, delete any matching transaction from the transaction pool
+        //       18.7. Relay block to our peers
+      }
+
+      // TODO:
+      // 19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
+    }
 
     return validity;
   };
@@ -130,15 +159,35 @@ export class BlockchainBlockDatabase {
       }
     }
 
-    // 11. Check if prev block (matching prev hash) is in main branch or side branches. If not, add this to orphan blocks,
-    // TODO: then query peer we got this from for 1st missing orphan block in prev chain
-    // done with block
+    // 11.a. Check if prev block (matching prev hash) is in main branch or side branches. If not, add this to orphan blocks,
     if (!this.findRegularBlock(header.previousHash)) {
       return 'orphan';
     }
 
     // all check passed
     return 'valid';
+  };
+
+  private readonly getAddType = (
+    parentNode: TreeNode<BlockchainBlock>
+  ): 'main-extend' | 'promote' | 'side-extend' => {
+    if (this.blocks.mainBranchHead?.id === parentNode.id) {
+      // parent is main branch head, we are extending main branch
+      return 'main-extend';
+    }
+
+    if (null === this.blocks.mainBranchHead) {
+      throw new Error('Main branch head is null!');
+    }
+
+    if (this.blocks.mainBranchHead.height === parentNode.height) {
+      // parent has the same height as the main branch head
+      // adding one more block would make it the longest chain
+      return 'promote';
+    }
+
+    // otherwise we are extending a side branch
+    return 'side-extend';
   };
 
   /** Finds a block in main or side branches */
