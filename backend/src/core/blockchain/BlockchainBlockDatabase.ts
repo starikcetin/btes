@@ -1,5 +1,6 @@
 import _ from 'lodash';
 
+import { Tree } from '../../common/tree/Tree';
 import { BlockchainBlockDatabaseSnapshot } from '../../common/blockchain/BlockchainBlockDatabaseSnapshot';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { hash } from '../../utils/hash';
@@ -71,10 +72,10 @@ export type BlockchainBlockValidity = 'valid' | 'orphan' | 'invalid';
  */
 
 export class BlockchainBlockDatabase {
-  private readonly blocks: BlockchainBlock[];
+  private readonly blocks: Tree<BlockchainBlock>;
   private readonly orphanBlocks: BlockchainBlock[];
 
-  constructor(blocks: BlockchainBlock[], orphanBlocks: BlockchainBlock[]) {
+  constructor(blocks: Tree<BlockchainBlock>, orphanBlocks: BlockchainBlock[]) {
     this.blocks = blocks;
     this.orphanBlocks = orphanBlocks;
   }
@@ -144,7 +145,7 @@ export class BlockchainBlockDatabase {
   private readonly findRegularBlock = (
     blockHeaderHash: string
   ): BlockchainBlock | null =>
-    this.findBlockInPool(blockHeaderHash, this.blocks);
+    this.blocks.getNode(blockHeaderHash)?.data || null;
 
   private readonly findOrphanBlock = (
     blockHeaderHash: string
@@ -159,7 +160,7 @@ export class BlockchainBlockDatabase {
 
   public readonly takeSnapshot = (): BlockchainBlockDatabaseSnapshot => {
     return {
-      blocks: this.blocks,
+      blocks: this.blocks.toJsonObject(),
       orphanBlocks: this.orphanBlocks,
     };
   };

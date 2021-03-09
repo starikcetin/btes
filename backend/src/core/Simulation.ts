@@ -8,10 +8,11 @@ import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
 import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
-import { dummyBlockchain } from '../utils/dummyBlockchain';
 import { BlockchainWallet } from './blockchain/BlockchainWallet';
 import { BlockchainTransactionDatabase } from './blockchain/BlockchainTransactionDatabase';
 import { BlockchainBlockDatabase } from './blockchain/BlockchainBlockDatabase';
+import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
+import { Tree } from '../common/tree/Tree';
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -48,7 +49,10 @@ export class Simulation {
       []
     );
 
-    const blockchainBlockDatabase = new BlockchainBlockDatabase([], []);
+    const blockchainBlockDatabase = new BlockchainBlockDatabase(
+      new Tree<BlockchainBlock>(),
+      []
+    );
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
@@ -91,7 +95,7 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      nodeSnapshot.blockchainApp.blockDatabase.blocks,
+      Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDatabase.blocks),
       nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
     );
 
