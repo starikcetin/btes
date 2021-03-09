@@ -37,6 +37,8 @@ import { SimulationNode } from '../../components/SimulationNode/SimulationNode';
 import LogModal from '../../components/LogModal/LogModal';
 import { hasValue } from '../../common/utils/hasValue';
 import { SimulationNodeConnection } from '../../components/SimulationNodeConnection/SimulationNodeConnection';
+import NodeConnectionModal from '../../components/NodeConnectionModal/NodeConnectionModal';
+import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -88,6 +90,10 @@ const SandboxSimulation: React.FC = () => {
   });
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
+  const [
+    viewingConnection,
+    setViewingConnection,
+  ] = useState<NodeConnectionData | null>(null);
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);
@@ -180,6 +186,12 @@ const SandboxSimulation: React.FC = () => {
     };
   }, [connect, handleKeyUp, teardown]);
 
+  const onConnectionLatencyChange = (newValue: number) => {
+    const connection = { ...viewingConnection };
+    connection.latencyInMs = newValue;
+    setViewingConnection(connection as NodeConnectionData);
+  };
+
   return (
     <div className="page-sandbox-simulation">
       {connected ? (
@@ -251,6 +263,9 @@ const SandboxSimulation: React.FC = () => {
                   <SimulationNodeConnection
                     connection={connection}
                     simulationUid={simulationUid}
+                    launchHandler={(connection) =>
+                      setViewingConnection(connection)
+                    }
                   />
                 ))}
               </div>
@@ -275,6 +290,12 @@ const SandboxSimulation: React.FC = () => {
             closeHandler={() => setShouldShowLogs(false)}
             logs={logs}
             show={shouldShowLogs}
+          />
+          <NodeConnectionModal
+            closeHandler={() => setViewingConnection(null)}
+            simulationUid={simulationUid}
+            connection={viewingConnection}
+            onConnectionLatencyChange={onConnectionLatencyChange}
           />
           <div className="page-sandbox-simulation--sliding-panel">
             <div className="page-sandbox-simulation--sliding-panel--handle">
