@@ -108,6 +108,20 @@ export class Tree<TData> {
     node: TreeNode<TData>,
     parent: TreeNode<TData> | null
   ): void => {
+    if (node.hasParent) {
+      throw new Error(
+        'Trying to add a node that has a parent! Importing dirty nodes is not supported.' +
+          'If you are trying to import JSON objects, use one of these: Tree.fromJsonObject`, `tree.importTreeJsonObject`, `tree.importTreeNodeJsonObject`.'
+      );
+    }
+
+    if (node.children.length > 0) {
+      throw new Error(
+        'Trying to add a node that has children! Importing dirty nodes is not supported.' +
+          'If you are trying to import JSON objects, use one of these: Tree.fromJsonObject`, `tree.importTreeJsonObject`, `tree.importTreeNodeJsonObject`.'
+      );
+    }
+
     if (parent === null) {
       if (this._root !== null) {
         throw new Error(

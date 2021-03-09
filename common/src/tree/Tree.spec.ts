@@ -389,3 +389,55 @@ it('makes tree from json object', () => {
   expect(idsOf(treeA.heads)).toIncludeSameMembers(idsOf(treeB.heads));
   expect(treeA.root?.id).toBe(treeB.root?.id);
 });
+
+describe('guards against dirty node add', () => {
+  it('throws on adding node with parent', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const parent = new TreeNode('parent', data);
+    const child = new TreeNode('child', data);
+    child.setParent(parent);
+    parent.addChild(child);
+
+    expect(() => tree.addNode(child, treeNodes.a6)).toThrow();
+    expect(() => tree.addNode(child, treeNodes.a1)).toThrow();
+    expect(() => tree.addNode(child, treeNodes.b2)).toThrow();
+  });
+
+  it('throws on adding node with children', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const parent = new TreeNode('parent', data);
+    const child = new TreeNode('child', data);
+    child.setParent(parent);
+    parent.addChild(child);
+
+    expect(() => tree.addNode(parent, treeNodes.a6)).toThrow();
+    expect(() => tree.addNode(parent, treeNodes.a1)).toThrow();
+    expect(() => tree.addNode(parent, treeNodes.b2)).toThrow();
+  });
+
+  it('throws on adding node with children and parent', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const parent = new TreeNode('parent', data);
+    const node = new TreeNode('node', data);
+    const child = new TreeNode('child', data);
+    node.setParent(parent);
+    child.setParent(node);
+    parent.addChild(node);
+    node.addChild(child);
+
+    expect(() => tree.addNode(node, treeNodes.a6)).toThrow();
+    expect(() => tree.addNode(node, treeNodes.a1)).toThrow();
+    expect(() => tree.addNode(node, treeNodes.b2)).toThrow();
+  });
+
+  it('does not throw on adding clean node', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const node = new TreeNode('node', data);
+
+    expect(() => tree.addNode(node, treeNodes.a6)).not.toThrow();
+  });
+});
