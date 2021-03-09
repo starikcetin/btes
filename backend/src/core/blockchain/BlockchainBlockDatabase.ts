@@ -8,6 +8,8 @@ import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { hash } from '../../utils/hash';
 import { countLeadingZeroes } from '../../utils/countLeading';
 import { TreeNode } from '../../common/tree/TreeNode';
+import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
+import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
 
 export type BlockchainBlockValidity = 'valid' | 'orphan' | 'invalid';
 
@@ -61,16 +63,58 @@ export class BlockchainBlockDatabase {
 
       const addType = this.getAddType(parentNode);
 
+      // a. block further extends the main branch;
+      //   16. For case 1, adding to main branch:
       if (addType === 'main-extend') {
+        // 16.1. For all but the coinbase transaction, apply the following:
+        for (const tx of block.transactions) {
+          if (tx.isCoinbase) {
+            continue;
+          }
+
+          let sumOfInputs = 0;
+
+          for (const input of tx.inputs) {
+            const outPoint = input.previousOutput;
+
+            // 16.1.1. For each input, look in the main branch to find the referenced output transaction. Reject if the output transaction is missing for any input.
+            const refOutputTx = this.findTxInMainBranch(outPoint.txHash);
+
+            if (null === refOutputTx) {
+              return 'invalid';
+            }
+
+            // 16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
+            if (refOutputTx.outputs.length < outPoint.outputIndex + 1) {
+              return 'invalid';
+            }
+
+            // 16.1.3. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1), it must have at least COINBASE_MATURITY (100) confirmations; else reject.
+            if (
+              refOutputTx.isCoinbase &&
+              !this.isCoinbaseTxMature(refOutputTx)
+            ) {
+              return 'invalid';
+            }
+
+            // 16.1.5. For each input, if the referenced output has already been spent by a transaction in the main branch, reject
+            if (this.isOutpointReferencedInMainBranch(outPoint)) {
+              return 'invalid';
+            }
+
+            const refOutput = refOutputTx.outputs[outPoint.outputIndex];
+            sumOfInputs += refOutput.value;
+          }
+
+          const sumOfOutputs = this.txSumOfOutputs(tx);
+
+          // 16.1.7. Reject if the sum of input values < sum of output values
+          if (sumOfInputs < sumOfOutputs) {
+            return 'invalid';
+          }
+        }
+
         // TODO:
-        //   a. block further extends the main branch;
-        //     16. For case 1, adding to main branch:
-        //       16.1. For all but the coinbase transaction, apply the following:
-        //         16.1.1. For each input, look in the main branch to find the referenced output transaction. Reject if the output transaction is missing for any input.
-        //         16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
-        //         16.1.3. For each input, if the referenced output transaction is coinbase (i.e. only 1 input, with hash=0, n=-1), it must have at least COINBASE_MATURITY (100) confirmations; else reject.
-        //         16.1.5. For each input, if the referenced output has already been spent by a transaction in the main branch, reject
-        //         16.1.7. Reject if the sum of input values < sum of output values
         //       16.2. Reject if coinbase value > sum of block creation fee and transaction fees
         //       16.3. (If we have not rejected):
         //       16.4. For each transaction, "Add to wallet if mine"
@@ -117,6 +161,38 @@ export class BlockchainBlockDatabase {
     }
 
     return validity;
+  };
+
+  private readonly isOutpointReferencedInMainBranch = (
+    outPoint: BlockchainTransactionOutPoint
+  ) => {
+    // TODO: implement
+    throw new Error('Method not implemented.');
+  };
+
+  private readonly isCoinbaseTxMature = (
+    tx: BlockchainTransaction
+  ): boolean => {
+    // TODO: implement
+    return true;
+  };
+
+  private readonly findTxInMainBranch = (
+    txHash: string
+  ): BlockchainTransaction | null => {
+    let current = this.blocks.mainBranchHead;
+
+    while (null !== current) {
+      for (const tx of current.data.transactions) {
+        if (hash(tx) === txHash) {
+          return tx;
+        }
+      }
+
+      current = current.parent;
+    }
+
+    return null;
   };
 
   private readonly isBlockValid = (
@@ -206,6 +282,9 @@ export class BlockchainBlockDatabase {
     pool: BlockchainBlock[]
   ): BlockchainBlock | null =>
     pool.find((b) => hash(b.header) === blockHeaderHash) || null;
+
+  private readonly txSumOfOutputs = (tx: BlockchainTransaction) =>
+    _.sumBy(tx.outputs, (o) => o.value);
 
   public readonly takeSnapshot = (): BlockchainBlockDatabaseSnapshot => {
     return {
