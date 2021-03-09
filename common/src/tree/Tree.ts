@@ -73,7 +73,7 @@ export class Tree<TData> {
 
   /** Returns whether given array has a node with given id. */
   public static readonly includesId = <TData>(
-    nodes: TreeNode<TData>[],
+    nodes: readonly TreeNode<TData>[],
     nodeId: string
   ): boolean => {
     return nodes.some((n) => n.id === nodeId);
@@ -92,6 +92,11 @@ export class Tree<TData> {
   private readonly _heads: TreeNode<TData>[] = [];
   public get heads(): ReadonlyArray<TreeNode<TData>> {
     return [...this._heads];
+  }
+
+  private _mainBranchHead: TreeNode<TData> | null = null;
+  public get mainBranchHead(): TreeNode<TData> | null {
+    return this._mainBranchHead;
   }
 
   public readonly createNode = (
@@ -131,6 +136,7 @@ export class Tree<TData> {
 
       this._root = node;
       this._heads.push(node);
+      this._mainBranchHead = node;
     } else {
       if (parent.children.length > 0) {
         this.registerForkPoint(parent);
@@ -298,5 +304,15 @@ export class Tree<TData> {
   ) => {
     _.remove(this._heads, (n) => n.id === parentId);
     this._heads.push(childNode);
+
+    if (null === this._mainBranchHead) {
+      throw new Error('Main branch head is null!');
+    }
+
+    // the use of `>` instead of `>=` is intentional
+    // we don't want to switch if they have the same height
+    if (childNode.height > this._mainBranchHead.height) {
+      this._mainBranchHead = childNode;
+    }
   };
 }
