@@ -14,6 +14,12 @@ import { BlockchainBlockDatabase } from './blockchain/BlockchainBlockDatabase';
 import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
 
+// TODO: this should not be here
+const blockchainKeypairBitLength = 5;
+
+// TODO: this should not be here
+const blockchainBlockCreationFee = 100;
+
 export class Simulation {
   public readonly simulationUid: string;
   public readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
@@ -40,9 +46,6 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
-    // TODO: this should not be here
-    const blockchainKeypairBitLength = 5;
-
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
     const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
       [],
@@ -50,6 +53,7 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
+      blockchainBlockCreationFee,
       new Tree<BlockchainBlock>(),
       []
     );
@@ -83,9 +87,6 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
-    // TODO: this should not be here
-    const blockchainKeypairBitLength = 5;
-
     // TODO: initialize with snapshot
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
 
@@ -95,6 +96,7 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
+      blockchainBlockCreationFee,
       Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDatabase.blocks),
       nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
     );

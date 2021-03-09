@@ -34,10 +34,16 @@ export type BlockchainBlockValidity = 'valid' | 'orphan' | 'invalid';
  */
 
 export class BlockchainBlockDatabase {
+  private readonly blockCreationFee: number;
   private readonly blocks: Tree<BlockchainBlock>;
   private readonly orphanBlocks: BlockchainBlock[];
 
-  constructor(blocks: Tree<BlockchainBlock>, orphanBlocks: BlockchainBlock[]) {
+  constructor(
+    blockCreationFee: number,
+    blocks: Tree<BlockchainBlock>,
+    orphanBlocks: BlockchainBlock[]
+  ) {
+    this.blockCreationFee = blockCreationFee;
     this.blocks = blocks;
     this.orphanBlocks = orphanBlocks;
   }
@@ -66,6 +72,8 @@ export class BlockchainBlockDatabase {
       // a. block further extends the main branch;
       //   16. For case 1, adding to main branch:
       if (addType === 'main-extend') {
+        let sumOfTxFees = 0;
+
         // 16.1. For all but the coinbase transaction, apply the following:
         for (const tx of block.transactions) {
           if (tx.isCoinbase) {
@@ -112,15 +120,30 @@ export class BlockchainBlockDatabase {
           if (sumOfInputs < sumOfOutputs) {
             return 'invalid';
           }
+
+          const txFee = sumOfInputs - sumOfOutputs;
+          sumOfTxFees += txFee;
         }
 
-        // TODO:
-        //       16.2. Reject if coinbase value > sum of block creation fee and transaction fees
-        //       16.3. (If we have not rejected):
-        //       16.4. For each transaction, "Add to wallet if mine"
-        //       16.5. For each transaction in the block, delete any matching transaction from the transaction pool
-        //       16.6. Relay block to our peers
-        //       16.7. If we rejected, the block is not counted as part of the main branch
+        // 16.2. Reject if coinbase value > sum of block creation fee and transaction fees
+        const coinbaseTx = block.transactions[0];
+        const sumOfCoinbaseTxOutputs = this.txSumOfOutputs(coinbaseTx);
+        if (sumOfCoinbaseTxOutputs > this.blockCreationFee + sumOfTxFees) {
+          return 'invalid';
+        }
+
+        // 16.3. (If we have not rejected):
+
+        // TODO: 16.4. For each transaction, "Add to wallet if mine"
+
+        // 16.5. For each transaction in the block, delete any matching transaction from the transaction pool
+        this.removeTxsFromPool(block);
+
+        // TODO: 16.6. Relay block to our peers
+
+        // 16.7. If we rejected, the block is not counted as part of the main branch
+        // > since we only add here, it is not added if we reject before
+        this.blocks.createNode(headerHash, block, parentNode);
       }
 
       if (addType === 'side-extend') {
@@ -161,6 +184,11 @@ export class BlockchainBlockDatabase {
     }
 
     return validity;
+  };
+
+  private readonly removeTxsFromPool = (block: BlockchainBlock) => {
+    // TODO: implement
+    throw new Error('Method not implemented.');
   };
 
   private readonly isOutpointReferencedInMainBranch = (
