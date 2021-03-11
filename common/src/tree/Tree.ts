@@ -1,7 +1,69 @@
+/*
+ * TODO:
+ *
+ * 1. If a `TreeNode` with children is added usin `add` method, internal state will get
+ *    garbled (heads will not be properly updated). Do we even want an `add` method?
+ *    Perhaps `create` is enough.
+ *
+ * 2. If we decide to keep the `add` method and support adding nodes with children,
+ *    `importTreeNodeJsonObject` logic can be moved to the `TreeNode` class as a
+ *    `TreeNode.fromJsonObject` static method. Then we can use that to construct the
+ *    node chain, and import all of them at once via root node in `Tree.importTreeJsonObject`.
+ *    That way we can get rid of the weird looking `importTreeNodeJsonObject` method as well.
+ */
+
 import _ from 'lodash';
+
+import { TreeJsonObject } from './TreeJsonObject';
 import { TreeNode } from './TreeNode';
+import { TreeNodeJsonObject } from './TreeNodeJsonObject';
 
 export class Tree<TData> {
+  /**
+   * Creates a new tree using the given `TreeJsonObject`.
+   */
+  public static readonly fromJsonObject = <TData>(
+    treeJsonObject: TreeJsonObject<TData>
+  ): Tree<TData> => {
+    const tree = new Tree<TData>();
+    tree.importTreeJsonObject(treeJsonObject, null);
+    return tree;
+  };
+
+  /**
+   * Imports the given `TreeJsonObject` into this tree at `mountPoint`.
+   * @param nodeJsonObject The `TreeJsonObject` to be imported.
+   * @param mountPoint Will be the parent of the imported tree. If `null`, root of the given `treeJsonObject` will be imported as the root of this tree.
+   */
+  public readonly importTreeJsonObject = (
+    treeJsonObject: TreeJsonObject<TData>,
+    mountPoint: TreeNode<TData> | null
+  ): void => {
+    if (null !== treeJsonObject.root) {
+      this.importTreeNodeJsonObject(treeJsonObject.root, mountPoint);
+    }
+  };
+
+  /**
+   * Imports the given `TreeNodeJsonObject` with all its descendants into this tree at `mountPoint`.
+   * @param nodeJsonObject The `TreeNodeJsonObject` to be imported along with all its descendants.
+   * @param mountPoint Will be the parent of the imported tree. If `null`, given `nodeJsonObject` will be imported as the root of this tree.
+   */
+  public readonly importTreeNodeJsonObject = (
+    nodeJsonObject: TreeNodeJsonObject<TData>,
+    mountPoint: TreeNode<TData> | null
+  ): void => {
+    const current = this.createNode(
+      nodeJsonObject.id,
+      nodeJsonObject.data,
+      mountPoint
+    );
+
+    for (const child of nodeJsonObject.children) {
+      this.importTreeNodeJsonObject(child, current);
+    }
+  };
+
   /** Returns nodes from given array that are unique by id. */
   public static readonly uniq = <TData>(
     nodes: TreeNode<TData>[]
@@ -11,7 +73,7 @@ export class Tree<TData> {
 
   /** Returns whether given array has a node with given id. */
   public static readonly includesId = <TData>(
-    nodes: TreeNode<TData>[],
+    nodes: readonly TreeNode<TData>[],
     nodeId: string
   ): boolean => {
     return nodes.some((n) => n.id === nodeId);
@@ -32,6 +94,11 @@ export class Tree<TData> {
     return [...this._heads];
   }
 
+  private _mainBranchHead: TreeNode<TData> | null = null;
+  public get mainBranchHead(): TreeNode<TData> | null {
+    return this._mainBranchHead;
+  }
+
   public readonly createNode = (
     id: string,
     data: TData,
@@ -46,6 +113,20 @@ export class Tree<TData> {
     node: TreeNode<TData>,
     parent: TreeNode<TData> | null
   ): void => {
+    if (node.hasParent) {
+      throw new Error(
+        'Trying to add a node that has a parent! Importing dirty nodes is not supported.' +
+          'If you are trying to import JSON objects, use one of these: Tree.fromJsonObject`, `tree.importTreeJsonObject`, `tree.importTreeNodeJsonObject`.'
+      );
+    }
+
+    if (node.children.length > 0) {
+      throw new Error(
+        'Trying to add a node that has children! Importing dirty nodes is not supported.' +
+          'If you are trying to import JSON objects, use one of these: Tree.fromJsonObject`, `tree.importTreeJsonObject`, `tree.importTreeNodeJsonObject`.'
+      );
+    }
+
     if (parent === null) {
       if (this._root !== null) {
         throw new Error(
@@ -55,6 +136,7 @@ export class Tree<TData> {
 
       this._root = node;
       this._heads.push(node);
+      this._mainBranchHead = node;
     } else {
       if (parent.children.length > 0) {
         this.registerForkPoint(parent);
@@ -95,6 +177,17 @@ export class Tree<TData> {
     node: TreeNode<TData>
   ): number => {
     return this._getForkPointOrRootWithHeight(node).height;
+  };
+
+  /**
+   * Returns a JSON serializable version of this tree with a nested object data structure.
+   * `data` fields of all nodes will be directly included, so YOU need to make sure `TData`
+   * is JSON seiralizable as well.
+   */
+  public readonly toJsonObject = (): TreeJsonObject<TData> => {
+    return {
+      root: this.root?.toJsonObject() || null,
+    };
   };
 
   /**
@@ -211,5 +304,15 @@ export class Tree<TData> {
   ) => {
     _.remove(this._heads, (n) => n.id === parentId);
     this._heads.push(childNode);
+
+    if (null === this._mainBranchHead) {
+      throw new Error('Main branch head is null!');
+    }
+
+    // the use of `>` instead of `>=` is intentional
+    // we don't want to switch if they have the same height
+    if (childNode.height > this._mainBranchHead.height) {
+      this._mainBranchHead = childNode;
+    }
   };
 }

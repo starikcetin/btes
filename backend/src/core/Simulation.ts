@@ -8,10 +8,17 @@ import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
 import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
-import { dummyBlockchain } from '../utils/dummyBlockchain';
 import { BlockchainWallet } from './blockchain/BlockchainWallet';
 import { BlockchainTransactionDatabase } from './blockchain/BlockchainTransactionDatabase';
 import { BlockchainBlockDatabase } from './blockchain/BlockchainBlockDatabase';
+import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
+import { Tree } from '../common/tree/Tree';
+
+// TODO: this should not be here
+const blockchainKeypairBitLength = 5;
+
+// TODO: this should not be here
+const blockchainBlockCreationFee = 100;
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -39,18 +46,16 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
-    // TODO: this should not be here
-    const blockchainKeypairBitLength = 5;
-
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
     const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
       [],
       []
     );
 
-    // TODO: dummyBlockchain is here
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      dummyBlockchain
+      blockchainBlockCreationFee,
+      new Tree<BlockchainBlock>(),
+      []
     );
 
     const blockchainApp = new NodeBlockchainApp(
@@ -82,9 +87,6 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
-    // TODO: this should not be here
-    const blockchainKeypairBitLength = 5;
-
     // TODO: initialize with snapshot
     const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
 
@@ -94,7 +96,9 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      nodeSnapshot.blockchainApp.blockDatabase.blocks
+      blockchainBlockCreationFee,
+      Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDatabase.blocks),
+      nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
     );
 
     const blockchainApp = new NodeBlockchainApp(

@@ -1,5 +1,6 @@
 import { Tree } from './Tree';
 import { TreeNode } from './TreeNode';
+import { TreeJsonObject } from './TreeJsonObject';
 
 interface NodeDataType {
   a: number;
@@ -68,6 +69,10 @@ function makeComplexTree() {
       e3,
     },
   };
+}
+
+function idsOf<TData>(nodes: ReadonlyArray<TreeNode<TData>>) {
+  return nodes.map((n) => n.id);
 }
 
 it('returns uniq nodes', () => {
@@ -364,4 +369,134 @@ it('calculates heights from fork points or root', () => {
 
   const outsiderNode = new TreeNode<NodeDataType>('outsider', data);
   expect(() => tree.getNodeHeightFromForkPointOrRoot(outsiderNode)).toThrow();
+});
+
+it('converts to json object', () => {
+  const tree = makeComplexTree().tree;
+  expect(tree.toJsonObject()).toMatchSnapshot();
+});
+
+it('makes tree from json object', () => {
+  const treeA = makeComplexTree().tree;
+  const jsonObjA = treeA.toJsonObject();
+
+  const treeB = Tree.fromJsonObject(jsonObjA);
+  const jsonObjB = treeB.toJsonObject();
+
+  expect(jsonObjA).toStrictEqual(jsonObjB);
+
+  expect(idsOf(treeA.forkPoints)).toIncludeSameMembers(idsOf(treeB.forkPoints));
+  expect(idsOf(treeA.heads)).toIncludeSameMembers(idsOf(treeB.heads));
+  expect(treeA.root?.id).toBe(treeB.root?.id);
+});
+
+describe('guards against dirty node add', () => {
+  it('throws on adding node with parent', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const parent = new TreeNode('parent', data);
+    const child = new TreeNode('child', data);
+    child.setParent(parent);
+    parent.addChild(child);
+
+    expect(() => tree.addNode(child, treeNodes.a6)).toThrow();
+    expect(() => tree.addNode(child, treeNodes.a1)).toThrow();
+    expect(() => tree.addNode(child, treeNodes.b2)).toThrow();
+  });
+
+  it('throws on adding node with children', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const parent = new TreeNode('parent', data);
+    const child = new TreeNode('child', data);
+    child.setParent(parent);
+    parent.addChild(child);
+
+    expect(() => tree.addNode(parent, treeNodes.a6)).toThrow();
+    expect(() => tree.addNode(parent, treeNodes.a1)).toThrow();
+    expect(() => tree.addNode(parent, treeNodes.b2)).toThrow();
+  });
+
+  it('throws on adding node with children and parent', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const parent = new TreeNode('parent', data);
+    const node = new TreeNode('node', data);
+    const child = new TreeNode('child', data);
+    node.setParent(parent);
+    child.setParent(node);
+    parent.addChild(node);
+    node.addChild(child);
+
+    expect(() => tree.addNode(node, treeNodes.a6)).toThrow();
+    expect(() => tree.addNode(node, treeNodes.a1)).toThrow();
+    expect(() => tree.addNode(node, treeNodes.b2)).toThrow();
+  });
+
+  it('does not throw on adding clean node', () => {
+    const { tree, nodes: treeNodes } = makeComplexTree();
+
+    const node = new TreeNode('node', data);
+
+    expect(() => tree.addNode(node, treeNodes.a6)).not.toThrow();
+  });
+});
+
+describe('keeps track of main branch head', () => {
+  it('empty', () => {
+    const tree = new Tree<NodeDataType>();
+
+    expect(tree.mainBranchHead).toBeNull();
+  });
+
+  it('root only', () => {
+    const tree = new Tree<NodeDataType>();
+    const a1 = tree.createNode('a1', data, null); // 0
+
+    expect(tree.mainBranchHead?.id).toBe(a1.id);
+  });
+
+  it('extend main branch', () => {
+    const tree = new Tree<NodeDataType>();
+    const a1 = tree.createNode('a1', data, null); // 0
+    const a2 = tree.createNode('a2', data, a1); // 1
+
+    expect(tree.mainBranchHead?.id).toBe(a2.id);
+  });
+
+  it('fork below head', () => {
+    const tree = new Tree<NodeDataType>();
+    const a1 = tree.createNode('a1', data, null); // 0
+    const a2 = tree.createNode('a2', data, a1); // 1
+    const a3 = tree.createNode('a3', data, a2); // 2
+
+    const b1 = tree.createNode('b1', data, a1); // 1
+
+    expect(tree.mainBranchHead?.id).toBe(a3.id);
+  });
+
+  it('extend side branch', () => {
+    const tree = new Tree<NodeDataType>();
+    const a1 = tree.createNode('a1', data, null); // 0
+    const a2 = tree.createNode('a2', data, a1); // 1
+    const a3 = tree.createNode('a3', data, a2); // 2
+
+    const b1 = tree.createNode('b1', data, a1); // 1
+    const b2 = tree.createNode('b2', data, b1); // 2 -> cannot promote
+
+    expect(tree.mainBranchHead?.id).toBe(a3.id);
+  });
+
+  it('promote side branch', () => {
+    const tree = new Tree<NodeDataType>();
+    const a1 = tree.createNode('a1', data, null); // 0
+    const a2 = tree.createNode('a2', data, a1); // 1
+    const a3 = tree.createNode('a3', data, a2); // 2
+
+    const b1 = tree.createNode('b1', data, a1); // 1
+    const b2 = tree.createNode('b2', data, b1); // 2
+    const b3 = tree.createNode('b3', data, b2); // 3 -> promote
+
+    expect(tree.mainBranchHead?.id).toBe(b3.id);
+  });
 });

@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`converts to json object 1`] = `
+Object {
+  "root": Object {
+    "children": Array [
+      Object {
+        "children": Array [
+          Object {
+            "children": Array [
+              Object {
+                "children": Array [
+                  Object {
+                    "children": Array [
+                      Object {
+                        "children": Array [],
+                        "data": Object {
+                          "a": 1,
+                          "b": "foobar",
+                        },
+                        "id": "a6",
+                      },
+                    ],
+                    "data": Object {
+                      "a": 1,
+                      "b": "foobar",
+                    },
+                    "id": "a5",
+                  },
+                ],
+                "data": Object {
+                  "a": 1,
+                  "b": "foobar",
+                },
+                "id": "a4",
+              },
+              Object {
+                "children": Array [
+                  Object {
+                    "children": Array [
+                      Object {
+                        "children": Array [],
+                        "data": Object {
+                          "a": 1,
+                          "b": "foobar",
+                        },
+                        "id": "d3",
+                      },
+                    ],
+                    "data": Object {
+                      "a": 1,
+                      "b": "foobar",
+                    },
+                    "id": "d2",
+                  },
+                  Object {
+                    "children": Array [
+                      Object {
+                        "children": Array [
+                          Object {
+                            "children": Array [],
+                            "data": Object {
+                              "a": 1,
+                              "b": "foobar",
+                            },
+                            "id": "e3",
+                          },
+                        ],
+                        "data": Object {
+                          "a": 1,
+                          "b": "foobar",
+                        },
+                        "id": "e2",
+                      },
+                    ],
+                    "data": Object {
+                      "a": 1,
+                      "b": "foobar",
+                    },
+                    "id": "e1",
+                  },
+                ],
+                "data": Object {
+                  "a": 1,
+                  "b": "foobar",
+                },
+                "id": "d1",
+              },
+            ],
+            "data": Object {
+              "a": 1,
+              "b": "foobar",
+            },
+            "id": "a3",
+          },
+          Object {
+            "children": Array [
+              Object {
+                "children": Array [
+                  Object {
+                    "children": Array [],
+                    "data": Object {
+                      "a": 1,
+                      "b": "foobar",
+                    },
+                    "id": "b3",
+                  },
+                  Object {
+                    "children": Array [
+                      Object {
+                        "children": Array [
+                          Object {
+                            "children": Array [],
+                            "data": Object {
+                              "a": 1,
+                              "b": "foobar",
+                            },
+                            "id": "c3",
+                          },
+                        ],
+                        "data": Object {
+                          "a": 1,
+                          "b": "foobar",
+                        },
+                        "id": "c2",
+                      },
+                    ],
+                    "data": Object {
+                      "a": 1,
+                      "b": "foobar",
+                    },
+                    "id": "c1",
+                  },
+                ],
+                "data": Object {
+                  "a": 1,
+                  "b": "foobar",
+                },
+                "id": "b2",
+              },
+            ],
+            "data": Object {
+              "a": 1,
+              "b": "foobar",
+            },
+            "id": "b1",
+          },
+        ],
+        "data": Object {
+          "a": 1,
+          "b": "foobar",
+        },
+        "id": "a2",
+      },
+    ],
+    "data": Object {
+      "a": 1,
+      "b": "foobar",
+    },
+    "id": "a1",
+  },
+}
+`;
