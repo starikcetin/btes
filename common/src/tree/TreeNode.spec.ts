@@ -11,6 +11,17 @@ const data: NodeDataType = {
   b: 'foobar',
 };
 
+const connectNodes = <TData>({
+  parent,
+  child,
+}: {
+  parent: TreeNode<TData>;
+  child: TreeNode<TData>;
+}) => {
+  parent.addChild(child);
+  child.setParent(parent);
+};
+
 it('sets parent correctly', () => {
   const parent = new TreeNode('parent-id', data);
   const child = new TreeNode('child-id', data);
@@ -190,4 +201,74 @@ it('converts from JSON object', () => {
   expect(childB.data).toStrictEqual(data);
   expect(childB.parent).toBe(parent);
   expect(childB.children).toHaveLength(0);
+});
+
+it('counts depth', () => {
+  /*
+   *       d -> e -> f
+   *      /
+   * a -> b -> c
+   */
+
+  const a = new TreeNode('a', data);
+  const b = new TreeNode('b', data);
+  const c = new TreeNode('c', data);
+  const d = new TreeNode('d', data);
+  const e = new TreeNode('e', data);
+  const f = new TreeNode('f', data);
+
+  expect(a.depth).toBe(0);
+  expect(b.depth).toBe(0);
+  expect(c.depth).toBe(0);
+  expect(d.depth).toBe(0);
+  expect(e.depth).toBe(0);
+  expect(f.depth).toBe(0);
+
+  connectNodes({ parent: a, child: b });
+  connectNodes({ parent: b, child: c });
+  connectNodes({ parent: b, child: d });
+  connectNodes({ parent: d, child: e });
+  connectNodes({ parent: e, child: f });
+
+  expect(a.depth).toBe(4);
+  expect(b.depth).toBe(3);
+  expect(c.depth).toBe(0);
+  expect(d.depth).toBe(2);
+  expect(e.depth).toBe(1);
+  expect(f.depth).toBe(0);
+});
+
+it('detemines if is head', () => {
+  /*
+   *       d -> e -> f
+   *      /
+   * a -> b -> c
+   */
+
+  const a = new TreeNode('a', data);
+  const b = new TreeNode('b', data);
+  const c = new TreeNode('c', data);
+  const d = new TreeNode('d', data);
+  const e = new TreeNode('e', data);
+  const f = new TreeNode('f', data);
+
+  expect(a.isHead).toBe(true);
+  expect(b.isHead).toBe(true);
+  expect(c.isHead).toBe(true);
+  expect(d.isHead).toBe(true);
+  expect(e.isHead).toBe(true);
+  expect(f.isHead).toBe(true);
+
+  connectNodes({ parent: a, child: b });
+  connectNodes({ parent: b, child: c });
+  connectNodes({ parent: b, child: d });
+  connectNodes({ parent: d, child: e });
+  connectNodes({ parent: e, child: f });
+
+  expect(a.isHead).toBe(false);
+  expect(b.isHead).toBe(false);
+  expect(c.isHead).toBe(true);
+  expect(d.isHead).toBe(false);
+  expect(e.isHead).toBe(false);
+  expect(f.isHead).toBe(true);
 });

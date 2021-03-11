@@ -1,4 +1,7 @@
+import _ from 'lodash';
+
 import { TreeNodeJsonObject } from './TreeNodeJsonObject';
+import { hasValue } from '../utils/hasValue';
 
 export class TreeNode<TData> {
   /**
@@ -53,6 +56,11 @@ export class TreeNode<TData> {
     return count;
   }
 
+  /** A node is a head if it has no children */
+  public get isHead(): boolean {
+    return this._children.length === 0;
+  }
+
   /**
    * Sets the parent directly.
    * If you are calling this outside the `Tree` class, make sure you know what you are doing.
@@ -68,6 +76,12 @@ export class TreeNode<TData> {
   public readonly addChild = (node: TreeNode<TData>): void => {
     this._children.push(node);
   };
+
+  /** 0-based distance from the highest descendant. 0 if this node is a head (no children). */
+  public get depth(): number {
+    const maxChildDepth = _.max(this._children.map((c) => c.depth));
+    return hasValue(maxChildDepth) ? maxChildDepth + 1 : 0;
+  }
 
   /**
    * Returns a JSON serializable version of this tree with a nested object data structure.
