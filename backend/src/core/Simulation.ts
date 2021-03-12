@@ -20,6 +20,9 @@ const blockchainKeypairBitLength = 5;
 // TODO: this should not be here
 const blockchainBlockCreationFee = 100;
 
+// TODO: this should not be here
+const blockchainCoinbaseMaturity = 5;
+
 export class Simulation {
   public readonly simulationUid: string;
   public readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
@@ -60,7 +63,9 @@ export class Simulation {
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
       blockchainTransactionDatabase,
-      blockchainBlockDatabase
+      blockchainBlockDatabase,
+      blockchainBlockCreationFee,
+      blockchainCoinbaseMaturity
     );
 
     const newNode = new SimulationNode(
@@ -102,7 +107,9 @@ export class Simulation {
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
       blockchainTransactionDatabase,
-      blockchainBlockDatabase
+      blockchainBlockDatabase,
+      blockchainBlockCreationFee,
+      blockchainCoinbaseMaturity
     );
 
     const newNode = new SimulationNode(
