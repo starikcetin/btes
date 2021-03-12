@@ -272,3 +272,78 @@ it('detemines if is head', () => {
   expect(e.isHead).toBe(false);
   expect(f.isHead).toBe(true);
 });
+
+it('iterates nodes to root', () => {
+  /*
+   *       d -> e -> f
+   *      /
+   * a -> b -> c
+   */
+
+  const a = new TreeNode('a', 1);
+  const b = new TreeNode('b', 2);
+  const c = new TreeNode('c', 3);
+  const d = new TreeNode('d', 4);
+  const e = new TreeNode('e', 5);
+  const f = new TreeNode('f', 6);
+
+  connectNodes({ parent: a, child: b });
+  connectNodes({ parent: b, child: c });
+  connectNodes({ parent: b, child: d });
+  connectNodes({ parent: d, child: e });
+  connectNodes({ parent: e, child: f });
+
+  expect([...a.getIteratorToRoot()]).toIncludeSameMembers([a]);
+  expect([...b.getIteratorToRoot()]).toIncludeSameMembers([b, a]);
+  expect([...c.getIteratorToRoot()]).toIncludeSameMembers([c, b, a]);
+  expect([...d.getIteratorToRoot()]).toIncludeSameMembers([d, b, a]);
+  expect([...e.getIteratorToRoot()]).toIncludeSameMembers([e, d, b, a]);
+  expect([...f.getIteratorToRoot()]).toIncludeSameMembers([f, e, d, b, a]);
+
+  // make sure subsequent iterations also work
+  expect([...f.getIteratorToRoot()]).toIncludeSameMembers([f, e, d, b, a]);
+  expect([...f.getIteratorToRoot()]).toIncludeSameMembers([f, e, d, b, a]);
+});
+
+it('iterates data to root', () => {
+  /*
+   *       d -> e -> f
+   *      /
+   * a -> b -> c
+   */
+
+  const a = new TreeNode('a', 1);
+  const b = new TreeNode('b', 2);
+  const c = new TreeNode('c', 3);
+  const d = new TreeNode('d', 4);
+  const e = new TreeNode('e', 5);
+  const f = new TreeNode('f', 6);
+
+  connectNodes({ parent: a, child: b });
+  connectNodes({ parent: b, child: c });
+  connectNodes({ parent: b, child: d });
+  connectNodes({ parent: d, child: e });
+  connectNodes({ parent: e, child: f });
+
+  const aDataIt = [a.data];
+  expect([...a.getDataIteratorToRoot()]).toIncludeSameMembers(aDataIt);
+
+  const bDataIt = [b.data, a.data];
+  expect([...b.getDataIteratorToRoot()]).toIncludeSameMembers(bDataIt);
+
+  const cDataIt = [c.data, b.data, a.data];
+  expect([...c.getDataIteratorToRoot()]).toIncludeSameMembers(cDataIt);
+
+  const dDataIt = [d.data, b.data, a.data];
+  expect([...d.getDataIteratorToRoot()]).toIncludeSameMembers(dDataIt);
+
+  const eDataIt = [e.data, d.data, b.data, a.data];
+  expect([...e.getDataIteratorToRoot()]).toIncludeSameMembers(eDataIt);
+
+  const fDataIt = [f.data, e.data, d.data, b.data, a.data];
+  expect([...f.getDataIteratorToRoot()]).toIncludeSameMembers(fDataIt);
+
+  // make sure subsequent iterations also work
+  expect([...f.getDataIteratorToRoot()]).toIncludeSameMembers(fDataIt);
+  expect([...f.getDataIteratorToRoot()]).toIncludeSameMembers(fDataIt);
+});

@@ -83,6 +83,30 @@ export class TreeNode<TData> {
     return hasValue(maxChildDepth) ? maxChildDepth + 1 : 0;
   }
 
+  /** Returns an iterator that yields nodes. Starts from this node, goes backwards to the root. */
+  public readonly getIteratorToRoot = (): Generator<TreeNode<TData>> =>
+    this._getIteratorToRoot.call(this);
+
+  private *_getIteratorToRoot() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let currentBlock: TreeNode<TData> | null = this;
+
+    while (null !== currentBlock) {
+      yield currentBlock;
+      currentBlock = currentBlock.parent;
+    }
+  }
+
+  /** Returns an iterator that yields data. Starts from this node, goes backwards to the root. */
+  public readonly getDataIteratorToRoot = (): Generator<TData> =>
+    this._getDataIteratorToRoot.call(this);
+
+  private *_getDataIteratorToRoot() {
+    for (const node of this.getIteratorToRoot()) {
+      yield node.data;
+    }
+  }
+
   /**
    * Returns a JSON serializable version of this tree with a nested object data structure.
    * `data` field will be directly included, so YOU need to make sure `TData` is JSON
