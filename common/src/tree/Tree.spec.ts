@@ -500,3 +500,19 @@ describe('keeps track of main branch head', () => {
     expect(tree.mainBranchHead?.id).toBe(b3.id);
   });
 });
+
+it('iterates main branch', () => {
+  const { tree } = makeComplexTree();
+
+  if (null === tree.mainBranchHead) {
+    throw Error('tree main branch head is null');
+  }
+
+  expect([...tree.getMainBranchIterator()]).toIncludeSameMembers([
+    ...tree.mainBranchHead.getIteratorToRoot(),
+  ]);
+
+  expect([...tree.getMainBranchDataIterator()]).toIncludeSameMembers([
+    ...tree.mainBranchHead.getDataIteratorToRoot(),
+  ]);
+});

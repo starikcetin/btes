@@ -179,6 +179,16 @@ export class Tree<TData> {
     return this._getForkPointOrRootWithHeight(node).height;
   };
 
+  /** Returns an iterator that yields nodes. Starts from the head of main branch, goes backwards to the root. */
+  public readonly getMainBranchIterator = (): Iterable<TreeNode<TData>> => {
+    return this._mainBranchHead?.getIteratorToRoot() ?? [];
+  };
+
+  /** Returns an iterator that yields data. Starts from the head of main branch, goes backwards to the root. */
+  public readonly getMainBranchDataIterator = (): Iterable<TData> => {
+    return this._mainBranchHead?.getDataIteratorToRoot() ?? [];
+  };
+
   /**
    * Returns a JSON serializable version of this tree with a nested object data structure.
    * `data` fields of all nodes will be directly included, so YOU need to make sure `TData`
