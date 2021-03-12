@@ -1,3 +1,5 @@
+// TODO: how to handle the genesis block? ideally we should ask during simulation init and include it by default in all nodes.
+
 import { NodeBlockchainAppSnapshot } from '../../common/blockchain/NodeBlockchainAppSnapshot';
 import { BlockchainWallet } from './BlockchainWallet';
 import { BlockchainTransactionDatabase } from './BlockchainTransactionDatabase';

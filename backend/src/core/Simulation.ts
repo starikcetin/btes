@@ -53,7 +53,6 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      blockchainBlockCreationFee,
       new Tree<BlockchainBlock>(),
       []
     );
@@ -96,7 +95,6 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      blockchainBlockCreationFee,
       Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDatabase.blocks),
       nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
     );
