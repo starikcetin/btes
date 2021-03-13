@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
+import { Modal } from 'react-bootstrap';
+
 import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
-import { Button, Modal } from 'react-bootstrap';
 import { simulationBridge } from '../../services/simulationBridge';
+import { hasValue } from '../../common/utils/hasValue';
 
 interface NodeConnectionModalProps {
   closeHandler: () => void;
@@ -20,6 +22,12 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
 
   const handleLatencyInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!hasValue(connection)) {
+        throw new Error(
+          `handleLatencyInputChange called but connection is ${connection}`
+        );
+      }
+
       let newValue = Number.parseFloat(e.target.value);
       if (!Number.isFinite(newValue) || newValue < 0) {
         newValue = 10;
@@ -27,8 +35,8 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
 
       simulationBridge.sendSimulationConnectionChangeLatency(simulationUid, {
         latencyInMs: newValue,
-        firstNodeUid: connection!.firstNodeUid,
-        secondNodeUid: connection!.secondNodeUid,
+        firstNodeUid: connection.firstNodeUid,
+        secondNodeUid: connection.secondNodeUid,
       });
       onConnectionLatencyChange(newValue);
     },
@@ -43,7 +51,6 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
       keyboard={false}
       size="lg"
     >
-      {' '}
       <Modal.Header closeButton>
         <Modal.Title>Node Connection Details</Modal.Title>
       </Modal.Header>
