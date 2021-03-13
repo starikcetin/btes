@@ -4,6 +4,8 @@ import { BlockchainBlockDatabaseSnapshot } from '../../common/blockchain/Blockch
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
 import { hash } from '../../utils/hash';
+import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
+import { areOutPointsEquivalent } from './utils/areOutPointsEquivalent';
 
 export class BlockchainBlockDatabase {
   private readonly blocks: Tree<BlockchainBlock>;
@@ -41,6 +43,23 @@ export class BlockchainBlockDatabase {
     }
 
     return null;
+  };
+
+  /** Is given outPoint used by any input of any tx of any block in the main branch? */
+  public readonly isOutPointInMainBranch = (
+    outPoint: BlockchainTransactionOutPoint
+  ): boolean => {
+    for (const { tx } of this.getMainBranchTxIterator()) {
+      const isUsed = tx.inputs.some((input) =>
+        areOutPointsEquivalent(input.previousOutput, outPoint)
+      );
+
+      if (isUsed) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   private *getMainBranchBlockIterator() {

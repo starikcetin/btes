@@ -37,6 +37,13 @@ export class BlockchainTransactionDatabase {
 
   /** Does any tx in the mempool have the given hash? */
   public readonly isTxInMempool = (txHash: string): boolean => {
-    return this.mempool.some((tx) => hash(tx) === txHash);
+    return this.findTxInMempool(txHash) !== null;
+  };
+
+  /** Finds the tx in mempool that has the given hash. */
+  public readonly findTxInMempool = (
+    txHash: string
+  ): BlockchainTransaction | null => {
+    return this.mempool.find((tx) => hash(tx) === txHash) ?? null;
   };
 }

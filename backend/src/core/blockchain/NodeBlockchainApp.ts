@@ -1,11 +1,17 @@
 // TODO: how to handle the genesis block? ideally we should ask during simulation init and include it by default in all nodes.
 
+import _ from 'lodash';
+
 import { NodeBlockchainAppSnapshot } from '../../common/blockchain/NodeBlockchainAppSnapshot';
 import { BlockchainWallet } from './BlockchainWallet';
 import { BlockchainTransactionDatabase } from './BlockchainTransactionDatabase';
 import { BlockchainBlockDatabase } from './BlockchainBlockDatabase';
 import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
 import { hash } from '../../utils/hash';
+import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
+import { TreeNode } from '../../common/tree/TreeNode';
+import { BlockchainUnlockingScript } from '../../common/blockchain/BlockchainUnlockingScript';
+import { BlockchainLockingScript } from '../../common/blockchain/BlockchainLockingScript';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -201,23 +207,110 @@ export class NodeBlockchainApp {
   // ---- Common ----
   //
 
-  private readonly checkTxForReceive = () => {
-    /*
-     * CheckTxForReceive (canSearchMempoolForOutput, checkForOutputIndex):
-     *   orphan  tx10. & bc16.1.1. For each input, look in the main branch (if canSearchMempoolForOutput: also look in the transaction pool) to find the referenced output transaction. If the output transaction is missing for any input, this will be an orphan transaction...
-     *           if checkForOutputIndex:
-     *   invalid   bc16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
-     *   invalid tx11. & bc16.1.3. For each input, if the referenced output transaction is coinbase, it must have at least COINBASE_MATURITY confirmations; else reject this transaction
-     *   invalid tx12. & bc16.1.5. For each input, if the referenced output does not exist (e.g. never existed or has already been spent), reject this transaction[6]
-     *   invalid tx14. & bc16.1.7. Reject if the sum of input values < sum of output values
-     *   invalid tx16. & bc16.1.4. Verify the scriptPubKey accepts for each input; reject if any are bad
-     */
+  private readonly checkTxForReceive = (
+    tx: BlockchainTransaction,
+    options: {
+      canSearchMempoolForOutput: boolean;
+    }
+  ): 'orphan' | 'invalid' | 'valid' => {
+    const { canSearchMempoolForOutput } = options;
+
+    let sumOfInputs = 0;
+
+    for (const input of tx.inputs) {
+      const { previousOutput, unlockingScript } = input;
+
+      // tx10. & bc16.1.1. For each input, look in the main branch (if canSearchMempoolForOutput: also look in the transaction pool) to find the referenced output transaction. If the output transaction is missing for any input, this will be an orphan transaction...
+      const refOutputLookup = this.checkTxForReceive_txLookup(
+        previousOutput.txHash,
+        canSearchMempoolForOutput
+      );
+
+      if (refOutputLookup === null) {
+        return 'orphan';
+      }
+
+      const { tx: refOutputTx, node: refOutputNode } = refOutputLookup;
+
+      // bc16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
+      if (refOutputTx.outputs.length < previousOutput.outputIndex + 1) {
+        return 'invalid';
+      }
+
+      const refOutput = refOutputTx.outputs[previousOutput.outputIndex];
+      sumOfInputs += refOutput.value;
+
+      // tx11. & bc16.1.3. For each input, if the referenced output transaction is coinbase, it must have at least COINBASE_MATURITY confirmations; else reject this transaction
+      if (refOutputTx.isCoinbase) {
+        if (refOutputNode === null) {
+          throw new Error(
+            'refOutputTx is coinbase, but refOutputNode is null!'
+          );
+        }
+
+        if (refOutputNode.depth < this.coinbaseMaturity) {
+          return 'invalid';
+        }
+      }
+
+      // tx12. & bc16.1.5. For each input, if the referenced output does not exist (e.g. never existed or has already been spent), reject this transaction[6]
+      // > existence is checked by tx10 and bc16.1.2 rules. we only need to check if it was spent before.
+      if (this.blockDatabase.isOutPointInMainBranch(previousOutput)) {
+        return 'invalid';
+      }
+
+      // tx16. & bc16.1.4. Verify the scriptPubKey accepts for each input; reject if any are bad
+      if (!this.verifyScripts(refOutput.lockingScript, unlockingScript)) {
+        return 'invalid';
+      }
+    }
+
+    // tx14. & bc16.1.7. Reject if the sum of input values < sum of output values
+    if (sumOfInputs < _.sumBy(tx.outputs, (o) => o.value)) {
+      return 'invalid';
+    }
+
+    return 'valid';
+  };
+
+  private readonly checkTxForReceive_txLookup = (
+    txHash: string,
+    canSearchMempool: boolean
+  ): {
+    tx: BlockchainTransaction;
+    block: BlockchainBlock | null;
+    node: TreeNode<BlockchainBlock> | null;
+  } | null => {
+    const lookupFromMainBranch = this.blockDatabase.findTxInMainBranch(txHash);
+
+    if (lookupFromMainBranch !== null) {
+      return lookupFromMainBranch;
+    }
+
+    if (canSearchMempool) {
+      const lookupFromMempool = this.transactionDatabase.findTxInMempool(
+        txHash
+      );
+
+      if (lookupFromMempool !== null) {
+        return {
+          block: null,
+          node: null,
+          tx: lookupFromMempool,
+        };
+      }
+    }
+
+    return null;
   };
 
   private readonly checkTxContextFree = (
     tx: BlockchainTransaction,
-    canSearchMainBranchForDupes: boolean
+    options: {
+      canSearchMainBranchForDupes: boolean;
+    }
   ): 'invalid' | 'valid' => {
+    const { canSearchMainBranchForDupes } = options;
     const txHash = hash(tx);
 
     // tx2. Make sure neither in or out lists are empty
@@ -261,4 +354,12 @@ export class NodeBlockchainApp {
   //
   // ---- Utils ----
   //
+
+  private readonly verifyScripts = (
+    lockingScript: BlockchainLockingScript,
+    unlockingScript: BlockchainUnlockingScript
+  ) => {
+    // TODO: implement
+    throw new Error('Method not implemented.');
+  };
 }
