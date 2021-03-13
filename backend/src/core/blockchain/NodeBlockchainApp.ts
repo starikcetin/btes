@@ -181,11 +181,14 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly addToWalletIfMine = () => {
+  private readonly addToWalletIfMine = (
+    ...txs: BlockchainTransaction[]
+  ): void => {
     /*
      * AddToWalletIfMine:
      *   bc16.4. & bc18.3.5. For each transaction, "Add to wallet if mine"
      */
+    // TODO: implement
   };
 
   private readonly cleanupMempool = (...txs: BlockchainTransaction[]): void => {
