@@ -1,24 +1,28 @@
 import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { Modal } from 'react-bootstrap';
 
-import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
 import { simulationBridge } from '../../services/simulationBridge';
 import { hasValue } from '../../common/utils/hasValue';
+import { RootState } from '../../state/RootState';
 
 interface NodeConnectionModalProps {
   closeHandler: () => void;
-  onConnectionLatencyChange: (newValue: number) => void;
   simulationUid: string;
-  connection: NodeConnectionData | null;
+  firstNodeUid: string | null;
+  secondNodeUid: string | null;
 }
 
 const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
-  const {
-    closeHandler,
-    simulationUid,
-    connection,
-    onConnectionLatencyChange,
-  } = props;
+  const { closeHandler, simulationUid, firstNodeUid, secondNodeUid } = props;
+
+  const connection = useSelector((state: RootState) => {
+    return !hasValue(firstNodeUid) || !hasValue(secondNodeUid)
+      ? null
+      : state.simulation[simulationUid].connectionMap.connectionMap[
+          firstNodeUid
+        ][secondNodeUid];
+  });
 
   const handleLatencyInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,25 +32,25 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
         );
       }
 
-      let newValue = Number.parseFloat(e.target.value);
-      if (!Number.isFinite(newValue) || newValue < 0) {
-        newValue = 10;
+      let newLatencyInMs = Number.parseFloat(e.target.value);
+      if (!Number.isFinite(newLatencyInMs) || newLatencyInMs < 0) {
+        newLatencyInMs = 10;
       }
 
       simulationBridge.sendSimulationConnectionChangeLatency(simulationUid, {
-        latencyInMs: newValue,
+        latencyInMs: newLatencyInMs,
         firstNodeUid: connection.firstNodeUid,
         secondNodeUid: connection.secondNodeUid,
       });
-      onConnectionLatencyChange(newValue);
     },
-    [connection, onConnectionLatencyChange, simulationUid]
+    [connection, simulationUid]
   );
 
   return (
     <Modal
-      show={!!connection}
+      show={hasValue(connection)}
       onHide={closeHandler}
+      onExit={closeHandler}
       backdrop="static"
       keyboard={false}
       size="lg"
@@ -55,26 +59,30 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
         <Modal.Title>Node Connection Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="container w-50">
-          <div className="input-group border">
-            <span className="input-group-text w-100">
-              Connection from {connection?.firstNodeUid} to{' '}
-              {connection?.secondNodeUid}
-            </span>
-          </div>
-          <div className="input-group">
-            <div className="input-group-prepend">
-              <span className="input-group-text">Latency</span>
+        {!hasValue(connection) ? (
+          <span>Connection not found</span>
+        ) : (
+          <div className="container w-50">
+            <div className="input-group border">
+              <span className="input-group-text w-100">
+                Connection from {connection.firstNodeUid} to{' '}
+                {connection.secondNodeUid}
+              </span>
             </div>
-            <input
-              type="number"
-              className="form-control"
-              value={connection?.latencyInMs}
-              step={100}
-              onChange={handleLatencyInputChange}
-            />
+            <div className="input-group">
+              <div className="input-group-prepend">
+                <span className="input-group-text">Latency</span>
+              </div>
+              <input
+                type="number"
+                className="form-control"
+                value={connection.latencyInMs}
+                step={100}
+                onChange={handleLatencyInputChange}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </Modal.Body>
     </Modal>
   );

@@ -90,10 +90,21 @@ const SandboxSimulation: React.FC = () => {
   });
 
   const [viewingNodeUid, setViewingNodeUid] = useState<string | null>(null);
+
   const [
-    viewingConnection,
-    setViewingConnection,
-  ] = useState<NodeConnectionData | null>(null);
+    viewingConnectionFirstNodeUid,
+    setViewingConnectionFirstNodeUid,
+  ] = useState<string | null>(null);
+
+  const [
+    viewingConnectionSecondNodeUid,
+    setViewingConnectionSecondNodeUid,
+  ] = useState<string | null>(null);
+
+  const setViewingConnection = (conn: NodeConnectionData | null) => {
+    setViewingConnectionFirstNodeUid(conn?.firstNodeUid ?? null);
+    setViewingConnectionSecondNodeUid(conn?.secondNodeUid ?? null);
+  };
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);
@@ -186,12 +197,6 @@ const SandboxSimulation: React.FC = () => {
     };
   }, [connect, handleKeyUp, teardown]);
 
-  const onConnectionLatencyChange = (newValue: number) => {
-    const connection = { ...viewingConnection };
-    connection.latencyInMs = newValue;
-    setViewingConnection(connection as NodeConnectionData);
-  };
-
   return (
     <div className="page-sandbox-simulation">
       {connected ? (
@@ -263,9 +268,7 @@ const SandboxSimulation: React.FC = () => {
                   <SimulationNodeConnection
                     connection={connection}
                     simulationUid={simulationUid}
-                    launchHandler={(connection) =>
-                      setViewingConnection(connection)
-                    }
+                    launchHandler={setViewingConnection}
                   />
                 ))}
               </div>
@@ -294,8 +297,8 @@ const SandboxSimulation: React.FC = () => {
           <NodeConnectionModal
             closeHandler={() => setViewingConnection(null)}
             simulationUid={simulationUid}
-            connection={viewingConnection}
-            onConnectionLatencyChange={onConnectionLatencyChange}
+            firstNodeUid={viewingConnectionFirstNodeUid}
+            secondNodeUid={viewingConnectionSecondNodeUid}
           />
           <div className="page-sandbox-simulation--sliding-panel">
             <div className="page-sandbox-simulation--sliding-panel--handle">
