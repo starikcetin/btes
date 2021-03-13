@@ -4,6 +4,8 @@ import { NodeBlockchainAppSnapshot } from '../../common/blockchain/NodeBlockchai
 import { BlockchainWallet } from './BlockchainWallet';
 import { BlockchainTransactionDatabase } from './BlockchainTransactionDatabase';
 import { BlockchainBlockDatabase } from './BlockchainBlockDatabase';
+import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
+import { hash } from '../../utils/hash';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -212,16 +214,48 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly checkTxContextFree = () => {
-    /*
-     * CheckTxContextFree (canSearchMainBranchForDupes):
-     *   invalid tx2. Make sure neither in or out lists are empty
-     *   invalid tx5. Make sure none of the inputs have hash=0, n=-1 (coinbase transactions)
-     *   invalid tx8. Reject if we already have matching tx in the pool...
-     *           if canSearchMainBranchForDupes:
-     *   invalid   tx8... or in a block in the main branch
-     *   invalid tx9. For each input, if the referenced output exists in any other tx in the pool, reject this transaction.[5]
-     */
+  private readonly checkTxContextFree = (
+    tx: BlockchainTransaction,
+    canSearchMainBranchForDupes: boolean
+  ): 'invalid' | 'valid' => {
+    const txHash = hash(tx);
+
+    // tx2. Make sure neither in or out lists are empty
+    if (tx.inputs.length === 0 || tx.outputs.length === 0) {
+      return 'invalid';
+    }
+
+    // tx5. Make sure none of the inputs have hash=0, n=-1 (coinbase transactions)
+    // > The intended purpose of this rule is to prevent relaying of coinbase transactions, since they can only exist in blocks.
+    // > Instead of the check mentioned in the rule, we simply look at the `isConbase` field, which is assigned by the miner.
+    if (tx.isCoinbase) {
+      return 'invalid';
+    }
+
+    // tx8. Reject if we already have matching tx in the pool...
+    if (this.transactionDatabase.isTxInMempool(txHash)) {
+      return 'invalid';
+    }
+
+    // if canSearchMainBranchForDupes:
+    //   tx8... or in a block in the main branch
+    if (
+      canSearchMainBranchForDupes &&
+      this.blockDatabase.isTxInMainBranch(txHash)
+    ) {
+      return 'invalid';
+    }
+
+    // tx9. For each input, if the referenced output exists in any other tx in the pool, reject this transaction.[5]
+    // > Clarification: https://bitcoin.stackexchange.com/questions/103342
+    // > The output referenced by the input must not be referenced by another input of a transaction already in the pool.
+    for (const input of tx.inputs) {
+      if (this.transactionDatabase.isOutPointInMempool(input.previousOutput)) {
+        return 'invalid';
+      }
+    }
+
+    return 'valid';
   };
 
   //

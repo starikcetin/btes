@@ -1,5 +1,8 @@
 import { BlockchainTransactionDatabaseSnapshot } from '../../common/blockchain/BlockchainTransactionDatabaseSnapshot';
 import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
+import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
+import { areOutPointsEquivalent } from './utils/areOutPointsEquivalent';
+import { hash } from '../../utils/hash';
 
 // See BlockchainTransactionDatabaseSnapshot for member jsdocs.
 export class BlockchainTransactionDatabase {
@@ -19,5 +22,21 @@ export class BlockchainTransactionDatabase {
       mempool: this.mempool,
       orphanage: this.orphanage,
     };
+  };
+
+  /** Is given outPoint used by any input of any tx in the mempool? */
+  public readonly isOutPointInMempool = (
+    outpoint: BlockchainTransactionOutPoint
+  ): boolean => {
+    return this.mempool.some((tx) =>
+      tx.inputs.some((input) =>
+        areOutPointsEquivalent(input.previousOutput, outpoint)
+      )
+    );
+  };
+
+  /** Does any tx in the mempool have the given hash? */
+  public readonly isTxInMempool = (txHash: string): boolean => {
+    return this.mempool.some((tx) => hash(tx) === txHash);
   };
 }
