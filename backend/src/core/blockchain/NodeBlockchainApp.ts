@@ -188,11 +188,9 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly cleanupMempool = () => {
-    /*
-     * CleanupMempool:
-     *   bc16.5. & bc18.6.1. For each transaction in the block, delete any matching transaction from the transaction pool
-     */
+  private readonly cleanupMempool = (...txs: BlockchainTransaction[]): void => {
+    // bc16.5. & bc18.6.1. For each transaction in the block, delete any matching transaction from the transaction pool
+    txs.map(hash).forEach(this.transactionDatabase.removeFromMempool);
   };
 
   private readonly checkTxsForReceiveBlock = (

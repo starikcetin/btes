@@ -3,6 +3,7 @@ import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransac
 import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
 import { areOutPointsEquivalent } from './utils/areOutPointsEquivalent';
 import { hash } from '../../utils/hash';
+import { removeFirst } from '../../common/utils/removeFirst';
 
 // See BlockchainTransactionDatabaseSnapshot for member jsdocs.
 export class BlockchainTransactionDatabase {
@@ -45,5 +46,12 @@ export class BlockchainTransactionDatabase {
     txHash: string
   ): BlockchainTransaction | null => {
     return this.mempool.find((tx) => hash(tx) === txHash) ?? null;
+  };
+
+  /** Removes the tx that has the given hash from the mempool and returns it. Null if not found. */
+  public readonly removeFromMempool = (
+    txHash: string
+  ): BlockchainTransaction | null => {
+    return removeFirst(this.mempool, (tx) => hash(tx) === txHash);
   };
 }
