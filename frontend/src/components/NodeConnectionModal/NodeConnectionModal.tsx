@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
-import { Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { simulationBridge } from '../../services/simulationBridge';
 
 interface NodeConnectionModalProps {
@@ -49,35 +49,15 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
       </Modal.Header>
       <Modal.Body>
         <div className="container w-50">
-          <div className="input-group">
-            <div className="input-group-prepend">
-              <span className="input-group-text" id="">
-                Connection from
-              </span>
-            </div>
-            <input
-              type="text"
-              className="form-control"
-              value={connection?.firstNodeUid}
-              disabled={true}
-            />
-            <div className="input-group-prepend">
-              <span className="input-group-text" id="">
-                to
-              </span>
-            </div>
-            <input
-              type="text"
-              className="form-control alert-success"
-              value={connection?.secondNodeUid}
-              disabled={true}
-            />
+          <div className="input-group border">
+            <span className="input-group-text w-100">
+              Connection from {connection?.firstNodeUid} to{' '}
+              {connection?.secondNodeUid}
+            </span>
           </div>
           <div className="input-group">
             <div className="input-group-prepend">
-              <span className="input-group-text" id="">
-                Latency
-              </span>
+              <span className="input-group-text">Latency</span>
             </div>
             <input
               type="number"
