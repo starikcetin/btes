@@ -12,6 +12,7 @@ import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { TreeNode } from '../../common/tree/TreeNode';
 import { BlockchainUnlockingScript } from '../../common/blockchain/BlockchainUnlockingScript';
 import { BlockchainLockingScript } from '../../common/blockchain/BlockchainLockingScript';
+import { sumOfOutputs } from './utils/sumOfOutputs';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -194,25 +195,59 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly checkTxsForReceiveBlock = () => {
-    /*
-     * CheckTxsForReceiveBlock:
-     *           bc16.1. For all but the coinbase transaction, apply the following:
-     *   <<<<<<<   CheckTxForReceive (canSearchMempoolForOutput = false, checkForOutputIndex = true) (reject if orphan)
-     *   invalid bc16.2. Reject if coinbase value > sum of block creation fee and transaction fees
-     */
+  private readonly checkTxsForReceiveBlock = (
+    block: BlockchainBlock
+  ): 'invalid' | 'valid' => {
+    let sumOfTxFees = 0;
+
+    // bc16.1. For all but the coinbase transaction, apply the following:
+    for (const tx of block.transactions) {
+      if (tx.isCoinbase) {
+        continue;
+      }
+
+      // CheckTxForReceive (canSearchMempoolForOutput = false) (reject if orphan)
+      const { checkResult, sumOfInputs, sumOfOutputs } = this.checkTxForReceive(
+        tx,
+        {
+          canSearchMempoolForOutput: false,
+        }
+      );
+
+      if (checkResult !== 'valid') {
+        return 'invalid';
+      }
+
+      const txFee = sumOfInputs - sumOfOutputs;
+      sumOfTxFees += txFee;
+    }
+
+    // bc16.2. Reject if coinbase value > sum of block creation fee and transaction fees
+    if (
+      sumOfOutputs(block.transactions[0]) >
+      this.blockCreationFee + sumOfTxFees
+    ) {
+      return 'invalid';
+    }
+
+    return 'valid';
   };
 
   //
   // ---- Common ----
   //
 
+  /** `sumOfInputs` and `sumOfOutputs` will be `-1` if `checkResult` is not `valid` */
   private readonly checkTxForReceive = (
     tx: BlockchainTransaction,
     options: {
       canSearchMempoolForOutput: boolean;
     }
-  ): 'orphan' | 'invalid' | 'valid' => {
+  ): {
+    checkResult: 'orphan' | 'invalid' | 'valid';
+    sumOfInputs: number;
+    sumOfOutputs: number;
+  } => {
     const { canSearchMempoolForOutput } = options;
 
     let sumOfInputs = 0;
@@ -227,14 +262,14 @@ export class NodeBlockchainApp {
       );
 
       if (refOutputLookup === null) {
-        return 'orphan';
+        return { checkResult: 'orphan', sumOfInputs: -1, sumOfOutputs: -1 };
       }
 
       const { tx: refOutputTx, node: refOutputNode } = refOutputLookup;
 
       // bc16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
       if (refOutputTx.outputs.length < previousOutput.outputIndex + 1) {
-        return 'invalid';
+        return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
       }
 
       const refOutput = refOutputTx.outputs[previousOutput.outputIndex];
@@ -249,59 +284,29 @@ export class NodeBlockchainApp {
         }
 
         if (refOutputNode.depth < this.coinbaseMaturity) {
-          return 'invalid';
+          return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
         }
       }
 
       // tx12. & bc16.1.5. For each input, if the referenced output does not exist (e.g. never existed or has already been spent), reject this transaction[6]
       // > existence is checked by tx10 and bc16.1.2 rules. we only need to check if it was spent before.
       if (this.blockDatabase.isOutPointInMainBranch(previousOutput)) {
-        return 'invalid';
+        return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
       }
 
       // tx16. & bc16.1.4. Verify the scriptPubKey accepts for each input; reject if any are bad
       if (!this.verifyScripts(refOutput.lockingScript, unlockingScript)) {
-        return 'invalid';
+        return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
       }
     }
 
+    const sumOfOutputs = _.sumBy(tx.outputs, (o) => o.value);
     // tx14. & bc16.1.7. Reject if the sum of input values < sum of output values
-    if (sumOfInputs < _.sumBy(tx.outputs, (o) => o.value)) {
-      return 'invalid';
+    if (sumOfInputs < sumOfOutputs) {
+      return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
     }
 
-    return 'valid';
-  };
-
-  private readonly checkTxForReceive_txLookup = (
-    txHash: string,
-    canSearchMempool: boolean
-  ): {
-    tx: BlockchainTransaction;
-    block: BlockchainBlock | null;
-    node: TreeNode<BlockchainBlock> | null;
-  } | null => {
-    const lookupFromMainBranch = this.blockDatabase.findTxInMainBranch(txHash);
-
-    if (lookupFromMainBranch !== null) {
-      return lookupFromMainBranch;
-    }
-
-    if (canSearchMempool) {
-      const lookupFromMempool = this.transactionDatabase.findTxInMempool(
-        txHash
-      );
-
-      if (lookupFromMempool !== null) {
-        return {
-          block: null,
-          node: null,
-          tx: lookupFromMempool,
-        };
-      }
-    }
-
-    return null;
+    return { checkResult: 'valid', sumOfInputs, sumOfOutputs };
   };
 
   private readonly checkTxContextFree = (
@@ -355,10 +360,41 @@ export class NodeBlockchainApp {
   // ---- Utils ----
   //
 
+  private readonly checkTxForReceive_txLookup = (
+    txHash: string,
+    canSearchMempool: boolean
+  ): {
+    tx: BlockchainTransaction;
+    block: BlockchainBlock | null;
+    node: TreeNode<BlockchainBlock> | null;
+  } | null => {
+    const lookupFromMainBranch = this.blockDatabase.findTxInMainBranch(txHash);
+
+    if (lookupFromMainBranch !== null) {
+      return lookupFromMainBranch;
+    }
+
+    if (canSearchMempool) {
+      const lookupFromMempool = this.transactionDatabase.findTxInMempool(
+        txHash
+      );
+
+      if (lookupFromMempool !== null) {
+        return {
+          block: null,
+          node: null,
+          tx: lookupFromMempool,
+        };
+      }
+    }
+
+    return null;
+  };
+
   private readonly verifyScripts = (
     lockingScript: BlockchainLockingScript,
     unlockingScript: BlockchainUnlockingScript
-  ) => {
+  ): boolean => {
     // TODO: implement
     throw new Error('Method not implemented.');
   };
