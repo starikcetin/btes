@@ -172,13 +172,25 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly reclaimTxsToMempool = () => {
-    /*
-     * ReclaimTxsToMempool:
-     *   bc18.5.1. For each non-coinbase transaction in the block:
-     *     CheckTxContextFree (canSearchMainBranchForDupes = false) (bc18.5.1.1. Apply "tx" checks 2-9, except in step 8, only look in the transaction pool for duplicates, not the main branch)
-     *     bc18.5.1.2. Add to transaction pool if accepted, else go on to next transaction
-     */
+  private readonly reclaimTxsToMempool = (
+    ...txs: BlockchainTransaction[]
+  ): void => {
+    // bc18.5.1. For each non-coinbase transaction in the block:
+    for (const tx of txs) {
+      if (tx.isCoinbase) {
+        continue;
+      }
+
+      // CheckTxContextFree (canSearchMainBranchForDupes = false) (bc18.5.1.1. Apply "tx" checks 2-9, except in step 8, only look in the transaction pool for duplicates, not the main branch)
+      const checkResult = this.checkTxContextFree(tx, {
+        canSearchMainBranchForDupes: false,
+      });
+
+      // bc18.5.1.2. Add to transaction pool if accepted, else go on to next transaction
+      if (checkResult === 'valid') {
+        this.transactionDatabase.addTxToMempool(tx);
+      }
+    }
   };
 
   private readonly addToWalletIfMine = (

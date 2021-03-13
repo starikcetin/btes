@@ -54,4 +54,9 @@ export class BlockchainTransactionDatabase {
   ): BlockchainTransaction | null => {
     return removeFirst(this.mempool, (tx) => hash(tx) === txHash);
   };
+
+  /** Adds the given tx to mempool. Does nothing else. */
+  public readonly addTxToMempool = (tx: BlockchainTransaction): void => {
+    this.mempool.push(tx);
+  };
 }
