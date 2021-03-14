@@ -9,6 +9,16 @@ import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainBlockDatabase } from '../modules/BlockchainBlockDatabase';
 import { BlockchainTransactionDatabase } from '../modules/BlockchainTransactionDatabase';
 
+type TxLookupResult = {
+  tx: BlockchainTransaction;
+  block: BlockchainBlock | null;
+  node: TreeNode<BlockchainBlock> | null;
+} | null;
+
+export type CheckTxForReceiveResult =
+  | { checkResult: 'valid'; sumOfInputs: number; sumOfOutputs: number }
+  | { checkResult: 'orphan' | 'invalid' };
+
 export class BlockchainCommonChecker {
   private readonly config: BlockchainConfig;
   private readonly blockDatabase: BlockchainBlockDatabase;
@@ -30,9 +40,7 @@ export class BlockchainCommonChecker {
     options: {
       canSearchMempoolForOutput: boolean;
     }
-  ):
-    | { checkResult: 'valid'; sumOfInputs: number; sumOfOutputs: number }
-    | { checkResult: 'orphan' | 'invalid' } => {
+  ): CheckTxForReceiveResult => {
     const { canSearchMempoolForOutput } = options;
 
     let sumOfInputs = 0;
@@ -144,11 +152,7 @@ export class BlockchainCommonChecker {
   private readonly checkTxForReceive_txLookup = (
     txHash: string,
     canSearchMempool: boolean
-  ): {
-    tx: BlockchainTransaction;
-    block: BlockchainBlock | null;
-    node: TreeNode<BlockchainBlock> | null;
-  } | null => {
+  ): TxLookupResult => {
     const lookupFromMainBranch = this.blockDatabase.findTxInMainBranch(txHash);
 
     if (lookupFromMainBranch !== null) {

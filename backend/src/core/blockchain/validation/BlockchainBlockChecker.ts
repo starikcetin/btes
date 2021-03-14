@@ -12,6 +12,14 @@ import { sumOfOutputs } from '../utils/sumOfOutputs';
 import { BlockchainCommonChecker } from './BlockchainCommonChecker';
 import { BlockchainWallet } from '../modules/BlockchainWallet';
 
+export type CheckBlockResult =
+  | { validity: 'invalid' | 'orphan' }
+  | { validity: 'valid'; parentNode: TreeNode<BlockchainBlock> };
+
+export type AddBlockResult =
+  | { isValid: true; canRelay: boolean }
+  | { isValid: false; canRelay: false };
+
 export class BlockchainBlockChecker {
   private readonly config: BlockchainConfig;
   private readonly blockDatabase: BlockchainBlockDatabase;
@@ -35,9 +43,7 @@ export class BlockchainBlockChecker {
 
   public readonly checkBlockForReceiveBlock = (
     block: BlockchainBlock
-  ):
-    | { validity: 'invalid' | 'orphan' }
-    | { validity: 'valid'; parentNode: TreeNode<BlockchainBlock> } => {
+  ): CheckBlockResult => {
     const { header } = block;
     const blockHash = hash(header);
 
@@ -64,9 +70,7 @@ export class BlockchainBlockChecker {
 
   private readonly checkBlockContextFree = (
     block: BlockchainBlock
-  ):
-    | { validity: 'invalid' | 'orphan' }
-    | { validity: 'valid'; parentNode: TreeNode<BlockchainBlock> } => {
+  ): CheckBlockResult => {
     const { transactions: txs, header } = block;
     const blockHash = hash(header);
 
@@ -111,9 +115,7 @@ export class BlockchainBlockChecker {
   public readonly addBlock = (
     receivedBlock: BlockchainBlock,
     parentNode: TreeNode<BlockchainBlock>
-  ):
-    | { isValid: true; canRelay: boolean }
-    | { isValid: false; canRelay: false } => {
+  ): AddBlockResult => {
     // GetBlockAddType
     const addType = this.getBlockAddType(parentNode);
 

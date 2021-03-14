@@ -11,6 +11,11 @@ import { areOutPointsEquivalent } from '../utils/areOutPointsEquivalent';
 import { collectGenerator } from '../../../common/utils/collectGenerator';
 import { hasValue } from '../../../common/utils/hasValue';
 
+export type BlockSearchResult =
+  | { foundIn: 'blockchain'; result: TreeNode<BlockchainBlock> }
+  | { foundIn: 'orphanage'; result: BlockchainBlock }
+  | { foundIn: 'none'; result: null };
+
 export class BlockchainBlockDatabase {
   private readonly blocks: Tree<BlockchainBlock>;
   private readonly orphanBlocks: BlockchainBlock[];
@@ -131,12 +136,7 @@ export class BlockchainBlockDatabase {
     this.orphanBlocks.find((b) => hash(b.header) === blockHash) ?? null;
 
   /** Finds a block with the given hash. First looks in the blockchain, then in the orphanage. */
-  public readonly getBlockAnywhere = (
-    blockHash: string
-  ):
-    | { foundIn: 'blockchain'; result: TreeNode<BlockchainBlock> }
-    | { foundIn: 'orphanage'; result: BlockchainBlock }
-    | { foundIn: 'none'; result: null } => {
+  public readonly getBlockAnywhere = (blockHash: string): BlockSearchResult => {
     const orphanageResult = this.getBlockInOrphanage(blockHash);
     if (hasValue(orphanageResult)) {
       return { foundIn: 'orphanage', result: orphanageResult };
