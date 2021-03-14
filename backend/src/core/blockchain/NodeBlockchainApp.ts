@@ -80,13 +80,22 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly checkTxForReceiveTx = () => {
-    /*
-     * CheckTxForReceiveTx:
-     *   CheckTxContextFree (canSearchMainBranchForDupes = true)
-     *   CheckTxForReceive (canSearchMempoolForOutput = true, checkForOutputIndex = false)
-     *
-     */
+  private readonly checkTxForReceiveTx = (tx: BlockchainTransaction) => {
+    // CheckTxContextFree (canSearchMainBranchForDupes = true)
+    const ctcf = this.checkTxContextFree(tx, {
+      canSearchMainBranchForDupes: true,
+    });
+
+    if (ctcf === 'invalid') {
+      return 'invalid';
+    }
+
+    // CheckTxForReceive (canSearchMempoolForOutput = true)
+    const ctfr = this.checkTxForReceive(tx, {
+      canSearchMempoolForOutput: true,
+    });
+
+    return ctfr.checkResult;
   };
 
   //
