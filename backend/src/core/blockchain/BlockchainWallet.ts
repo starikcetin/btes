@@ -1,21 +1,23 @@
+import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
 import { BlockchainWalletSnapshot } from '../../common/blockchain/BlockchainWalletSnapshot';
 import { BlockchainKeyPair } from './BlockchainKeyPair';
+import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 
 /**
  * Non-deterministic
  * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch05.asciidoc#nondeterministic-random-wallets
  */
 export class BlockchainWallet {
-  public readonly keyPairBitLength: number;
+  public readonly config: BlockchainConfig;
 
   private readonly keyPairs: BlockchainKeyPair[] = [];
 
-  constructor(keyPairBitLength: number) {
-    this.keyPairBitLength = keyPairBitLength;
+  constructor(config: BlockchainConfig) {
+    this.config = config;
   }
 
   public readonly generateAndRecordKeyPair = (): BlockchainKeyPair => {
-    const newKeyPair = new BlockchainKeyPair(this.keyPairBitLength);
+    const newKeyPair = new BlockchainKeyPair(this.config.keypairBitLength);
     this.keyPairs.push(newKeyPair);
     return newKeyPair;
   };
@@ -23,5 +25,15 @@ export class BlockchainWallet {
   public readonly takeSnapshot = (): BlockchainWalletSnapshot => {
     // TODO: implement
     return {};
+  };
+
+  public readonly addToWalletIfMine = (
+    ...txs: BlockchainTransaction[]
+  ): void => {
+    /*
+     * AddToWalletIfMine:
+     *   bc16.4. & bc18.3.5. For each transaction, "Add to wallet if mine"
+     */
+    // TODO: implement
   };
 }

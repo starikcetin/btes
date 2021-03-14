@@ -13,18 +13,15 @@ import { BlockchainTransactionDatabase } from './blockchain/BlockchainTransactio
 import { BlockchainBlockDatabase } from './blockchain/BlockchainBlockDatabase';
 import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
+import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
 
 // TODO: this should not be here
-const blockchainKeypairBitLength = 5;
-
-// TODO: this should not be here
-const blockchainBlockCreationFee = 100;
-
-// TODO: this should not be here
-const blockchainCoinbaseMaturity = 5;
-
-// TODO: this should not be here
-const blockchainTargetLeadingZeroCount = 3;
+const blockchainConfig: BlockchainConfig = {
+  keypairBitLength: 5,
+  blockCreationFee: 100,
+  coinbaseMaturity: 5,
+  targetLeadingZeroCount: 3,
+};
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -52,7 +49,7 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
-    const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
+    const blockchainWallet = new BlockchainWallet(blockchainConfig);
     const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
       [],
       []
@@ -67,9 +64,7 @@ export class Simulation {
       blockchainWallet,
       blockchainTransactionDatabase,
       blockchainBlockDatabase,
-      blockchainBlockCreationFee,
-      blockchainCoinbaseMaturity,
-      blockchainTargetLeadingZeroCount
+      blockchainConfig
     );
 
     const newNode = new SimulationNode(
@@ -96,7 +91,9 @@ export class Simulation {
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
     // TODO: initialize with snapshot
-    const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
+    const blockchainWallet = new BlockchainWallet(
+      nodeSnapshot.blockchainApp.config
+    );
 
     const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
       nodeSnapshot.blockchainApp.transactionDatabase.mempool,
@@ -112,9 +109,7 @@ export class Simulation {
       blockchainWallet,
       blockchainTransactionDatabase,
       blockchainBlockDatabase,
-      blockchainBlockCreationFee,
-      blockchainCoinbaseMaturity,
-      blockchainTargetLeadingZeroCount
+      nodeSnapshot.blockchainApp.config
     );
 
     const newNode = new SimulationNode(
