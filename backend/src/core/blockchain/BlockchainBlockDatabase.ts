@@ -101,6 +101,9 @@ export class BlockchainBlockDatabase {
     return { stopNode: collect.ret, visitedNodes: collect.yields };
   };
 
+  public readonly getMainBranchHead = (): TreeNode<BlockchainBlock> | null =>
+    this.blocks.mainBranchHead;
+
   private *getMainBranchBlockIterator() {
     for (const node of this.blocks.getMainBranchIterator()) {
       yield { block: node.data, node };

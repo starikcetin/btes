@@ -13,6 +13,7 @@ import { TreeNode } from '../../common/tree/TreeNode';
 import { BlockchainUnlockingScript } from '../../common/blockchain/BlockchainUnlockingScript';
 import { BlockchainLockingScript } from '../../common/blockchain/BlockchainLockingScript';
 import { sumOfOutputs } from './utils/sumOfOutputs';
+import { hasValue } from '../../common/utils/hasValue';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -137,14 +138,32 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly getBlockAddType = () => {
-    /*
-     * GetBlockAddType:
-     *               bc15. Add block into the tree. There are three cases: (we do not actually add here, poor writing)
-     *   main-extend bc16. For case 1, adding to main branch:
-     *   side-extend bc17. For case 2, adding to a side branch...
-     *   promote     bc18. For case 3, a side branch becoming the main branch:
-     */
+  private readonly getBlockAddType = (
+    parentNode: TreeNode<BlockchainBlock>
+  ): 'main-extend' | 'side-extend' | 'promote' => {
+    // bc15. Add block into the tree. There are three cases: (we do not actually add here, poor writing)
+    // > no-op: we add to the tree later on.
+
+    const mainBranchHead = this.blockDatabase.getMainBranchHead();
+    if (!hasValue(mainBranchHead)) {
+      throw new Error(`Main branch head is ${mainBranchHead}!`);
+    }
+
+    // bc16. For case 1, adding to main branch:
+    // > if parent is the main branch head, we are extending the main branch
+    if (mainBranchHead.id === parentNode.id) {
+      return 'main-extend';
+    }
+
+    // bc18. For case 3, a side branch becoming the main branch:
+    // > if parent has the same height as the main branch head, adding one more block would make it the longest chain
+    if (mainBranchHead.height === parentNode.height) {
+      return 'promote';
+    }
+
+    // bc17. For case 2, adding to a side branch...
+    // > if previous checks did not hit, we are extending a side branch
+    return 'side-extend';
   };
 
   private readonly addBlockMainExtend = (
