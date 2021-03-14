@@ -123,19 +123,52 @@ export class NodeBlockchainApp {
     throw new Error('Not implemented');
   };
 
-  private readonly addBlock = () => {
-    /*
-     * AddBlock:
-     *              GetBlockAddType
-     *              if side-extend:
-     *   (no-relay)   bc17... we don't do anything.
-     *              if main-extend:
-     *   (relay)      AddBlockMainExtend
-     *              if promote:
-     *   (relay)      AddBlockPromote
-     *              if did not reject:
-     *                Add block to tree
-     */
+  private readonly addBlock = (
+    receivedBlock: BlockchainBlock,
+    parentNode: TreeNode<BlockchainBlock>
+  ): { isValid: boolean; canRelay: boolean } => {
+    // GetBlockAddType
+    const addType = this.getBlockAddType(parentNode);
+
+    // if side-extend:
+    if (addType === 'side-extend') {
+      //  (no-relay) bc17... we don't do anything.
+      //  Add block to tree
+      this.blockDatabase.addToBlockchain(receivedBlock, parentNode);
+      return { isValid: true, canRelay: false };
+    }
+
+    // if main-extend:
+    if (addType === 'main-extend') {
+      // (relay if valid) AddBlockMainExtend
+      const result = this.addBlockMainExtend(receivedBlock);
+
+      // if did not reject:
+      if (result === 'valid') {
+        // Add block to tree
+        this.blockDatabase.addToBlockchain(receivedBlock, parentNode);
+        return { isValid: true, canRelay: true };
+      }
+
+      return { isValid: false, canRelay: false };
+    }
+
+    // if promote:
+    if (addType === 'promote') {
+      // (relay if valid) AddBlockPromote
+      const result = this.addBlockPromote(receivedBlock, parentNode);
+
+      // if did not reject:
+      if (result === 'valid') {
+        // Add block to tree
+        this.blockDatabase.addToBlockchain(receivedBlock, parentNode);
+        return { isValid: true, canRelay: true };
+      }
+
+      return { isValid: false, canRelay: false };
+    }
+
+    throw new Error(`Fell out of block add type checks! addType is ${addType}`);
   };
 
   private readonly getBlockAddType = (

@@ -104,6 +104,18 @@ export class BlockchainBlockDatabase {
   public readonly getMainBranchHead = (): TreeNode<BlockchainBlock> | null =>
     this.blocks.mainBranchHead;
 
+  /**
+   * Adds the `block` to the blockchain unconditionally.
+   * @returns the `TreeNode` created for the `block`.
+   */
+  public readonly addToBlockchain = (
+    block: BlockchainBlock,
+    parentNode: TreeNode<BlockchainBlock>
+  ): TreeNode<BlockchainBlock> => {
+    const id = hash(block.header);
+    return this.blocks.createNode(id, block, parentNode);
+  };
+
   private *getMainBranchBlockIterator() {
     for (const node of this.blocks.getMainBranchIterator()) {
       yield { block: node.data, node };
