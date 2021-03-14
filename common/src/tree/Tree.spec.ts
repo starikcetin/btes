@@ -508,11 +508,11 @@ it('iterates main branch', () => {
     throw Error('tree main branch head is null');
   }
 
-  expect([...tree.getMainBranchIterator()]).toIncludeSameMembers([
+  expect([...tree.getMainBranchIterator()]).toStrictEqual([
     ...tree.mainBranchHead.getIteratorToRoot(),
   ]);
 
-  expect([...tree.getMainBranchDataIterator()]).toIncludeSameMembers([
+  expect([...tree.getMainBranchDataIterator()]).toStrictEqual([
     ...tree.mainBranchHead.getDataIteratorToRoot(),
   ]);
 });

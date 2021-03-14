@@ -293,16 +293,16 @@ it('iterates nodes to root', () => {
   connectNodes({ parent: d, child: e });
   connectNodes({ parent: e, child: f });
 
-  expect([...a.getIteratorToRoot()]).toIncludeSameMembers([a]);
-  expect([...b.getIteratorToRoot()]).toIncludeSameMembers([b, a]);
-  expect([...c.getIteratorToRoot()]).toIncludeSameMembers([c, b, a]);
-  expect([...d.getIteratorToRoot()]).toIncludeSameMembers([d, b, a]);
-  expect([...e.getIteratorToRoot()]).toIncludeSameMembers([e, d, b, a]);
-  expect([...f.getIteratorToRoot()]).toIncludeSameMembers([f, e, d, b, a]);
+  expect([...a.getIteratorToRoot()]).toStrictEqual([a]);
+  expect([...b.getIteratorToRoot()]).toStrictEqual([b, a]);
+  expect([...c.getIteratorToRoot()]).toStrictEqual([c, b, a]);
+  expect([...d.getIteratorToRoot()]).toStrictEqual([d, b, a]);
+  expect([...e.getIteratorToRoot()]).toStrictEqual([e, d, b, a]);
+  expect([...f.getIteratorToRoot()]).toStrictEqual([f, e, d, b, a]);
 
   // make sure subsequent iterations also work
-  expect([...f.getIteratorToRoot()]).toIncludeSameMembers([f, e, d, b, a]);
-  expect([...f.getIteratorToRoot()]).toIncludeSameMembers([f, e, d, b, a]);
+  expect([...f.getIteratorToRoot()]).toStrictEqual([f, e, d, b, a]);
+  expect([...f.getIteratorToRoot()]).toStrictEqual([f, e, d, b, a]);
 });
 
 it('iterates data to root', () => {
@@ -326,24 +326,24 @@ it('iterates data to root', () => {
   connectNodes({ parent: e, child: f });
 
   const aDataIt = [a.data];
-  expect([...a.getDataIteratorToRoot()]).toIncludeSameMembers(aDataIt);
+  expect([...a.getDataIteratorToRoot()]).toStrictEqual(aDataIt);
 
   const bDataIt = [b.data, a.data];
-  expect([...b.getDataIteratorToRoot()]).toIncludeSameMembers(bDataIt);
+  expect([...b.getDataIteratorToRoot()]).toStrictEqual(bDataIt);
 
   const cDataIt = [c.data, b.data, a.data];
-  expect([...c.getDataIteratorToRoot()]).toIncludeSameMembers(cDataIt);
+  expect([...c.getDataIteratorToRoot()]).toStrictEqual(cDataIt);
 
   const dDataIt = [d.data, b.data, a.data];
-  expect([...d.getDataIteratorToRoot()]).toIncludeSameMembers(dDataIt);
+  expect([...d.getDataIteratorToRoot()]).toStrictEqual(dDataIt);
 
   const eDataIt = [e.data, d.data, b.data, a.data];
-  expect([...e.getDataIteratorToRoot()]).toIncludeSameMembers(eDataIt);
+  expect([...e.getDataIteratorToRoot()]).toStrictEqual(eDataIt);
 
   const fDataIt = [f.data, e.data, d.data, b.data, a.data];
-  expect([...f.getDataIteratorToRoot()]).toIncludeSameMembers(fDataIt);
+  expect([...f.getDataIteratorToRoot()]).toStrictEqual(fDataIt);
 
   // make sure subsequent iterations also work
-  expect([...f.getDataIteratorToRoot()]).toIncludeSameMembers(fDataIt);
-  expect([...f.getDataIteratorToRoot()]).toIncludeSameMembers(fDataIt);
+  expect([...f.getDataIteratorToRoot()]).toStrictEqual(fDataIt);
+  expect([...f.getDataIteratorToRoot()]).toStrictEqual(fDataIt);
 });
