@@ -99,6 +99,13 @@ export class Tree<TData> {
     return this._mainBranchHead;
   }
 
+  private readonly _mainBranchForkPoints: TreeNode<TData>[] = [];
+
+  /** Fork points that reside on the main branch */
+  public get mainBranchForkPoints(): ReadonlyArray<TreeNode<TData>> {
+    return [...this._mainBranchForkPoints];
+  }
+
   public readonly createNode = (
     id: string,
     data: TData,
@@ -145,7 +152,7 @@ export class Tree<TData> {
       parent.addChild(node);
       node.setParent(parent);
 
-      this.updateHeadsAfterAdd(parent.id, node);
+      this.updateInternalStateAfterAdd(parent.id, node);
     }
   };
 
@@ -178,6 +185,89 @@ export class Tree<TData> {
   ): number => {
     return this._getForkPointOrRootWithHeight(node).height;
   };
+
+  /** Returns an iterator that yields nodes. Starts from the head of main branch, goes backwards to the root. */
+  public readonly getMainBranchIterator = (): Iterable<TreeNode<TData>> => {
+    return this._mainBranchHead?.getIteratorToRoot() ?? [];
+  };
+
+  /** Returns an iterator that yields data. Starts from the head of main branch, goes backwards to the root. */
+  public readonly getMainBranchDataIterator = (): Iterable<TData> => {
+    return this._mainBranchHead?.getDataIteratorToRoot() ?? [];
+  };
+
+  /**
+   * Returns an iterator that yields nodes and returns a node.
+   *
+   * Starts from the given node, goes backwards until it hits the root or a fork point that is part of the main branch.
+   *
+   * Does NOT yield the root or the fork point it stopped on! Instead, the root or the fork point is returned as the generator's result.
+   */
+  public readonly getNodeIteratorUntilMainBranchForkPointOrRoot = (
+    start: TreeNode<TData>
+  ): Generator<TreeNode<TData>, TreeNode<TData>> =>
+    this._getNodeIteratorUntilMainBranchForkPointOrRoot.call(this, start);
+
+  private *_getNodeIteratorUntilMainBranchForkPointOrRoot(
+    start: TreeNode<TData>
+  ) {
+    for (const it of start.getIteratorToRoot()) {
+      if (this.isMainBranchForkPoint(it.id) || this.isRootNode(it.id)) {
+        return it;
+      } else {
+        yield it;
+      }
+    }
+
+    /* The very last yield of a TreeNode.getIteratorToRoot is the root of the tree. So we will hit the if
+     * statement in the loop and jump out of the generator. If we ended up here, it means the node's root
+     * is not the same node as the tree's root. This may happen in two ways:
+     *   1. Node's internal state was tempered with (ex: addChild or setParent called outside the tree)
+     *   2. Somehow a dirty node ended up in the tree.
+     * ~~ Tarık, 2021-03-14 00:02
+     */
+    throw new Error('Fell out of the node iterator!');
+  }
+
+  /** Returns true if the node with given id is a fork point residing on the main branch. */
+  public readonly isMainBranchForkPoint = (nodeId: string): boolean => {
+    return Tree.includesId(this._mainBranchForkPoints, nodeId);
+  };
+
+  /** Returns whether the main branch includes a node with the given id. */
+  public readonly isOnMainBranch = (nodeId: string): boolean => {
+    for (const it of this.getMainBranchIterator()) {
+      if (it.id === nodeId) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  /**
+   * - Returns an iterator that yields nodes and returns a node.
+   * - Starts from the head of the main branch, goes backwards until it hits a node with the given id.
+   * - Does NOT yield the stop node! Instead, the stop node is returned as the generator's result.
+   */
+  public readonly getMainBranchIteratorUntil = (
+    stopId: string
+  ): Generator<TreeNode<TData>, TreeNode<TData>> =>
+    this._getMainBranchIteratorUntil.call(this, stopId);
+
+  private *_getMainBranchIteratorUntil(stopId: string) {
+    for (const it of this.getMainBranchIterator()) {
+      if (it.id === stopId) {
+        return it;
+      } else {
+        yield it;
+      }
+    }
+
+    throw new Error(
+      'Fell out of the node iterator! Make sure a node with the given id exists on the main branch.'
+    );
+  }
 
   /**
    * Returns a JSON serializable version of this tree with a nested object data structure.
@@ -221,6 +311,13 @@ export class Tree<TData> {
   private readonly registerForkPoint = (forkPoint: TreeNode<TData>): void => {
     if (!Tree.includesId(this._forkPoints, forkPoint.id)) {
       this._forkPoints.push(forkPoint);
+    }
+
+    if (
+      !Tree.includesId(this._mainBranchForkPoints, forkPoint.id) &&
+      this.isOnMainBranch(forkPoint.id)
+    ) {
+      this._mainBranchForkPoints.push(forkPoint);
     }
   };
 
@@ -298,7 +395,7 @@ export class Tree<TData> {
     }
   };
 
-  private readonly updateHeadsAfterAdd = (
+  private readonly updateInternalStateAfterAdd = (
     parentId: string,
     childNode: TreeNode<TData>
   ) => {
@@ -313,6 +410,16 @@ export class Tree<TData> {
     // we don't want to switch if they have the same height
     if (childNode.height > this._mainBranchHead.height) {
       this._mainBranchHead = childNode;
+      this.recalculateMainBranchForkPoints();
+    }
+  };
+
+  private readonly recalculateMainBranchForkPoints = () => {
+    this._mainBranchForkPoints.length = 0;
+    for (const it of this.getMainBranchIterator()) {
+      if (this.isForkPoint(it.id)) {
+        this._mainBranchForkPoints.push(it);
+      }
     }
   };
 }

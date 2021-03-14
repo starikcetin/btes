@@ -20,6 +20,12 @@ const blockchainKeypairBitLength = 5;
 // TODO: this should not be here
 const blockchainBlockCreationFee = 100;
 
+// TODO: this should not be here
+const blockchainCoinbaseMaturity = 5;
+
+// TODO: this should not be here
+const blockchainTargetLeadingZeroCount = 3;
+
 export class Simulation {
   public readonly simulationUid: string;
   public readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
@@ -53,7 +59,6 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      blockchainBlockCreationFee,
       new Tree<BlockchainBlock>(),
       []
     );
@@ -61,7 +66,10 @@ export class Simulation {
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
       blockchainTransactionDatabase,
-      blockchainBlockDatabase
+      blockchainBlockDatabase,
+      blockchainBlockCreationFee,
+      blockchainCoinbaseMaturity,
+      blockchainTargetLeadingZeroCount
     );
 
     const newNode = new SimulationNode(
@@ -96,7 +104,6 @@ export class Simulation {
     );
 
     const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      blockchainBlockCreationFee,
       Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDatabase.blocks),
       nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
     );
@@ -104,7 +111,10 @@ export class Simulation {
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
       blockchainTransactionDatabase,
-      blockchainBlockDatabase
+      blockchainBlockDatabase,
+      blockchainBlockCreationFee,
+      blockchainCoinbaseMaturity,
+      blockchainTargetLeadingZeroCount
     );
 
     const newNode = new SimulationNode(

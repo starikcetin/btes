@@ -1,6 +1,6 @@
 import { Tree } from './Tree';
 import { TreeNode } from './TreeNode';
-import { TreeJsonObject } from './TreeJsonObject';
+import { collectGenerator } from '../utils/collectGenerator';
 
 interface NodeDataType {
   a: number;
@@ -499,4 +499,265 @@ describe('keeps track of main branch head', () => {
 
     expect(tree.mainBranchHead?.id).toBe(b3.id);
   });
+});
+
+it('iterates main branch', () => {
+  const { tree } = makeComplexTree();
+
+  if (null === tree.mainBranchHead) {
+    throw Error('tree main branch head is null');
+  }
+
+  expect([...tree.getMainBranchIterator()]).toStrictEqual([
+    ...tree.mainBranchHead.getIteratorToRoot(),
+  ]);
+
+  expect([...tree.getMainBranchDataIterator()]).toStrictEqual([
+    ...tree.mainBranchHead.getDataIteratorToRoot(),
+  ]);
+});
+
+it('registers main branch fork points', () => {
+  /*
+   *                       (c1) -> (c2) -> (c3) << main branch head
+   *                      /
+   *            (b1) -> (b2) -> b3
+   *           /
+   * (a1) -> (a2) -> a3 -> a4 -> a5 -> a6
+   *                  \
+   *                   d1 -> d2 -> d3
+   *                    \
+   *                     e1 -> e2 -> e3
+   */
+  const { tree, nodes } = makeComplexTree();
+  expect(tree.mainBranchForkPoints).toIncludeSameMembers([nodes.b2, nodes.a2]);
+});
+
+it('updates main branch fork points after promotion', () => {
+  /*
+   *                    c1 -> c2 -> c3
+   *                   /
+   *            b1 -> b2 -> b3
+   *           /
+   * (a1) -> (a2) -> (a3) -> a4 -> a5 -> a6
+   *                   \
+   *                    (d1) -> d2 -> d3
+   *                      \
+   *                       (e1) -> (e2) -> (e3) -> (e4) << main branch head after promotion
+   */
+  const { tree, nodes } = makeComplexTree();
+
+  // promote 'e' branch to main branch
+  tree.createNode('e4', data, nodes.e3);
+
+  expect(tree.mainBranchForkPoints).toIncludeSameMembers([
+    nodes.d1,
+    nodes.a3,
+    nodes.a2,
+  ]);
+});
+
+it('determines whether node is on main branch', () => {
+  /*
+   *                       (c1) -> (c2) -> (c3) << main branch head
+   *                      /
+   *            (b1) -> (b2) -> b3
+   *           /
+   * (a1) -> (a2) -> a3 -> a4 -> a5 -> a6
+   *                  \
+   *                   d1 -> d2 -> d3
+   *                    \
+   *                     e1 -> e2 -> e3
+   */
+  const { tree, nodes } = makeComplexTree();
+
+  expect(tree.isOnMainBranch(nodes.a1.id)).toBeTrue();
+  expect(tree.isOnMainBranch(nodes.a2.id)).toBeTrue();
+
+  expect(tree.isOnMainBranch(nodes.b1.id)).toBeTrue();
+  expect(tree.isOnMainBranch(nodes.b2.id)).toBeTrue();
+
+  expect(tree.isOnMainBranch(nodes.c1.id)).toBeTrue();
+  expect(tree.isOnMainBranch(nodes.c2.id)).toBeTrue();
+  expect(tree.isOnMainBranch(nodes.c3.id)).toBeTrue();
+
+  expect(tree.isOnMainBranch(nodes.a3.id)).toBeFalse();
+  expect(tree.isOnMainBranch(nodes.a4.id)).toBeFalse();
+  expect(tree.isOnMainBranch(nodes.a5.id)).toBeFalse();
+  expect(tree.isOnMainBranch(nodes.a6.id)).toBeFalse();
+
+  expect(tree.isOnMainBranch(nodes.b3.id)).toBeFalse();
+
+  expect(tree.isOnMainBranch(nodes.d1.id)).toBeFalse();
+  expect(tree.isOnMainBranch(nodes.d2.id)).toBeFalse();
+  expect(tree.isOnMainBranch(nodes.d3.id)).toBeFalse();
+
+  expect(tree.isOnMainBranch(nodes.e1.id)).toBeFalse();
+  expect(tree.isOnMainBranch(nodes.e2.id)).toBeFalse();
+  expect(tree.isOnMainBranch(nodes.e3.id)).toBeFalse();
+});
+
+it('determines whether node is a main branch fork point', () => {
+  /*
+   *                       (c1) -> (c2) -> (c3) << main branch head
+   *                      /
+   *            (b1) -> (b2) -> b3
+   *           /
+   * (a1) -> (a2) -> a3 -> a4 -> a5 -> a6
+   *                  \
+   *                   d1 -> d2 -> d3
+   *                    \
+   *                     e1 -> e2 -> e3
+   */
+  const { tree, nodes } = makeComplexTree();
+
+  expect(tree.isMainBranchForkPoint(nodes.a2.id)).toBeTrue();
+  expect(tree.isMainBranchForkPoint(nodes.b2.id)).toBeTrue();
+
+  expect(tree.isMainBranchForkPoint(nodes.a1.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.a3.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.a4.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.a5.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.a6.id)).toBeFalse();
+
+  expect(tree.isMainBranchForkPoint(nodes.b1.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.b3.id)).toBeFalse();
+
+  expect(tree.isMainBranchForkPoint(nodes.c1.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.c2.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.c3.id)).toBeFalse();
+
+  expect(tree.isMainBranchForkPoint(nodes.d1.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.d2.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.d3.id)).toBeFalse();
+
+  expect(tree.isMainBranchForkPoint(nodes.e1.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.e2.id)).toBeFalse();
+  expect(tree.isMainBranchForkPoint(nodes.e3.id)).toBeFalse();
+});
+
+it('iterates until main branch fork point or root', () => {
+  /*
+   *                       (c1) -> (c2) -> (c3) << main branch head
+   *                      /
+   *            (b1) -> (b2) -> b3
+   *           /
+   * (a1) -> (a2) -> a3 -> a4 -> a5 -> a6
+   *                  \
+   *                   d1 -> d2 -> d3
+   *                    \
+   *                     e1 -> e2 -> e3
+   */
+  const { tree, nodes } = makeComplexTree();
+
+  const check = (
+    startNode: TreeNode<NodeDataType>,
+    expectedBranchIds: string[],
+    expectedStopId: string
+  ) => {
+    const itr = tree.getNodeIteratorUntilMainBranchForkPointOrRoot(startNode);
+
+    const collectResult = collectGenerator(itr);
+
+    const receivedBranchIds = collectResult.yields.map((n) => n.id);
+    const receivedStopId = collectResult.ret.id;
+
+    const info = {
+      startNode: startNode.id,
+      receivedBranchIds,
+      expectedBranchIds,
+      receivedStopId,
+      expectedStopId,
+    };
+    const infoStr = JSON.stringify(info, null, 2);
+
+    expect(receivedBranchIds, infoStr).toStrictEqual(expectedBranchIds);
+    expect(receivedStopId, infoStr).toBe(expectedStopId);
+  };
+
+  check(nodes.a1, [], 'a1');
+  check(nodes.a2, [], 'a2');
+  check(nodes.a3, ['a3'], 'a2');
+  check(nodes.a4, ['a4', 'a3'], 'a2');
+  check(nodes.a5, ['a5', 'a4', 'a3'], 'a2');
+  check(nodes.a6, ['a6', 'a5', 'a4', 'a3'], 'a2');
+
+  check(nodes.b1, ['b1'], 'a2');
+  check(nodes.b2, [], 'b2');
+  check(nodes.b3, ['b3'], 'b2');
+
+  check(nodes.c1, ['c1'], 'b2');
+  check(nodes.c2, ['c2', 'c1'], 'b2');
+  check(nodes.c3, ['c3', 'c2', 'c1'], 'b2');
+
+  check(nodes.d1, ['d1', 'a3'], 'a2');
+  check(nodes.d2, ['d2', 'd1', 'a3'], 'a2');
+  check(nodes.d3, ['d3', 'd2', 'd1', 'a3'], 'a2');
+
+  check(nodes.e1, ['e1', 'd1', 'a3'], 'a2');
+  check(nodes.e2, ['e2', 'e1', 'd1', 'a3'], 'a2');
+  check(nodes.e3, ['e3', 'e2', 'e1', 'd1', 'a3'], 'a2');
+
+  // it throws when iterating an outsider node
+  const outsiderNode = new TreeNode<NodeDataType>('outsider', data);
+  expect(() => [
+    ...tree.getNodeIteratorUntilMainBranchForkPointOrRoot(outsiderNode),
+  ]).toThrow();
+});
+
+it('iterates main branch until stop point', () => {
+  /*
+   *                       (c1) -> (c2) -> (c3) << main branch head
+   *                      /
+   *            (b1) -> (b2) -> b3
+   *           /
+   * (a1) -> (a2) -> a3 -> a4 -> a5 -> a6
+   *                  \
+   *                   d1 -> d2 -> d3
+   *                    \
+   *                     e1 -> e2 -> e3
+   */
+  const { tree } = makeComplexTree();
+
+  const check = (stopId: string, expectedWalkIds: string[]) => {
+    const { ret: receivedStop, yields: receivedWalk } = collectGenerator(
+      tree.getMainBranchIteratorUntil(stopId)
+    );
+
+    const receivedWalkIds = receivedWalk.map((n) => n.id);
+
+    const infoObj = {
+      expectedStopId: stopId,
+      expectedWalkIds,
+      receivedStopId: receivedStop.id,
+      receivedWalkIds,
+    };
+    const infoStr = JSON.stringify(infoObj, null, 2);
+
+    expect(receivedStop.id, infoStr).toBe(stopId);
+    expect(receivedWalkIds, infoStr).toStrictEqual(expectedWalkIds);
+  };
+
+  check('c3', []);
+  check('c2', ['c3']);
+  check('c1', ['c3', 'c2']);
+  check('b2', ['c3', 'c2', 'c1']);
+  check('b1', ['c3', 'c2', 'c1', 'b2']);
+  check('a2', ['c3', 'c2', 'c1', 'b2', 'b1']);
+  check('a1', ['c3', 'c2', 'c1', 'b2', 'b1', 'a2']);
+
+  expect(() => [...tree.getMainBranchIteratorUntil('b3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a6')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a5')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a4')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('d3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('d2')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('d1')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('e3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('e2')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('e1')]).toThrow();
+
+  const outsiderNode = new TreeNode<NodeDataType>('outsider', data);
+  expect(() => [...tree.getMainBranchIteratorUntil(outsiderNode.id)]).toThrow();
 });
