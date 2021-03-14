@@ -110,21 +110,20 @@ export class NodeBlockchainApp {
 
   private readonly checkBlockForReceiveBlock = (
     block: BlockchainBlock
-  ): {
-    validity: 'invalid' | 'orphan' | 'valid';
-    parentNode: TreeNode<BlockchainBlock> | null;
-  } => {
+  ):
+    | { validity: 'invalid' | 'orphan' }
+    | { validity: 'valid'; parentNode: TreeNode<BlockchainBlock> } => {
     const { header } = block;
     const blockHash = hash(header);
 
     // bc2. Reject if duplicate of block we have in any of the three categories (main, side, orphan)
     if (this.blockDatabase.getBlockAnywhere(blockHash).result !== null) {
-      return { validity: 'invalid', parentNode: null };
+      return { validity: 'invalid' };
     }
 
     // bc12. Check that nBits value matches the difficulty rules
     if (this.checkDifficultyCorrect(header.leadingZeroCount) === false) {
-      return { validity: 'invalid', parentNode: null };
+      return { validity: 'invalid' };
     }
 
     // CheckBlockContextFree
@@ -135,37 +134,36 @@ export class NodeBlockchainApp {
 
   private readonly checkBlockContextFree = (
     block: BlockchainBlock
-  ): {
-    validity: 'invalid' | 'orphan' | 'valid';
-    parentNode: TreeNode<BlockchainBlock> | null;
-  } => {
+  ):
+    | { validity: 'invalid' | 'orphan' }
+    | { validity: 'valid'; parentNode: TreeNode<BlockchainBlock> } => {
     const { transactions: txs, header } = block;
     const blockHash = hash(header);
 
     // bc3. Transaction list must be non-empty
     if (txs.length === 0) {
-      return { validity: 'invalid', parentNode: null };
+      return { validity: 'invalid' };
     }
 
     // bc4. Block hash must satisfy claimed nBits proof of work
     if (!this.checkProofOfWork(blockHash, header.leadingZeroCount)) {
-      return { validity: 'invalid', parentNode: null };
+      return { validity: 'invalid' };
     }
 
     // bc6. First transaction must be coinbase, the rest must not be
     if (txs[0].isCoinbase === false) {
-      return { validity: 'invalid', parentNode: null };
+      return { validity: 'invalid' };
     }
 
     if (txs.slice(1).some((t) => t.isCoinbase)) {
-      return { validity: 'invalid', parentNode: null };
+      return { validity: 'invalid' };
     }
 
     // bc7. For each transaction, apply "tx" checks 2-4
     // > tx3. and tx4. won't be implemented. only tx2. remains:
     // > tx2. Make sure neither in or out lists are empty
     if (txs.some((t) => t.inputs.length === 0 || t.outputs.length === 0)) {
-      return { validity: 'invalid', parentNode: null };
+      return { validity: 'invalid' };
     }
 
     // bc11. Check if prev block (matching prev hash) is in main branch or side branches If not, ...
@@ -174,7 +172,7 @@ export class NodeBlockchainApp {
     );
 
     if (parentNode === null) {
-      return { validity: 'orphan', parentNode: null };
+      return { validity: 'orphan' };
     }
 
     return { validity: 'valid', parentNode: parentNode };
@@ -183,7 +181,9 @@ export class NodeBlockchainApp {
   private readonly addBlock = (
     receivedBlock: BlockchainBlock,
     parentNode: TreeNode<BlockchainBlock>
-  ): { isValid: boolean; canRelay: boolean } => {
+  ):
+    | { isValid: true; canRelay: boolean }
+    | { isValid: false; canRelay: false } => {
     // GetBlockAddType
     const addType = this.getBlockAddType(parentNode);
 
@@ -376,18 +376,15 @@ export class NodeBlockchainApp {
       }
 
       // CheckTxForReceive (canSearchMempoolForOutput = false) (reject if orphan)
-      const { checkResult, sumOfInputs, sumOfOutputs } = this.checkTxForReceive(
-        tx,
-        {
-          canSearchMempoolForOutput: false,
-        }
-      );
+      const ctxfr = this.checkTxForReceive(tx, {
+        canSearchMempoolForOutput: false,
+      });
 
-      if (checkResult !== 'valid') {
+      if (ctxfr.checkResult !== 'valid') {
         return 'invalid';
       }
 
-      const txFee = sumOfInputs - sumOfOutputs;
+      const txFee = ctxfr.sumOfInputs - ctxfr.sumOfOutputs;
       sumOfTxFees += txFee;
     }
 
@@ -412,11 +409,9 @@ export class NodeBlockchainApp {
     options: {
       canSearchMempoolForOutput: boolean;
     }
-  ): {
-    checkResult: 'orphan' | 'invalid' | 'valid';
-    sumOfInputs: number;
-    sumOfOutputs: number;
-  } => {
+  ):
+    | { checkResult: 'valid'; sumOfInputs: number; sumOfOutputs: number }
+    | { checkResult: 'orphan' | 'invalid' } => {
     const { canSearchMempoolForOutput } = options;
 
     let sumOfInputs = 0;
@@ -431,14 +426,14 @@ export class NodeBlockchainApp {
       );
 
       if (refOutputLookup === null) {
-        return { checkResult: 'orphan', sumOfInputs: -1, sumOfOutputs: -1 };
+        return { checkResult: 'orphan' };
       }
 
       const { tx: refOutputTx, node: refOutputNode } = refOutputLookup;
 
       // bc16.1.2. For each input, if we are using the nth output of the earlier transaction, but it has fewer than n+1 outputs, reject.
       if (refOutputTx.outputs.length < previousOutput.outputIndex + 1) {
-        return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
+        return { checkResult: 'invalid' };
       }
 
       const refOutput = refOutputTx.outputs[previousOutput.outputIndex];
@@ -453,26 +448,26 @@ export class NodeBlockchainApp {
         }
 
         if (refOutputNode.depth < this.coinbaseMaturity) {
-          return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
+          return { checkResult: 'invalid' };
         }
       }
 
       // tx12. & bc16.1.5. For each input, if the referenced output does not exist (e.g. never existed or has already been spent), reject this transaction[6]
       // > existence is checked by tx10 and bc16.1.2 rules. we only need to check if it was spent before.
       if (this.blockDatabase.isOutPointInMainBranch(previousOutput)) {
-        return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
+        return { checkResult: 'invalid' };
       }
 
       // tx16. & bc16.1.4. Verify the scriptPubKey accepts for each input; reject if any are bad
       if (!this.verifyScripts(refOutput.lockingScript, unlockingScript)) {
-        return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
+        return { checkResult: 'invalid' };
       }
     }
 
     const sumOfOutputs = _.sumBy(tx.outputs, (o) => o.value);
     // tx14. & bc16.1.7. Reject if the sum of input values < sum of output values
     if (sumOfInputs < sumOfOutputs) {
-      return { checkResult: 'invalid', sumOfInputs: -1, sumOfOutputs: -1 };
+      return { checkResult: 'invalid' };
     }
 
     return { checkResult: 'valid', sumOfInputs, sumOfOutputs };
@@ -572,12 +567,14 @@ export class NodeBlockchainApp {
   private readonly checkProofOfWork = (
     hash: string,
     leadingZeroCount: number
-  ) => {
+  ): boolean => {
     return countLeadingZeroes(hash) >= leadingZeroCount;
   };
 
   /** Checks if the given `leadingZeroCount` is acceptable according to difficulty rules. */
-  private readonly checkDifficultyCorrect = (leadingZeroCount: number) => {
+  private readonly checkDifficultyCorrect = (
+    leadingZeroCount: number
+  ): boolean => {
     return leadingZeroCount >= this.targetLeadingZeroCount;
   };
 }
