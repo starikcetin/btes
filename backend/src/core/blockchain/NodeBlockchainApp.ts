@@ -147,15 +147,24 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly addBlockMainExtend = () => {
-    /*
-     * AddBlockMainExtend:
-     *   CheckTxsForReceiveBlock
-     *   bc16.3. (If we have not rejected):
-     *     AddToWalletIfMine
-     *     CleanupMempool
-     *   bc16.7. If we rejected, the block is not counted as part of the main branch
-     */
+  private readonly addBlockMainExtend = (
+    receivedBlock: BlockchainBlock
+  ): 'invalid' | 'valid' => {
+    // CheckTxsForReceiveBlock
+    if (this.checkTxsForReceiveBlock(receivedBlock) !== 'valid') {
+      return 'invalid';
+    }
+
+    // bc16.3. (If we have not rejected):
+    //   AddToWalletIfMine
+    //   CleanupMempool
+    this.addToWalletIfMine(...receivedBlock.transactions);
+    this.cleanupMempool(...receivedBlock.transactions);
+
+    // bc16.7. If we rejected, the block is not counted as part of the main branch
+    // > no-op: actually adding to the tree is done later on
+
+    return 'valid';
   };
 
   private readonly addBlockPromote = (
