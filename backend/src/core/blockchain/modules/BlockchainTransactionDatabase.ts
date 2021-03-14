@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-import { BlockchainTransactionDatabaseSnapshot } from '../../common/blockchain/BlockchainTransactionDatabaseSnapshot';
-import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
-import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
-import { areOutPointsEquivalent } from './utils/areOutPointsEquivalent';
-import { hash } from '../../utils/hash';
-import { removeFirst } from '../../common/utils/removeFirst';
+import { BlockchainTransactionDatabaseSnapshot } from '../../../common/blockchain/BlockchainTransactionDatabaseSnapshot';
+import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { BlockchainTransactionOutPoint } from '../../../common/blockchain/BlockchainTransactionOutPoint';
+import { areOutPointsEquivalent } from '../utils/areOutPointsEquivalent';
+import { hash } from '../../../utils/hash';
+import { removeFirst } from '../../../common/utils/removeFirst';
 
 // See BlockchainTransactionDatabaseSnapshot for member jsdocs.
 export class BlockchainTransactionDatabase {

@@ -1,15 +1,15 @@
 import _ from 'lodash';
 
-import { Tree } from '../../common/tree/Tree';
-import { TreeNode } from '../../common/tree/TreeNode';
-import { BlockchainBlockDatabaseSnapshot } from '../../common/blockchain/BlockchainBlockDatabaseSnapshot';
-import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
-import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
-import { hash } from '../../utils/hash';
-import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
-import { areOutPointsEquivalent } from './utils/areOutPointsEquivalent';
-import { collectGenerator } from '../../common/utils/collectGenerator';
-import { hasValue } from '../../common/utils/hasValue';
+import { Tree } from '../../../common/tree/Tree';
+import { TreeNode } from '../../../common/tree/TreeNode';
+import { BlockchainBlockDatabaseSnapshot } from '../../../common/blockchain/BlockchainBlockDatabaseSnapshot';
+import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
+import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { hash } from '../../../utils/hash';
+import { BlockchainTransactionOutPoint } from '../../../common/blockchain/BlockchainTransactionOutPoint';
+import { areOutPointsEquivalent } from '../utils/areOutPointsEquivalent';
+import { collectGenerator } from '../../../common/utils/collectGenerator';
+import { hasValue } from '../../../common/utils/hasValue';
 
 export class BlockchainBlockDatabase {
   private readonly blocks: Tree<BlockchainBlock>;

@@ -4,13 +4,13 @@ import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTran
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { hasValue } from '../../../common/utils/hasValue';
 import { hash } from '../../../utils/hash';
-import { BlockchainBlockDatabase } from '../BlockchainBlockDatabase';
-import { BlockchainTransactionDatabase } from '../BlockchainTransactionDatabase';
+import { BlockchainBlockDatabase } from '../modules/BlockchainBlockDatabase';
+import { BlockchainTransactionDatabase } from '../modules/BlockchainTransactionDatabase';
 import { checkDifficultyCorrect } from '../utils/checkDifficultyCorrect';
 import { checkProofOfWork } from '../utils/checkProofOfWork';
 import { sumOfOutputs } from '../utils/sumOfOutputs';
 import { BlockchainCommonChecker } from './BlockchainCommonChecker';
-import { BlockchainWallet } from '../BlockchainWallet';
+import { BlockchainWallet } from '../modules/BlockchainWallet';
 
 export class BlockchainBlockChecker {
   private readonly config: BlockchainConfig;

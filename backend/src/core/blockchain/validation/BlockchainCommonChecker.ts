@@ -6,8 +6,8 @@ import { TreeNode } from '../../../common/tree/TreeNode';
 import { hash } from '../../../utils/hash';
 import { verifyScripts } from '../utils/verifyScripts';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
-import { BlockchainBlockDatabase } from '../BlockchainBlockDatabase';
-import { BlockchainTransactionDatabase } from '../BlockchainTransactionDatabase';
+import { BlockchainBlockDatabase } from '../modules/BlockchainBlockDatabase';
+import { BlockchainTransactionDatabase } from '../modules/BlockchainTransactionDatabase';
 
 export class BlockchainCommonChecker {
   private readonly config: BlockchainConfig;

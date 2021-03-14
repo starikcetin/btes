@@ -1,7 +1,7 @@
-import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
-import { BlockchainWalletSnapshot } from '../../common/blockchain/BlockchainWalletSnapshot';
-import { BlockchainKeyPair } from './BlockchainKeyPair';
-import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
+import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { BlockchainWalletSnapshot } from '../../../common/blockchain/BlockchainWalletSnapshot';
+import { BlockchainKeyPair } from '../BlockchainKeyPair';
+import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 
 /**
  * Non-deterministic
