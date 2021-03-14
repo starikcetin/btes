@@ -116,6 +116,11 @@ export class BlockchainBlockDatabase {
     return this.blocks.createNode(id, block, parentNode);
   };
 
+  /** Finds the block with the given hash in main or side branches. Does NOT search the orphanage. */
+  public readonly getBlockInBlockchain = (
+    blockHash: string
+  ): TreeNode<BlockchainBlock> | null => this.blocks.getNode(blockHash);
+
   private *getMainBranchBlockIterator() {
     for (const node of this.blocks.getMainBranchIterator()) {
       yield { block: node.data, node };

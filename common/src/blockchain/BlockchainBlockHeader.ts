@@ -28,9 +28,8 @@ export interface BlockchainBlockHeader {
   readonly timestamp: number;
 
   /**
-   * The count of leading zeroes in the hash.
-   *
-   * Intended as an easier to implement alternative for the `difficultyTarget` field in the real Bitcoin protocol.
+   * * Intended as an easier to implement alternative for the `difficultyTarget` field in the real Bitcoin protocol.
+   * * Rule: `countLeadingZeroes(headerHash) >= leadingZeroCount`
    */
   readonly leadingZeroCount: number;
 

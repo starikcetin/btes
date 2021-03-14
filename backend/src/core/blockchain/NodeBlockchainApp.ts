@@ -14,6 +14,7 @@ import { BlockchainUnlockingScript } from '../../common/blockchain/BlockchainUnl
 import { BlockchainLockingScript } from '../../common/blockchain/BlockchainLockingScript';
 import { sumOfOutputs } from './utils/sumOfOutputs';
 import { hasValue } from '../../common/utils/hasValue';
+import { countLeadingZeroes } from '../../utils/countLeading';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -110,17 +111,49 @@ export class NodeBlockchainApp {
 
   private readonly checkBlockContextFree = (
     block: BlockchainBlock
-  ): 'invalid' | 'orphan' | 'valid' => {
-    /*
-     * CheckBlockContextFree:
-     *   invalid bc3. Transaction list must be non-empty
-     *   invalid bc4. Block hash must satisfy claimed nBits proof of work
-     *   invalid bc6. First transaction must be coinbase, the rest must not be
-     *   invalid bc7. For each transaction, apply "tx" checks 2-4
-     *   orphan  bc11. Check if prev block (matching prev hash) is in main branch or side branches If not, ...
-     */
-    // TODO: implement
-    throw new Error('Not implemented');
+  ): {
+    validity: 'invalid' | 'orphan' | 'valid';
+    parentNode: TreeNode<BlockchainBlock> | null;
+  } => {
+    const { transactions: txs, header } = block;
+    const blockHash = hash(header);
+
+    // bc3. Transaction list must be non-empty
+    if (txs.length === 0) {
+      return { validity: 'invalid', parentNode: null };
+    }
+
+    // bc4. Block hash must satisfy claimed nBits proof of work
+    if (!this.checkProofOfWork(blockHash, header.leadingZeroCount)) {
+      return { validity: 'invalid', parentNode: null };
+    }
+
+    // bc6. First transaction must be coinbase, the rest must not be
+    if (txs[0].isCoinbase === false) {
+      return { validity: 'invalid', parentNode: null };
+    }
+
+    if (txs.slice(1).some((t) => t.isCoinbase)) {
+      return { validity: 'invalid', parentNode: null };
+    }
+
+    // bc7. For each transaction, apply "tx" checks 2-4
+    // > tx3. and tx4. won't be implemented. only tx2. remains:
+    // > tx2. Make sure neither in or out lists are empty
+    if (txs.some((t) => t.inputs.length === 0 || t.outputs.length === 0)) {
+      return { validity: 'invalid', parentNode: null };
+    }
+
+    // bc11. Check if prev block (matching prev hash) is in main branch or side branches If not, ...
+    const parentNode = this.blockDatabase.getBlockInBlockchain(
+      header.previousHash
+    );
+
+    if (parentNode === null) {
+      return { validity: 'orphan', parentNode: null };
+    }
+
+    return { validity: 'valid', parentNode: parentNode };
   };
 
   private readonly addBlock = (
@@ -237,7 +270,7 @@ export class NodeBlockchainApp {
     // bc18.3. For each block on the side branch, from the child of the fork block to the leaf, add to the main branch: (DON'T FORGET: run these steps for the to-be-added block also!)
     for (const it of promotingBlocks) {
       // CheckBlockContextFree (bc18.3.1. Do "branch" checks 3-11) (result can never be orphan, because it was in the chain already)
-      if (this.checkBlockContextFree(it) !== 'valid') {
+      if (this.checkBlockContextFree(it).validity !== 'valid') {
         return 'invalid';
       }
 
@@ -509,5 +542,13 @@ export class NodeBlockchainApp {
   ): boolean => {
     // TODO: implement
     throw new Error('Method not implemented.');
+  };
+
+  /** Checks if the given `hash` has at least given `leadingZeroCount`. */
+  private readonly checkProofOfWork = (
+    hash: string,
+    leadingZeroCount: number
+  ) => {
+    return countLeadingZeroes(hash) >= leadingZeroCount;
   };
 }
