@@ -4,6 +4,7 @@
     "esbenp.prettier-vscode",
     "stylelint.vscode-stylelint",
     "msjsdiag.debugger-for-chrome",
-    "rioj7.command-variable"
+    "rioj7.command-variable",
+    "firsttris.vscode-jest-runner"
   ]
 }
