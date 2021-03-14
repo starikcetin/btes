@@ -93,19 +93,40 @@ export class NodeBlockchainApp {
   // ---- Block ----
   //
 
-  public readonly receiveBlock = () => {
-    /*
-     * ReceiveBlock:
-     *   CheckBlockForReceiveBlock
-     *   if orphan:
-     *     bc11... add this to orphan blocks, then query peer we got this from for 1st missing orphan block in prev chain; done with block
-     *   if valid:
-     *     AddBlock
-     *     if did not reject:
-     *       if relay:
-     *         bc16.6. & bc18.7. Relay block to our peers
-     *       bc19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
-     */
+  public readonly receiveBlock = (block: BlockchainBlock): void => {
+    // CheckBlockForReceiveBlock
+    const cbfrb = this.checkBlockForReceiveBlock(block);
+
+    // if orphan:
+    if (cbfrb.validity === 'orphan') {
+      // bc11... add this to orphan blocks...
+      this.blockDatabase.addToOrphanage(block);
+
+      // TODO: bc11... then query peer we got this from for 1st missing orphan block in prev chain...
+
+      // bc11... done with block
+      return;
+    }
+
+    // if valid:
+    if (cbfrb.validity === 'valid') {
+      // AddBlock
+      const { isValid, canRelay } = this.addBlock(block, cbfrb.parentNode);
+
+      // if did not reject:
+      if (isValid) {
+        // if relay:
+        if (canRelay) {
+          // TODO: bc16.6. & bc18.7. Relay block to our peers
+        }
+
+        // bc19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
+        const blockHash = hash(block.header);
+        this.blockDatabase
+          .popOrphansWithParent(blockHash)
+          .forEach(this.receiveBlock);
+      }
+    }
   };
 
   private readonly checkBlockForReceiveBlock = (

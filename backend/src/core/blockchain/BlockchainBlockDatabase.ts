@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { Tree } from '../../common/tree/Tree';
 import { TreeNode } from '../../common/tree/TreeNode';
 import { BlockchainBlockDatabaseSnapshot } from '../../common/blockchain/BlockchainBlockDatabaseSnapshot';
@@ -147,6 +149,17 @@ export class BlockchainBlockDatabase {
 
     return { foundIn: 'none', result: null };
   };
+
+  /** Adds the `block` to the orphanage unconditionally. */
+  public readonly addToOrphanage = (block: BlockchainBlock): void => {
+    this.orphanBlocks.push(block);
+  };
+
+  /** Removes all blocks from the orphanage which has the given block as their parent, and returns them. */
+  public readonly popOrphansWithParent = (
+    parentHash: string
+  ): BlockchainBlock[] =>
+    _.remove(this.orphanBlocks, (b) => b.header.previousHash === parentHash);
 
   private *getMainBranchBlockIterator() {
     for (const node of this.blocks.getMainBranchIterator()) {
