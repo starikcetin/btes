@@ -7,6 +7,7 @@ import { hash } from '../../utils/hash';
 import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
 import { areOutPointsEquivalent } from './utils/areOutPointsEquivalent';
 import { collectGenerator } from '../../common/utils/collectGenerator';
+import { hasValue } from '../../common/utils/hasValue';
 
 export class BlockchainBlockDatabase {
   private readonly blocks: Tree<BlockchainBlock>;
@@ -120,6 +121,32 @@ export class BlockchainBlockDatabase {
   public readonly getBlockInBlockchain = (
     blockHash: string
   ): TreeNode<BlockchainBlock> | null => this.blocks.getNode(blockHash);
+
+  /** Finds the block with the given hash in the orphanage. Does NOT search the blockchain. */
+  public readonly getBlockInOrphanage = (
+    blockHash: string
+  ): BlockchainBlock | null =>
+    this.orphanBlocks.find((b) => hash(b.header) === blockHash) ?? null;
+
+  /** Finds a block with the given hash. First looks in the blockchain, then in the orphanage. */
+  public readonly getBlockAnywhere = (
+    blockHash: string
+  ):
+    | { foundIn: 'blockchain'; result: TreeNode<BlockchainBlock> }
+    | { foundIn: 'orphanage'; result: BlockchainBlock }
+    | { foundIn: 'none'; result: null } => {
+    const orphanageResult = this.getBlockInOrphanage(blockHash);
+    if (hasValue(orphanageResult)) {
+      return { foundIn: 'orphanage', result: orphanageResult };
+    }
+
+    const blockchainResult = this.getBlockInBlockchain(blockHash);
+    if (hasValue(blockchainResult)) {
+      return { foundIn: 'blockchain', result: blockchainResult };
+    }
+
+    return { foundIn: 'none', result: null };
+  };
 
   private *getMainBranchBlockIterator() {
     for (const node of this.blocks.getMainBranchIterator()) {

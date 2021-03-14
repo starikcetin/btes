@@ -27,13 +27,15 @@ export class NodeBlockchainApp {
     transactionDatabase: BlockchainTransactionDatabase,
     blockDatabase: BlockchainBlockDatabase,
     blockCreationFee: number,
-    coinbaseMaturity: number
+    coinbaseMaturity: number,
+    targetLeadingZeroCount: number
   ) {
     this.wallet = wallet;
     this.transactionDatabase = transactionDatabase;
     this.blockDatabase = blockDatabase;
     this.blockCreationFee = blockCreationFee;
     this.coinbaseMaturity = coinbaseMaturity;
+    this.targetLeadingZeroCount = targetLeadingZeroCount;
   }
 
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
@@ -53,6 +55,12 @@ export class NodeBlockchainApp {
 
   /** Number of confirmations needed to be able to spend a coinbase output. */
   private readonly coinbaseMaturity: number;
+
+  /**
+   * * The target `leadingZeroCount` for all blocks.
+   * * Rule: `leadingZeroCount >= targetLeadingZeroCount`
+   */
+  private readonly targetLeadingZeroCount: number;
 
   //
   // ---- Tx ----
@@ -100,13 +108,29 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly checkBlockForReceiveBlock = () => {
-    /*
-     * CheckBlockForReceiveBlock:
-     *   invalid bc2. Reject if duplicate of block we have in any of the three categories (main, side, orphan)
-     *   <<<<<<< CheckBlockContextFree
-     *   invalid bc12. Check that nBits value matches the difficulty rules
-     */
+  private readonly checkBlockForReceiveBlock = (
+    block: BlockchainBlock
+  ): {
+    validity: 'invalid' | 'orphan' | 'valid';
+    parentNode: TreeNode<BlockchainBlock> | null;
+  } => {
+    const { header } = block;
+    const blockHash = hash(header);
+
+    // bc2. Reject if duplicate of block we have in any of the three categories (main, side, orphan)
+    if (this.blockDatabase.getBlockAnywhere(blockHash).result !== null) {
+      return { validity: 'invalid', parentNode: null };
+    }
+
+    // bc12. Check that nBits value matches the difficulty rules
+    if (this.checkDifficultyCorrect(header.leadingZeroCount) === false) {
+      return { validity: 'invalid', parentNode: null };
+    }
+
+    // CheckBlockContextFree
+    // > this was before bc12. in the planning.
+    // > we swapped their places so we can return CheckBlockContextFree as-is.
+    return this.checkBlockContextFree(block);
   };
 
   private readonly checkBlockContextFree = (
@@ -550,5 +574,10 @@ export class NodeBlockchainApp {
     leadingZeroCount: number
   ) => {
     return countLeadingZeroes(hash) >= leadingZeroCount;
+  };
+
+  /** Checks if the given `leadingZeroCount` is acceptable according to difficulty rules. */
+  private readonly checkDifficultyCorrect = (leadingZeroCount: number) => {
+    return leadingZeroCount >= this.targetLeadingZeroCount;
   };
 }
