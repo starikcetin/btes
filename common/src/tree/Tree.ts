@@ -246,6 +246,30 @@ export class Tree<TData> {
   };
 
   /**
+   * - Returns an iterator that yields nodes and returns a node.
+   * - Starts from the head of the main branch, goes backwards until it hits a node with the given id.
+   * - Does NOT yield the stop node! Instead, the stop node is returned as the generator's result.
+   */
+  public readonly getMainBranchIteratorUntil = (
+    stopId: string
+  ): Generator<TreeNode<TData>, TreeNode<TData>> =>
+    this._getMainBranchIteratorUntil.call(this, stopId);
+
+  private *_getMainBranchIteratorUntil(stopId: string) {
+    for (const it of this.getMainBranchIterator()) {
+      if (it.id === stopId) {
+        return it;
+      } else {
+        yield it;
+      }
+    }
+
+    throw new Error(
+      'Fell out of the node iterator! Make sure a node with the given id exists on the main branch.'
+    );
+  }
+
+  /**
    * Returns a JSON serializable version of this tree with a nested object data structure.
    * `data` fields of all nodes will be directly included, so YOU need to make sure `TData`
    * is JSON seiralizable as well.

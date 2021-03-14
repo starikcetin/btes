@@ -704,3 +704,60 @@ it('iterates until main branch fork point or root', () => {
     ...tree.getNodeIteratorUntilMainBranchForkPointOrRoot(outsiderNode),
   ]).toThrow();
 });
+
+it('iterates main branch until stop point', () => {
+  /*
+   *                       (c1) -> (c2) -> (c3) << main branch head
+   *                      /
+   *            (b1) -> (b2) -> b3
+   *           /
+   * (a1) -> (a2) -> a3 -> a4 -> a5 -> a6
+   *                  \
+   *                   d1 -> d2 -> d3
+   *                    \
+   *                     e1 -> e2 -> e3
+   */
+  const { tree } = makeComplexTree();
+
+  const check = (stopId: string, expectedWalkIds: string[]) => {
+    const { ret: receivedStop, yields: receivedWalk } = collectGenerator(
+      tree.getMainBranchIteratorUntil(stopId)
+    );
+
+    const receivedWalkIds = receivedWalk.map((n) => n.id);
+
+    const infoObj = {
+      expectedStopId: stopId,
+      expectedWalkIds,
+      receivedStopId: receivedStop.id,
+      receivedWalkIds,
+    };
+    const infoStr = JSON.stringify(infoObj, null, 2);
+
+    expect(receivedStop.id, infoStr).toBe(stopId);
+    expect(receivedWalkIds, infoStr).toStrictEqual(expectedWalkIds);
+  };
+
+  check('c3', []);
+  check('c2', ['c3']);
+  check('c1', ['c3', 'c2']);
+  check('b2', ['c3', 'c2', 'c1']);
+  check('b1', ['c3', 'c2', 'c1', 'b2']);
+  check('a2', ['c3', 'c2', 'c1', 'b2', 'b1']);
+  check('a1', ['c3', 'c2', 'c1', 'b2', 'b1', 'a2']);
+
+  expect(() => [...tree.getMainBranchIteratorUntil('b3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a6')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a5')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a4')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('a3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('d3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('d2')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('d1')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('e3')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('e2')]).toThrow();
+  expect(() => [...tree.getMainBranchIteratorUntil('e1')]).toThrow();
+
+  const outsiderNode = new TreeNode<NodeDataType>('outsider', data);
+  expect(() => [...tree.getMainBranchIteratorUntil(outsiderNode.id)]).toThrow();
+});
