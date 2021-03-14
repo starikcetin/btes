@@ -10,11 +10,11 @@ import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransac
 import { hash } from '../../utils/hash';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { TreeNode } from '../../common/tree/TreeNode';
-import { BlockchainUnlockingScript } from '../../common/blockchain/BlockchainUnlockingScript';
-import { BlockchainLockingScript } from '../../common/blockchain/BlockchainLockingScript';
 import { sumOfOutputs } from './utils/sumOfOutputs';
 import { hasValue } from '../../common/utils/hasValue';
-import { countLeadingZeroes } from '../../utils/countLeading';
+import { checkDifficultyCorrect } from './utils/checkDifficultyCorrect';
+import { checkProofOfWork } from './utils/checkProofOfWork';
+import { verifyScripts } from './utils/verifyScripts';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -168,7 +168,12 @@ export class NodeBlockchainApp {
     }
 
     // bc12. Check that nBits value matches the difficulty rules
-    if (this.checkDifficultyCorrect(header.leadingZeroCount) === false) {
+    if (
+      !checkDifficultyCorrect(
+        header.leadingZeroCount,
+        this.targetLeadingZeroCount
+      )
+    ) {
       return { validity: 'invalid' };
     }
 
@@ -192,7 +197,7 @@ export class NodeBlockchainApp {
     }
 
     // bc4. Block hash must satisfy claimed nBits proof of work
-    if (!this.checkProofOfWork(blockHash, header.leadingZeroCount)) {
+    if (!checkProofOfWork(blockHash, header.leadingZeroCount)) {
       return { validity: 'invalid' };
     }
 
@@ -505,7 +510,7 @@ export class NodeBlockchainApp {
       }
 
       // tx16. & bc16.1.4. Verify the scriptPubKey accepts for each input; reject if any are bad
-      if (!this.verifyScripts(refOutput.lockingScript, unlockingScript)) {
+      if (!verifyScripts(refOutput.lockingScript, unlockingScript)) {
         return { checkResult: 'invalid' };
       }
     }
@@ -599,28 +604,5 @@ export class NodeBlockchainApp {
     }
 
     return null;
-  };
-
-  private readonly verifyScripts = (
-    lockingScript: BlockchainLockingScript,
-    unlockingScript: BlockchainUnlockingScript
-  ): boolean => {
-    // TODO: implement
-    throw new Error('Method not implemented.');
-  };
-
-  /** Checks if the given `hash` has at least given `leadingZeroCount`. */
-  private readonly checkProofOfWork = (
-    hash: string,
-    leadingZeroCount: number
-  ): boolean => {
-    return countLeadingZeroes(hash) >= leadingZeroCount;
-  };
-
-  /** Checks if the given `leadingZeroCount` is acceptable according to difficulty rules. */
-  private readonly checkDifficultyCorrect = (
-    leadingZeroCount: number
-  ): boolean => {
-    return leadingZeroCount >= this.targetLeadingZeroCount;
   };
 }
