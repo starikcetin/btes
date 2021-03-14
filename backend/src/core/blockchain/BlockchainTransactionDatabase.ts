@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { BlockchainTransactionDatabaseSnapshot } from '../../common/blockchain/BlockchainTransactionDatabaseSnapshot';
 import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
 import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
@@ -55,8 +57,24 @@ export class BlockchainTransactionDatabase {
     return removeFirst(this.mempool, (tx) => hash(tx) === txHash);
   };
 
-  /** Adds the given tx to mempool. Does nothing else. */
+  /** Adds the given tx to mempool unconditionally. Does nothing else. */
   public readonly addTxToMempool = (tx: BlockchainTransaction): void => {
     this.mempool.push(tx);
   };
+
+  /** Adds the given tx to orphanage unconditionally. Does nothing else. */
+  public readonly addToOrphanage = (tx: BlockchainTransaction): void => {
+    this.orphanage.push(tx);
+  };
+
+  /**
+   * Finds all orphan transactions referencing the given tx in one of its inputs.
+   * Removes them from the orphanage and returns them.
+   */
+  public readonly popOrphansUsingTxAsInput = (
+    txHash: string
+  ): BlockchainTransaction[] =>
+    _.remove(this.orphanage, (orphan) =>
+      orphan.inputs.some((input) => input.previousOutput.txHash === txHash)
+    );
 }

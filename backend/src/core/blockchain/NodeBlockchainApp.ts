@@ -66,21 +66,37 @@ export class NodeBlockchainApp {
   // ---- Tx ----
   //
 
-  public readonly receiveTx = () => {
-    /*
-     * ReceiveTx:
-     *   CheckTxForReceiveTx
-     *   if orphan:
-     *     tx10... Add to the orphan transactions, if a matching transaction is not in there already.
-     *   if valid:
-     *     tx17. Add to transaction pool[7]
-     *     tx18. "Add to wallet if mine"
-     *     tx19. Relay transaction to peers
-     *     tx20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one) recursively on that orphan
-     */
+  public readonly receiveTx = (tx: BlockchainTransaction): void => {
+    // CheckTxForReceiveTx
+    const checkResult = this.checkTxForReceiveTx(tx);
+
+    // if orphan:
+    if (checkResult === 'orphan') {
+      // tx10... Add to the orphan transactions, if a matching transaction is not in there already.
+      this.transactionDatabase.addToOrphanage(tx);
+    }
+
+    // if valid:
+    if (checkResult === 'valid') {
+      // tx17. Add to transaction pool[7]
+      this.transactionDatabase.addTxToMempool(tx);
+
+      // tx18. "Add to wallet if mine"
+      this.addToWalletIfMine(tx);
+
+      // TODO: tx19. Relay transaction to peers
+
+      // tx20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one) recursively on that orphan
+      const txHash = hash(tx);
+      this.transactionDatabase
+        .popOrphansUsingTxAsInput(txHash)
+        .forEach(this.receiveTx);
+    }
   };
 
-  private readonly checkTxForReceiveTx = (tx: BlockchainTransaction) => {
+  private readonly checkTxForReceiveTx = (
+    tx: BlockchainTransaction
+  ): 'invalid' | 'orphan' | 'valid' => {
     // CheckTxContextFree (canSearchMainBranchForDupes = true)
     const ctcf = this.checkTxContextFree(tx, {
       canSearchMainBranchForDupes: true,
