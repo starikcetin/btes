@@ -6,6 +6,7 @@ import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransac
 import { hash } from '../../utils/hash';
 import { BlockchainTransactionOutPoint } from '../../common/blockchain/BlockchainTransactionOutPoint';
 import { areOutPointsEquivalent } from './utils/areOutPointsEquivalent';
+import { collectGenerator } from '../../common/utils/collectGenerator';
 
 export class BlockchainBlockDatabase {
   private readonly blocks: Tree<BlockchainBlock>;
@@ -60,6 +61,44 @@ export class BlockchainBlockDatabase {
     }
 
     return false;
+  };
+
+  /**
+   * Finds the fork point where this block's ancestory diverged from the main branch.
+   *
+   * Returns the branch and the fork point seperately. The fork point is NOT included in the branch.
+   *
+   * Returned branch will be part of (or the whole) main branch if the given block is on the main branch.
+   */
+  public readonly getBranchAndForkPointFromMainBranch = (
+    node: TreeNode<BlockchainBlock>
+  ): {
+    forkPoint: TreeNode<BlockchainBlock>;
+    branch: TreeNode<BlockchainBlock>[];
+  } => {
+    const collect = collectGenerator(
+      this.blocks.getNodeIteratorUntilMainBranchForkPointOrRoot(node)
+    );
+    return { forkPoint: collect.ret, branch: collect.yields };
+  };
+
+  /**
+   * * Iterates the main branch head backwards until a node with the given id is hit.
+   * * Returns the visited nodes and the stop node seperately. The stop node is NOT included in the visited nodes.
+   */
+  public readonly getMainBranchUntil = (
+    stopNodeHash: string
+  ): {
+    /** The node with the given id. */
+    stopNode: TreeNode<BlockchainBlock>;
+
+    /** The nodes we visited until we hit the stop node. */
+    visitedNodes: TreeNode<BlockchainBlock>[];
+  } => {
+    const collect = collectGenerator(
+      this.blocks.getMainBranchIteratorUntil(stopNodeHash)
+    );
+    return { stopNode: collect.ret, visitedNodes: collect.yields };
   };
 
   private *getMainBranchBlockIterator() {

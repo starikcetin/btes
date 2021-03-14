@@ -107,7 +107,9 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly checkBlockContextFree = () => {
+  private readonly checkBlockContextFree = (
+    block: BlockchainBlock
+  ): 'invalid' | 'orphan' | 'valid' => {
     /*
      * CheckBlockContextFree:
      *   invalid bc3. Transaction list must be non-empty
@@ -116,6 +118,8 @@ export class NodeBlockchainApp {
      *   invalid bc7. For each transaction, apply "tx" checks 2-4
      *   orphan  bc11. Check if prev block (matching prev hash) is in main branch or side branches If not, ...
      */
+    // TODO: implement
+    throw new Error('Not implemented');
   };
 
   private readonly addBlock = () => {
@@ -154,22 +158,56 @@ export class NodeBlockchainApp {
      */
   };
 
-  private readonly addBlockPromote = () => {
-    /*
-     * AddBlockPromote:
-     *   bc18.1. Find the fork block on the main branch which this side branch forks off of
-     *   bc18.2. Redefine the main branch to only go up to this fork block
-     *   bc18.3. For each block on the side branch, from the child of the fork block to the leaf, add to the main branch: (DON'T FORGET: run these steps for the to-be-added block also!)
-     *     CheckBlockContextFree (bc18.3.1. Do "branch" checks 3-11) (result can never be orphan, because it was in the chain already)
-     *     CheckTxsForReceiveBlock
-     *     bc18.3.4. (If we have not rejected):
-     *       AddToWalletIfMine
-     *   bc18.4. If we reject at any point, leave the main branch as what it was originally, done with block
-     *   bc18.5. For each block in the old main branch, from the leaf down to the child of the fork block:
-     *     ReclaimTxsToMempool
-     *   bc18.6. For each block in the new main branch, from the child of the fork node to the leaf:
-     *      CleanupMempool
-     */
+  private readonly addBlockPromote = (
+    receivedBlock: BlockchainBlock,
+    parentNode: TreeNode<BlockchainBlock>
+  ): 'invalid' | 'valid' => {
+    // bc18.1. Find the fork block on the main branch which this side branch forks off of
+    const {
+      forkPoint: sideBranchForkPoint,
+      branch: sideBranch,
+    } = this.blockDatabase.getBranchAndForkPointFromMainBranch(parentNode);
+
+    const promotingBlocks = [receivedBlock, ...sideBranch.map((n) => n.data)];
+
+    // bc18.2. Redefine the main branch to only go up to this fork block
+    // > no-op: this step doesn't make sense for our data structure
+
+    // bc18.3. For each block on the side branch, from the child of the fork block to the leaf, add to the main branch: (DON'T FORGET: run these steps for the to-be-added block also!)
+    for (const it of promotingBlocks) {
+      // CheckBlockContextFree (bc18.3.1. Do "branch" checks 3-11) (result can never be orphan, because it was in the chain already)
+      if (this.checkBlockContextFree(it) !== 'valid') {
+        return 'invalid';
+      }
+
+      // CheckTxsForReceiveBlock
+      if (this.checkTxsForReceiveBlock(it) !== 'valid') {
+        return 'invalid';
+      }
+    }
+
+    // bc18.3.4. (If we have not rejected): (note: this part is in the above loop in the original algo. it makes more sense this way because we don't have to revert if we reject.)
+    //   AddToWalletIfMine (for each block in promoted branch and the received block)
+    promotingBlocks.forEach((b) => this.addToWalletIfMine(...b.transactions));
+
+    // bc18.4. If we reject at any point, leave the main branch as what it was originally, done with block
+    // > no-op: actually adding the block to the tree is done later on, so we don't have to revert
+
+    // bc18.5. For each block in the old main branch, from the leaf down to the child of the fork block:
+    //   ReclaimTxsToMempool
+    const {
+      visitedNodes: demotingBlocks,
+    } = this.blockDatabase.getMainBranchUntil(sideBranchForkPoint.id);
+
+    for (const it of demotingBlocks) {
+      this.reclaimTxsToMempool(...it.data.transactions);
+    }
+
+    // bc18.6. For each block in the new main branch, from the child of the fork node to the leaf: (DON'T FORGET: run these steps for the to-be-added block also!)
+    //   CleanupMempool
+    promotingBlocks.forEach((b) => this.cleanupMempool(...b.transactions));
+
+    return 'valid';
   };
 
   private readonly reclaimTxsToMempool = (
