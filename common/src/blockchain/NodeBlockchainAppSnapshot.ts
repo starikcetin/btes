@@ -1,11 +1,16 @@
 import { BlockchainWalletSnapshot } from './BlockchainWalletSnapshot';
-import { BlockchainTransactionDatabaseSnapshot } from './BlockchainTransactionDatabaseSnapshot';
-import { BlockchainBlockDatabaseSnapshot } from './BlockchainBlockDatabaseSnapshot';
+import { BlockchainTxDbSnapshot } from './BlockchainTxDbSnapshot';
+import { BlockchainBlockDbSnapshot } from './BlockchainBlockDbSnapshot';
 import { BlockchainConfig } from './BlockchainConfig';
 
 export interface NodeBlockchainAppSnapshot {
   readonly wallet: BlockchainWalletSnapshot;
-  readonly transactionDatabase: BlockchainTransactionDatabaseSnapshot;
-  readonly blockDatabase: BlockchainBlockDatabaseSnapshot;
+
+  /** Transaction database */
+  readonly txDb: BlockchainTxDbSnapshot;
+
+  /** Block database */
+  readonly blockDb: BlockchainBlockDbSnapshot;
+
   readonly config: BlockchainConfig;
 }

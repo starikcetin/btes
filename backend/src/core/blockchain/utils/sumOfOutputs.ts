@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 
-export const sumOfOutputs = (tx: BlockchainTransaction): number => {
+export const sumOfOutputs = (tx: BlockchainTx): number => {
   return _.sumBy(tx.outputs, (o) => o.value);
 };

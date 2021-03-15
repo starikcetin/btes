@@ -1,5 +1,5 @@
 /** Checks if `leadingZeroCount >= targetLeadingZeroCount`. */
-export const checkDifficultyCorrect = (
+export const checkDifficultyTarget = (
   leadingZeroCount: number,
   targetLeadingZeroCount: number
 ): boolean => {

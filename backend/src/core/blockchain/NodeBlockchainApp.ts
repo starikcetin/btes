@@ -2,11 +2,11 @@
 
 import { NodeBlockchainAppSnapshot } from '../../common/blockchain/NodeBlockchainAppSnapshot';
 import { BlockchainWallet } from './modules/BlockchainWallet';
-import { BlockchainTransactionDatabase } from './modules/BlockchainTransactionDatabase';
-import { BlockchainBlockDatabase } from './modules/BlockchainBlockDatabase';
+import { BlockchainTxDb } from './modules/BlockchainTxDb';
+import { BlockchainBlockDb } from './modules/BlockchainBlockDb';
 import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
-import { BlockchainTransaction } from '../../common/blockchain/BlockchainTransaction';
+import { BlockchainTx } from '../../common/blockchain/BlockchainTx';
 import { hash } from '../../utils/hash';
 import { BlockchainBlockChecker } from './validation/BlockchainBlockChecker';
 import { BlockchainTxChecker } from './validation/BlockchainTxChecker';
@@ -14,34 +14,35 @@ import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
-  private readonly wallet: BlockchainWallet;
-  private readonly transactionDatabase: BlockchainTransactionDatabase;
-  private readonly blockDatabase: BlockchainBlockDatabase;
+  // Data
   private readonly config: BlockchainConfig;
+
+  // Stateful Modules
+  private readonly wallet: BlockchainWallet;
+  private readonly txDb: BlockchainTxDb;
+  private readonly blockDb: BlockchainBlockDb;
+
+  // Stateless modules
   private readonly blockChecker: BlockchainBlockChecker;
   private readonly txChecker: BlockchainTxChecker;
 
   constructor(
     wallet: BlockchainWallet,
-    transactionDatabase: BlockchainTransactionDatabase,
-    blockDatabase: BlockchainBlockDatabase,
+    txDb: BlockchainTxDb,
+    blockDb: BlockchainBlockDb,
     config: BlockchainConfig
   ) {
     this.wallet = wallet;
-    this.transactionDatabase = transactionDatabase;
-    this.blockDatabase = blockDatabase;
+    this.txDb = txDb;
+    this.blockDb = blockDb;
     this.config = config;
 
-    const commonChecker = new BlockchainCommonChecker(
-      config,
-      blockDatabase,
-      transactionDatabase
-    );
+    const commonChecker = new BlockchainCommonChecker(config, blockDb, txDb);
     this.txChecker = new BlockchainTxChecker(commonChecker);
     this.blockChecker = new BlockchainBlockChecker(
       config,
-      blockDatabase,
-      transactionDatabase,
+      blockDb,
+      txDb,
       wallet,
       commonChecker
     );
@@ -50,20 +51,20 @@ export class NodeBlockchainApp {
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
     return {
       wallet: this.wallet.takeSnapshot(),
-      transactionDatabase: this.transactionDatabase.takeSnapshot(),
-      blockDatabase: this.blockDatabase.takeSnapshot(),
+      txDb: this.txDb.takeSnapshot(),
+      blockDb: this.blockDb.takeSnapshot(),
       config: this.config,
     };
   };
 
   public readonly receiveBlock = (block: BlockchainBlock): void => {
     // CheckBlockForReceiveBlock
-    const cbfrb = this.blockChecker.checkBlockForReceiveBlock(block);
+    const checkResult = this.blockChecker.checkBlockForReceiveBlock(block);
 
     // if orphan:
-    if (cbfrb.validity === 'orphan') {
+    if (checkResult.validity === 'orphan') {
       // bc11... add this to orphan blocks...
-      this.blockDatabase.addToOrphanage(block);
+      this.blockDb.addToOrphanage(block);
 
       // TODO: bc11... then query peer we got this from for 1st missing orphan block in prev chain...
 
@@ -72,11 +73,11 @@ export class NodeBlockchainApp {
     }
 
     // if valid:
-    if (cbfrb.validity === 'valid') {
+    if (checkResult.validity === 'valid') {
       // AddBlock
       const { isValid, canRelay } = this.blockChecker.addBlock(
         block,
-        cbfrb.parentNode
+        checkResult.parentNode
       );
 
       // if did not reject:
@@ -88,27 +89,25 @@ export class NodeBlockchainApp {
 
         // bc19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
         const blockHash = hash(block.header);
-        this.blockDatabase
-          .popOrphansWithParent(blockHash)
-          .forEach(this.receiveBlock);
+        this.blockDb.popOrphansWithParent(blockHash).forEach(this.receiveBlock);
       }
     }
   };
 
-  public readonly receiveTx = (tx: BlockchainTransaction): void => {
+  public readonly receiveTx = (tx: BlockchainTx): void => {
     // CheckTxForReceiveTx
     const checkResult = this.txChecker.checkTxForReceiveTx(tx);
 
     // if orphan:
     if (checkResult === 'orphan') {
       // tx10... Add to the orphan transactions, if a matching transaction is not in there already.
-      this.transactionDatabase.addToOrphanage(tx);
+      this.txDb.addToOrphanage(tx);
     }
 
     // if valid:
     if (checkResult === 'valid') {
       // tx17. Add to transaction pool[7]
-      this.transactionDatabase.addTxToMempool(tx);
+      this.txDb.addToMempool(tx);
 
       // tx18. "Add to wallet if mine"
       this.wallet.addToWalletIfMine(tx);
@@ -117,9 +116,7 @@ export class NodeBlockchainApp {
 
       // tx20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one) recursively on that orphan
       const txHash = hash(tx);
-      this.transactionDatabase
-        .popOrphansUsingTxAsInput(txHash)
-        .forEach(this.receiveTx);
+      this.txDb.popOrphansWithTxAsInput(txHash).forEach(this.receiveTx);
     }
   };
 }

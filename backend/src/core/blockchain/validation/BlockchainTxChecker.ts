@@ -1,4 +1,4 @@
-import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { BlockchainCommonChecker } from './BlockchainCommonChecker';
 
 export class BlockchainTxChecker {
@@ -9,22 +9,22 @@ export class BlockchainTxChecker {
   }
 
   public readonly checkTxForReceiveTx = (
-    tx: BlockchainTransaction
+    tx: BlockchainTx
   ): 'invalid' | 'orphan' | 'valid' => {
     // CheckTxContextFree (canSearchMainBranchForDupes = true)
-    const ctcf = this.commonChecker.checkTxContextFree(tx, {
+    const contextFreeCheck = this.commonChecker.checkTxContextFree(tx, {
       canSearchMainBranchForDupes: true,
     });
 
-    if (ctcf === 'invalid') {
+    if (contextFreeCheck === 'invalid') {
       return 'invalid';
     }
 
     // CheckTxForReceive (canSearchMempoolForOutput = true)
-    const ctfr = this.commonChecker.checkTxForReceive(tx, {
+    const forReceiveCheck = this.commonChecker.checkTxForReceive(tx, {
       canSearchMempoolForOutput: true,
     });
 
-    return ctfr.checkResult;
+    return forReceiveCheck.checkResult;
   };
 }

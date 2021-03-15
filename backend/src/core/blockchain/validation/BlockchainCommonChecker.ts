@@ -1,16 +1,16 @@
 import _ from 'lodash';
 
 import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
-import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { hash } from '../../../utils/hash';
-import { verifyScripts } from '../utils/verifyScripts';
+import { checkScriptsUnlock } from '../utils/checkScriptsUnlock';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
-import { BlockchainBlockDatabase } from '../modules/BlockchainBlockDatabase';
-import { BlockchainTransactionDatabase } from '../modules/BlockchainTransactionDatabase';
+import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';
+import { BlockchainTxDb } from '../modules/BlockchainTxDb';
 
 type TxLookupResult = {
-  tx: BlockchainTransaction;
+  tx: BlockchainTx;
   block: BlockchainBlock | null;
   node: TreeNode<BlockchainBlock> | null;
 } | null;
@@ -21,22 +21,22 @@ export type CheckTxForReceiveResult =
 
 export class BlockchainCommonChecker {
   private readonly config: BlockchainConfig;
-  private readonly blockDatabase: BlockchainBlockDatabase;
-  private readonly transactionDatabase: BlockchainTransactionDatabase;
+  private readonly blockDb: BlockchainBlockDb;
+  private readonly txDb: BlockchainTxDb;
 
   constructor(
     config: BlockchainConfig,
-    blockDatabase: BlockchainBlockDatabase,
-    transactionDatabase: BlockchainTransactionDatabase
+    blockDb: BlockchainBlockDb,
+    txDb: BlockchainTxDb
   ) {
     this.config = config;
-    this.blockDatabase = blockDatabase;
-    this.transactionDatabase = transactionDatabase;
+    this.blockDb = blockDb;
+    this.txDb = txDb;
   }
 
   /** `sumOfInputs` and `sumOfOutputs` will be `-1` if `checkResult` is not `valid` */
   public readonly checkTxForReceive = (
-    tx: BlockchainTransaction,
+    tx: BlockchainTx,
     options: {
       canSearchMempoolForOutput: boolean;
     }
@@ -49,9 +49,11 @@ export class BlockchainCommonChecker {
       const { previousOutput, unlockingScript } = input;
 
       // tx10. & bc16.1.1. For each input, look in the main branch (if canSearchMempoolForOutput: also look in the transaction pool) to find the referenced output transaction. If the output transaction is missing for any input, this will be an orphan transaction...
-      const refOutputLookup = this.checkTxForReceive_txLookup(
+      const refOutputLookup = this.findTxInMainBranchOrMempool(
         previousOutput.txHash,
-        canSearchMempoolForOutput
+        {
+          canSearchMempool: canSearchMempoolForOutput,
+        }
       );
 
       if (refOutputLookup === null) {
@@ -83,17 +85,18 @@ export class BlockchainCommonChecker {
 
       // tx12. & bc16.1.5. For each input, if the referenced output does not exist (e.g. never existed or has already been spent), reject this transaction[6]
       // > existence is checked by tx10 and bc16.1.2 rules. we only need to check if it was spent before.
-      if (this.blockDatabase.isOutPointInMainBranch(previousOutput)) {
+      if (this.blockDb.isOutPointInMainBranch(previousOutput)) {
         return { checkResult: 'invalid' };
       }
 
       // tx16. & bc16.1.4. Verify the scriptPubKey accepts for each input; reject if any are bad
-      if (!verifyScripts(refOutput.lockingScript, unlockingScript)) {
+      if (!checkScriptsUnlock(refOutput.lockingScript, unlockingScript)) {
         return { checkResult: 'invalid' };
       }
     }
 
     const sumOfOutputs = _.sumBy(tx.outputs, (o) => o.value);
+
     // tx14. & bc16.1.7. Reject if the sum of input values < sum of output values
     if (sumOfInputs < sumOfOutputs) {
       return { checkResult: 'invalid' };
@@ -103,7 +106,7 @@ export class BlockchainCommonChecker {
   };
 
   public readonly checkTxContextFree = (
-    tx: BlockchainTransaction,
+    tx: BlockchainTx,
     options: {
       canSearchMainBranchForDupes: boolean;
     }
@@ -124,16 +127,13 @@ export class BlockchainCommonChecker {
     }
 
     // tx8. Reject if we already have matching tx in the pool...
-    if (this.transactionDatabase.isTxInMempool(txHash)) {
+    if (this.txDb.isTxInMempool(txHash)) {
       return 'invalid';
     }
 
     // if canSearchMainBranchForDupes:
     //   tx8... or in a block in the main branch
-    if (
-      canSearchMainBranchForDupes &&
-      this.blockDatabase.isTxInMainBranch(txHash)
-    ) {
+    if (canSearchMainBranchForDupes && this.blockDb.isTxInMainBranch(txHash)) {
       return 'invalid';
     }
 
@@ -141,7 +141,7 @@ export class BlockchainCommonChecker {
     // > Clarification: https://bitcoin.stackexchange.com/questions/103342
     // > The output referenced by the input must not be referenced by another input of a transaction already in the pool.
     for (const input of tx.inputs) {
-      if (this.transactionDatabase.isOutPointInMempool(input.previousOutput)) {
+      if (this.txDb.isOutPointInMempool(input.previousOutput)) {
         return 'invalid';
       }
     }
@@ -149,20 +149,20 @@ export class BlockchainCommonChecker {
     return 'valid';
   };
 
-  private readonly checkTxForReceive_txLookup = (
+  private readonly findTxInMainBranchOrMempool = (
     txHash: string,
-    canSearchMempool: boolean
+    options: {
+      canSearchMempool: boolean;
+    }
   ): TxLookupResult => {
-    const lookupFromMainBranch = this.blockDatabase.findTxInMainBranch(txHash);
+    const lookupFromMainBranch = this.blockDb.findTxInMainBranch(txHash);
 
     if (lookupFromMainBranch !== null) {
       return lookupFromMainBranch;
     }
 
-    if (canSearchMempool) {
-      const lookupFromMempool = this.transactionDatabase.findTxInMempool(
-        txHash
-      );
+    if (options.canSearchMempool) {
+      const lookupFromMempool = this.txDb.findTxInMempool(txHash);
 
       if (lookupFromMempool !== null) {
         return {

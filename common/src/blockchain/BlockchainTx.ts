@@ -1,10 +1,10 @@
-import { BlockchainTransactionInput } from './BlockchainTransactionInput';
-import { BlockchainTransactionOutput } from './BlockchainTransactionOutput';
+import { BlockchainTxInput } from './BlockchainTxInput';
+import { BlockchainTxOutput } from './BlockchainTxOutput';
 
 /**
  * https://en.bitcoin.it/wiki/Protocol_documentation#tx
  */
-export interface BlockchainTransaction {
+export interface BlockchainTx {
   /*
    * Omitted fields:
    * - version (number): Transaction data format version
@@ -20,12 +20,12 @@ export interface BlockchainTransaction {
   /**
    * `tx_in`
    */
-  readonly inputs: BlockchainTransactionInput[];
+  readonly inputs: BlockchainTxInput[];
 
   /**
    * `tx_out`
    */
-  readonly outputs: BlockchainTransactionOutput[];
+  readonly outputs: BlockchainTxOutput[];
 
   /**
    * Indicates if this transaction is coinbase.

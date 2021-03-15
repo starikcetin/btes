@@ -1,4 +1,4 @@
-import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { BlockchainWalletSnapshot } from '../../../common/blockchain/BlockchainWalletSnapshot';
 import { BlockchainKeyPair } from '../BlockchainKeyPair';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
@@ -8,7 +8,7 @@ import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
  * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch05.asciidoc#nondeterministic-random-wallets
  */
 export class BlockchainWallet {
-  public readonly config: BlockchainConfig;
+  private readonly config: BlockchainConfig;
 
   private readonly keyPairs: BlockchainKeyPair[] = [];
 
@@ -27,9 +27,7 @@ export class BlockchainWallet {
     return {};
   };
 
-  public readonly addToWalletIfMine = (
-    ...txs: BlockchainTransaction[]
-  ): void => {
+  public readonly addToWalletIfMine = (...txs: BlockchainTx[]): void => {
     /*
      * AddToWalletIfMine:
      *   bc16.4. & bc18.3.5. For each transaction, "Add to wallet if mine"

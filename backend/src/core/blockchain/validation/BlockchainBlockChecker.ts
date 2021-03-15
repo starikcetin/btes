@@ -1,12 +1,12 @@
 import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
-import { BlockchainTransaction } from '../../../common/blockchain/BlockchainTransaction';
+import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { hasValue } from '../../../common/utils/hasValue';
 import { hash } from '../../../utils/hash';
-import { BlockchainBlockDatabase } from '../modules/BlockchainBlockDatabase';
-import { BlockchainTransactionDatabase } from '../modules/BlockchainTransactionDatabase';
-import { checkDifficultyCorrect } from '../utils/checkDifficultyCorrect';
+import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';
+import { BlockchainTxDb } from '../modules/BlockchainTxDb';
+import { checkDifficultyTarget } from '../utils/checkDifficultyTarget';
 import { checkProofOfWork } from '../utils/checkProofOfWork';
 import { sumOfOutputs } from '../utils/sumOfOutputs';
 import { BlockchainCommonChecker } from './BlockchainCommonChecker';
@@ -22,21 +22,21 @@ export type AddBlockResult =
 
 export class BlockchainBlockChecker {
   private readonly config: BlockchainConfig;
-  private readonly blockDatabase: BlockchainBlockDatabase;
-  private readonly transactionDatabase: BlockchainTransactionDatabase;
+  private readonly blockDb: BlockchainBlockDb;
+  private readonly txDb: BlockchainTxDb;
   private readonly wallet: BlockchainWallet;
   private readonly commonChecker: BlockchainCommonChecker;
 
   constructor(
     config: BlockchainConfig,
-    blockDatabase: BlockchainBlockDatabase,
-    transactionDatabase: BlockchainTransactionDatabase,
+    blockDb: BlockchainBlockDb,
+    txDb: BlockchainTxDb,
     wallet: BlockchainWallet,
     commonChecker: BlockchainCommonChecker
   ) {
     this.config = config;
-    this.blockDatabase = blockDatabase;
-    this.transactionDatabase = transactionDatabase;
+    this.blockDb = blockDb;
+    this.txDb = txDb;
     this.wallet = wallet;
     this.commonChecker = commonChecker;
   }
@@ -48,13 +48,13 @@ export class BlockchainBlockChecker {
     const blockHash = hash(header);
 
     // bc2. Reject if duplicate of block we have in any of the three categories (main, side, orphan)
-    if (this.blockDatabase.getBlockAnywhere(blockHash).result !== null) {
+    if (this.blockDb.getBlockAnywhere(blockHash).result !== null) {
       return { validity: 'invalid' };
     }
 
     // bc12. Check that nBits value matches the difficulty rules
     if (
-      !checkDifficultyCorrect(
+      !checkDifficultyTarget(
         header.leadingZeroCount,
         this.config.targetLeadingZeroCount
       )
@@ -68,10 +68,58 @@ export class BlockchainBlockChecker {
     return this.checkBlockContextFree(block);
   };
 
+  public readonly addBlock = (
+    receivedBlock: BlockchainBlock,
+    parentNode: TreeNode<BlockchainBlock>
+  ): AddBlockResult => {
+    // GetBlockAddType
+    const addType = this.getBlockAddType(parentNode);
+
+    // if side-extend:
+    if (addType === 'side-extend') {
+      //  (no-relay) bc17... we don't do anything.
+      //  Add block to tree
+      this.blockDb.addToBlockchain(receivedBlock, parentNode);
+      return { isValid: true, canRelay: false };
+    }
+
+    // if main-extend:
+    if (addType === 'main-extend') {
+      // (relay if valid) AddBlockMainExtend
+      const result = this.addBlockMainExtend(receivedBlock);
+
+      // if did not reject:
+      if (result === 'valid') {
+        // Add block to tree
+        this.blockDb.addToBlockchain(receivedBlock, parentNode);
+        return { isValid: true, canRelay: true };
+      }
+
+      return { isValid: false, canRelay: false };
+    }
+
+    // if promote:
+    if (addType === 'promote') {
+      // (relay if valid) AddBlockPromote
+      const result = this.addBlockPromote(receivedBlock, parentNode);
+
+      // if did not reject:
+      if (result === 'valid') {
+        // Add block to tree
+        this.blockDb.addToBlockchain(receivedBlock, parentNode);
+        return { isValid: true, canRelay: true };
+      }
+
+      return { isValid: false, canRelay: false };
+    }
+
+    throw new Error(`Fell out of block add type checks! addType is ${addType}`);
+  };
+
   private readonly checkBlockContextFree = (
     block: BlockchainBlock
   ): CheckBlockResult => {
-    const { transactions: txs, header } = block;
+    const { txs: txs, header } = block;
     const blockHash = hash(header);
 
     // bc3. Transaction list must be non-empty
@@ -101,9 +149,7 @@ export class BlockchainBlockChecker {
     }
 
     // bc11. Check if prev block (matching prev hash) is in main branch or side branches If not, ...
-    const parentNode = this.blockDatabase.getBlockInBlockchain(
-      header.previousHash
-    );
+    const parentNode = this.blockDb.getBlockInBlockchain(header.previousHash);
 
     if (parentNode === null) {
       return { validity: 'orphan' };
@@ -112,61 +158,13 @@ export class BlockchainBlockChecker {
     return { validity: 'valid', parentNode: parentNode };
   };
 
-  public readonly addBlock = (
-    receivedBlock: BlockchainBlock,
-    parentNode: TreeNode<BlockchainBlock>
-  ): AddBlockResult => {
-    // GetBlockAddType
-    const addType = this.getBlockAddType(parentNode);
-
-    // if side-extend:
-    if (addType === 'side-extend') {
-      //  (no-relay) bc17... we don't do anything.
-      //  Add block to tree
-      this.blockDatabase.addToBlockchain(receivedBlock, parentNode);
-      return { isValid: true, canRelay: false };
-    }
-
-    // if main-extend:
-    if (addType === 'main-extend') {
-      // (relay if valid) AddBlockMainExtend
-      const result = this.addBlockMainExtend(receivedBlock);
-
-      // if did not reject:
-      if (result === 'valid') {
-        // Add block to tree
-        this.blockDatabase.addToBlockchain(receivedBlock, parentNode);
-        return { isValid: true, canRelay: true };
-      }
-
-      return { isValid: false, canRelay: false };
-    }
-
-    // if promote:
-    if (addType === 'promote') {
-      // (relay if valid) AddBlockPromote
-      const result = this.addBlockPromote(receivedBlock, parentNode);
-
-      // if did not reject:
-      if (result === 'valid') {
-        // Add block to tree
-        this.blockDatabase.addToBlockchain(receivedBlock, parentNode);
-        return { isValid: true, canRelay: true };
-      }
-
-      return { isValid: false, canRelay: false };
-    }
-
-    throw new Error(`Fell out of block add type checks! addType is ${addType}`);
-  };
-
   private readonly getBlockAddType = (
     parentNode: TreeNode<BlockchainBlock>
   ): 'main-extend' | 'side-extend' | 'promote' => {
     // bc15. Add block into the tree. There are three cases: (we do not actually add here, poor writing)
     // > no-op: we add to the tree later on.
 
-    const mainBranchHead = this.blockDatabase.getMainBranchHead();
+    const mainBranchHead = this.blockDb.getMainBranchHead();
     if (!hasValue(mainBranchHead)) {
       throw new Error(`Main branch head is ${mainBranchHead}!`);
     }
@@ -199,8 +197,8 @@ export class BlockchainBlockChecker {
     // bc16.3. (If we have not rejected):
     //   AddToWalletIfMine
     //   CleanupMempool
-    this.wallet.addToWalletIfMine(...receivedBlock.transactions);
-    this.cleanupMempool(...receivedBlock.transactions);
+    this.wallet.addToWalletIfMine(...receivedBlock.txs);
+    this.cleanupMempool(...receivedBlock.txs);
 
     // bc16.7. If we rejected, the block is not counted as part of the main branch
     // > no-op: actually adding to the tree is done later on
@@ -216,7 +214,7 @@ export class BlockchainBlockChecker {
     const {
       forkPoint: sideBranchForkPoint,
       branch: sideBranch,
-    } = this.blockDatabase.getBranchAndForkPointFromMainBranch(parentNode);
+    } = this.blockDb.getBranchAndForkPointFromMainBranch(parentNode);
 
     const promotingBlocks = [receivedBlock, ...sideBranch.map((n) => n.data)];
 
@@ -238,33 +236,29 @@ export class BlockchainBlockChecker {
 
     // bc18.3.4. (If we have not rejected): (note: this part is in the above loop in the original algo. it makes more sense this way because we don't have to revert if we reject.)
     //   AddToWalletIfMine (for each block in promoted branch and the received block)
-    promotingBlocks.forEach((b) =>
-      this.wallet.addToWalletIfMine(...b.transactions)
-    );
+    promotingBlocks.forEach((b) => this.wallet.addToWalletIfMine(...b.txs));
 
     // bc18.4. If we reject at any point, leave the main branch as what it was originally, done with block
     // > no-op: actually adding the block to the tree is done later on, so we don't have to revert
 
     // bc18.5. For each block in the old main branch, from the leaf down to the child of the fork block:
     //   ReclaimTxsToMempool
-    const {
-      visitedNodes: demotingBlocks,
-    } = this.blockDatabase.getMainBranchUntil(sideBranchForkPoint.id);
+    const { visitedNodes: demotingBlocks } = this.blockDb.getMainBranchUntil(
+      sideBranchForkPoint.id
+    );
 
     for (const it of demotingBlocks) {
-      this.reclaimTxsToMempool(...it.data.transactions);
+      this.reclaimTxsToMempool(...it.data.txs);
     }
 
     // bc18.6. For each block in the new main branch, from the child of the fork node to the leaf: (DON'T FORGET: run these steps for the to-be-added block also!)
     //   CleanupMempool
-    promotingBlocks.forEach((b) => this.cleanupMempool(...b.transactions));
+    promotingBlocks.forEach((b) => this.cleanupMempool(...b.txs));
 
     return 'valid';
   };
 
-  private readonly reclaimTxsToMempool = (
-    ...txs: BlockchainTransaction[]
-  ): void => {
+  private readonly reclaimTxsToMempool = (...txs: BlockchainTx[]): void => {
     // bc18.5.1. For each non-coinbase transaction in the block:
     for (const tx of txs) {
       if (tx.isCoinbase) {
@@ -278,14 +272,14 @@ export class BlockchainBlockChecker {
 
       // bc18.5.1.2. Add to transaction pool if accepted, else go on to next transaction
       if (checkResult === 'valid') {
-        this.transactionDatabase.addTxToMempool(tx);
+        this.txDb.addToMempool(tx);
       }
     }
   };
 
-  private readonly cleanupMempool = (...txs: BlockchainTransaction[]): void => {
+  private readonly cleanupMempool = (...txs: BlockchainTx[]): void => {
     // bc16.5. & bc18.6.1. For each transaction in the block, delete any matching transaction from the transaction pool
-    txs.map(hash).forEach(this.transactionDatabase.removeFromMempool);
+    txs.map(hash).forEach(this.txDb.removeFromMempool);
   };
 
   private readonly checkTxsForReceiveBlock = (
@@ -294,7 +288,7 @@ export class BlockchainBlockChecker {
     let sumOfTxFees = 0;
 
     // bc16.1. For all but the coinbase transaction, apply the following:
-    for (const tx of block.transactions) {
+    for (const tx of block.txs) {
       if (tx.isCoinbase) {
         continue;
       }
@@ -314,7 +308,7 @@ export class BlockchainBlockChecker {
 
     // bc16.2. Reject if coinbase value > sum of block creation fee and transaction fees
     if (
-      sumOfOutputs(block.transactions[0]) >
+      sumOfOutputs(block.txs[0]) >
       this.config.blockCreationFee + sumOfTxFees
     ) {
       return 'invalid';

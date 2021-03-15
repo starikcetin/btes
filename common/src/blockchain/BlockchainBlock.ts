@@ -1,10 +1,12 @@
 import { BlockchainBlockHeader } from './BlockchainBlockHeader';
-import { BlockchainTransaction } from './BlockchainTransaction';
+import { BlockchainTx } from './BlockchainTx';
 
 /**
  * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch09.asciidoc#structure-of-a-block
  */
 export interface BlockchainBlock {
   readonly header: BlockchainBlockHeader;
-  readonly transactions: BlockchainTransaction[];
+
+  /** Transactions */
+  readonly txs: BlockchainTx[];
 }

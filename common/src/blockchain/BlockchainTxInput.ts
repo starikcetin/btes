@@ -1,11 +1,11 @@
-import { BlockchainTransactionOutPoint } from './BlockchainTransactionOutPoint';
+import { BlockchainTxOutPoint } from './BlockchainTxOutPoint';
 import { BlockchainUnlockingScript } from './BlockchainUnlockingScript';
 
 /**
  * https://en.bitcoin.it/wiki/Protocol_documentation#tx
  * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch06.asciidoc#transaction-inputs
  */
-export interface BlockchainTransactionInput {
+export interface BlockchainTxInput {
   /*
    * Omitted fields:
    * - sequence (number): Transaction version as defined by the sender. Intended for "replacement" of transactions when information is updated before inclusion into a block.
@@ -17,7 +17,7 @@ export interface BlockchainTransactionInput {
   /**
    * The previous output transaction reference, as an OutPoint structure.
    */
-  readonly previousOutput: BlockchainTransactionOutPoint;
+  readonly previousOutput: BlockchainTxOutPoint;
 
   /**
    * `scriptSig` = `signature script`

@@ -9,8 +9,8 @@ import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
 import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 import { BlockchainWallet } from './blockchain/modules/BlockchainWallet';
-import { BlockchainTransactionDatabase } from './blockchain/modules/BlockchainTransactionDatabase';
-import { BlockchainBlockDatabase } from './blockchain/modules/BlockchainBlockDatabase';
+import { BlockchainTxDb } from './blockchain/modules/BlockchainTxDb';
+import { BlockchainBlockDb } from './blockchain/modules/BlockchainBlockDb';
 import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
 import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
@@ -50,20 +50,17 @@ export class Simulation {
     const nodeUid = nodeUidGenerator.next().toString();
 
     const blockchainWallet = new BlockchainWallet(blockchainConfig);
-    const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
-      [],
-      []
-    );
+    const blockchainTxDb = new BlockchainTxDb([], []);
 
-    const blockchainBlockDatabase = new BlockchainBlockDatabase(
+    const blockchainBlockDb = new BlockchainBlockDb(
       new Tree<BlockchainBlock>(),
       []
     );
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
-      blockchainTransactionDatabase,
-      blockchainBlockDatabase,
+      blockchainTxDb,
+      blockchainBlockDb,
       blockchainConfig
     );
 
@@ -95,20 +92,20 @@ export class Simulation {
       nodeSnapshot.blockchainApp.config
     );
 
-    const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
-      nodeSnapshot.blockchainApp.transactionDatabase.mempool,
-      nodeSnapshot.blockchainApp.transactionDatabase.orphanage
+    const blockchainTxDb = new BlockchainTxDb(
+      nodeSnapshot.blockchainApp.txDb.mempool,
+      nodeSnapshot.blockchainApp.txDb.orphanage
     );
 
-    const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDatabase.blocks),
-      nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
+    const blockchainBlockDb = new BlockchainBlockDb(
+      Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDb.blockchain),
+      nodeSnapshot.blockchainApp.blockDb.orphanage
     );
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
-      blockchainTransactionDatabase,
-      blockchainBlockDatabase,
+      blockchainTxDb,
+      blockchainBlockDb,
       nodeSnapshot.blockchainApp.config
     );
 
