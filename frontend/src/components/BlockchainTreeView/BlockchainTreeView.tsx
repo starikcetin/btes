@@ -6,15 +6,16 @@ import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
 import './BlockchainTreeView.scss';
 import { RootState } from '../../state/RootState';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
+import { TreeNodeJsonObject } from '../../common/tree/TreeNodeJsonObject';
 
 interface BlockchainTreeViewProps {
   simulationUid: string;
   nodeUid: string | null;
 }
 
-function format(rootBlock: BlockchainBlock): RawNodeDatum {
+function format(rootBlock: TreeNodeJsonObject<BlockchainBlock>): RawNodeDatum {
   return {
-    name: rootBlock.hash,
+    name: rootBlock.id,
     children: rootBlock.children?.map((child) => format(child)),
   };
 }
@@ -26,8 +27,8 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
 
   const rootBlock = useSelector((state: RootState) => {
     return nodeUid
-      ? state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp
-          .blockchainBlock
+      ? state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
+          .blockchain.root
       : null;
   });
 

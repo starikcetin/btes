@@ -1,5 +1,5 @@
 export interface TreeNodeJsonObject<TData> {
-  id: string;
-  data: TData;
-  children: TreeNodeJsonObject<TData>[];
+  readonly id: string;
+  readonly data: TData;
+  readonly children: TreeNodeJsonObject<TData>[];
 }

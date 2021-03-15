@@ -1,5 +1,5 @@
 import { TreeNodeJsonObject } from './TreeNodeJsonObject';
 
 export interface TreeJsonObject<TData> {
-  root: TreeNodeJsonObject<TData> | null;
+  readonly root: TreeNodeJsonObject<TData> | null;
 }
