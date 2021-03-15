@@ -8,23 +8,20 @@ import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
 import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
-import { BlockchainWallet } from './blockchain/BlockchainWallet';
-import { BlockchainTransactionDatabase } from './blockchain/BlockchainTransactionDatabase';
-import { BlockchainBlockDatabase } from './blockchain/BlockchainBlockDatabase';
+import { BlockchainWallet } from './blockchain/modules/BlockchainWallet';
+import { BlockchainTxDb } from './blockchain/modules/BlockchainTxDb';
+import { BlockchainBlockDb } from './blockchain/modules/BlockchainBlockDb';
 import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
+import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
 
 // TODO: this should not be here
-const blockchainKeypairBitLength = 5;
-
-// TODO: this should not be here
-const blockchainBlockCreationFee = 100;
-
-// TODO: this should not be here
-const blockchainCoinbaseMaturity = 5;
-
-// TODO: this should not be here
-const blockchainTargetLeadingZeroCount = 3;
+const blockchainConfig: BlockchainConfig = {
+  keypairBitLength: 5,
+  blockCreationFee: 100,
+  coinbaseMaturity: 5,
+  targetLeadingZeroCount: 3,
+};
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -52,24 +49,19 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
-    const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
-    const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
-      [],
-      []
-    );
+    const blockchainWallet = new BlockchainWallet(blockchainConfig);
+    const blockchainTxDb = new BlockchainTxDb([], []);
 
-    const blockchainBlockDatabase = new BlockchainBlockDatabase(
+    const blockchainBlockDb = new BlockchainBlockDb(
       new Tree<BlockchainBlock>(),
       []
     );
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
-      blockchainTransactionDatabase,
-      blockchainBlockDatabase,
-      blockchainBlockCreationFee,
-      blockchainCoinbaseMaturity,
-      blockchainTargetLeadingZeroCount
+      blockchainTxDb,
+      blockchainBlockDb,
+      blockchainConfig
     );
 
     const newNode = new SimulationNode(
@@ -96,25 +88,25 @@ export class Simulation {
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
     // TODO: initialize with snapshot
-    const blockchainWallet = new BlockchainWallet(blockchainKeypairBitLength);
-
-    const blockchainTransactionDatabase = new BlockchainTransactionDatabase(
-      nodeSnapshot.blockchainApp.transactionDatabase.mempool,
-      nodeSnapshot.blockchainApp.transactionDatabase.orphanage
+    const blockchainWallet = new BlockchainWallet(
+      nodeSnapshot.blockchainApp.config
     );
 
-    const blockchainBlockDatabase = new BlockchainBlockDatabase(
-      Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDatabase.blocks),
-      nodeSnapshot.blockchainApp.blockDatabase.orphanBlocks
+    const blockchainTxDb = new BlockchainTxDb(
+      nodeSnapshot.blockchainApp.txDb.mempool,
+      nodeSnapshot.blockchainApp.txDb.orphanage
+    );
+
+    const blockchainBlockDb = new BlockchainBlockDb(
+      Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDb.blockchain),
+      nodeSnapshot.blockchainApp.blockDb.orphanage
     );
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
-      blockchainTransactionDatabase,
-      blockchainBlockDatabase,
-      blockchainBlockCreationFee,
-      blockchainCoinbaseMaturity,
-      blockchainTargetLeadingZeroCount
+      blockchainTxDb,
+      blockchainBlockDb,
+      nodeSnapshot.blockchainApp.config
     );
 
     const newNode = new SimulationNode(

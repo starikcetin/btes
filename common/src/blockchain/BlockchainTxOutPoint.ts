@@ -1,7 +1,7 @@
 /**
  * https://en.bitcoin.it/wiki/Protocol_documentation#tx
  */
-export interface BlockchainTransactionOutPoint {
+export interface BlockchainTxOutPoint {
   /**
    * `hash`
    * The hash of the referenced transaction.
