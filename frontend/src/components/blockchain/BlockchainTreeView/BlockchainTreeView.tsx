@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
 
 import './BlockchainTreeView.scss';
-import { RootState } from '../../state/RootState';
-import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
-import { TreeNodeJsonObject } from '../../common/tree/TreeNodeJsonObject';
+import { RootState } from '../../../state/RootState';
+import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
+import { TreeNodeJsonObject } from '../../../common/tree/TreeNodeJsonObject';
 
 interface BlockchainTreeViewProps {
   simulationUid: string;
