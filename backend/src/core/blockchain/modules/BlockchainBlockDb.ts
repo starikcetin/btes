@@ -5,7 +5,7 @@ import { TreeNode } from '../../../common/tree/TreeNode';
 import { BlockchainBlockDbSnapshot } from '../../../common/blockchain/BlockchainBlockDbSnapshot';
 import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
-import { hash } from '../../../utils/hash';
+import { hash } from '../../../common/utils/hash';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 import { collectGenerator } from '../../../common/utils/collectGenerator';

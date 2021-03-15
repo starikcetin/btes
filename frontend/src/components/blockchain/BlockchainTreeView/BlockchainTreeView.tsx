@@ -4,17 +4,19 @@ import { useSelector } from 'react-redux';
 import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
 
 import './BlockchainTreeView.scss';
-import { RootState } from '../../state/RootState';
-import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
+import { RootState } from '../../../state/RootState';
+import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
+import { TreeNodeJsonObject } from '../../../common/tree/TreeNodeJsonObject';
+import { hasValue } from '../../../common/utils/hasValue';
 
 interface BlockchainTreeViewProps {
   simulationUid: string;
-  nodeUid: string | null;
+  nodeUid: string;
 }
 
-function format(rootBlock: BlockchainBlock): RawNodeDatum {
+function format(rootBlock: TreeNodeJsonObject<BlockchainBlock>): RawNodeDatum {
   return {
-    name: rootBlock.hash,
+    name: rootBlock.id,
     children: rootBlock.children?.map((child) => format(child)),
   };
 }
@@ -24,17 +26,16 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
 ) => {
   const { simulationUid, nodeUid } = props;
 
-  const rootBlock = useSelector((state: RootState) => {
-    return nodeUid
-      ? state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp
-          .blockchainBlock
-      : null;
-  });
+  const rootBlock = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
+        .blockchain.root
+  );
 
   return (
     <div className="d-flex justify-content-center align-items-center border comp-blockchain-tree-view">
-      {null === rootBlock ? (
-        <p>This node has no blockchain data yet.</p>
+      {!hasValue(rootBlock) ? (
+        <div>(No blocks found)</div>
       ) : (
         <Tree data={format(rootBlock)} />
       )}

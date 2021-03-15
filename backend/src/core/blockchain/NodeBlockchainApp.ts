@@ -7,7 +7,7 @@ import { BlockchainBlockDb } from './modules/BlockchainBlockDb';
 import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { BlockchainTx } from '../../common/blockchain/BlockchainTx';
-import { hash } from '../../utils/hash';
+import { hash } from '../../common/utils/hash';
 import { BlockchainBlockChecker } from './validation/BlockchainBlockChecker';
 import { BlockchainTxChecker } from './validation/BlockchainTxChecker';
 import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';

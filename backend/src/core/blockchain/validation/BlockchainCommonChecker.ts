@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
-import { hash } from '../../../utils/hash';
+import { hash } from '../../../common/utils/hash';
 import { checkScriptsUnlock } from '../utils/checkScriptsUnlock';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';

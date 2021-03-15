@@ -3,7 +3,7 @@ import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { hasValue } from '../../../common/utils/hasValue';
-import { hash } from '../../../utils/hash';
+import { hash } from '../../../common/utils/hash';
 import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';
 import { BlockchainTxDb } from '../modules/BlockchainTxDb';
 import { checkDifficultyTarget } from '../utils/checkDifficultyTarget';

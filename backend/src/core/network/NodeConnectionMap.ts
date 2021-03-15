@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { hasValue } from '../../common/utils/hasValue';
-import { fatalAssert } from '../../utils/fatalAssert';
+import { fatalAssert } from '../../common/utils/fatalAssert';
 import { SimulationNode } from '../SimulationNode';
 import { NodeConnection } from './NodeConnection';
 import { SimulationNamespaceEmitter } from '../SimulationNamespaceEmitter';

@@ -4,7 +4,7 @@ import { BlockchainTxDbSnapshot } from '../../../common/blockchain/BlockchainTxD
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
-import { hash } from '../../../utils/hash';
+import { hash } from '../../../common/utils/hash';
 import { removeFirst } from '../../../common/utils/removeFirst';
 
 // See BlockchainTxDbSnapshot for member jsdocs.

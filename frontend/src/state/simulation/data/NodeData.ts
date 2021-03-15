@@ -1,6 +1,6 @@
 import { SimulationNodeMail } from '../../../common/SimulationNodeMail';
 import { SimulationLog } from './SimulationLog';
-import { NodeBlockchainAppData } from './NodeBlockchainAppData';
+import { NodeBlockchainAppData } from './blockchain/NodeBlockchainAppData';
 
 export interface NodeData {
   // synced state

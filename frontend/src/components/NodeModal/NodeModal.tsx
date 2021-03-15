@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Col, Container, Modal, Row, Tab, Table, Tabs } from 'react-bootstrap';
+import { Modal, Tab, Table, Tabs } from 'react-bootstrap';
 
 import './NodeModal.scss';
 import { empty } from '../../common/utils/empty';
@@ -9,7 +9,7 @@ import { NodeData } from '../../state/simulation/data/NodeData';
 import LogTable from '../LogTable/LogTable';
 import NodeNetworkDashboard from '../NodeNetworkDashboard/NodeNetworkDashboard';
 import { NodeMailsDashboard } from '../NodeMailsDashboard/NodeMailsDashboard';
-import { BlockchainTreeView } from '../BlockchainTreeView/BlockchainTreeView';
+import { NodeBlockchainDashboard } from '../blockchain/NodeBlockchainDashboard/NodeBlockchainDashboard';
 
 interface NodeModalProps {
   closeHandler: () => void;
@@ -75,7 +75,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
           <Tab
             eventKey="network"
             title="Network"
-            className="comp-node-modal--tab-network"
+            className="comp-node-modal--tab-content"
           >
             <NodeNetworkDashboard
               simulationUid={simulationUid}
@@ -85,7 +85,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
           <Tab
             eventKey="mails"
             title="Mails"
-            className="comp-node-modal--tab-mails"
+            className="comp-node-modal--tab-content"
           >
             <NodeMailsDashboard
               simulationUid={simulationUid}
@@ -97,16 +97,10 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
             title="Blockchain"
             className="comp-node-modal--tab-content"
           >
-            <Container>
-              <Row>
-                <Col>
-                  <BlockchainTreeView
-                    simulationUid={simulationUid}
-                    nodeUid={nodeUid}
-                  />
-                </Col>
-              </Row>
-            </Container>
+            <NodeBlockchainDashboard
+              simulationUid={simulationUid}
+              nodeUid={nodeUid}
+            />
           </Tab>
           <Tab
             eventKey="log"
