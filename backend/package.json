@@ -23,14 +23,13 @@
     "test:coverage": "yarn test --coverage"
   },
   "dependencies": {
-    "@types/node-rsa": "^1.1.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-ping": "^1.4.0",
     "jsum": "^0.1.4",
     "lodash": "^4.17.21",
-    "node-rsa": "^1.1.1",
+    "secp256k1": "^4.0.2",
     "socket.io": "^3.1.2",
     "swagger-ui-express": "^4.1.6",
     "tsoa": "^3.5.2"
@@ -43,6 +42,7 @@
     "@types/jsum": "^0.1.0",
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.31",
+    "@types/secp256k1": "^4.0.1",
     "@types/swagger-ui-express": "^4.1.2",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
