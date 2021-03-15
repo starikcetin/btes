@@ -5,7 +5,7 @@ dotenv.config();
 
 import { app } from './app';
 import { socketManager } from './socketManager';
-import { fatalAssert } from './utils/fatalAssert';
+import { fatalAssert } from './common/utils/fatalAssert';
 
 // Get ports to use from environment parameters
 const restPort = process.env.REST_PORT || 3001;

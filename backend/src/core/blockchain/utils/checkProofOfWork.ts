@@ -1,4 +1,4 @@
-import { countLeadingZeroes } from '../../../utils/countLeading';
+import { countLeadingZeroes } from '../../../common/utils/countLeading';
 
 /** Checks if the given `hash` has at least given `leadingZeroCount`. */
 export const checkProofOfWork = (
