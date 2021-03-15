@@ -18,7 +18,7 @@ const Home: React.FC = () => {
             <b>Blockchain Technology For Everyone</b>
           </span>
         </div>
-        <div className="page-home--header-info d-flex justify-content-center col-lg-8 col-12 text-center">
+        <div className="page-home--header-info d-flex justify-content-end col-lg-8 col-12 text-center">
           <span>
             <i>
               BTES is an educational tool for learning Blockchain technology.
@@ -28,12 +28,16 @@ const Home: React.FC = () => {
             </i>
           </span>
         </div>
-        <div className="buttons col-12 d-flex align-content-center justify-content-center align-items-center">
+
+        <div className="buttons col-12 d-flex align-content-right justify-content-top-right align-items-center">
           <Link to="/lessons" className="btn btn-success m-2 col-lg-2 col-6">
             Start Learning
           </Link>
           <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-6">
             Explore
+          </Link>
+          <Link to="/signin" className="btn btn-danger  m-2 col-lg-2 col-6">
+            Sign in
           </Link>
         </div>
       </div>
