@@ -1,9 +1,14 @@
 import React from 'react';
-import { Col, Container, Nav, Row, Tab, Table, Tabs } from 'react-bootstrap';
+import { Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { hasValue } from '../../../common/utils/hasValue';
 import { BlockchainTreeView } from '../BlockchainTreeView/BlockchainTreeView';
 
 import './NodeBlockchainDashboard.scss';
+import { BlockchainOverviewPane } from '../BlockchainOverviewPane/BlockchainOverviewPane';
+import { BlockchainBlockDbPane } from '../BlockchainBlockDbPane/BlockchainBlockDbPane';
+import { BlockchainMinerPane } from '../BlockchainMinerPane/BlockchainMinerPane';
+import { BlockchainTxPoolPane } from '../BlockchainTxPoolPane/BlockchainTxPoolPane';
+import { BlockchainWalletPane } from '../BlockchainWalletPane/BlockchainWalletPane';
 
 const tabKey = {
   overview: 'overview',
@@ -56,16 +61,36 @@ export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
             </Col>
             <Col>
               <Tab.Content className="comp-node-blockchain-dashboard--tab-content-container">
-                <Tab.Pane eventKey={tabKey.overview}>Overview</Tab.Pane>
-                <Tab.Pane eventKey={tabKey.blockDb}>
-                  <BlockchainTreeView
+                <Tab.Pane eventKey={tabKey.overview}>
+                  <BlockchainOverviewPane
                     simulationUid={simulationUid}
                     nodeUid={nodeUid}
                   />
                 </Tab.Pane>
-                <Tab.Pane eventKey={tabKey.txPool}>Transaction Pool</Tab.Pane>
-                <Tab.Pane eventKey={tabKey.wallet}>Wallet</Tab.Pane>
-                <Tab.Pane eventKey={tabKey.miner}>Miner</Tab.Pane>
+                <Tab.Pane eventKey={tabKey.blockDb}>
+                  <BlockchainBlockDbPane
+                    simulationUid={simulationUid}
+                    nodeUid={nodeUid}
+                  />
+                </Tab.Pane>
+                <Tab.Pane eventKey={tabKey.txPool}>
+                  <BlockchainTxPoolPane
+                    simulationUid={simulationUid}
+                    nodeUid={nodeUid}
+                  />
+                </Tab.Pane>
+                <Tab.Pane eventKey={tabKey.wallet}>
+                  <BlockchainWalletPane
+                    simulationUid={simulationUid}
+                    nodeUid={nodeUid}
+                  />
+                </Tab.Pane>
+                <Tab.Pane eventKey={tabKey.miner}>
+                  <BlockchainMinerPane
+                    simulationUid={simulationUid}
+                    nodeUid={nodeUid}
+                  />
+                </Tab.Pane>
               </Tab.Content>
             </Col>
           </Row>
