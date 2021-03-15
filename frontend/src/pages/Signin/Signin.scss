@@ -12,7 +12,7 @@
   &--form-container {
     width: fit-content;
     height: fit-content;
-    padding: 60px;
+    padding: 100px;
     background-color: #33313f6c;
     border-radius: 2.5%;
   }
@@ -23,11 +23,16 @@
 
   &--btn-custom {
     color: #fff;
-    background-color: #3e3d56;
+    //background-color: #3e3d56;
+    background-color: #67a752;
   }
 
   &--btn-custom:hover {
     color: #fff;
     background-color: #33313f;
   }
+
+  .link-success { color: #4caf50; }
+
+  // &--link-success { color: #4caf50; }
 }

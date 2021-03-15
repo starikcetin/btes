@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
                 className="nav-link"
                 activeClassName="active"
               >
-                Sign in
+                Sign In
               </NavLink>
             </li>
           </ul>
