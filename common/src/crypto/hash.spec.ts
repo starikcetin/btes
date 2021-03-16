@@ -61,17 +61,25 @@ const veryDifferent = {
 };
 
 it('calculates same hash for same objects', () => {
-  expect(hash(original)).toBe(hash(original));
+  expect(hash(original)).toStrictEqual(hash(original));
 });
 
 it('calculates same hash for equivalent objects', () => {
-  expect(hash(original)).toBe(hash(equivalent));
+  expect(hash(original)).toStrictEqual(hash(equivalent));
 });
 
 it('calculates different hash for slightly different objects', () => {
-  expect(hash(original)).not.toBe(hash(slightlyDifferent));
+  const originalHash = hash(original);
+  const slightlyDifferentHash = hash(slightlyDifferent);
+
+  expect(originalHash.base64).not.toBe(slightlyDifferentHash.base64);
+  expect(originalHash.byteArray).not.toBe(slightlyDifferentHash.byteArray);
 });
 
 it('calculates different hash for very different objects', () => {
-  expect(hash(original)).not.toBe(hash(veryDifferent));
+  const originalHash = hash(original);
+  const veryDifferentHash = hash(veryDifferent);
+
+  expect(originalHash.base64).not.toBe(veryDifferentHash.base64);
+  expect(originalHash.byteArray).not.toBe(veryDifferentHash.byteArray);
 });

@@ -36,6 +36,7 @@
     "@reduxjs/toolkit": "^1.5.0",
     "axios": "^0.20.0",
     "bootstrap": "^4.6.0",
+    "byte-base64": "^1.1.0",
     "camelcase": "^6.2.0",
     "jquery": "^3.5.1",
     "jsum": "^0.1.4",
