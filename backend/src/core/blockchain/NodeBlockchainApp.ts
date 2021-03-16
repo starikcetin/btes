@@ -12,6 +12,9 @@ import { BlockchainTxChecker } from './validation/BlockchainTxChecker';
 import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../common/blockchain/utils/hashTx';
+import { hashBuffer } from '../../../../common/src/crypto/hashBuffer';
+import { encodeBuffer } from '../../../../common/src/blockchain/utils/encodeBuffer';
+import { makeGenesisBlock } from './utils/makeGenesisBlock';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -47,6 +50,8 @@ export class NodeBlockchainApp {
       wallet,
       commonChecker
     );
+
+    this.registerGenesisBlock();
   }
 
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
@@ -119,5 +124,12 @@ export class NodeBlockchainApp {
       const txHash = hashTx(tx);
       this.txDb.popOrphansWithTxAsInput(txHash).forEach(this.receiveTx);
     }
+  };
+
+  private readonly registerGenesisBlock = (): void => {
+    // TODO: generating the genesis block can be done at the very beginning of the simulation.
+    // that way we can simply reuse it instead of generating it every time.
+    const genesisBlock = makeGenesisBlock();
+    this.blockDb.addGenesis(genesisBlock);
   };
 }

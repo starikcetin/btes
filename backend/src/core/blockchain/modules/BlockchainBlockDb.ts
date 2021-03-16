@@ -160,6 +160,12 @@ export class BlockchainBlockDb {
   ): BlockchainBlock[] =>
     _.remove(this.orphanage, (b) => b.header.previousHash === parentHash);
 
+  /** Adds the genesis block. */
+  public readonly addGenesis = (genesisBlock: BlockchainBlock): void => {
+    const id = hashBlock(genesisBlock.header);
+    this.blockchain.createNode(id, genesisBlock, null);
+  };
+
   private *getMainBranchBlockIterator() {
     for (const node of this.blockchain.getMainBranchIterator()) {
       yield { block: node.data, node };
