@@ -40,21 +40,21 @@ export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
       >
         <Container>
           <Row>
-            <Col sm="auto">
-              <Nav variant="pills" className="flex-sm-column">
-                <Nav.Item className="text-sm-right">
+            <Col lg="auto">
+              <Nav variant="pills" className="flex-lg-column">
+                <Nav.Item className="text-lg-right">
                   <Nav.Link eventKey={tabKey.overview}>Overview</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-sm-right">
+                <Nav.Item className="text-lg-right">
                   <Nav.Link eventKey={tabKey.blockDb}>Block Database</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-sm-right">
+                <Nav.Item className="text-lg-right">
                   <Nav.Link eventKey={tabKey.txPool}>Transaction Pool</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-sm-right">
+                <Nav.Item className="text-lg-right">
                   <Nav.Link eventKey={tabKey.wallet}>Wallet</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-sm-right">
+                <Nav.Item className="text-lg-right">
                   <Nav.Link eventKey={tabKey.miner}>Miner</Nav.Link>
                 </Nav.Item>
               </Nav>

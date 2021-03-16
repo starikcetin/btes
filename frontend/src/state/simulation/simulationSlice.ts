@@ -18,6 +18,8 @@ import { SimulationPausedActionPayload } from './actionPayloads/SimulationPaused
 import { SimulationResumedActionPayload } from './actionPayloads/SimulationResumedActionPayload';
 import { SimulationTimeScaleChangedActionPayload } from './actionPayloads/SimulationTimeScaleChangedActionPayload';
 import { SimulationConnectionLatencyChangedActionPayload } from './actionPayloads/SimulationConnectionLatencyChangedActionPayload';
+import { BlockchainKeyPairSavedActionPayload } from './actionPayloads/BlockchainKeyPairSavedActionPayload';
+import { hasValue } from '../../common/utils/hasValue';
 
 const initialState: SimulationSliceState = {};
 
@@ -273,6 +275,29 @@ export const simulationSlice = createSlice({
 
       connMap[firstNodeUid][secondNodeUid].latencyInMs = latencyInMs;
       connMap[secondNodeUid][firstNodeUid].latencyInMs = latencyInMs;
+    },
+    keyPairSaved: (
+      state,
+      { payload }: PayloadAction<BlockchainKeyPairSavedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `keyPairSaved`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      if (hasValue(sim.nodeMap[payload.nodeUid].blockchainApp.wallet.keyPair)) {
+        console.warn(
+          'Received `keyPairSaved`, but a key pair already exists for this node!'
+        );
+      }
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.wallet.keyPair =
+        payload.keyPair;
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);

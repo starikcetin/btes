@@ -6,7 +6,7 @@ it('address hard-coded test', () => {
     'hex'
   );
 
-  const expectedEncodedStr = '1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs';
+  const expectedEncodedStr = '14RCpjq2QRHuQsthsy6jAAdrVc47J';
 
   expect(encodeBuffer(addrRaw, 'address')).toBe(expectedEncodedStr);
 });

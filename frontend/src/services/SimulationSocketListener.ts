@@ -14,6 +14,7 @@ import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/Sim
 import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
 import { SimulationTimeScaleChangedPayload } from '../common/socketPayloads/SimulationTimeScaleChangedPayload';
 import { SimulationConnectionLatencyChangedPayload } from '../common/socketPayloads/SimulationConnectionLatencyChangedPayload';
+import { BlockchainKeyPairSavedPayload } from '../../../common/src/socketPayloads/BlockchainKeyPairSavedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -60,6 +61,10 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.connectionLatencyChanged,
       this.handleConnectionLatencyChanged
+    );
+    socket.on(
+      socketEvents.simulation.blockchainKeyPairSaved,
+      this.handleBlockchainKeyPairSaved
     );
 
     socket.onAny(this.handleAny);
@@ -267,6 +272,23 @@ export class SimulationSocketListener {
         simulationUid: this.simulationUid,
         ...body,
       })
+    );
+  };
+
+  private readonly handleBlockchainKeyPairSaved = (
+    body: BlockchainKeyPairSavedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.keyPairSaved({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+
+    this.dispatchLogNodeEvent(
+      body.nodeUid,
+      socketEvents.simulation.blockchainKeyPairSaved,
+      body
     );
   };
 

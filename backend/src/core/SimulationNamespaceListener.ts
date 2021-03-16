@@ -17,6 +17,7 @@ import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/Sim
 import { SimulationNodeBroadcastMailCommand } from './commands/SimulationNodeBroadcastMailCommand';
 import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
 import { SimulationNodeUnicastMailCommand } from './commands/SimulationNodeUnicastMailCommand';
+import { BlockchainSaveKeyPairCommand } from './commands/BlockchainSaveKeyPairCommand';
 import { SimulationConnectNodesPayload } from '../common/socketPayloads/SimulationConnectNodesPayload';
 import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/SimulationDisconnectNodesPayload';
 import { SimulationConnectNodesCommand } from './commands/SimulationConnectNodesCommand';
@@ -27,6 +28,7 @@ import { ControlledTimerService } from './network/ControlledTimerService';
 import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
 import { SimulationConnectionChangeLatencyPayload } from '../common/socketPayloads/SimulationConnectionChangeLatencyPayload';
 import { SimulationConnectionChangeLatencyCommand } from './commands/SimulationConnectionChangeLatencyCommand';
+import { BlockchainSaveKeyPairPayload } from '../common/socketPayloads/BlockchainSaveKeyPairPayload';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -113,6 +115,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.connectionChangeLatency,
       this.handleConnectionChangeLatency
+    );
+    socket.on(
+      socketEvents.simulation.blockchainSaveKeyPair,
+      this.handleBlockchainSaveKeyPair
     );
   };
 
@@ -259,6 +265,13 @@ export class SimulationNamespaceListener {
     );
 
     this.commandHistoryManager.register(command);
+    command.execute();
+  };
+
+  private readonly handleBlockchainSaveKeyPair = (
+    body: BlockchainSaveKeyPairPayload
+  ) => {
+    const command = new BlockchainSaveKeyPairCommand(this.simulation, body);
     command.execute();
   };
 }

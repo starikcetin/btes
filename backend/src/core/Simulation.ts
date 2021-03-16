@@ -49,7 +49,13 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
-    const blockchainWallet = new BlockchainWallet(blockchainConfig);
+    const blockchainWallet = new BlockchainWallet(
+      this.socketEmitter,
+      nodeUid,
+      blockchainConfig,
+      null
+    );
+
     const blockchainTxDb = new BlockchainTxDb([], []);
 
     const blockchainBlockDb = new BlockchainBlockDb(
@@ -89,7 +95,10 @@ export class Simulation {
   ): SimulationNode => {
     // TODO: initialize with snapshot
     const blockchainWallet = new BlockchainWallet(
-      nodeSnapshot.blockchainApp.config
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.blockchainApp.config,
+      nodeSnapshot.blockchainApp.wallet.keyPair
     );
 
     const blockchainTxDb = new BlockchainTxDb(

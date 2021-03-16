@@ -19,7 +19,7 @@ export class NodeBlockchainApp {
   private readonly config: BlockchainConfig;
 
   // Stateful Modules
-  private readonly wallet: BlockchainWallet;
+  public readonly wallet: BlockchainWallet;
   private readonly txDb: BlockchainTxDb;
   private readonly blockDb: BlockchainBlockDb;
 
