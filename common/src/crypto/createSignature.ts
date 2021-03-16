@@ -1,6 +1,4 @@
 import secp256k1 from 'secp256k1';
-import { CryptoResult } from './CryptoResult';
-import { byteArrayToCryptoResult } from './byteArrayToCryptoResult';
 
 /**
  * * Signs the given `plainHash` with the given `privateKey`.
@@ -11,7 +9,6 @@ import { byteArrayToCryptoResult } from './byteArrayToCryptoResult';
 export function createSignature(
   plainHash: Uint8Array,
   privateKey: Uint8Array
-): CryptoResult {
-  const signature = secp256k1.ecdsaSign(plainHash, privateKey).signature;
-  return byteArrayToCryptoResult(signature);
+): Uint8Array {
+  return secp256k1.ecdsaSign(plainHash, privateKey).signature;
 }

@@ -11,14 +11,10 @@ const plainText = {
 
 it('accepts correct signature', () => {
   const privateKey = createPrivateKey();
-  const publicKey = createPublicKey(privateKey.byteArray);
+  const publicKey = createPublicKey(privateKey);
   const plainHash = hash(plainText);
-  const signature = createSignature(plainHash.byteArray, privateKey.byteArray);
-  const verification = verifySignature(
-    signature.byteArray,
-    plainHash.byteArray,
-    publicKey.byteArray
-  );
+  const signature = createSignature(plainHash, privateKey);
+  const verification = verifySignature(signature, plainHash, publicKey);
 
   expect(verification).toBeTrue();
 });

@@ -72,14 +72,13 @@ it('calculates different hash for slightly different objects', () => {
   const originalHash = hash(original);
   const slightlyDifferentHash = hash(slightlyDifferent);
 
-  expect(originalHash.base64).not.toBe(slightlyDifferentHash.base64);
-  expect(originalHash.byteArray).not.toBe(slightlyDifferentHash.byteArray);
+  expect(originalHash).not.toStrictEqual(slightlyDifferentHash);
 });
 
 it('calculates different hash for very different objects', () => {
   const originalHash = hash(original);
   const veryDifferentHash = hash(veryDifferent);
 
-  expect(originalHash.base64).not.toBe(veryDifferentHash.base64);
-  expect(originalHash.byteArray).not.toBe(veryDifferentHash.byteArray);
+  expect(originalHash).not.toEqual(veryDifferentHash);
+  expect(originalHash).not.toEqual(veryDifferentHash);
 });

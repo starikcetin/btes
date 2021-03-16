@@ -15,18 +15,17 @@ const plainB = {
 it('creates signature', () => {
   const privateKey = createPrivateKey();
   const plainHash = hash(plainA);
-  const signature = createSignature(plainHash.byteArray, privateKey.byteArray);
+  const signature = createSignature(plainHash, privateKey);
 
-  expect(signature.base64).toHaveLength(88);
-  expect(signature.byteArray).toHaveLength(64);
+  expect(signature).toHaveLength(64);
 });
 
 it('creates the same signature for the same inputs', () => {
   const privateKey = createPrivateKey();
   const plainHash = hash(plainA);
 
-  const signatureA = createSignature(plainHash.byteArray, privateKey.byteArray);
-  const signatureB = createSignature(plainHash.byteArray, privateKey.byteArray);
+  const signatureA = createSignature(plainHash, privateKey);
+  const signatureB = createSignature(plainHash, privateKey);
 
   expect(signatureA).toStrictEqual(signatureB);
 });
@@ -36,19 +35,12 @@ describe('creates different signatures', () => {
     const privateKey = createPrivateKey();
 
     const plainAHash = hash(plainA);
-    const signatureA = createSignature(
-      plainAHash.byteArray,
-      privateKey.byteArray
-    );
-
     const plainBHash = hash(plainB);
-    const signatureB = createSignature(
-      plainBHash.byteArray,
-      privateKey.byteArray
-    );
 
-    expect(signatureA.base64).not.toBe(signatureB.base64);
-    expect(signatureA.byteArray).not.toBe(signatureB.byteArray);
+    const signatureA = createSignature(plainAHash, privateKey);
+    const signatureB = createSignature(plainBHash, privateKey);
+
+    expect(signatureA).not.toEqual(signatureB);
   });
 
   it('for different private keys', () => {
@@ -57,17 +49,9 @@ describe('creates different signatures', () => {
 
     const plainHash = hash(plainA);
 
-    const signatureA = createSignature(
-      plainHash.byteArray,
-      privateKeyA.byteArray
-    );
+    const signatureA = createSignature(plainHash, privateKeyA);
+    const signatureB = createSignature(plainHash, privateKeyB);
 
-    const signatureB = createSignature(
-      plainHash.byteArray,
-      privateKeyB.byteArray
-    );
-
-    expect(signatureA.base64).not.toBe(signatureB.base64);
-    expect(signatureA.byteArray).not.toBe(signatureB.byteArray);
+    expect(signatureA).not.toEqual(signatureB);
   });
 });
