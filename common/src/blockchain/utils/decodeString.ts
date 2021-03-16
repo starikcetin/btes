@@ -3,16 +3,16 @@
 import bs58check from 'bs58check';
 
 /**
- * Encodes the given buffer to a string.
+ * Decodes the given encoded string to a buffer.
  * * Uses `hex` encoding for `tx` or `block`.
  * * Uses `base58check` encoding for `address`.
- * @returns the encoded string
+ * @returns the buffer
  */
-export const encode = (
-  buffer: Buffer,
+export const decodeString = (
+  encodedString: string,
   encodingFor: 'tx' | 'block' | 'address'
-): string => {
+): Buffer => {
   return encodingFor === 'address'
-    ? bs58check.encode(buffer)
-    : buffer.toString('hex');
+    ? bs58check.decode(encodedString)
+    : Buffer.from(encodedString, 'hex');
 };

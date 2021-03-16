@@ -3,11 +3,11 @@ import _ from 'lodash';
 import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
-import { hash } from '../../../common/utils/hash';
 import { checkScriptsUnlock } from '../utils/checkScriptsUnlock';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';
 import { BlockchainTxDb } from '../modules/BlockchainTxDb';
+import { hashTx } from '../../../common/blockchain/utils/hashTx';
 
 type TxLookupResult = {
   tx: BlockchainTx;
@@ -112,7 +112,7 @@ export class BlockchainCommonChecker {
     }
   ): 'invalid' | 'valid' => {
     const { canSearchMainBranchForDupes } = options;
-    const txHash = hash(tx);
+    const txHash = hashTx(tx);
 
     // tx2. Make sure neither in or out lists are empty
     if (tx.inputs.length === 0 || tx.outputs.length === 0) {

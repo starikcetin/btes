@@ -4,8 +4,8 @@ import { BlockchainTxDbSnapshot } from '../../../common/blockchain/BlockchainTxD
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
-import { hash } from '../../../common/utils/hash';
 import { removeFirst } from '../../../common/utils/removeFirst';
+import { hashTx } from '../../../common/blockchain/utils/hashTx';
 
 // See BlockchainTxDbSnapshot for member jsdocs.
 export class BlockchainTxDb {
@@ -42,12 +42,12 @@ export class BlockchainTxDb {
 
   /** Finds the tx in mempool that has the given hash. */
   public readonly findTxInMempool = (txHash: string): BlockchainTx | null => {
-    return this.mempool.find((tx) => hash(tx) === txHash) ?? null;
+    return this.mempool.find((tx) => hashTx(tx) === txHash) ?? null;
   };
 
   /** Removes the tx that has the given hash from the mempool and returns it. Null if not found. */
   public readonly removeFromMempool = (txHash: string): BlockchainTx | null => {
-    return removeFirst(this.mempool, (tx) => hash(tx) === txHash);
+    return removeFirst(this.mempool, (tx) => hashTx(tx) === txHash);
   };
 
   /** Adds the given tx to mempool unconditionally. Does nothing else. */

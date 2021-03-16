@@ -5,11 +5,12 @@ import { TreeNode } from '../../../common/tree/TreeNode';
 import { BlockchainBlockDbSnapshot } from '../../../common/blockchain/BlockchainBlockDbSnapshot';
 import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
-import { hash } from '../../../common/utils/hash';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 import { collectGenerator } from '../../../common/utils/collectGenerator';
 import { hasValue } from '../../../common/utils/hasValue';
+import { hashTx } from '../../../common/blockchain/utils/hashTx';
+import { hashBlock } from '../../../common/blockchain/utils/hashBlock';
 
 export type BlockSearchResult =
   | { foundIn: 'blockchain'; result: TreeNode<BlockchainBlock> }
@@ -46,7 +47,7 @@ export class BlockchainBlockDb {
     node: TreeNode<BlockchainBlock>;
   } | null => {
     for (const it of this.getMainBranchTxIterator()) {
-      if (hash(it.tx) === txHash) {
+      if (hashTx(it.tx) === txHash) {
         return it;
       }
     }
@@ -118,7 +119,7 @@ export class BlockchainBlockDb {
     block: BlockchainBlock,
     parentNode: TreeNode<BlockchainBlock>
   ): TreeNode<BlockchainBlock> => {
-    const id = hash(block.header);
+    const id = hashBlock(block.header);
     return this.blockchain.createNode(id, block, parentNode);
   };
 
@@ -131,7 +132,7 @@ export class BlockchainBlockDb {
   public readonly getBlockInOrphanage = (
     blockHash: string
   ): BlockchainBlock | null =>
-    this.orphanage.find((b) => hash(b.header) === blockHash) ?? null;
+    this.orphanage.find((b) => hashBlock(b.header) === blockHash) ?? null;
 
   /** Finds a block with the given hash. First looks in the blockchain, then in the orphanage. */
   public readonly getBlockAnywhere = (blockHash: string): BlockSearchResult => {

@@ -3,7 +3,6 @@ import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { hasValue } from '../../../common/utils/hasValue';
-import { hash } from '../../../common/utils/hash';
 import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';
 import { BlockchainTxDb } from '../modules/BlockchainTxDb';
 import { checkDifficultyTarget } from '../utils/checkDifficultyTarget';
@@ -11,6 +10,8 @@ import { checkProofOfWork } from '../utils/checkProofOfWork';
 import { sumOfOutputs } from '../utils/sumOfOutputs';
 import { BlockchainCommonChecker } from './BlockchainCommonChecker';
 import { BlockchainWallet } from '../modules/BlockchainWallet';
+import { hashBlock } from '../../../common/blockchain/utils/hashBlock';
+import { hashTx } from '../../../common/blockchain/utils/hashTx';
 
 export type CheckBlockResult =
   | { validity: 'invalid' | 'orphan' }
@@ -45,7 +46,7 @@ export class BlockchainBlockChecker {
     block: BlockchainBlock
   ): CheckBlockResult => {
     const { header } = block;
-    const blockHash = hash(header);
+    const blockHash = hashBlock(header);
 
     // bc2. Reject if duplicate of block we have in any of the three categories (main, side, orphan)
     if (this.blockDb.getBlockAnywhere(blockHash).result !== null) {
@@ -120,7 +121,7 @@ export class BlockchainBlockChecker {
     block: BlockchainBlock
   ): CheckBlockResult => {
     const { txs: txs, header } = block;
-    const blockHash = hash(header);
+    const blockHash = hashBlock(header);
 
     // bc3. Transaction list must be non-empty
     if (txs.length === 0) {
@@ -279,7 +280,7 @@ export class BlockchainBlockChecker {
 
   private readonly cleanupMempool = (...txs: BlockchainTx[]): void => {
     // bc16.5. & bc18.6.1. For each transaction in the block, delete any matching transaction from the transaction pool
-    txs.map(hash).forEach(this.txDb.removeFromMempool);
+    txs.map(hashTx).forEach(this.txDb.removeFromMempool);
   };
 
   private readonly checkTxsForReceiveBlock = (
