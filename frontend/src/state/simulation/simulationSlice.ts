@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 
+import { hasValue } from '../../common/utils/hasValue';
 import { SimulationPongActionPayload } from './actionPayloads/SimulationPongActionPayload';
 import { SimulationSetupActionPayload } from './actionPayloads/SimulationSetupActionPayload';
 import { SimulationSliceState } from './SimulationSliceState';
@@ -19,7 +20,7 @@ import { SimulationResumedActionPayload } from './actionPayloads/SimulationResum
 import { SimulationTimeScaleChangedActionPayload } from './actionPayloads/SimulationTimeScaleChangedActionPayload';
 import { SimulationConnectionLatencyChangedActionPayload } from './actionPayloads/SimulationConnectionLatencyChangedActionPayload';
 import { BlockchainKeyPairSavedActionPayload } from './actionPayloads/BlockchainKeyPairSavedActionPayload';
-import { hasValue } from '../../common/utils/hasValue';
+import { BlockchainMinerStateUpdatedActionPayload } from './actionPayloads/BlockchainMinerStateUpdatedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -298,6 +299,23 @@ export const simulationSlice = createSlice({
 
       sim.nodeMap[payload.nodeUid].blockchainApp.wallet.keyPair =
         payload.keyPair;
+    },
+    minerStateUpdated: (
+      state,
+      { payload }: PayloadAction<BlockchainMinerStateUpdatedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `minerStateUpdated`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.miner.currentState =
+        payload.newState;
     },
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {
       state[payload.simulationUid].logs.push(payload);

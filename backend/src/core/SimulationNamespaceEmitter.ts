@@ -12,6 +12,7 @@ import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/Sim
 import { SimulationTimeScaleChangedPayload } from '../common/socketPayloads/SimulationTimeScaleChangedPayload';
 import { SimulationConnectionLatencyChangedPayload } from '../common/socketPayloads/SimulationConnectionLatencyChangedPayload';
 import { BlockchainKeyPairSavedPayload } from '../common/socketPayloads/BlockchainKeyPairSavedPayload';
+import { BlockchainMinerStateUpdatedPayload } from '../common/socketPayloads/BlockchainMinerStateUpdatedPayload';
 
 export class SimulationNamespaceEmitter {
   private readonly ns: Namespace;
@@ -88,7 +89,13 @@ export class SimulationNamespaceEmitter {
 
   public readonly sendBlockchainKeyPairSaved = (
     body: BlockchainKeyPairSavedPayload
-  ) => {
+  ): void => {
     this.ns.emit(socketEvents.simulation.blockchainKeyPairSaved, body);
+  };
+
+  public readonly sendBlockchainMinerStateUpdated = (
+    body: BlockchainMinerStateUpdatedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.blockchainMinerStateUpdated, body);
   };
 }

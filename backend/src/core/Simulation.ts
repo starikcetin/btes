@@ -60,7 +60,8 @@ export class Simulation {
     const blockchainMiner = new BlockchainMiner(
       this.socketEmitter,
       nodeUid,
-      blockchainConfig
+      blockchainConfig,
+      { state: 'idle' }
     );
 
     const blockchainTxDb = new BlockchainTxDb([], []);
@@ -112,7 +113,8 @@ export class Simulation {
     const blockchainMiner = new BlockchainMiner(
       this.socketEmitter,
       nodeSnapshot.nodeUid,
-      nodeSnapshot.blockchainApp.config
+      nodeSnapshot.blockchainApp.config,
+      nodeSnapshot.blockchainApp.miner.currentState
     );
 
     const blockchainTxDb = new BlockchainTxDb(

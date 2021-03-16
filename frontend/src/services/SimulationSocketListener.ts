@@ -14,7 +14,8 @@ import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/Sim
 import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
 import { SimulationTimeScaleChangedPayload } from '../common/socketPayloads/SimulationTimeScaleChangedPayload';
 import { SimulationConnectionLatencyChangedPayload } from '../common/socketPayloads/SimulationConnectionLatencyChangedPayload';
-import { BlockchainKeyPairSavedPayload } from '../../../common/src/socketPayloads/BlockchainKeyPairSavedPayload';
+import { BlockchainKeyPairSavedPayload } from '../common/socketPayloads/BlockchainKeyPairSavedPayload';
+import { BlockchainMinerStateUpdatedPayload } from '../common/socketPayloads/BlockchainMinerStateUpdatedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -65,6 +66,10 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.blockchainKeyPairSaved,
       this.handleBlockchainKeyPairSaved
+    );
+    socket.on(
+      socketEvents.simulation.blockchainMinerStateUpdated,
+      this.handleBlockchainMinerStateUpdated
     );
 
     socket.onAny(this.handleAny);
@@ -288,6 +293,24 @@ export class SimulationSocketListener {
     this.dispatchLogNodeEvent(
       body.nodeUid,
       socketEvents.simulation.blockchainKeyPairSaved,
+      body
+    );
+  };
+
+  private readonly handleBlockchainMinerStateUpdated = (
+    body: BlockchainMinerStateUpdatedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.minerStateUpdated({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+
+    // TODO: this might lag a bit, measure and take out if necessary
+    this.dispatchLogNodeEvent(
+      body.nodeUid,
+      socketEvents.simulation.blockchainMinerStateUpdated,
       body
     );
   };

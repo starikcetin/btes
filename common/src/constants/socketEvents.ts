@@ -34,5 +34,6 @@ export const socketEvents = {
     connectionLatencyChanged: 'simulation-connection-latency-changed',
     blockchainSaveKeyPair: 'simulation-blockchain-save-key-pair',
     blockchainKeyPairSaved: 'simulation-blockchain-key-pair-saved',
+    blockchainMinerStateUpdated: 'simulation-miner-state-updated',
   },
 } as const;
