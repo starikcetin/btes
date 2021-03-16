@@ -14,6 +14,7 @@ import { BlockchainBlockDb } from './blockchain/modules/BlockchainBlockDb';
 import { BlockchainBlock } from '../common/blockchain/block/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
 import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
+import { BlockchainMiner } from './blockchain/modules/BlockchainMiner';
 
 // TODO: this should not be here
 const blockchainConfig: BlockchainConfig = {
@@ -56,6 +57,12 @@ export class Simulation {
       null
     );
 
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      nodeUid,
+      blockchainConfig
+    );
+
     const blockchainTxDb = new BlockchainTxDb([], []);
 
     const blockchainBlockDb = new BlockchainBlockDb(
@@ -65,6 +72,7 @@ export class Simulation {
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
+      blockchainMiner,
       blockchainTxDb,
       blockchainBlockDb,
       blockchainConfig
@@ -93,12 +101,18 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
-    // TODO: initialize with snapshot
     const blockchainWallet = new BlockchainWallet(
       this.socketEmitter,
       nodeSnapshot.nodeUid,
       nodeSnapshot.blockchainApp.config,
       nodeSnapshot.blockchainApp.wallet.keyPair
+    );
+
+    // TODO: initialize with snapshot
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.blockchainApp.config
     );
 
     const blockchainTxDb = new BlockchainTxDb(
@@ -113,6 +127,7 @@ export class Simulation {
 
     const blockchainApp = new NodeBlockchainApp(
       blockchainWallet,
+      blockchainMiner,
       blockchainTxDb,
       blockchainBlockDb,
       nodeSnapshot.blockchainApp.config

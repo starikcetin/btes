@@ -1,5 +1,3 @@
-// TODO: how to handle the genesis block? ideally we should ask during simulation init and include it by default in all nodes.
-
 import { NodeBlockchainAppSnapshot } from '../../common/blockchain/snapshots/NodeBlockchainAppSnapshot';
 import { BlockchainWallet } from './modules/BlockchainWallet';
 import { BlockchainTxDb } from './modules/BlockchainTxDb';
@@ -13,6 +11,7 @@ import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../common/blockchain/utils/hashTx';
 import { makeGenesisBlock } from './utils/makeGenesisBlock';
+import { BlockchainMiner } from './modules/BlockchainMiner';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -21,6 +20,7 @@ export class NodeBlockchainApp {
 
   // Stateful Modules
   public readonly wallet: BlockchainWallet;
+  public readonly miner: BlockchainMiner;
   private readonly txDb: BlockchainTxDb;
   private readonly blockDb: BlockchainBlockDb;
 
@@ -30,11 +30,13 @@ export class NodeBlockchainApp {
 
   constructor(
     wallet: BlockchainWallet,
+    miner: BlockchainMiner,
     txDb: BlockchainTxDb,
     blockDb: BlockchainBlockDb,
     config: BlockchainConfig
   ) {
     this.wallet = wallet;
+    this.miner = miner;
     this.txDb = txDb;
     this.blockDb = blockDb;
     this.config = config;
@@ -55,6 +57,7 @@ export class NodeBlockchainApp {
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
     return {
       wallet: this.wallet.takeSnapshot(),
+      miner: this.miner.takeSnapshot(),
       txDb: this.txDb.takeSnapshot(),
       blockDb: this.blockDb.takeSnapshot(),
       config: this.config,
