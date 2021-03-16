@@ -6,6 +6,6 @@ import JSum from 'jsum';
  * * Note: Change of order within an array causes a different hash. Because array index is semantically important.
  * @returns the hash. `sha256` outputs `32 bytes = 256 bits`.
  */
-export const hash = (jsonObj: unknown): Buffer => {
+export const hashJsonObj = (jsonObj: unknown): Buffer => {
   return JSum.digest(jsonObj, 'SHA256');
 };

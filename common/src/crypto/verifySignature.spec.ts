@@ -1,6 +1,6 @@
 import { createPrivateKey } from './createPrivateKey';
 import { createPublicKey } from './createPublicKey';
-import { hash } from './hash';
+import { hashJsonObj } from './hashJsonObj';
 import { createSignature } from './createSignature';
 import { verifySignature } from './verifySignature';
 
@@ -12,7 +12,7 @@ const plainText = {
 it('accepts correct signature', () => {
   const privateKey = createPrivateKey();
   const publicKey = createPublicKey(privateKey);
-  const plainHash = hash(plainText);
+  const plainHash = hashJsonObj(plainText);
   const signature = createSignature(plainHash, privateKey);
   const verification = verifySignature(signature, plainHash, publicKey);
 

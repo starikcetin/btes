@@ -1,6 +1,6 @@
 import { createPrivateKey } from './createPrivateKey';
 import { createSignature } from './createSignature';
-import { hash } from './hash';
+import { hashJsonObj } from './hashJsonObj';
 
 const plainA = {
   foo: 'lorem ipsum dolor sit amet',
@@ -14,7 +14,7 @@ const plainB = {
 
 it('creates signature', () => {
   const privateKey = createPrivateKey();
-  const plainHash = hash(plainA);
+  const plainHash = hashJsonObj(plainA);
   const signature = createSignature(plainHash, privateKey);
 
   expect(signature).toHaveLength(64);
@@ -22,7 +22,7 @@ it('creates signature', () => {
 
 it('creates the same signature for the same inputs', () => {
   const privateKey = createPrivateKey();
-  const plainHash = hash(plainA);
+  const plainHash = hashJsonObj(plainA);
 
   const signatureA = createSignature(plainHash, privateKey);
   const signatureB = createSignature(plainHash, privateKey);
@@ -34,8 +34,8 @@ describe('creates different signatures', () => {
   it('for different plaintext', () => {
     const privateKey = createPrivateKey();
 
-    const plainAHash = hash(plainA);
-    const plainBHash = hash(plainB);
+    const plainAHash = hashJsonObj(plainA);
+    const plainBHash = hashJsonObj(plainB);
 
     const signatureA = createSignature(plainAHash, privateKey);
     const signatureB = createSignature(plainBHash, privateKey);
@@ -47,7 +47,7 @@ describe('creates different signatures', () => {
     const privateKeyA = createPrivateKey();
     const privateKeyB = createPrivateKey();
 
-    const plainHash = hash(plainA);
+    const plainHash = hashJsonObj(plainA);
 
     const signatureA = createSignature(plainHash, privateKeyA);
     const signatureB = createSignature(plainHash, privateKeyB);
