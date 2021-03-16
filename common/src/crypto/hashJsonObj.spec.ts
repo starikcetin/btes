@@ -1,4 +1,4 @@
-import { hash } from './hash';
+import { hashJsonObj } from './hashJsonObj';
 
 const original = {
   a: 'foo',
@@ -61,17 +61,24 @@ const veryDifferent = {
 };
 
 it('calculates same hash for same objects', () => {
-  expect(hash(original)).toBe(hash(original));
+  expect(hashJsonObj(original)).toStrictEqual(hashJsonObj(original));
 });
 
 it('calculates same hash for equivalent objects', () => {
-  expect(hash(original)).toBe(hash(equivalent));
+  expect(hashJsonObj(original)).toStrictEqual(hashJsonObj(equivalent));
 });
 
 it('calculates different hash for slightly different objects', () => {
-  expect(hash(original)).not.toBe(hash(slightlyDifferent));
+  const originalHash = hashJsonObj(original);
+  const slightlyDifferentHash = hashJsonObj(slightlyDifferent);
+
+  expect(originalHash).not.toStrictEqual(slightlyDifferentHash);
 });
 
 it('calculates different hash for very different objects', () => {
-  expect(hash(original)).not.toBe(hash(veryDifferent));
+  const originalHash = hashJsonObj(original);
+  const veryDifferentHash = hashJsonObj(veryDifferent);
+
+  expect(originalHash).not.toEqual(veryDifferentHash);
+  expect(originalHash).not.toEqual(veryDifferentHash);
 });

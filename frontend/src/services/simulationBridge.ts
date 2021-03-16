@@ -20,6 +20,7 @@ import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/Sim
 import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
 import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
 import { SimulationConnectionChangeLatencyPayload } from '../common/socketPayloads/SimulationConnectionChangeLatencyPayload';
+import { BlockchainSaveKeyPairPayload } from '../common/socketPayloads/BlockchainSaveKeyPairPayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -194,6 +195,17 @@ class SimulationBridge {
     this.emit(
       simulationUid,
       socketEvents.simulation.connectionChangeLatency,
+      body
+    );
+  }
+
+  public sendBlockchainSaveKeyPair(
+    simulationUid: string,
+    body: BlockchainSaveKeyPairPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.blockchainSaveKeyPair,
       body
     );
   }

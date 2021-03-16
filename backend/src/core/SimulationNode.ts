@@ -9,10 +9,10 @@ import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 
 export class SimulationNode {
   public readonly nodeUid: string;
+  public readonly blockchainApp: NodeBlockchainApp;
 
   private readonly connectionMap: NodeConnectionMap;
   private readonly timerService: ControlledTimerService;
-  private readonly blockchainApp: NodeBlockchainApp;
 
   private _positionX: number;
   public get positionX(): number {

@@ -7,10 +7,11 @@ import { BlockchainBlockDb } from './modules/BlockchainBlockDb';
 import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
 import { BlockchainTx } from '../../common/blockchain/BlockchainTx';
-import { hash } from '../../common/utils/hash';
 import { BlockchainBlockChecker } from './validation/BlockchainBlockChecker';
 import { BlockchainTxChecker } from './validation/BlockchainTxChecker';
 import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
+import { hashBlock } from '../../common/blockchain/utils/hashBlock';
+import { hashTx } from '../../common/blockchain/utils/hashTx';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -18,7 +19,7 @@ export class NodeBlockchainApp {
   private readonly config: BlockchainConfig;
 
   // Stateful Modules
-  private readonly wallet: BlockchainWallet;
+  public readonly wallet: BlockchainWallet;
   private readonly txDb: BlockchainTxDb;
   private readonly blockDb: BlockchainBlockDb;
 
@@ -88,7 +89,7 @@ export class NodeBlockchainApp {
         }
 
         // bc19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
-        const blockHash = hash(block.header);
+        const blockHash = hashBlock(block.header);
         this.blockDb.popOrphansWithParent(blockHash).forEach(this.receiveBlock);
       }
     }
@@ -115,7 +116,7 @@ export class NodeBlockchainApp {
       // TODO: tx19. Relay transaction to peers
 
       // tx20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one) recursively on that orphan
-      const txHash = hash(tx);
+      const txHash = hashTx(tx);
       this.txDb.popOrphansWithTxAsInput(txHash).forEach(this.receiveTx);
     }
   };
