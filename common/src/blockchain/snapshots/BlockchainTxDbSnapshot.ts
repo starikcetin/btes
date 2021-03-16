@@ -1,4 +1,4 @@
-import { BlockchainRegularTx } from './BlockchainTx';
+import { BlockchainRegularTx } from '../tx/BlockchainTx';
 
 export interface BlockchainTxDbSnapshot {
   /**

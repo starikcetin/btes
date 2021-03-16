@@ -1,4 +1,4 @@
-import { BlockchainLockingScript } from './BlockchainLockingScript';
+import { BlockchainLockingScript } from '../crypto/BlockchainLockingScript';
 
 /**
  * https://en.bitcoin.it/wiki/Protocol_documentation#tx

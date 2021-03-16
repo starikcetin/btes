@@ -1,5 +1,5 @@
 import { BlockchainTxOutPoint } from './BlockchainTxOutPoint';
-import { BlockchainUnlockingScript } from './BlockchainUnlockingScript';
+import { BlockchainUnlockingScript } from '../crypto/BlockchainUnlockingScript';
 
 /**
  * https://en.bitcoin.it/wiki/Protocol_documentation#tx

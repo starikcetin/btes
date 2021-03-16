@@ -1,4 +1,4 @@
-import { BlockchainKeyPair } from '../blockchain/BlockchainKeyPair';
+import { BlockchainKeyPair } from '../blockchain/crypto/BlockchainKeyPair';
 
 export interface BlockchainKeyPairSavedPayload {
   readonly nodeUid: string;

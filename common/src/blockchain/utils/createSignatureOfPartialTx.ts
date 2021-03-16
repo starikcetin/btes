@@ -1,6 +1,6 @@
 import { createSignature } from '../../crypto/createSignature';
 import { hashJsonObj } from '../../crypto/hashJsonObj';
-import { BlockchainPartialRegularTx } from '../BlockchainPartialRegularTx';
+import { BlockchainPartialRegularTx } from '../tx/BlockchainPartialRegularTx';
 
 /**
  * * Signs the given partial tx.

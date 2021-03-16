@@ -1,4 +1,4 @@
-import { BlockchainRegularTx } from '../../../common/blockchain/BlockchainTx';
+import { BlockchainRegularTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { BlockchainCommonChecker } from './BlockchainCommonChecker';
 
 export class BlockchainTxChecker {

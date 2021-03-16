@@ -1,4 +1,4 @@
-import { BlockchainTx } from '../../../../common/blockchain/BlockchainTx';
+import { BlockchainTx } from '../../../../common/blockchain/tx/BlockchainTx';
 
 export interface BlockchainTxDbData {
   readonly mempool: BlockchainTx[];

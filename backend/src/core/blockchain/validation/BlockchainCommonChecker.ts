@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
-import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
+import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
 import {
   BlockchainRegularTx,
   BlockchainTx,
-} from '../../../common/blockchain/BlockchainTx';
+} from '../../../common/blockchain/tx/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { checkScriptsUnlock } from '../utils/checkScriptsUnlock';
 import { makePartialTx } from '../utils/makePartialTx';

@@ -1,7 +1,7 @@
-import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
-import { BlockchainWalletSnapshot } from '../../../common/blockchain/BlockchainWalletSnapshot';
+import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
+import { BlockchainWalletSnapshot } from '../../../common/blockchain/snapshots/BlockchainWalletSnapshot';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
-import { BlockchainKeyPair } from '../../../common/blockchain/BlockchainKeyPair';
+import { BlockchainKeyPair } from '../../../common/blockchain/crypto/BlockchainKeyPair';
 import { hasValue } from '../../../common/utils/hasValue';
 import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
 

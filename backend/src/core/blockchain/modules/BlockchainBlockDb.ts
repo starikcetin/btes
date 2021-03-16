@@ -2,10 +2,10 @@ import _ from 'lodash';
 
 import { Tree } from '../../../common/tree/Tree';
 import { TreeNode } from '../../../common/tree/TreeNode';
-import { BlockchainBlockDbSnapshot } from '../../../common/blockchain/BlockchainBlockDbSnapshot';
-import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
-import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
-import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
+import { BlockchainBlockDbSnapshot } from '../../../common/blockchain/snapshots/BlockchainBlockDbSnapshot';
+import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
+import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
+import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 import { collectGenerator } from '../../../common/utils/collectGenerator';
 import { hasValue } from '../../../common/utils/hasValue';

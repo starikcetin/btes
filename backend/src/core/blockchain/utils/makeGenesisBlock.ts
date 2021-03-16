@@ -1,4 +1,4 @@
-import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
+import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
 import { encodeBuffer } from '../../../common/blockchain/utils/encodeBuffer';
 import { createAddress } from '../../../common/crypto/createAddress';
 import { createPrivateKey } from '../../../common/crypto/createPrivateKey';

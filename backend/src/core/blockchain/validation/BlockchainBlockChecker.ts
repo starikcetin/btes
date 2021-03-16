@@ -1,6 +1,6 @@
-import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
+import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
-import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
+import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { hasValue } from '../../../common/utils/hasValue';
 import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';

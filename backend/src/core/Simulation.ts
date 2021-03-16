@@ -11,7 +11,7 @@ import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 import { BlockchainWallet } from './blockchain/modules/BlockchainWallet';
 import { BlockchainTxDb } from './blockchain/modules/BlockchainTxDb';
 import { BlockchainBlockDb } from './blockchain/modules/BlockchainBlockDb';
-import { BlockchainBlock } from '../common/blockchain/BlockchainBlock';
+import { BlockchainBlock } from '../common/blockchain/block/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
 import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
 

@@ -1,6 +1,6 @@
 import { hasValue } from '../../utils/hasValue';
 import { createPrivateKey } from '../../crypto/createPrivateKey';
-import { BlockchainKeyPair } from '../BlockchainKeyPair';
+import { BlockchainKeyPair } from '../crypto/BlockchainKeyPair';
 import { createPublicKey } from '../../crypto/createPublicKey';
 import { createAddress } from '../../crypto/createAddress';
 import { encodeBuffer } from './encodeBuffer';

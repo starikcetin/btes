@@ -1,4 +1,4 @@
-import { BlockchainBlockHeader } from '../BlockchainBlockHeader';
+import { BlockchainBlockHeader } from '../block/BlockchainBlockHeader';
 import { hashJsonObj } from '../../crypto/hashJsonObj';
 import { encodeBuffer } from './encodeBuffer';
 

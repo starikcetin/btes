@@ -1,4 +1,4 @@
-import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
+import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
 
 export const areOutPointsEqual = (
   a: BlockchainTxOutPoint,

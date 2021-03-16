@@ -5,7 +5,7 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 
 import { RootState } from '../../../state/RootState';
 import { hasValue } from '../../../common/utils/hasValue';
-import { BlockchainKeyPair } from '../../../common/blockchain/BlockchainKeyPair';
+import { BlockchainKeyPair } from '../../../common/blockchain/crypto/BlockchainKeyPair';
 import { decodeString } from '../../../common/blockchain/utils/decodeString';
 import { createKeyPair } from '../../../common/blockchain/utils/createKeyPair';
 import { verifyPrivateKey } from '../../../common/crypto/verifyPrivateKey';

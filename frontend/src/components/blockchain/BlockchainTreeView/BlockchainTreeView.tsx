@@ -5,7 +5,7 @@ import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
 
 import './BlockchainTreeView.scss';
 import { RootState } from '../../../state/RootState';
-import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
+import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
 import { TreeNodeJsonObject } from '../../../common/tree/TreeNodeJsonObject';
 import { hasValue } from '../../../common/utils/hasValue';
 

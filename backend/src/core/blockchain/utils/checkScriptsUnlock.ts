@@ -1,5 +1,5 @@
-import { BlockchainLockingScript } from '../../../common/blockchain/BlockchainLockingScript';
-import { BlockchainUnlockingScript } from '../../../common/blockchain/BlockchainUnlockingScript';
+import { BlockchainLockingScript } from '../../../common/blockchain/crypto/BlockchainLockingScript';
+import { BlockchainUnlockingScript } from '../../../common/blockchain/crypto/BlockchainUnlockingScript';
 import { decodeString } from '../../../common/blockchain/utils/decodeString';
 import { verifySignature } from '../../../common/crypto/verifySignature';
 import { createAddress } from '../../../common/crypto/createAddress';

@@ -1,7 +1,7 @@
 import { BlockchainWalletSnapshot } from './BlockchainWalletSnapshot';
 import { BlockchainTxDbSnapshot } from './BlockchainTxDbSnapshot';
 import { BlockchainBlockDbSnapshot } from './BlockchainBlockDbSnapshot';
-import { BlockchainConfig } from './BlockchainConfig';
+import { BlockchainConfig } from '../BlockchainConfig';
 
 export interface NodeBlockchainAppSnapshot {
   readonly wallet: BlockchainWalletSnapshot;

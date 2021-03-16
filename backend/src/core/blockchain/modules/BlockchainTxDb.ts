@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-import { BlockchainTxDbSnapshot } from '../../../common/blockchain/BlockchainTxDbSnapshot';
+import { BlockchainTxDbSnapshot } from '../../../common/blockchain/snapshots/BlockchainTxDbSnapshot';
 import {
   BlockchainRegularTx,
   BlockchainTx,
-} from '../../../common/blockchain/BlockchainTx';
-import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
+} from '../../../common/blockchain/tx/BlockchainTx';
+import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 import { removeFirst } from '../../../common/utils/removeFirst';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
