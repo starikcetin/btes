@@ -5,7 +5,7 @@ import { BlockchainUnlockingScript } from './BlockchainUnlockingScript';
  * https://en.bitcoin.it/wiki/Protocol_documentation#tx
  * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch06.asciidoc#transaction-inputs
  */
-export interface BlockchainTxInput {
+export interface BlockchainRegularTxInput {
   /*
    * Omitted fields:
    * - sequence (number): Transaction version as defined by the sender. Intended for "replacement" of transactions when information is updated before inclusion into a block.

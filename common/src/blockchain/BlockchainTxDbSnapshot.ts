@@ -1,14 +1,14 @@
-import { BlockchainTx } from './BlockchainTx';
+import { BlockchainRegularTx } from './BlockchainTx';
 
 export interface BlockchainTxDbSnapshot {
   /**
    * `transaction pool` = `memory pool` = `mempool`
    */
-  readonly mempool: BlockchainTx[];
+  readonly mempool: BlockchainRegularTx[];
 
   /**
    * `orphan transactions pool`
    * https://cryptoservices.github.io/fde/2018/12/14/bitcoin-orphan-TX-CVE.html
    */
-  readonly orphanage: BlockchainTx[];
+  readonly orphanage: BlockchainRegularTx[];
 }

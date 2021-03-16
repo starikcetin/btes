@@ -3,5 +3,5 @@ import { encodeBuffer } from './encodeBuffer';
 import { BlockchainTx } from '../BlockchainTx';
 
 /** Hashes the given tx and encodes the hash in `hex` encoding. */
-export const hashTx = (blockHeader: BlockchainTx): string =>
-  encodeBuffer(hashJsonObj(blockHeader), 'tx');
+export const hashTx = (tx: BlockchainTx): string =>
+  encodeBuffer(hashJsonObj(tx), 'tx');

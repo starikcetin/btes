@@ -60,6 +60,10 @@ export class BlockchainBlockDb {
     outPoint: BlockchainTxOutPoint
   ): boolean => {
     for (const { tx } of this.getMainBranchTxIterator()) {
+      if (tx.isCoinbase) {
+        continue;
+      }
+
       const isUsed = tx.inputs.some((input) =>
         areOutPointsEqual(input.previousOutput, outPoint)
       );

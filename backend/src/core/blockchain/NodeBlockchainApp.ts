@@ -6,14 +6,15 @@ import { BlockchainTxDb } from './modules/BlockchainTxDb';
 import { BlockchainBlockDb } from './modules/BlockchainBlockDb';
 import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 import { BlockchainBlock } from '../../common/blockchain/BlockchainBlock';
-import { BlockchainTx } from '../../common/blockchain/BlockchainTx';
+import {
+  BlockchainRegularTx,
+  BlockchainTx,
+} from '../../common/blockchain/BlockchainTx';
 import { BlockchainBlockChecker } from './validation/BlockchainBlockChecker';
 import { BlockchainTxChecker } from './validation/BlockchainTxChecker';
 import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../common/blockchain/utils/hashTx';
-import { hashBuffer } from '../../../../common/src/crypto/hashBuffer';
-import { encodeBuffer } from '../../../../common/src/blockchain/utils/encodeBuffer';
 import { makeGenesisBlock } from './utils/makeGenesisBlock';
 
 /** Deals with everything related to blockchain, for a specific node. */
@@ -100,7 +101,7 @@ export class NodeBlockchainApp {
     }
   };
 
-  public readonly receiveTx = (tx: BlockchainTx): void => {
+  public readonly receiveTx = (tx: BlockchainRegularTx): void => {
     // CheckTxForReceiveTx
     const checkResult = this.txChecker.checkTxForReceiveTx(tx);
 

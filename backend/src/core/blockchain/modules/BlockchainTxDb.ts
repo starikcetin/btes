@@ -1,7 +1,10 @@
 import _ from 'lodash';
 
 import { BlockchainTxDbSnapshot } from '../../../common/blockchain/BlockchainTxDbSnapshot';
-import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
+import {
+  BlockchainRegularTx,
+  BlockchainTx,
+} from '../../../common/blockchain/BlockchainTx';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 import { removeFirst } from '../../../common/utils/removeFirst';
@@ -9,10 +12,13 @@ import { hashTx } from '../../../common/blockchain/utils/hashTx';
 
 // See BlockchainTxDbSnapshot for member jsdocs.
 export class BlockchainTxDb {
-  private readonly mempool: BlockchainTx[];
-  private readonly orphanage: BlockchainTx[];
+  private readonly mempool: BlockchainRegularTx[];
+  private readonly orphanage: BlockchainRegularTx[];
 
-  constructor(mempool: BlockchainTx[], orphanage: BlockchainTx[]) {
+  constructor(
+    mempool: BlockchainRegularTx[],
+    orphanage: BlockchainRegularTx[]
+  ) {
     this.mempool = mempool;
     this.orphanage = orphanage;
   }
@@ -51,12 +57,12 @@ export class BlockchainTxDb {
   };
 
   /** Adds the given tx to mempool unconditionally. Does nothing else. */
-  public readonly addToMempool = (tx: BlockchainTx): void => {
+  public readonly addToMempool = (tx: BlockchainRegularTx): void => {
     this.mempool.push(tx);
   };
 
   /** Adds the given tx to orphanage unconditionally. Does nothing else. */
-  public readonly addToOrphanage = (tx: BlockchainTx): void => {
+  public readonly addToOrphanage = (tx: BlockchainRegularTx): void => {
     this.orphanage.push(tx);
   };
 
@@ -64,7 +70,9 @@ export class BlockchainTxDb {
    * Finds all orphan transactions referencing the given tx in one of its inputs.
    * Removes them from the orphanage and returns them.
    */
-  public readonly popOrphansWithTxAsInput = (txHash: string): BlockchainTx[] =>
+  public readonly popOrphansWithTxAsInput = (
+    txHash: string
+  ): BlockchainRegularTx[] =>
     _.remove(this.orphanage, (orphan) =>
       orphan.inputs.some((input) => input.previousOutput.txHash === txHash)
     );

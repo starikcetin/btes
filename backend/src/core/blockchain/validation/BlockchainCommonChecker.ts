@@ -1,13 +1,18 @@
 import _ from 'lodash';
 
 import { BlockchainBlock } from '../../../common/blockchain/BlockchainBlock';
-import { BlockchainTx } from '../../../common/blockchain/BlockchainTx';
+import {
+  BlockchainRegularTx,
+  BlockchainTx,
+} from '../../../common/blockchain/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { checkScriptsUnlock } from '../utils/checkScriptsUnlock';
+import { makePartialTx } from '../utils/makePartialTx';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';
 import { BlockchainTxDb } from '../modules/BlockchainTxDb';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
+import { hashJsonObj } from '../../../common/crypto/hashJsonObj';
 
 type TxLookupResult = {
   tx: BlockchainTx;
@@ -36,12 +41,14 @@ export class BlockchainCommonChecker {
 
   /** `sumOfInputs` and `sumOfOutputs` will be `-1` if `checkResult` is not `valid` */
   public readonly checkTxForReceive = (
-    tx: BlockchainTx,
+    tx: BlockchainRegularTx,
     options: {
       canSearchMempoolForOutput: boolean;
     }
   ): CheckTxForReceiveResult => {
     const { canSearchMempoolForOutput } = options;
+
+    const partialTxHash = hashJsonObj(makePartialTx(tx));
 
     let sumOfInputs = 0;
 
@@ -90,7 +97,13 @@ export class BlockchainCommonChecker {
       }
 
       // tx16. & bc16.1.4. Verify the scriptPubKey accepts for each input; reject if any are bad
-      if (!checkScriptsUnlock(refOutput.lockingScript, unlockingScript)) {
+      if (
+        !checkScriptsUnlock(
+          partialTxHash,
+          refOutput.lockingScript,
+          unlockingScript
+        )
+      ) {
         return { checkResult: 'invalid' };
       }
     }
