@@ -6,9 +6,9 @@ import secp256k1 from 'secp256k1';
  * @returns whether the verification was successful
  */
 export const verifySignature = (
-  signature: Uint8Array,
-  plainHash: Uint8Array,
-  publicKey: Uint8Array
+  signature: Buffer,
+  plainHash: Buffer,
+  publicKey: Buffer
 ): boolean => {
   return secp256k1.ecdsaVerify(signature, plainHash, publicKey);
 };

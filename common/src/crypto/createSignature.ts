@@ -6,9 +6,6 @@ import secp256k1 from 'secp256k1';
  * * `plainHash` must be `32 bytes = 256 bits` long. `sha256` hash gives this result.
  * @returns the signature. length is `64 bytes = 512 bits`
  */
-export function createSignature(
-  plainHash: Uint8Array,
-  privateKey: Uint8Array
-): Uint8Array {
-  return secp256k1.ecdsaSign(plainHash, privateKey).signature;
+export function createSignature(plainHash: Buffer, privateKey: Buffer): Buffer {
+  return Buffer.from(secp256k1.ecdsaSign(plainHash, privateKey).signature);
 }

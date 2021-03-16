@@ -5,6 +5,6 @@ import secp256k1 from 'secp256k1';
  * * `ECDSA` algorithm `secp256k1` curve.
  * @returns the compressed public key. Length is `33 bytes = 264 bits`.
  */
-export const createPublicKey = (privateKey: Uint8Array): Uint8Array => {
-  return secp256k1.publicKeyCreate(privateKey);
+export const createPublicKey = (privateKey: Uint8Array): Buffer => {
+  return Buffer.from(secp256k1.publicKeyCreate(privateKey));
 };

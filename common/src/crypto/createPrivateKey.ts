@@ -6,8 +6,8 @@ import { randomBytes } from 'crypto';
  * * `ECDSA` algorithm `secp256k1` curve.
  * @returns the pivate key. Length is `32 bytes = 256 bits`.
  */
-export const createPrivateKey = (): Uint8Array => {
-  let privateKey: Uint8Array;
+export const createPrivateKey = (): Buffer => {
+  let privateKey: Buffer;
   do {
     privateKey = randomBytes(32);
   } while (!secp256k1.privateKeyVerify(privateKey));

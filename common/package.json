@@ -12,10 +12,12 @@
     "test:coverage": "yarn test --coverage"
   },
   "dependencies": {
+    "bs58check": "^2.1.2",
     "jsum": "^0.1.4",
     "secp256k1": "^4.0.2"
   },
   "devDependencies": {
+    "@types/bs58check": "^2.1.0",
     "@types/jest": "^26.0.20",
     "@types/jest-expect-message": "^1.0.3",
     "@types/secp256k1": "^4.0.1",
