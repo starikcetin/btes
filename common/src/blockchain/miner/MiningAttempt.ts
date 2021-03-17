@@ -1,5 +1,7 @@
 export interface MiningAttempt {
-  /** Raw byte array. Make a `Buffer` before using via `Buffer.from`. */
-  readonly blockHash: number[];
+  readonly isSuccess: boolean;
+  /** In `hhashing. */
+  readonly hash: string;
   readonly nonce: number;
+  readonly timestamp: number;
 }

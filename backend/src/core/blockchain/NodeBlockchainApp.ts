@@ -11,7 +11,7 @@ import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../common/blockchain/utils/hashTx';
 import { makeGenesisBlock } from './utils/makeGenesisBlock';
-import { BlockchainMiner } from './modules/BlockchainMiner';
+import { BlockchainMiner } from './modules/miner/BlockchainMiner';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {

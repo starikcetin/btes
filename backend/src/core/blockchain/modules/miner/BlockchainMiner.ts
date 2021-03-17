@@ -1,8 +1,9 @@
-import { BlockchainMinerSnapshot } from '../../../common/blockchain/snapshots/BlockchainMinerSnapshot';
-import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
-import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
-import { BlockchainMinerState } from '../../../common/blockchain/miner/BlockchainMinerStateData';
-import { BlockchainMiningTask } from '../../../common/blockchain/miner/BlockchainMiningTask';
+import { BlockchainMinerSnapshot } from '../../../../common/blockchain/snapshots/BlockchainMinerSnapshot';
+import { BlockchainConfig } from '../../../../common/blockchain/BlockchainConfig';
+import { SimulationNamespaceEmitter } from '../../../SimulationNamespaceEmitter';
+import { BlockchainMinerState } from '../../../../common/blockchain/miner/BlockchainMinerStateData';
+import { BlockchainMiningTask } from '../../../../common/blockchain/miner/BlockchainMiningTask';
+import { beginMining } from './beginMining';
 
 export class BlockchainMiner {
   private readonly socketEmitter: SimulationNamespaceEmitter;
@@ -57,6 +58,20 @@ export class BlockchainMiner {
   };
 
   private readonly mine = () => {
-    console.log('mining', this.currentState);
+    if (this.currentState.state !== 'working') {
+      throw new Error(
+        `Miner expected 'working' state, but it is: ${this.currentState}`
+      );
+    }
+
+    const minerAborter = beginMining(
+      this.currentState.task,
+      (attempt) => {
+        return;
+      },
+      (report) => {
+        console.log('finished:', report);
+      }
+    );
   };
 }

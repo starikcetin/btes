@@ -14,7 +14,7 @@ import { BlockchainBlockDb } from './blockchain/modules/BlockchainBlockDb';
 import { BlockchainBlock } from '../common/blockchain/block/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
 import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
-import { BlockchainMiner } from './blockchain/modules/BlockchainMiner';
+import { BlockchainMiner } from './blockchain/modules/miner/BlockchainMiner';
 
 // TODO: this should not be here
 const blockchainConfig: BlockchainConfig = {
