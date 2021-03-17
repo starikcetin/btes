@@ -37,7 +37,7 @@ export const BlockchainMinerPane: React.FC<BlockchainMinerPaneProps> = (
 
   return (
     <div className="comp-blockchain-miner-pane">
-      <BlockchainMinerPaneStatusBar {...props} />
+      {/* <BlockchainMinerPaneStatusBar {...props} /> */}
       {getStateView()}
     </div>
   );
