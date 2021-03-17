@@ -4,45 +4,46 @@ import React, { useMemo, useState } from 'react';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 
 import './BlockchainMinerIdleView.scss';
-import { NodeBlockchainAppData } from '../../../../../state/simulation/data/blockchain/NodeBlockchainAppData';
-import { TreeNodeJsonObject } from '../../../../../../../common/src/tree/TreeNodeJsonObject';
-import { BlockchainBlock } from '../../../../../common/blockchain/block/BlockchainBlock';
 import { Tree } from '../../../../../common/tree/Tree';
-import { hashBlock } from '../../../../../../../backend/src/common/blockchain/utils/hashBlock';
+import { BlockchainMinerIdleState } from '../../../../../../../common/src/blockchain/miner/BlockchainMinerStateData';
+import { NodeBlockchainAppData } from '../../../../../state/simulation/data/blockchain/NodeBlockchainAppData';
 
 interface BlockchainMinerIdleViewProps {
+  state: BlockchainMinerIdleState;
   appData: NodeBlockchainAppData;
 }
+
+const fiveMinsLaterTimestamp = () =>
+  date.addMinutes(new Date(Date.now()), 5).getTime();
+
+/** timestamp -> HH:mm:ss */
+const formatTimestamp = (timestamp: number) =>
+  date.format(new Date(timestamp), 'HH:mm:ss');
+
+/** HH:mm:ss -> timestamp */
+const parseToTimestamp = (inputValue: string) =>
+  date.parse(inputValue, 'HH:mm:ss').getTime();
 
 export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
   props
 ) => {
-  const { appData } = props;
+  const { state, appData } = props;
 
   const tree = useMemo(() => Tree.fromJsonObject(appData.blockDb.blockchain), [
     appData.blockDb.blockchain,
   ]);
 
-  const mainBrHeadHeader = tree.mainBranchHead?.data.header ?? null;
-
-  const mainBranchHeadHash = useMemo(
-    () => (mainBrHeadHeader ? hashBlock(mainBrHeadHeader) : null),
-    [mainBrHeadHeader]
-  );
-
-  const fiveMinsLater = () =>
-    date.addMinutes(new Date(Date.now()), 5).getTime();
-
   const [coinbase, setCoinbase] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
-  const [value, setValue] = useState(10);
-  const [previousHash, setPreviousHash] = useState('');
-  const [timestamp, setTimeStamp] = useState(fiveMinsLater());
-  const [difficultyTarget, setDifficultyTarget] = useState(3);
+  const [value, setValue] = useState(appData.config.blockCreationFee);
+  const [previousHash, setPreviousHash] = useState(
+    tree.mainBranchHead?.id ?? ''
+  );
+  const [timestamp, setTimeStamp] = useState(fiveMinsLaterTimestamp());
+  const [difficultyTarget, setDifficultyTarget] = useState(
+    appData.config.targetLeadingZeroCount
+  );
 
-  const getTimeStamp = () => {
-    return date.format(new Date(timestamp), 'HH:mm:ss');
-  };
   return (
     <div className="comp-blockchain-miner-idle-view">
       <Card>
@@ -97,6 +98,7 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                   <Button
                     variant="info"
                     title="Automatically select a value based on the blockchain configuration of this simulation."
+                    onClick={() => setValue(appData.config.blockCreationFee)}
                   >
                     Use configuration
                   </Button>
@@ -125,7 +127,14 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                   onChange={(e) => setPreviousHash(e.target.value)}
                 />
                 <InputGroup.Append>
-                  <Button variant="info">Set to active branch leaf</Button>
+                  <Button
+                    variant="info"
+                    onClick={() =>
+                      setPreviousHash(tree.mainBranchHead?.id ?? '')
+                    }
+                  >
+                    Set to active branch leaf
+                  </Button>
                 </InputGroup.Append>
               </InputGroup>
               <Form.Text className="text-muted">
@@ -141,15 +150,18 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                 <Form.Control
                   type="time"
                   step={1}
-                  value={getTimeStamp()}
+                  value={formatTimestamp(timestamp)}
                   onChange={(e) =>
-                    setTimeStamp(
-                      date.parse(e.target.value, 'HH:mm:ss').getTime()
-                    )
+                    setTimeStamp(parseToTimestamp(e.target.value))
                   }
                 />
                 <InputGroup.Append>
-                  <Button variant="info">Set to 5 minutes later</Button>
+                  <Button
+                    variant="info"
+                    onClick={() => setTimeStamp(fiveMinsLaterTimestamp())}
+                  >
+                    Set to 5 minutes later
+                  </Button>
                 </InputGroup.Append>
               </InputGroup>
               <Form.Text className="text-muted">
@@ -172,6 +184,9 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                   <Button
                     variant="info"
                     title="Automatically select a value based on the blockchain configuration of this simulation."
+                    onClick={() =>
+                      setDifficultyTarget(appData.config.targetLeadingZeroCount)
+                    }
                   >
                     Use configuration
                   </Button>

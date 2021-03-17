@@ -7,7 +7,6 @@ import { BlockchainMinerPaneStatusBar } from './comps/StatusBar/BlockchainMinerP
 import { BlockchainMinerIdleView } from './comps/IdleView/BlockchainMinerIdleView';
 import { BlockchainMinerStoppedView } from './comps/StoppedView/BlockchainMinerStoppedView';
 import { BlockchainMinerWorkingView } from './comps/WorkingView/BlockchainMinerWorkingView';
-import { Row, Col, Container } from 'react-bootstrap';
 
 interface BlockchainMinerPaneProps {
   simulationUid: string;
@@ -19,15 +18,19 @@ export const BlockchainMinerPane: React.FC<BlockchainMinerPaneProps> = (
 ) => {
   const { simulationUid, nodeUid } = props;
 
-  const { currentState } = useSelector(
+  const appData = useSelector(
     (state: RootState) =>
-      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.miner
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp
   );
 
   const getStateView = () => {
+    const { currentState } = appData.miner;
+
     switch (currentState.state) {
       case 'idle':
-        return <BlockchainMinerIdleView state={currentState} />;
+        return (
+          <BlockchainMinerIdleView state={currentState} appData={appData} />
+        );
       case 'working':
         return <BlockchainMinerWorkingView state={currentState} />;
       case 'stopped':
@@ -37,7 +40,7 @@ export const BlockchainMinerPane: React.FC<BlockchainMinerPaneProps> = (
 
   return (
     <div className="comp-blockchain-miner-pane">
-      {/* <BlockchainMinerPaneStatusBar {...props} /> */}
+      <BlockchainMinerPaneStatusBar {...props} />
       {getStateView()}
     </div>
   );
