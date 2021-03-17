@@ -95,15 +95,20 @@ export class SimulationSocketListener {
       );
     }
 
-    store.dispatch(
-      simulationSlice.actions.log({
-        simulationUid: this.simulationUid,
-        direction: 'incoming',
-        eventName,
-        payload: body,
-        timestamp: Date.now(),
-      })
-    );
+    /**
+     * TODO: logging is disabled due to performance problems during blockchain mining
+     * perhaps we can solve the performance problems by moving logs to a separate slice
+     * ~~ Tarık, 2021-03-18
+     */
+    // store.dispatch(
+    //   simulationSlice.actions.log({
+    //     simulationUid: this.simulationUid,
+    //     direction: 'incoming',
+    //     eventName,
+    //     payload: body,
+    //     timestamp: Date.now(),
+    //   })
+    // );
   };
 
   private handleSimulationPong = (body: SimulationPongPayload): void => {
@@ -307,12 +312,12 @@ export class SimulationSocketListener {
       })
     );
 
-    // TODO: this might lag a bit, measure and take out if necessary
-    this.dispatchLogNodeEvent(
-      body.nodeUid,
-      socketEvents.simulation.blockchainMinerStateUpdated,
-      body
-    );
+    // // TODO: this might lag a bit, measure and take out if necessary
+    // this.dispatchLogNodeEvent(
+    //   body.nodeUid,
+    //   socketEvents.simulation.blockchainMinerStateUpdated,
+    //   body
+    // );
   };
 
   private readonly dispatchLogNodeEvent = (

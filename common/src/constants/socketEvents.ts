@@ -36,5 +36,6 @@ export const socketEvents = {
     blockchainKeyPairSaved: 'simulation-blockchain-key-pair-saved',
     blockchainMinerStateUpdated: 'simulation-miner-state-updated',
     blockchainStartMining: 'simulation-blockchain-start-mining',
+    blockchainAbortMining: 'simulation-blockchain-abort-mining',
   },
 } as const;

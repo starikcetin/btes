@@ -13,14 +13,16 @@ export interface BlockchainMinerIdleState {
 export interface BlockchainMinerWorkingState {
   readonly state: 'working';
   readonly task: BlockchainMiningTask;
-  readonly hashCount: number;
+  readonly attemptCount: number;
   readonly recentAttempts: MiningAttempt[];
 }
 
 export interface BlockchainMinerStoppedState {
   readonly state: 'stopped';
   readonly task: BlockchainMiningTask;
-  readonly stopReason: 'success' | 'received-block' | 'cancelled';
-  readonly hashCount: number;
-  readonly finalAttempt: MiningAttempt;
+  readonly stopReason: 'success' | 'aborted';
+  readonly attemptCount: number;
+
+  /** `null` if aborted before the very first attempt. */
+  readonly finalAttempt: MiningAttempt | null;
 }

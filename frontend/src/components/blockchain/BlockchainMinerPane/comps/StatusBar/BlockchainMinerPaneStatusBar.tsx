@@ -27,9 +27,7 @@ export const BlockchainMinerPaneStatusBar: React.FC<{
         switch (currentState.stopReason) {
           case 'success':
             return 'success';
-          case 'cancelled':
-            return 'warning';
-          case 'received-block':
+          case 'aborted':
             return 'danger';
         }
     }

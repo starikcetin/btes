@@ -64,7 +64,7 @@ export const beginMining = (
   setImmediate(() =>
     mineLooper(
       task.blockTemplate,
-      -1,
+      0,
       canWork,
       handleAttempt,
       handleSuccess,

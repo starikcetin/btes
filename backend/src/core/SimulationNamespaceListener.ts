@@ -31,6 +31,8 @@ import { SimulationConnectionChangeLatencyCommand } from './commands/SimulationC
 import { BlockchainSaveKeyPairPayload } from '../common/socketPayloads/BlockchainSaveKeyPairPayload';
 import { BlockchainStartMiningPayload } from '../common/socketPayloads/BlockchainStartMiningPayload';
 import { BlockchainStartMiningCommand } from './commands/BlockchainStartMiningCommand';
+import { BlockchainAbortMiningPayload } from '../common/socketPayloads/BlockchainAbortMiningPayload';
+import { BlockchainAbortMiningCommand } from './commands/BlockchainAbortMiningCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -125,6 +127,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.blockchainStartMining,
       this.handleBlockchainStartMining
+    );
+    socket.on(
+      socketEvents.simulation.blockchainAbortMining,
+      this.handleBlockchainAbortMining
     );
   };
 
@@ -285,6 +291,13 @@ export class SimulationNamespaceListener {
     body: BlockchainStartMiningPayload
   ) => {
     const command = new BlockchainStartMiningCommand(this.simulation, body);
+    command.execute();
+  };
+
+  private readonly handleBlockchainAbortMining = (
+    body: BlockchainAbortMiningPayload
+  ) => {
+    const command = new BlockchainAbortMiningCommand(this.simulation, body);
     command.execute();
   };
 }
