@@ -1,33 +1,28 @@
-import _ from 'lodash';
-import date from 'date-and-time';
 import React, { useMemo, useState } from 'react';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 import './BlockchainMinerIdleView.scss';
 import { Tree } from '../../../../../common/tree/Tree';
 import { BlockchainMinerIdleState } from '../../../../../../../common/src/blockchain/miner/BlockchainMinerStateData';
-import { NodeBlockchainAppData } from '../../../../../state/simulation/data/blockchain/NodeBlockchainAppData';
+import { simulationBridge } from '../../../../../services/simulationBridge';
+import { RootState } from '../../../../../state/RootState';
 
 interface BlockchainMinerIdleViewProps {
+  simulationUid: string;
+  nodeUid: string;
   state: BlockchainMinerIdleState;
-  appData: NodeBlockchainAppData;
 }
-
-const fiveMinsLaterTimestamp = () =>
-  date.addMinutes(new Date(Date.now()), 5).getTime();
-
-/** timestamp -> HH:mm:ss */
-const formatTimestamp = (timestamp: number) =>
-  date.format(new Date(timestamp), 'HH:mm:ss');
-
-/** HH:mm:ss -> timestamp */
-const parseToTimestamp = (inputValue: string) =>
-  date.parse(inputValue, 'HH:mm:ss').getTime();
 
 export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
   props
 ) => {
-  const { state, appData } = props;
+  const { simulationUid, nodeUid, state } = props;
+
+  const appData = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp
+  );
 
   const tree = useMemo(() => Tree.fromJsonObject(appData.blockDb.blockchain), [
     appData.blockDb.blockchain,
@@ -39,10 +34,24 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
   const [previousHash, setPreviousHash] = useState(
     tree.mainBranchHead?.id ?? ''
   );
-  const [timestamp, setTimeStamp] = useState(fiveMinsLaterTimestamp());
   const [difficultyTarget, setDifficultyTarget] = useState(
     appData.config.targetLeadingZeroCount
   );
+
+  const startMining = () => {
+    simulationBridge.sendBlockchainStartMining(simulationUid, {
+      nodeUid,
+      miningTask: {
+        blockTemplate: {
+          coinbase,
+          recipientAddress,
+          value,
+          previousHash,
+          difficultyTarget,
+        },
+      },
+    });
+  };
 
   return (
     <div className="comp-blockchain-miner-idle-view">
@@ -144,32 +153,6 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
               </Form.Text>
             </Form.Group>
 
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Timestamp</Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type="time"
-                  step={1}
-                  value={formatTimestamp(timestamp)}
-                  onChange={(e) =>
-                    setTimeStamp(parseToTimestamp(e.target.value))
-                  }
-                />
-                <InputGroup.Append>
-                  <Button
-                    variant="info"
-                    onClick={() => setTimeStamp(fiveMinsLaterTimestamp())}
-                  >
-                    Set to 5 minutes later
-                  </Button>
-                </InputGroup.Append>
-              </InputGroup>
-              <Form.Text className="text-muted">
-                Approximate time of creation for this block. Does not need to be
-                exact.
-              </Form.Text>
-            </Form.Group>
-
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Difficulty Target</Form.Label>
               <InputGroup>
@@ -209,7 +192,9 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
           </Form>
         </Card.Body>
         <Card.Footer className="d-flex justify-content-center">
-          <Button variant="success">Start Mining</Button>
+          <Button variant="success" onClick={() => startMining()}>
+            Start Mining
+          </Button>
         </Card.Footer>
       </Card>
     </div>

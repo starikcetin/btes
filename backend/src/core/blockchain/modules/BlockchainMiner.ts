@@ -2,6 +2,7 @@ import { BlockchainMinerSnapshot } from '../../../common/blockchain/snapshots/Bl
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
 import { BlockchainMinerState } from '../../../common/blockchain/miner/BlockchainMinerStateData';
+import { BlockchainMiningTask } from '../../../common/blockchain/miner/BlockchainMiningTask';
 
 export class BlockchainMiner {
   private readonly socketEmitter: SimulationNamespaceEmitter;
@@ -29,6 +30,23 @@ export class BlockchainMiner {
     this.currentState = state;
   }
 
+  public readonly takeSnapshot = (): BlockchainMinerSnapshot => {
+    return {
+      currentState: this.currentState,
+    };
+  };
+
+  public readonly startMining = (task: BlockchainMiningTask): void => {
+    this.updateState({
+      state: 'working',
+      task,
+      hashCount: 0,
+      recentAttempts: [],
+    });
+
+    this.mine();
+  };
+
   private readonly updateState = (newState: BlockchainMinerState): void => {
     this.currentState = newState;
 
@@ -38,9 +56,7 @@ export class BlockchainMiner {
     });
   };
 
-  public readonly takeSnapshot = (): BlockchainMinerSnapshot => {
-    return {
-      currentState: this.currentState,
-    };
+  private readonly mine = () => {
+    console.log('mining', this.currentState);
   };
 }

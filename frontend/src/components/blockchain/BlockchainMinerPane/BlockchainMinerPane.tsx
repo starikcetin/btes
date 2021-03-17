@@ -28,9 +28,7 @@ export const BlockchainMinerPane: React.FC<BlockchainMinerPaneProps> = (
 
     switch (currentState.state) {
       case 'idle':
-        return (
-          <BlockchainMinerIdleView state={currentState} appData={appData} />
-        );
+        return <BlockchainMinerIdleView {...props} state={currentState} />;
       case 'working':
         return <BlockchainMinerWorkingView state={currentState} />;
       case 'stopped':
