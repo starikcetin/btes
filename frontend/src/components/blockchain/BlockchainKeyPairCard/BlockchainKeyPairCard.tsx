@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
+import './BlockchainKeyPairCard.scss';
 import { RootState } from '../../../state/RootState';
 import { hasValue } from '../../../common/utils/hasValue';
 import { BlockchainKeyPair } from '../../../common/blockchain/crypto/BlockchainKeyPair';
@@ -90,7 +91,9 @@ export const BlockchainKeyPairCard: React.FC<BlockchainKeyPairCardProps> = (
     <div>
       <InputGroup className="mb-1">
         <InputGroup.Prepend>
-          <InputGroup.Text>Private Key</InputGroup.Text>
+          <InputGroup.Text className="comp-blockchain-key-pair-card--key-prepend">
+            Private Key
+          </InputGroup.Text>
         </InputGroup.Prepend>
         <Form.Control
           disabled={hasKeyPair}
@@ -103,7 +106,9 @@ export const BlockchainKeyPairCard: React.FC<BlockchainKeyPairCardProps> = (
       </InputGroup>
       <InputGroup className="mb-1">
         <InputGroup.Prepend>
-          <InputGroup.Text>Public Key</InputGroup.Text>
+          <InputGroup.Text className="comp-blockchain-key-pair-card--key-prepend">
+            Public Key
+          </InputGroup.Text>
         </InputGroup.Prepend>
         <Form.Control
           disabled
@@ -114,7 +119,9 @@ export const BlockchainKeyPairCard: React.FC<BlockchainKeyPairCardProps> = (
       </InputGroup>
       <InputGroup className="mb-3">
         <InputGroup.Prepend>
-          <InputGroup.Text>Address</InputGroup.Text>
+          <InputGroup.Text className="comp-blockchain-key-pair-card--key-prepend">
+            Address
+          </InputGroup.Text>
         </InputGroup.Prepend>
         <Form.Control
           disabled
