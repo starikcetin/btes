@@ -12,6 +12,7 @@ import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../common/blockchain/utils/hashTx';
 import { makeGenesisBlock } from './utils/makeGenesisBlock';
 import { BlockchainMiner } from './modules/miner/BlockchainMiner';
+import { BlockchainNetwork } from './modules/BlockchainNetwork';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -21,6 +22,7 @@ export class NodeBlockchainApp {
   // Stateful Modules
   public readonly wallet: BlockchainWallet;
   public readonly miner: BlockchainMiner;
+  private readonly network: BlockchainNetwork;
   private readonly txDb: BlockchainTxDb;
   private readonly blockDb: BlockchainBlockDb;
 
@@ -29,12 +31,14 @@ export class NodeBlockchainApp {
   private readonly txChecker: BlockchainTxChecker;
 
   constructor(
+    network: BlockchainNetwork,
     wallet: BlockchainWallet,
-    miner: BlockchainMiner,
     txDb: BlockchainTxDb,
     blockDb: BlockchainBlockDb,
+    miner: BlockchainMiner,
     config: BlockchainConfig
   ) {
+    this.network = network;
     this.wallet = wallet;
     this.miner = miner;
     this.txDb = txDb;
@@ -56,6 +60,7 @@ export class NodeBlockchainApp {
 
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
     return {
+      network: this.network.takeSnapshot(),
       wallet: this.wallet.takeSnapshot(),
       miner: this.miner.takeSnapshot(),
       txDb: this.txDb.takeSnapshot(),

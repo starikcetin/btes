@@ -82,10 +82,11 @@ export class Simulation {
     );
 
     const blockchainApp = new NodeBlockchainApp(
+      blockchainNetwork,
       blockchainWallet,
-      blockchainMiner,
       blockchainTxDb,
       blockchainBlockDb,
+      blockchainMiner,
       blockchainConfig
     );
 
@@ -147,10 +148,11 @@ export class Simulation {
     );
 
     const blockchainApp = new NodeBlockchainApp(
+      blockchainNetwork,
       blockchainWallet,
-      blockchainMiner,
       blockchainTxDb,
       blockchainBlockDb,
+      blockchainMiner,
       nodeSnapshot.blockchainApp.config
     );
 
