@@ -96,7 +96,8 @@ export class NodeBlockchainApp {
       if (isValid) {
         // if relay:
         if (canRelay) {
-          // TODO: bc16.6. & bc18.7. Relay block to our peers
+          // bc16.6. & bc18.7. Relay block to our peers
+          this.network.broadcastBlock(block);
         }
 
         // bc19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
@@ -124,7 +125,8 @@ export class NodeBlockchainApp {
       // tx18. "Add to wallet if mine"
       this.wallet.addToWalletIfMine(tx);
 
-      // TODO: tx19. Relay transaction to peers
+      // tx19. Relay transaction to peers
+      this.network.broadcastTx(tx);
 
       // tx20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one) recursively on that orphan
       const txHash = hashTx(tx);

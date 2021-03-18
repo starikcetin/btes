@@ -64,9 +64,16 @@ export class Simulation {
       null
     );
 
-    const blockchainTxDb = new BlockchainTxDb([], []);
+    const blockchainTxDb = new BlockchainTxDb(
+      this.socketEmitter,
+      nodeUid,
+      [],
+      []
+    );
 
     const blockchainBlockDb = new BlockchainBlockDb(
+      this.socketEmitter,
+      nodeUid,
       new Tree<BlockchainBlock>(),
       []
     );
@@ -128,11 +135,15 @@ export class Simulation {
     );
 
     const blockchainTxDb = new BlockchainTxDb(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
       nodeSnapshot.blockchainApp.txDb.mempool,
       nodeSnapshot.blockchainApp.txDb.orphanage
     );
 
     const blockchainBlockDb = new BlockchainBlockDb(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
       Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDb.blockchain),
       nodeSnapshot.blockchainApp.blockDb.orphanage
     );

@@ -39,5 +39,12 @@ export const socketEvents = {
     blockchainAbortMining: 'simulation-blockchain-abort-mining',
     blockchainDismissMining: 'simulation-blockchain-dismiss-mining',
     blockchainBroadcastMinedBlock: 'simulation-broadcast-mined-block',
+    blockAddedToBlockchain: 'simulation-block-added-to-blockchain',
+    blockAddedToOrphanage: 'simulation-block-added-to-orphanage',
+    blocksRemovedFromOrphanage: 'simulaiton-blocks-removed-from-orphanage',
+    txAddedToMempool: 'simulation-tx-added-to-mempool',
+    txAddedToOrphanage: 'simulation-tx-added-to-orphanage',
+    txRemovedFromMempool: 'simulation-tx-removed-from-mempool',
+    txsRemovedFromOrphanage: 'simulation-txs-removed-from-orphanage',
   },
 } as const;
