@@ -79,7 +79,10 @@ const Signin: React.FC = () => {
                 Register
               </button>
               <label className="p-3">
-                Already have an account? <a href="#"> Sign in </a>
+                Already have an account?{' '}
+                <a href="#" onClick={() => setisRegistering(false)}>
+                  Sign in
+                </a>
               </label>
             </form>
           </div>
