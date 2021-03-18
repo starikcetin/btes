@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Tree } from './Tree';
 import { TreeNode } from './TreeNode';
 import { collectGenerator } from '../utils/collectGenerator';

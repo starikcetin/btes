@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, ProgressBar, Table, Button } from 'react-bootstrap';
+import { Card, Table, Button } from 'react-bootstrap';
 
 import './BlockchainMinerStoppedView.scss';
 import { BlockchainMinerStoppedState } from '../../../../../common/blockchain/miner/BlockchainMinerStateData';

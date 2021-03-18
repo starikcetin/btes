@@ -15,15 +15,15 @@
     }
   }
 
-  .blockchain-tree--root-node > circle { /* stylelint-disable-line selector-class-pattern -- react-d3-tree build in css */
+  .blockchain-tree--root-node > circle {
     fill: #c22;
   }
 
-  .blockchain-tree--branch-node > circle { /* stylelint-disable-line selector-class-pattern -- react-d3-tree build in css */
+  .blockchain-tree--branch-node > circle {
     fill: #22c;
   }
 
-  .blockchain-tree--leaf-node > circle { /* stylelint-disable-line selector-class-pattern -- react-d3-tree build in css */
+  .blockchain-tree--leaf-node > circle {
     fill: #2c2;
   }
 }

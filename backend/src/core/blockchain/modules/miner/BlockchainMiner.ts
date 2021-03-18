@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { BlockchainMinerSnapshot } from '../../../../common/blockchain/snapshots/BlockchainMinerSnapshot';
 import { BlockchainConfig } from '../../../../common/blockchain/BlockchainConfig';
 import { SimulationNamespaceEmitter } from '../../../SimulationNamespaceEmitter';
