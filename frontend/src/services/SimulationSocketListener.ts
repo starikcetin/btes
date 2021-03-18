@@ -14,6 +14,15 @@ import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/Sim
 import { SimulationNodeMailReceivedPayload } from '../common/socketPayloads/SimulationNodeMailReceivedPayload';
 import { SimulationTimeScaleChangedPayload } from '../common/socketPayloads/SimulationTimeScaleChangedPayload';
 import { SimulationConnectionLatencyChangedPayload } from '../common/socketPayloads/SimulationConnectionLatencyChangedPayload';
+import { BlockchainKeyPairSavedPayload } from '../common/socketPayloads/BlockchainKeyPairSavedPayload';
+import { BlockchainMinerStateUpdatedPayload } from '../common/socketPayloads/BlockchainMinerStateUpdatedPayload';
+import { BlockAddedToBlockchainPayload } from '../common/socketPayloads/BlockAddedToBlockchainPayload';
+import { BlockAddedToOrphanagePayload } from '../common/socketPayloads/BlockAddedToOrphanagePayload';
+import { BlocksRemovedFromOrphanagePayload } from '../common/socketPayloads/BlocksRemovedFromOrphanagePayload';
+import { TxAddedToMempoolPayload } from '../common/socketPayloads/TxAddedToMempoolPayload';
+import { TxAddedToOrphanagePayload } from '../common/socketPayloads/TxAddedToOrphanagePayload';
+import { TxRemovedFromMempoolPayload } from '../common/socketPayloads/TxRemovedFromMempoolPayload';
+import { TxsRemovedFromOrphanagePayload } from '../common/socketPayloads/TxsRemovedFromOrphanagePayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -61,6 +70,42 @@ export class SimulationSocketListener {
       socketEvents.simulation.connectionLatencyChanged,
       this.handleConnectionLatencyChanged
     );
+    socket.on(
+      socketEvents.simulation.blockchainKeyPairSaved,
+      this.handleBlockchainKeyPairSaved
+    );
+    socket.on(
+      socketEvents.simulation.blockchainMinerStateUpdated,
+      this.handleBlockchainMinerStateUpdated
+    );
+    socket.on(
+      socketEvents.simulation.blockAddedToBlockchain,
+      this.handleBlockAddedToBlockchain
+    );
+    socket.on(
+      socketEvents.simulation.blockAddedToOrphanage,
+      this.handleBlockAddedToOrphanage
+    );
+    socket.on(
+      socketEvents.simulation.blocksRemovedFromOrphanage,
+      this.handleBlocksRemovedFromOrphanage
+    );
+    socket.on(
+      socketEvents.simulation.txAddedToMempool,
+      this.handleTxAddedToMempool
+    );
+    socket.on(
+      socketEvents.simulation.txAddedToOrphanage,
+      this.handleTxAddedToOrphanage
+    );
+    socket.on(
+      socketEvents.simulation.txRemovedFromMempool,
+      this.handleTxRemovedFromMempool
+    );
+    socket.on(
+      socketEvents.simulation.txsRemovedFromOrphanage,
+      this.handleTxsRemovedFromOrphanage
+    );
 
     socket.onAny(this.handleAny);
   }
@@ -85,15 +130,20 @@ export class SimulationSocketListener {
       );
     }
 
-    store.dispatch(
-      simulationSlice.actions.log({
-        simulationUid: this.simulationUid,
-        direction: 'incoming',
-        eventName,
-        payload: body,
-        timestamp: Date.now(),
-      })
-    );
+    /**
+     * TODO: logging is disabled due to performance problems during blockchain mining
+     * perhaps we can solve the performance problems by moving logs to a separate slice
+     * ~~ Tarık, 2021-03-18
+     */
+    // store.dispatch(
+    //   simulationSlice.actions.log({
+    //     simulationUid: this.simulationUid,
+    //     direction: 'incoming',
+    //     eventName,
+    //     payload: body,
+    //     timestamp: Date.now(),
+    //   })
+    // );
   };
 
   private handleSimulationPong = (body: SimulationPongPayload): void => {
@@ -264,6 +314,116 @@ export class SimulationSocketListener {
   ) => {
     store.dispatch(
       simulationSlice.actions.connectionLatencyChanged({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleBlockchainKeyPairSaved = (
+    body: BlockchainKeyPairSavedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.keyPairSaved({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+
+    this.dispatchLogNodeEvent(
+      body.nodeUid,
+      socketEvents.simulation.blockchainKeyPairSaved,
+      body
+    );
+  };
+
+  private readonly handleBlockchainMinerStateUpdated = (
+    body: BlockchainMinerStateUpdatedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.minerStateUpdated({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+
+    // // TODO: this might lag a bit, measure and take out if necessary
+    // this.dispatchLogNodeEvent(
+    //   body.nodeUid,
+    //   socketEvents.simulation.blockchainMinerStateUpdated,
+    //   body
+    // );
+  };
+
+  private readonly handleTxsRemovedFromOrphanage = (
+    body: TxsRemovedFromOrphanagePayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.txsRemovedFromOrphanage({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleTxRemovedFromMempool = (
+    body: TxRemovedFromMempoolPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.txRemovedFromMempool({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleTxAddedToOrphanage = (
+    body: TxAddedToOrphanagePayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.txAddedToOrphanage({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleTxAddedToMempool = (body: TxAddedToMempoolPayload) => {
+    store.dispatch(
+      simulationSlice.actions.txAddedToMempool({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleBlocksRemovedFromOrphanage = (
+    body: BlocksRemovedFromOrphanagePayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.blocksRemovedFromOrphanage({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleBlockAddedToOrphanage = (
+    body: BlockAddedToOrphanagePayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.blockAddedToOrphanage({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleBlockAddedToBlockchain = (
+    body: BlockAddedToBlockchainPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.blockAddedToBlockchain({
         simulationUid: this.simulationUid,
         ...body,
       })

@@ -7,6 +7,23 @@ import { SimulationNodeSnapshot } from '../common/SimulationNodeSnapshot';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
+import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
+import { BlockchainWallet } from './blockchain/modules/BlockchainWallet';
+import { BlockchainTxDb } from './blockchain/modules/BlockchainTxDb';
+import { BlockchainBlockDb } from './blockchain/modules/BlockchainBlockDb';
+import { BlockchainBlock } from '../common/blockchain/block/BlockchainBlock';
+import { Tree } from '../common/tree/Tree';
+import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
+import { BlockchainMiner } from './blockchain/modules/miner/BlockchainMiner';
+import { BlockchainNetwork } from './blockchain/modules/BlockchainNetwork';
+
+// TODO: this should not be here
+const blockchainConfig: BlockchainConfig = {
+  keypairBitLength: 5,
+  blockCreationFee: 100,
+  coinbaseMaturity: 5,
+  targetLeadingZeroCount: 3,
+};
 
 export class Simulation {
   public readonly simulationUid: string;
@@ -33,10 +50,58 @@ export class Simulation {
     positionY: number
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
+
+    const blockchainNetwork = new BlockchainNetwork(
+      this.connectionMap,
+      this.timerService,
+      nodeUid
+    );
+
+    const blockchainWallet = new BlockchainWallet(
+      this.socketEmitter,
+      nodeUid,
+      blockchainConfig,
+      null
+    );
+
+    const blockchainTxDb = new BlockchainTxDb(
+      this.socketEmitter,
+      nodeUid,
+      [],
+      []
+    );
+
+    const blockchainBlockDb = new BlockchainBlockDb(
+      this.socketEmitter,
+      nodeUid,
+      new Tree<BlockchainBlock>(),
+      []
+    );
+
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      blockchainNetwork,
+      blockchainBlockDb,
+      blockchainTxDb,
+      nodeUid,
+      blockchainConfig,
+      { state: 'idle' }
+    );
+
+    const blockchainApp = new NodeBlockchainApp(
+      blockchainNetwork,
+      blockchainWallet,
+      blockchainTxDb,
+      blockchainBlockDb,
+      blockchainMiner,
+      blockchainConfig
+    );
+
     const newNode = new SimulationNode(
       this.socketEmitter,
       this.connectionMap,
       this.timerService,
+      blockchainApp,
       nodeUid,
       positionX,
       positionY,
@@ -55,10 +120,58 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
+    // TODO: initialize with snapshot
+    const blockchainNetwork = new BlockchainNetwork(
+      this.connectionMap,
+      this.timerService,
+      nodeSnapshot.nodeUid
+    );
+
+    const blockchainWallet = new BlockchainWallet(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.blockchainApp.config,
+      nodeSnapshot.blockchainApp.wallet.keyPair
+    );
+
+    const blockchainTxDb = new BlockchainTxDb(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.blockchainApp.txDb.mempool,
+      nodeSnapshot.blockchainApp.txDb.orphanage
+    );
+
+    const blockchainBlockDb = new BlockchainBlockDb(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
+      Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDb.blockchain),
+      nodeSnapshot.blockchainApp.blockDb.orphanage
+    );
+
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      blockchainNetwork,
+      blockchainBlockDb,
+      blockchainTxDb,
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.blockchainApp.config,
+      nodeSnapshot.blockchainApp.miner.currentState
+    );
+
+    const blockchainApp = new NodeBlockchainApp(
+      blockchainNetwork,
+      blockchainWallet,
+      blockchainTxDb,
+      blockchainBlockDb,
+      blockchainMiner,
+      nodeSnapshot.blockchainApp.config
+    );
+
     const newNode = new SimulationNode(
       this.socketEmitter,
       this.connectionMap,
       this.timerService,
+      blockchainApp,
       nodeSnapshot.nodeUid,
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,

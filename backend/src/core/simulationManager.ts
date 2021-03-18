@@ -1,7 +1,7 @@
 import { Namespace } from 'socket.io';
 
 import { Simulation } from './Simulation';
-import { fatalAssert } from '../utils/fatalAssert';
+import { fatalAssert } from '../common/utils/fatalAssert';
 import { SimulationNamespaceListener } from './SimulationNamespaceListener';
 import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';

@@ -5,15 +5,14 @@ import { SimulationNodeMail } from '../common/SimulationNodeMail';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
-import { BlockchainBlock } from '../common/BlockchainBlock';
-import { dummyBlockchain } from '../utils/dummyBlockchain';
+import { NodeBlockchainApp } from './blockchain/NodeBlockchainApp';
 
 export class SimulationNode {
   public readonly nodeUid: string;
+  public readonly blockchainApp: NodeBlockchainApp;
 
   private readonly connectionMap: NodeConnectionMap;
   private readonly timerService: ControlledTimerService;
-  private readonly blockchainBlock: BlockchainBlock;
 
   private _positionX: number;
   public get positionX(): number {
@@ -40,6 +39,7 @@ export class SimulationNode {
     socketEmitter: SimulationNamespaceEmitter,
     connectionMap: NodeConnectionMap,
     timerService: ControlledTimerService,
+    blockchainApp: NodeBlockchainApp,
     nodeUid: string,
     positionX: number,
     positionY: number,
@@ -48,12 +48,11 @@ export class SimulationNode {
     this.socketEmitter = socketEmitter;
     this.connectionMap = connectionMap;
     this.timerService = timerService;
+    this.blockchainApp = blockchainApp;
     this.nodeUid = nodeUid;
     this._positionX = positionX;
     this._positionY = positionY;
     this._receivedMails = [...receivedMails];
-
-    this.blockchainBlock = dummyBlockchain;
   }
 
   public readonly teardown = (): void => {
@@ -144,7 +143,7 @@ export class SimulationNode {
       positionX: this._positionX,
       positionY: this._positionY,
       receivedMails: [...this._receivedMails],
-      blockchainBlock: this.blockchainBlock,
+      blockchainApp: this.blockchainApp.takeSnapshot(),
     };
   };
 }

@@ -20,6 +20,11 @@ import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/Sim
 import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
 import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
 import { SimulationConnectionChangeLatencyPayload } from '../common/socketPayloads/SimulationConnectionChangeLatencyPayload';
+import { BlockchainSaveKeyPairPayload } from '../common/socketPayloads/BlockchainSaveKeyPairPayload';
+import { BlockchainStartMiningPayload } from '../common/socketPayloads/BlockchainStartMiningPayload';
+import { BlockchainAbortMiningPayload } from '../common/socketPayloads/BlockchainAbortMiningPayload';
+import { BlockchainDismissMiningPayload } from '../../../common/src/socketPayloads/BlockchainDismissMiningPayload';
+import { BlockchainBroadcastMinedBlockPayload } from '../common/socketPayloads/BlockchainBroadcastMinedBlockPayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -194,6 +199,61 @@ class SimulationBridge {
     this.emit(
       simulationUid,
       socketEvents.simulation.connectionChangeLatency,
+      body
+    );
+  }
+
+  public sendBlockchainSaveKeyPair(
+    simulationUid: string,
+    body: BlockchainSaveKeyPairPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.blockchainSaveKeyPair,
+      body
+    );
+  }
+
+  public sendBlockchainStartMining(
+    simulationUid: string,
+    body: BlockchainStartMiningPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.blockchainStartMining,
+      body
+    );
+  }
+
+  public sendBlockchainAbortMining(
+    simulationUid: string,
+    body: BlockchainAbortMiningPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.blockchainAbortMining,
+      body
+    );
+  }
+
+  public sendBlockchainDismissMining(
+    simulationUid: string,
+    body: BlockchainDismissMiningPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.blockchainDismissMining,
+      body
+    );
+  }
+
+  public sendBlockchainBroadcastMinedBlock(
+    simulationUid: string,
+    body: BlockchainBroadcastMinedBlockPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.blockchainBroadcastMinedBlock,
       body
     );
   }

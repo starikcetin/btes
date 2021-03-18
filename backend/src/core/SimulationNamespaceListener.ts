@@ -17,6 +17,7 @@ import { SimulationNodeBroadcastMailPayload } from '../common/socketPayloads/Sim
 import { SimulationNodeBroadcastMailCommand } from './commands/SimulationNodeBroadcastMailCommand';
 import { SimulationNodeUnicastMailPayload } from '../common/socketPayloads/SimulationNodeUnicastMailPayload';
 import { SimulationNodeUnicastMailCommand } from './commands/SimulationNodeUnicastMailCommand';
+import { BlockchainSaveKeyPairCommand } from './commands/BlockchainSaveKeyPairCommand';
 import { SimulationConnectNodesPayload } from '../common/socketPayloads/SimulationConnectNodesPayload';
 import { SimulationDisconnectNodesPayload } from '../common/socketPayloads/SimulationDisconnectNodesPayload';
 import { SimulationConnectNodesCommand } from './commands/SimulationConnectNodesCommand';
@@ -27,6 +28,15 @@ import { ControlledTimerService } from './network/ControlledTimerService';
 import { SimulationChangeTimeScalePayload } from '../common/socketPayloads/SimulationChangeTimeScalePayload';
 import { SimulationConnectionChangeLatencyPayload } from '../common/socketPayloads/SimulationConnectionChangeLatencyPayload';
 import { SimulationConnectionChangeLatencyCommand } from './commands/SimulationConnectionChangeLatencyCommand';
+import { BlockchainSaveKeyPairPayload } from '../common/socketPayloads/BlockchainSaveKeyPairPayload';
+import { BlockchainStartMiningPayload } from '../common/socketPayloads/BlockchainStartMiningPayload';
+import { BlockchainStartMiningCommand } from './commands/BlockchainStartMiningCommand';
+import { BlockchainAbortMiningPayload } from '../common/socketPayloads/BlockchainAbortMiningPayload';
+import { BlockchainAbortMiningCommand } from './commands/BlockchainAbortMiningCommand';
+import { BlockchainBroadcastMinedBlockPayload } from '../common/socketPayloads/BlockchainBroadcastMinedBlockPayload';
+import { BlockchainDismissMiningPayload } from '../common/socketPayloads/BlockchainDismissMiningPayload';
+import { BlockchainBroadcastMinedBlockCommand } from './commands/BlockchainBroadcastMinedBlockCommand';
+import { BlockchainDismissMiningCommand } from './commands/BlockchainDismissMiningCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -113,6 +123,26 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.connectionChangeLatency,
       this.handleConnectionChangeLatency
+    );
+    socket.on(
+      socketEvents.simulation.blockchainSaveKeyPair,
+      this.handleBlockchainSaveKeyPair
+    );
+    socket.on(
+      socketEvents.simulation.blockchainStartMining,
+      this.handleBlockchainStartMining
+    );
+    socket.on(
+      socketEvents.simulation.blockchainAbortMining,
+      this.handleBlockchainAbortMining
+    );
+    socket.on(
+      socketEvents.simulation.blockchainDismissMining,
+      this.handleBlockchainDismissMining
+    );
+    socket.on(
+      socketEvents.simulation.blockchainBroadcastMinedBlock,
+      this.handleBlockchainBroadcastMinedBlock
     );
   };
 
@@ -259,6 +289,44 @@ export class SimulationNamespaceListener {
     );
 
     this.commandHistoryManager.register(command);
+    command.execute();
+  };
+
+  private readonly handleBlockchainSaveKeyPair = (
+    body: BlockchainSaveKeyPairPayload
+  ) => {
+    const command = new BlockchainSaveKeyPairCommand(this.simulation, body);
+    command.execute();
+  };
+
+  private readonly handleBlockchainStartMining = (
+    body: BlockchainStartMiningPayload
+  ) => {
+    const command = new BlockchainStartMiningCommand(this.simulation, body);
+    command.execute();
+  };
+
+  private readonly handleBlockchainAbortMining = (
+    body: BlockchainAbortMiningPayload
+  ) => {
+    const command = new BlockchainAbortMiningCommand(this.simulation, body);
+    command.execute();
+  };
+
+  private readonly handleBlockchainBroadcastMinedBlock = (
+    body: BlockchainBroadcastMinedBlockPayload
+  ) => {
+    const command = new BlockchainBroadcastMinedBlockCommand(
+      this.simulation,
+      body
+    );
+    command.execute();
+  };
+
+  private readonly handleBlockchainDismissMining = (
+    body: BlockchainDismissMiningPayload
+  ) => {
+    const command = new BlockchainDismissMiningCommand(this.simulation, body);
     command.execute();
   };
 }
