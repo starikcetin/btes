@@ -118,7 +118,7 @@ const attemptMine = (
   nonce: number,
   timestamp: number
 ): MiningAttempt => {
-  const header = makeBlockHeader(template, nonce, timestamp);
+  const header = makeBlockHeader(template, timestamp, nonce);
   const hash = hashBlock(header);
   const isSuccess = checkProofOfWork(hash, template.difficultyTarget);
   return {

@@ -15,6 +15,7 @@ import { BlockchainBlock } from '../common/blockchain/block/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
 import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
 import { BlockchainMiner } from './blockchain/modules/miner/BlockchainMiner';
+import { BlockchainNetwork } from './blockchain/modules/BlockchainNetwork';
 
 // TODO: this should not be here
 const blockchainConfig: BlockchainConfig = {
@@ -50,6 +51,12 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
+    const blockchainNetwork = new BlockchainNetwork(
+      this.connectionMap,
+      this.timerService,
+      nodeUid
+    );
+
     const blockchainWallet = new BlockchainWallet(
       this.socketEmitter,
       nodeUid,
@@ -57,18 +64,21 @@ export class Simulation {
       null
     );
 
-    const blockchainMiner = new BlockchainMiner(
-      this.socketEmitter,
-      nodeUid,
-      blockchainConfig,
-      { state: 'idle' }
-    );
-
     const blockchainTxDb = new BlockchainTxDb([], []);
 
     const blockchainBlockDb = new BlockchainBlockDb(
       new Tree<BlockchainBlock>(),
       []
+    );
+
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      blockchainNetwork,
+      blockchainBlockDb,
+      blockchainTxDb,
+      nodeUid,
+      blockchainConfig,
+      { state: 'idle' }
     );
 
     const blockchainApp = new NodeBlockchainApp(
@@ -102,19 +112,18 @@ export class Simulation {
   public readonly createNodeWithSnapshot = (
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
+    // TODO: initialize with snapshot
+    const blockchainNetwork = new BlockchainNetwork(
+      this.connectionMap,
+      this.timerService,
+      nodeSnapshot.nodeUid
+    );
+
     const blockchainWallet = new BlockchainWallet(
       this.socketEmitter,
       nodeSnapshot.nodeUid,
       nodeSnapshot.blockchainApp.config,
       nodeSnapshot.blockchainApp.wallet.keyPair
-    );
-
-    // TODO: initialize with snapshot
-    const blockchainMiner = new BlockchainMiner(
-      this.socketEmitter,
-      nodeSnapshot.nodeUid,
-      nodeSnapshot.blockchainApp.config,
-      nodeSnapshot.blockchainApp.miner.currentState
     );
 
     const blockchainTxDb = new BlockchainTxDb(
@@ -125,6 +134,16 @@ export class Simulation {
     const blockchainBlockDb = new BlockchainBlockDb(
       Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDb.blockchain),
       nodeSnapshot.blockchainApp.blockDb.orphanage
+    );
+
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      blockchainNetwork,
+      blockchainBlockDb,
+      blockchainTxDb,
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.blockchainApp.config,
+      nodeSnapshot.blockchainApp.miner.currentState
     );
 
     const blockchainApp = new NodeBlockchainApp(
