@@ -7,12 +7,17 @@ import { nodeCardIdFormatter } from '../../utils/nodeIdFormatters';
 interface SimulationNodeConnectionProps {
   simulationUid: string;
   connection: NodeConnectionData;
+  launchHandler: (connection: NodeConnectionData) => void;
 }
 
 export const SimulationNodeConnection: React.FC<SimulationNodeConnectionProps> = (
   props
 ) => {
-  const { connection, simulationUid } = props;
+  const { connection, simulationUid, launchHandler } = props;
+
+  const click = () => {
+    launchHandler(connection);
+  };
 
   return (
     <div>
@@ -22,7 +27,8 @@ export const SimulationNodeConnection: React.FC<SimulationNodeConnectionProps> =
         headSize={0}
         path={'smooth'}
         curveness={0.4}
-        strokeWidth={1}
+        strokeWidth={3}
+        passProps={{ onClick: click, cursor: 'pointer' }}
       />
     </div>
   );

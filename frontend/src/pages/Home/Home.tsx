@@ -28,12 +28,16 @@ const Home: React.FC = () => {
             </i>
           </span>
         </div>
+
         <div className="buttons col-12 d-flex align-content-center justify-content-center align-items-center">
-          <Link to="/lessons" className="btn btn-success m-2 col-lg-2 col-6">
+          <Link to="/lessons" className="btn btn-success m-2 col-lg-2 col-4">
             Start Learning
           </Link>
-          <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-6">
+          <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-4">
             Explore
+          </Link>
+          <Link to="/signin" className="btn btn-danger m-2 col-lg-2 col-4">
+            Sign In
           </Link>
         </div>
       </div>
