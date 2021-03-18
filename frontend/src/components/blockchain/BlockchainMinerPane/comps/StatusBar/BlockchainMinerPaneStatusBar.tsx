@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Variant } from 'react-bootstrap/esm/types';
-import { Alert, Col, Row } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import { capitalize } from 'lodash';
 
 import { RootState } from '../../../../../state/RootState';
@@ -38,6 +38,8 @@ export const BlockchainMinerPaneStatusBar: React.FC<{
   return (
     <Alert variant={getAlertVariant()} className="p-2">
       State: {stateText}
+      {currentState.state === 'stopped' &&
+        `, Reason: ${capitalize(currentState.stopReason)}`}
     </Alert>
   );
 };

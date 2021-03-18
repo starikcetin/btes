@@ -97,6 +97,15 @@ export class BlockchainMiner {
     });
   };
 
+  public readonly dismissStoppedState = (): void => {
+    this.updateState({ state: 'idle' });
+  };
+
+  public readonly broadcastMinedBlock = (): void => {
+    // TODO: implement
+    console.log('broadcast mined block');
+  };
+
   private readonly mine = () => {
     if (this.currentState.state !== 'working') {
       throw new Error(
@@ -155,7 +164,7 @@ export class BlockchainMiner {
       state: 'stopped',
       stopReason: report.reason,
       task: this.currentState.task,
-      attemptCount: this.currentState.attemptCount,
+      attemptCount: this.currentState.attemptCount + this.attemptBatchCounter,
       finalAttempt: report.lastAttempt,
     });
 

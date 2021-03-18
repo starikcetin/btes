@@ -58,7 +58,7 @@ export const BlockchainMinerWorkingView: React.FC<BlockchainMinerWorkingViewProp
             </tbody>
           </Table>
         </Card.Body>
-        <Card.Footer>
+        <Card.Footer className="d-flex justify-content-center">
           <Button variant="danger" onClick={() => abort()}>
             Abort
           </Button>

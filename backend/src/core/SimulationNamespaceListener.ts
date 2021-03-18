@@ -33,6 +33,10 @@ import { BlockchainStartMiningPayload } from '../common/socketPayloads/Blockchai
 import { BlockchainStartMiningCommand } from './commands/BlockchainStartMiningCommand';
 import { BlockchainAbortMiningPayload } from '../common/socketPayloads/BlockchainAbortMiningPayload';
 import { BlockchainAbortMiningCommand } from './commands/BlockchainAbortMiningCommand';
+import { BlockchainBroadcastMinedBlockPayload } from '../common/socketPayloads/BlockchainBroadcastMinedBlockPayload';
+import { BlockchainDismissMiningPayload } from '../common/socketPayloads/BlockchainDismissMiningPayload';
+import { BlockchainBroadcastMinedBlockCommand } from './commands/BlockchainBroadcastMinedBlockCommand';
+import { BlockchainDismissMiningCommand } from './commands/BlockchainDismissMiningCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -131,6 +135,14 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.blockchainAbortMining,
       this.handleBlockchainAbortMining
+    );
+    socket.on(
+      socketEvents.simulation.blockchainDismissMining,
+      this.handleBlockchainDismissMining
+    );
+    socket.on(
+      socketEvents.simulation.blockchainBroadcastMinedBlock,
+      this.handleBlockchainBroadcastMinedBlock
     );
   };
 
@@ -298,6 +310,23 @@ export class SimulationNamespaceListener {
     body: BlockchainAbortMiningPayload
   ) => {
     const command = new BlockchainAbortMiningCommand(this.simulation, body);
+    command.execute();
+  };
+
+  private readonly handleBlockchainBroadcastMinedBlock = (
+    body: BlockchainBroadcastMinedBlockPayload
+  ) => {
+    const command = new BlockchainBroadcastMinedBlockCommand(
+      this.simulation,
+      body
+    );
+    command.execute();
+  };
+
+  private readonly handleBlockchainDismissMining = (
+    body: BlockchainDismissMiningPayload
+  ) => {
+    const command = new BlockchainDismissMiningCommand(this.simulation, body);
     command.execute();
   };
 }

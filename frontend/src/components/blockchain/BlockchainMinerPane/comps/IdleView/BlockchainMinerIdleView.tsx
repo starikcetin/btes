@@ -7,6 +7,7 @@ import { Tree } from '../../../../../common/tree/Tree';
 import { BlockchainMinerIdleState } from '../../../../../../../common/src/blockchain/miner/BlockchainMinerStateData';
 import { simulationBridge } from '../../../../../services/simulationBridge';
 import { RootState } from '../../../../../state/RootState';
+import { hasValue } from '../../../../../common/utils/hasValue';
 
 interface BlockchainMinerIdleViewProps {
   simulationUid: string;
@@ -53,6 +54,8 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
     });
   };
 
+  const ownAddress = appData.wallet.keyPair?.address;
+
   return (
     <div className="comp-blockchain-miner-idle-view">
       <Card>
@@ -83,12 +86,30 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
 
             <Form.Group controlId="formBasicPassword">
               <Form.Label>Recipient Address</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Base58 encoded blockchain address of the recipient..."
-                value={recipientAddress}
-                onChange={(e) => setRecipientAddress(e.target.value)}
-              />
+              <InputGroup>
+                <Form.Control
+                  type="text"
+                  placeholder="Base58 encoded blockchain address of the recipient..."
+                  value={recipientAddress}
+                  onChange={(e) => setRecipientAddress(e.target.value)}
+                />
+                <InputGroup.Append>
+                  <Button
+                    disabled={!hasValue(ownAddress)}
+                    variant="info"
+                    onClick={() =>
+                      setRecipientAddress(ownAddress ?? recipientAddress)
+                    }
+                    title={
+                      hasValue(ownAddress)
+                        ? 'Set to own blockchain address.'
+                        : 'This node does not have a blockchain address yet.'
+                    }
+                  >
+                    Set to own address
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
               <Form.Text className="text-muted">
                 Please note that we use <code>base58</code> encoding for the
                 addresses and keys, not <code>base58check</code>.
