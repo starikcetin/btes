@@ -145,7 +145,7 @@ const Signin: React.FC = () => {
               <label className="p-3">
                 Not a member yet?
                 <a href="#" onClick={() => setisRegistering(true)}>
-                  <a href="#"> Join now </a>
+                  Join now
                 </a>
               </label>
             </form>
