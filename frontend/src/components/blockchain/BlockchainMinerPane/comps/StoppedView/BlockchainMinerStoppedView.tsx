@@ -65,7 +65,7 @@ export const BlockchainMinerStoppedView: React.FC<BlockchainMinerStoppedViewProp
         </Card.Body>
         <Card.Footer className="d-flex justify-content-center">
           <Button variant="danger" onClick={() => dismiss()}>
-            Dismiss
+            {state.stopReason === 'success' ? 'Discard' : 'Dismiss'}
           </Button>
           {state.stopReason === 'success' && (
             <Button
