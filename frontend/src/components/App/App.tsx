@@ -5,6 +5,7 @@ import './App.scss';
 import Navbar from '../Navbar/Navbar';
 import Home from '../../pages/Home/Home';
 import Sandbox from '../../pages/Sandbox/Sandbox';
+import Signin from '../../pages/Signin/Signin';
 import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
 
 const App: React.FC = () => {
@@ -35,6 +36,9 @@ const App: React.FC = () => {
             <div>
               <p>About</p>
             </div>
+          </Route>
+          <Route path="/signin">
+            <Signin></Signin>
           </Route>
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>

@@ -70,6 +70,15 @@ const Navbar: React.FC = () => {
                 About
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="/signin"
+                className="nav-link"
+                activeClassName="active"
+              >
+                Sign In
+              </NavLink>
+            </li>
           </ul>
         </div>
       </nav>
