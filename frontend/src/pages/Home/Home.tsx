@@ -18,7 +18,7 @@ const Home: React.FC = () => {
             <b>Blockchain Technology For Everyone</b>
           </span>
         </div>
-        <div className="page-home--header-info d-flex justify-content-end col-lg-8 col-12 text-center">
+        <div className="page-home--header-info d-flex justify-content-center col-lg-8 col-12 text-center">
           <span>
             <i>
               BTES is an educational tool for learning Blockchain technology.
