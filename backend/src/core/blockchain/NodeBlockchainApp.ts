@@ -1,5 +1,3 @@
-// TODO: how to handle the genesis block? ideally we should ask during simulation init and include it by default in all nodes.
-
 import { NodeBlockchainAppSnapshot } from '../../common/blockchain/snapshots/NodeBlockchainAppSnapshot';
 import { BlockchainWallet } from './modules/BlockchainWallet';
 import { BlockchainTxDb } from './modules/BlockchainTxDb';
@@ -13,6 +11,8 @@ import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../common/blockchain/utils/hashTx';
 import { makeGenesisBlock } from './utils/makeGenesisBlock';
+import { BlockchainMiner } from './modules/miner/BlockchainMiner';
+import { BlockchainNetwork } from './modules/BlockchainNetwork';
 
 /** Deals with everything related to blockchain, for a specific node. */
 export class NodeBlockchainApp {
@@ -21,6 +21,8 @@ export class NodeBlockchainApp {
 
   // Stateful Modules
   public readonly wallet: BlockchainWallet;
+  public readonly miner: BlockchainMiner;
+  private readonly network: BlockchainNetwork;
   private readonly txDb: BlockchainTxDb;
   private readonly blockDb: BlockchainBlockDb;
 
@@ -29,12 +31,16 @@ export class NodeBlockchainApp {
   private readonly txChecker: BlockchainTxChecker;
 
   constructor(
+    network: BlockchainNetwork,
     wallet: BlockchainWallet,
     txDb: BlockchainTxDb,
     blockDb: BlockchainBlockDb,
+    miner: BlockchainMiner,
     config: BlockchainConfig
   ) {
+    this.network = network;
     this.wallet = wallet;
+    this.miner = miner;
     this.txDb = txDb;
     this.blockDb = blockDb;
     this.config = config;
@@ -54,7 +60,9 @@ export class NodeBlockchainApp {
 
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
     return {
+      network: this.network.takeSnapshot(),
       wallet: this.wallet.takeSnapshot(),
+      miner: this.miner.takeSnapshot(),
       txDb: this.txDb.takeSnapshot(),
       blockDb: this.blockDb.takeSnapshot(),
       config: this.config,
@@ -88,7 +96,8 @@ export class NodeBlockchainApp {
       if (isValid) {
         // if relay:
         if (canRelay) {
-          // TODO: bc16.6. & bc18.7. Relay block to our peers
+          // bc16.6. & bc18.7. Relay block to our peers
+          this.network.broadcastBlock(block);
         }
 
         // bc19. For each orphan block for which this block is its prev, run all these steps (including this one) recursively on that orphan
@@ -116,7 +125,8 @@ export class NodeBlockchainApp {
       // tx18. "Add to wallet if mine"
       this.wallet.addToWalletIfMine(tx);
 
-      // TODO: tx19. Relay transaction to peers
+      // tx19. Relay transaction to peers
+      this.network.broadcastTx(tx);
 
       // tx20. For each orphan transaction that uses this one as one of its inputs, run all these steps (including this one) recursively on that orphan
       const txHash = hashTx(tx);

@@ -11,6 +11,7 @@ import { collectGenerator } from '../../../common/utils/collectGenerator';
 import { hasValue } from '../../../common/utils/hasValue';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
 import { hashBlock } from '../../../common/blockchain/utils/hashBlock';
+import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
 
 export type BlockSearchResult =
   | { foundIn: 'blockchain'; result: TreeNode<BlockchainBlock> }
@@ -18,10 +19,19 @@ export type BlockSearchResult =
   | { foundIn: 'none'; result: null };
 
 export class BlockchainBlockDb {
+  private readonly socketEmitter: SimulationNamespaceEmitter;
+  private readonly nodeUid: string;
   private readonly blockchain: Tree<BlockchainBlock>;
   private readonly orphanage: BlockchainBlock[];
 
-  constructor(blocks: Tree<BlockchainBlock>, orphanBlocks: BlockchainBlock[]) {
+  constructor(
+    socketEmitter: SimulationNamespaceEmitter,
+    nodeUid: string,
+    blocks: Tree<BlockchainBlock>,
+    orphanBlocks: BlockchainBlock[]
+  ) {
+    this.socketEmitter = socketEmitter;
+    this.nodeUid = nodeUid;
     this.blockchain = blocks;
     this.orphanage = orphanBlocks;
   }
@@ -124,7 +134,14 @@ export class BlockchainBlockDb {
     parentNode: TreeNode<BlockchainBlock>
   ): TreeNode<BlockchainBlock> => {
     const id = hashBlock(block.header);
-    return this.blockchain.createNode(id, block, parentNode);
+    const node = this.blockchain.createNode(id, block, parentNode);
+
+    this.socketEmitter.sendBlockAddedToBlockchain({
+      nodeUid: this.nodeUid,
+      treeNode: node.toJsonObject(),
+    });
+
+    return node;
   };
 
   /** Finds the block with the given hash in main or side branches. Does NOT search the orphanage. */
@@ -156,18 +173,39 @@ export class BlockchainBlockDb {
   /** Adds the `block` to the orphanage unconditionally. */
   public readonly addToOrphanage = (block: BlockchainBlock): void => {
     this.orphanage.push(block);
+
+    this.socketEmitter.sendBlockAddedToOrphanage({
+      nodeUid: this.nodeUid,
+      block,
+    });
   };
 
   /** Removes all blocks from the orphanage which has the given block as their parent, and returns them. */
   public readonly popOrphansWithParent = (
     parentHash: string
-  ): BlockchainBlock[] =>
-    _.remove(this.orphanage, (b) => b.header.previousHash === parentHash);
+  ): BlockchainBlock[] => {
+    const poppedOrphans = _.remove(
+      this.orphanage,
+      (b) => b.header.previousHash === parentHash
+    );
+
+    if (poppedOrphans.length > 0) {
+      this.socketEmitter.sendBlocksRemovedFromOrphanage({
+        nodeUid: this.nodeUid,
+        removedBlockHashes: poppedOrphans.map((o) => hashBlock(o.header)),
+      });
+    }
+
+    return poppedOrphans;
+  };
 
   /** Adds the genesis block. */
   public readonly addGenesis = (genesisBlock: BlockchainBlock): void => {
     const id = hashBlock(genesisBlock.header);
     this.blockchain.createNode(id, genesisBlock, null);
+
+    // We don't need a separate socket event for genesis block,
+    // it must be already included in the very first snapshot.
   };
 
   private *getMainBranchBlockIterator() {

@@ -32,7 +32,6 @@ export class BlockchainWallet {
   }
 
   public readonly takeSnapshot = (): BlockchainWalletSnapshot => {
-    // TODO: implement
     return {
       keyPair: this._keyPair,
     };

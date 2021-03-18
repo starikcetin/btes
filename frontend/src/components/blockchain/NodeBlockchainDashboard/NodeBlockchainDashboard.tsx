@@ -1,7 +1,6 @@
 import React from 'react';
 import { Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { hasValue } from '../../../common/utils/hasValue';
-import { BlockchainTreeView } from '../BlockchainTreeView/BlockchainTreeView';
 
 import './NodeBlockchainDashboard.scss';
 import { BlockchainOverviewPane } from '../BlockchainOverviewPane/BlockchainOverviewPane';

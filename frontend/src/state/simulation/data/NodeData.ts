@@ -4,11 +4,11 @@ import { NodeBlockchainAppData } from './blockchain/NodeBlockchainAppData';
 
 export interface NodeData {
   // synced state
-  nodeUid: string;
-  positionX: number;
-  positionY: number;
-  receivedMails: SimulationNodeMail[];
-  blockchainApp: NodeBlockchainAppData;
+  readonly nodeUid: string;
+  readonly positionX: number;
+  readonly positionY: number;
+  readonly receivedMails: SimulationNodeMail[];
+  readonly blockchainApp: NodeBlockchainAppData;
 
   // local-only state
   readonly logs: SimulationLog[];

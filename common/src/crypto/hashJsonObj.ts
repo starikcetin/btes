@@ -7,5 +7,16 @@ import JSum from 'jsum';
  * @returns the hash. `sha256` outputs `32 bytes = 256 bits`.
  */
 export const hashJsonObj = (jsonObj: unknown): Buffer => {
+  /*
+   * Alternative if JSum ever fails: https://www.npmjs.com/package/fast-json-stable-stringify
+   *
+   * import stringify from 'fast-json-stable-stringify';
+   * import { createHash } from 'crypto';
+   * const str = stringify(jsonObj);
+   * const hash = createHash('sha256');
+   * hash.write(str);
+   * return hash.digest();
+   */
+
   return JSum.digest(jsonObj, 'SHA256');
 };

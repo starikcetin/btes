@@ -17,7 +17,10 @@ interface BlockchainTreeViewProps {
 function format(rootBlock: TreeNodeJsonObject<BlockchainBlock>): RawNodeDatum {
   return {
     name: rootBlock.id,
-    children: rootBlock.children?.map((child) => format(child)),
+    children:
+      rootBlock.children && rootBlock.children.length > 0
+        ? rootBlock.children.map(format)
+        : undefined,
   };
 }
 
@@ -37,7 +40,12 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
       {!hasValue(rootBlock) ? (
         <div>(No blocks found)</div>
       ) : (
-        <Tree data={format(rootBlock)} />
+        <Tree
+          data={format(rootBlock)}
+          rootNodeClassName="blockchain-tree--root-node"
+          branchNodeClassName="blockchain-tree--branch-node"
+          leafNodeClassName="blockchain-tree--leaf-node"
+        />
       )}
     </div>
   );

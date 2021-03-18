@@ -12,6 +12,14 @@ import { SimulationNodesDisconnectedPayload } from '../common/socketPayloads/Sim
 import { SimulationTimeScaleChangedPayload } from '../common/socketPayloads/SimulationTimeScaleChangedPayload';
 import { SimulationConnectionLatencyChangedPayload } from '../common/socketPayloads/SimulationConnectionLatencyChangedPayload';
 import { BlockchainKeyPairSavedPayload } from '../common/socketPayloads/BlockchainKeyPairSavedPayload';
+import { BlockchainMinerStateUpdatedPayload } from '../common/socketPayloads/BlockchainMinerStateUpdatedPayload';
+import { BlockAddedToBlockchainPayload } from '../common/socketPayloads/BlockAddedToBlockchainPayload';
+import { BlockAddedToOrphanagePayload } from '../common/socketPayloads/BlockAddedToOrphanagePayload';
+import { TxAddedToMempoolPayload } from '../common/socketPayloads/TxAddedToMempoolPayload';
+import { TxAddedToOrphanagePayload } from '../common/socketPayloads/TxAddedToOrphanagePayload';
+import { BlocksRemovedFromOrphanagePayload } from '../common/socketPayloads/BlocksRemovedFromOrphanagePayload';
+import { TxRemovedFromMempoolPayload } from '../common/socketPayloads/TxRemovedFromMempoolPayload';
+import { TxsRemovedFromOrphanagePayload } from '../common/socketPayloads/TxsRemovedFromOrphanagePayload';
 
 export class SimulationNamespaceEmitter {
   private readonly ns: Namespace;
@@ -88,7 +96,55 @@ export class SimulationNamespaceEmitter {
 
   public readonly sendBlockchainKeyPairSaved = (
     body: BlockchainKeyPairSavedPayload
-  ) => {
+  ): void => {
     this.ns.emit(socketEvents.simulation.blockchainKeyPairSaved, body);
+  };
+
+  public readonly sendBlockchainMinerStateUpdated = (
+    body: BlockchainMinerStateUpdatedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.blockchainMinerStateUpdated, body);
+  };
+
+  public readonly sendBlockAddedToBlockchain = (
+    body: BlockAddedToBlockchainPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.blockAddedToBlockchain, body);
+  };
+
+  public readonly sendBlockAddedToOrphanage = (
+    body: BlockAddedToOrphanagePayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.blockAddedToOrphanage, body);
+  };
+
+  public readonly sendBlocksRemovedFromOrphanage = (
+    body: BlocksRemovedFromOrphanagePayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.blocksRemovedFromOrphanage, body);
+  };
+
+  public readonly sendTxAddedToMempool = (
+    body: TxAddedToMempoolPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.txAddedToMempool, body);
+  };
+
+  public readonly sendTxAddedToOrphanage = (
+    body: TxAddedToOrphanagePayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.txAddedToOrphanage, body);
+  };
+
+  public readonly sendTxRemovedFromMempool = (
+    body: TxRemovedFromMempoolPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.txRemovedFromMempool, body);
+  };
+
+  public readonly sendTxsRemovedFromOrphanage = (
+    body: TxsRemovedFromOrphanagePayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.txsRemovedFromOrphanage, body);
   };
 }

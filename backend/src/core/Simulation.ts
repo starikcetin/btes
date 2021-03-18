@@ -14,6 +14,8 @@ import { BlockchainBlockDb } from './blockchain/modules/BlockchainBlockDb';
 import { BlockchainBlock } from '../common/blockchain/block/BlockchainBlock';
 import { Tree } from '../common/tree/Tree';
 import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
+import { BlockchainMiner } from './blockchain/modules/miner/BlockchainMiner';
+import { BlockchainNetwork } from './blockchain/modules/BlockchainNetwork';
 
 // TODO: this should not be here
 const blockchainConfig: BlockchainConfig = {
@@ -49,6 +51,12 @@ export class Simulation {
   ): SimulationNode => {
     const nodeUid = nodeUidGenerator.next().toString();
 
+    const blockchainNetwork = new BlockchainNetwork(
+      this.connectionMap,
+      this.timerService,
+      nodeUid
+    );
+
     const blockchainWallet = new BlockchainWallet(
       this.socketEmitter,
       nodeUid,
@@ -56,17 +64,36 @@ export class Simulation {
       null
     );
 
-    const blockchainTxDb = new BlockchainTxDb([], []);
+    const blockchainTxDb = new BlockchainTxDb(
+      this.socketEmitter,
+      nodeUid,
+      [],
+      []
+    );
 
     const blockchainBlockDb = new BlockchainBlockDb(
+      this.socketEmitter,
+      nodeUid,
       new Tree<BlockchainBlock>(),
       []
     );
 
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      blockchainNetwork,
+      blockchainBlockDb,
+      blockchainTxDb,
+      nodeUid,
+      blockchainConfig,
+      { state: 'idle' }
+    );
+
     const blockchainApp = new NodeBlockchainApp(
+      blockchainNetwork,
       blockchainWallet,
       blockchainTxDb,
       blockchainBlockDb,
+      blockchainMiner,
       blockchainConfig
     );
 
@@ -94,6 +121,12 @@ export class Simulation {
     nodeSnapshot: SimulationNodeSnapshot
   ): SimulationNode => {
     // TODO: initialize with snapshot
+    const blockchainNetwork = new BlockchainNetwork(
+      this.connectionMap,
+      this.timerService,
+      nodeSnapshot.nodeUid
+    );
+
     const blockchainWallet = new BlockchainWallet(
       this.socketEmitter,
       nodeSnapshot.nodeUid,
@@ -102,19 +135,35 @@ export class Simulation {
     );
 
     const blockchainTxDb = new BlockchainTxDb(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
       nodeSnapshot.blockchainApp.txDb.mempool,
       nodeSnapshot.blockchainApp.txDb.orphanage
     );
 
     const blockchainBlockDb = new BlockchainBlockDb(
+      this.socketEmitter,
+      nodeSnapshot.nodeUid,
       Tree.fromJsonObject(nodeSnapshot.blockchainApp.blockDb.blockchain),
       nodeSnapshot.blockchainApp.blockDb.orphanage
     );
 
+    const blockchainMiner = new BlockchainMiner(
+      this.socketEmitter,
+      blockchainNetwork,
+      blockchainBlockDb,
+      blockchainTxDb,
+      nodeSnapshot.nodeUid,
+      nodeSnapshot.blockchainApp.config,
+      nodeSnapshot.blockchainApp.miner.currentState
+    );
+
     const blockchainApp = new NodeBlockchainApp(
+      blockchainNetwork,
       blockchainWallet,
       blockchainTxDb,
       blockchainBlockDb,
+      blockchainMiner,
       nodeSnapshot.blockchainApp.config
     );
 
