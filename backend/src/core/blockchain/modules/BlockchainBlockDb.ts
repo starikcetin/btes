@@ -12,6 +12,7 @@ import { hasValue } from '../../../common/utils/hasValue';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
 import { hashBlock } from '../../../common/blockchain/utils/hashBlock';
 import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
+import { makeGenesisBlock } from '../utils/makeGenesisBlock';
 
 export type BlockSearchResult =
   | { foundIn: 'blockchain'; result: TreeNode<BlockchainBlock> }
@@ -34,6 +35,11 @@ export class BlockchainBlockDb {
     this.nodeUid = nodeUid;
     this.blockchain = blocks;
     this.orphanage = orphanBlocks;
+
+    if (!hasValue(blocks.root)) {
+      // if we don't have a root, the tree is empty. so register the genesis block.
+      this.addGenesis();
+    }
   }
 
   public readonly takeSnapshot = (): BlockchainBlockDbSnapshot => {
@@ -200,7 +206,12 @@ export class BlockchainBlockDb {
   };
 
   /** Adds the genesis block. */
-  public readonly addGenesis = (genesisBlock: BlockchainBlock): void => {
+  private readonly addGenesis = (): void => {
+    // TODO: generating the genesis block can be done at the very beginning of the simulation.
+    // that way we can simply reuse it instead of generating it every time. That way we can also
+    // parameterize it at the beginning of the simulation.
+    const genesisBlock = makeGenesisBlock();
+
     const id = hashBlock(genesisBlock.header);
     this.blockchain.createNode(id, genesisBlock, null);
 
