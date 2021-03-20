@@ -54,8 +54,6 @@ export class NodeBlockchainApp {
       wallet,
       commonChecker
     );
-
-    this.registerGenesisBlock();
   }
 
   public readonly takeSnapshot = (): NodeBlockchainAppSnapshot => {
@@ -132,12 +130,5 @@ export class NodeBlockchainApp {
       const txHash = hashTx(tx);
       this.txDb.popOrphansWithTxAsInput(txHash).forEach(this.receiveTx);
     }
-  };
-
-  private readonly registerGenesisBlock = (): void => {
-    // TODO: generating the genesis block can be done at the very beginning of the simulation.
-    // that way we can simply reuse it instead of generating it every time.
-    const genesisBlock = makeGenesisBlock();
-    this.blockDb.addGenesis(genesisBlock);
   };
 }
