@@ -1,1 +1,0 @@
-{"version":3,"file":"encodeBuffer.js","sourceRoot":"","sources":["encodeBuffer.ts"],"names":[],"mappings":";;;;;;AAEA,8CAAwB;AAQjB,IAAM,YAAY,GAAG,UAC1B,MAAc,EACd,WAAqD;IAErD,OAAO,WAAW,KAAK,SAAS;QAC9B,CAAC,CAAC,cAAI,CAAC,MAAM,CAAC,MAAM,CAAC;QACrB,CAAC,CAAC,MAAM,CAAC,QAAQ,CAAC,KAAK,CAAC,CAAC;AAC7B,CAAC,CAAC;AAPW,QAAA,YAAY,gBAOvB"}
