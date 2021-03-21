@@ -10,7 +10,6 @@ import { BlockchainTxChecker } from './validation/BlockchainTxChecker';
 import { BlockchainCommonChecker } from './validation/BlockchainCommonChecker';
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../common/blockchain/utils/hashTx';
-import { makeGenesisBlock } from './utils/makeGenesisBlock';
 import { BlockchainMiner } from './modules/miner/BlockchainMiner';
 import { BlockchainNetwork } from './modules/BlockchainNetwork';
 
