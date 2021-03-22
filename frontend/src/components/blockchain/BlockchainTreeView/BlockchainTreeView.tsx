@@ -17,15 +17,39 @@ interface BlockchainTreeViewProps {
   onBlockClick?: (blockHash: string) => void;
 }
 
-function format(rootBlock: TreeNodeJsonObject<BlockchainBlock>): RawNodeDatum {
+const hashToName = (hash: string, leadingZeroTarget: number): string => {
+  const leadingZeroes = _.takeWhile(hash, (c) => c === '0').join('');
+  const missingZeros = 0; // Math.max(0, leadingZeroTarget - leadingZeroes.length);
+  const truncatedRest = _.trimStart(hash, '0').substr(0, 6 + missingZeros);
+  return leadingZeroes.length + '..' + truncatedRest;
+};
+
+const format = (
+  rootBlock: TreeNodeJsonObject<BlockchainBlock>,
+  leadingZeroTarget: number
+): RawNodeDatum => {
   return {
-    name: rootBlock.id,
+    name: hashToName(rootBlock.id, leadingZeroTarget),
     children:
       rootBlock.children && rootBlock.children.length > 0
-        ? rootBlock.children.map(format)
+        ? rootBlock.children.map((c) => format(c, leadingZeroTarget))
         : undefined,
   };
-}
+};
+
+const makeNameToHashMap = (
+  rootNode: TreeNodeJsonObject<BlockchainBlock>,
+  leadingZeroTarget: number
+): Record<string, string> => {
+  return {
+    [hashToName(rootNode.id, leadingZeroTarget)]: rootNode.id,
+    ..._.reduce(
+      rootNode.children,
+      (acc, it) => ({ ...acc, ...makeNameToHashMap(it, leadingZeroTarget) }),
+      {}
+    ),
+  };
+};
 
 export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
   props
@@ -38,12 +62,22 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
         .blockchain.root
   );
 
+  const leadingZeroTarget = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.config
+        .targetLeadingZeroCount
+  );
+
+  const nameToHashMap = hasValue(rootBlock)
+    ? makeNameToHashMap(rootBlock, leadingZeroTarget)
+    : {};
+
   const handleOnNodeClick: TreeNodeEventCallback = (node) => {
     if (!hasValue(onBlockClick)) {
       return;
     }
 
-    onBlockClick(node.name);
+    onBlockClick(nameToHashMap[node.name]);
   };
 
   return (
@@ -52,7 +86,13 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
         <div>(No blocks found)</div>
       ) : (
         <Tree
-          data={format(rootBlock)}
+          nodeSize={{
+            x: 100 + leadingZeroTarget * 10,
+            y: 75,
+          }}
+          collapsible={false}
+          translate={{ x: 50, y: 200 }}
+          data={format(rootBlock, leadingZeroTarget)}
           rootNodeClassName="blockchain-tree--root-node"
           branchNodeClassName="blockchain-tree--branch-node"
           leafNodeClassName="blockchain-tree--leaf-node"

@@ -1,10 +1,14 @@
 .comp-blockchain-tree-view {
   width: 100%;
-  height: 40vh;
+  height: 400px;
 
   .rd3t-label__title { /* stylelint-disable-line selector-class-pattern -- react-d3-tree build in css */
-    font-size: x-small;
-    transform: translate(-10px, 15px) rotate(-55deg);
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    // font-weight: bold;
+    text-anchor: middle;
+    fill: #e83e8c;
+    stroke: none;
+    transform: translate(-40px, 35px);
   }
 
   .rd3t-node,
@@ -15,15 +19,21 @@
     }
   }
 
-  .blockchain-tree--root-node > circle {
-    fill: #c22;
+  .blockchain-tree--root-node {
+    circle {
+      fill: #c22;
+    }
   }
 
-  .blockchain-tree--branch-node > circle {
-    fill: #22c;
+  .blockchain-tree--branch-node {
+    circle {
+      fill: #22c;
+    }
   }
 
-  .blockchain-tree--leaf-node > circle {
-    fill: #2c2;
+  .blockchain-tree--leaf-node {
+    circle {
+      fill: #2c2;
+    }
   }
 }

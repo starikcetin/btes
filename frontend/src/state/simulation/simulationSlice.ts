@@ -434,6 +434,10 @@ export const simulationSlice = createSlice({
       sim.nodeMap[
         payload.nodeUid
       ].blockchainApp.blockDb.blockchain = tree.toJsonObject();
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.blockchainLookup[
+        payload.treeNode.id
+      ] = payload.treeNode.data;
     },
     blockAddedToOrphanage: (
       state,

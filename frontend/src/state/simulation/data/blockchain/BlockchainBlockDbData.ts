@@ -1,5 +1,6 @@
 import { BlockchainBlock } from '../../../../common/blockchain/block/BlockchainBlock';
 import { TreeJsonObject } from '../../../../common/tree/TreeJsonObject';
+import { BlockLookup } from './BlockLookup';
 
 export interface BlockchainBlockDbData {
   // synced state
@@ -7,5 +8,5 @@ export interface BlockchainBlockDbData {
   readonly orphanage: BlockchainBlock[];
 
   // derived state
-  readonly blockchainLookup: Record<string, BlockchainBlock>;
+  readonly blockchainLookup: BlockLookup;
 }
