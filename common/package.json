@@ -23,7 +23,7 @@
     "@types/jest-expect-message": "^1.0.3",
     "@types/ripemd160": "^2.0.0",
     "@types/secp256k1": "^4.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.15.2",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^6.15.0",
