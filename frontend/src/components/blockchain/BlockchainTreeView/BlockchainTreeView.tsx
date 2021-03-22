@@ -1,7 +1,9 @@
+import _ from 'lodash';
 import React from 'react';
 import Tree from 'react-d3-tree';
 import { useSelector } from 'react-redux';
 import { RawNodeDatum } from 'react-d3-tree/lib/types/common';
+import { TreeNodeEventCallback } from 'react-d3-tree/lib/Tree/types';
 
 import './BlockchainTreeView.scss';
 import { RootState } from '../../../state/RootState';
@@ -12,6 +14,7 @@ import { hasValue } from '../../../common/utils/hasValue';
 interface BlockchainTreeViewProps {
   simulationUid: string;
   nodeUid: string;
+  onBlockClick?: (blockHash: string) => void;
 }
 
 function format(rootBlock: TreeNodeJsonObject<BlockchainBlock>): RawNodeDatum {
@@ -27,13 +30,21 @@ function format(rootBlock: TreeNodeJsonObject<BlockchainBlock>): RawNodeDatum {
 export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
   props
 ) => {
-  const { simulationUid, nodeUid } = props;
+  const { simulationUid, nodeUid, onBlockClick } = props;
 
   const rootBlock = useSelector(
     (state: RootState) =>
       state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
         .blockchain.root
   );
+
+  const handleOnNodeClick: TreeNodeEventCallback = (node) => {
+    if (!hasValue(onBlockClick)) {
+      return;
+    }
+
+    onBlockClick(node.name);
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center border comp-blockchain-tree-view">
@@ -45,6 +56,7 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
           rootNodeClassName="blockchain-tree--root-node"
           branchNodeClassName="blockchain-tree--branch-node"
           leafNodeClassName="blockchain-tree--leaf-node"
+          onNodeClick={handleOnNodeClick}
         />
       )}
     </div>

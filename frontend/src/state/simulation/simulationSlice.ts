@@ -32,6 +32,7 @@ import { BlocksRemovedFromOrphanageActionPayload } from './actionPayloads/Blocks
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { Tree } from '../../common/tree/Tree';
 import { TreeNode } from '../../common/tree/TreeNode';
+import { makeNodeData } from './utils/makeNodeData';
 
 const initialState: SimulationSliceState = {};
 
@@ -101,7 +102,7 @@ export const simulationSlice = createSlice({
         );
       }
 
-      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload.nodeSnapshot };
+      sim.nodeMap[payload.nodeUid] = makeNodeData(null, payload.nodeSnapshot);
     },
     teardown: (
       state,
@@ -137,10 +138,9 @@ export const simulationSlice = createSlice({
 
         // state included in a snapshot, overwrite with the snapshot
         simulationUid: snapshot.simulationUid,
-        nodeMap: _.mapValues(snapshot.nodeMap, (node) => ({
-          logs: old.nodeMap[node.nodeUid]?.logs || [],
-          ...node,
-        })),
+        nodeMap: _.mapValues(snapshot.nodeMap, (node) =>
+          makeNodeData(old.nodeMap[node.nodeUid], node)
+        ),
         connectionMap: snapshot.connectionMap,
         timerService: snapshot.timerService,
       };
