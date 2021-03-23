@@ -39,8 +39,8 @@ export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
       >
         <Container>
           <Row>
-            <Col lg="auto">
-              <Nav variant="pills" className="flex-lg-column">
+            <Col xl="2">
+              <Nav variant="pills" className="flex-xl-column">
                 <Nav.Item className="text-lg-right">
                   <Nav.Link eventKey={tabKey.overview}>Overview</Nav.Link>
                 </Nav.Item>
@@ -58,7 +58,7 @@ export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
                 </Nav.Item>
               </Nav>
             </Col>
-            <Col>
+            <Col xl="10">
               <Tab.Content className="comp-node-blockchain-dashboard--tab-content-container">
                 <Tab.Pane eventKey={tabKey.overview}>
                   <BlockchainOverviewPane
