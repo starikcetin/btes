@@ -41,6 +41,12 @@ export const BlockchainBlockDbPane: React.FC<BlockchainBlockDbPaneProps> = (
     }
   });
 
+  const orphanBlocks = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
+        .orphanage
+  );
+
   return (
     <div className="comp-blockchain-block-db-pane">
       <Card>
@@ -63,8 +69,18 @@ export const BlockchainBlockDbPane: React.FC<BlockchainBlockDbPaneProps> = (
         </Card.Body>
       </Card>
       <Card className="mt-3">
-        <Card.Header>Orphan Blocks</Card.Header>
-        <Card.Body>TODO</Card.Body>
+        <Card.Header>Orphan Blocks ({orphanBlocks.length})</Card.Header>
+        <Card.Body>
+          {orphanBlocks.length === 0 ? (
+            <Card.Text className="text-muted">No orphan blocks.</Card.Text>
+          ) : (
+            orphanBlocks.map((orphan) => (
+              <div className="comp-blockchain-block-db-pane--orphan-block-card">
+                <BlockchainBlockCard block={orphan} />
+              </div>
+            ))
+          )}
+        </Card.Body>
       </Card>
     </div>
   );

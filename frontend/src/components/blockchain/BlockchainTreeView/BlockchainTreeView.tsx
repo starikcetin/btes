@@ -91,7 +91,7 @@ export const BlockchainTreeView: React.FC<BlockchainTreeViewProps> = (
             y: 75,
           }}
           collapsible={false}
-          translate={{ x: 50, y: 200 }}
+          translate={{ x: 50, y: 125 }}
           data={format(rootBlock, leadingZeroTarget)}
           rootNodeClassName="blockchain-tree--root-node"
           branchNodeClassName="blockchain-tree--branch-node"

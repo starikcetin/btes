@@ -1,3 +1,7 @@
 .comp-blockchain-block-db-pane {
   width: 100%;
+
+  &--orphan-block-card:not(:first-child) {
+    margin-top: 15px;
+  }
 }
