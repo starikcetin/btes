@@ -143,15 +143,11 @@ export const BlockchainKeyPairCard: React.FC<BlockchainKeyPairCardProps> = (
         </Card.Body>
         <Card.Footer>
           {hasKeyPair ? (
-            <small>
-              <Card.Text className="text-muted">
-                In this simulation, key pairs are permanent after they are
-                locked, for simplicity. Please note that in real-life, not only
-                would you be able to change your key pairs whenever you want,
-                but it is actually encouraged to use a new key pair for each new
-                transaction.
-              </Card.Text>
-            </small>
+            <Card.Text className="text-muted small">
+              In this simulation, key pairs are permanent after they are locked,
+              for simplicity. In real-life, you can change your key pairs
+              whenever you want.
+            </Card.Text>
           ) : (
             <div className="d-flex justify-content-center align-items-center">
               <Button
