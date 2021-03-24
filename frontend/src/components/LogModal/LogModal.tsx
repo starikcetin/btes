@@ -20,6 +20,7 @@ const LogModal: React.FC<LogModalProps> = (props) => {
       backdrop="static"
       keyboard={false}
       size="lg"
+      scrollable
     >
       <Modal.Header closeButton>
         <Modal.Title>Logs</Modal.Title>
