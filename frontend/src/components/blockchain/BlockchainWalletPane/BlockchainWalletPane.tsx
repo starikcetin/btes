@@ -1,7 +1,6 @@
 import React from 'react';
 
 import './BlockchainWalletPane.scss';
-import { Col, Container, Row } from 'react-bootstrap';
 import { BlockchainKeyPairCard } from '../BlockchainKeyPairCard/BlockchainKeyPairCard';
 
 interface BlockchainWalletPaneProps {
@@ -16,16 +15,7 @@ export const BlockchainWalletPane: React.FC<BlockchainWalletPaneProps> = (
 
   return (
     <div className="comp-blockchain-wallet-pane">
-      <Container>
-        <Row>
-          <Col>
-            <BlockchainKeyPairCard
-              simulationUid={simulationUid}
-              nodeUid={nodeUid}
-            />
-          </Col>
-        </Row>
-      </Container>
+      <BlockchainKeyPairCard simulationUid={simulationUid} nodeUid={nodeUid} />
     </div>
   );
 };
