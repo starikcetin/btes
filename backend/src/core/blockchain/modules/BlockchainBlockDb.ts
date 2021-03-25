@@ -195,7 +195,7 @@ export class BlockchainBlockDb {
     if (poppedOrphans.length > 0) {
       this.socketEmitter.sendBlocksRemovedFromOrphanage({
         nodeUid: this.nodeUid,
-        removedBlockHashes: poppedOrphans.map((o) => hashBlock(o.header)),
+        removedBlocks: poppedOrphans,
       });
     }
 

@@ -1,9 +1,15 @@
+import _ from 'lodash';
 import React from 'react';
 import { Button, Card, Col, Modal, Row } from 'react-bootstrap';
-import useArray from 'react-use-array';
+import { useArray } from 'react-hanger';
+import { useSelector } from 'react-redux';
 
 import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
+import { BlockchainTxOutPoint } from '../../../../../common/src/blockchain/tx/BlockchainTxOutPoint';
+import { RootState } from '../../../state/RootState';
+import { hasValue } from '../../../common/utils/hasValue';
+import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -17,8 +23,96 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
 ) => {
   const { show, closeHandler, simulationUid, nodeUid } = props;
 
-  const [inputs, manipulateInputs] = useArray<BlockchainTxInput>([]);
-  const [outputs, manipulateOutputs] = useArray<BlockchainTxOutput>([]);
+  const mainBranchTxLookup = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
+        .mainBranchTxLookup
+  );
+  const sideBranchesTxLookup = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
+        .sideBranchesTxLookup
+  );
+  const blockOrphanageTxLookup = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
+        .orphanageTxLookup
+  );
+  const mempoolTxLookup = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.txDb
+        .mempoolTxLookup
+  );
+  const txOrphanageTxLookup = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.txDb
+        .orphanageTxLookup
+  );
+
+  const inputs = useArray<BlockchainTxInput>([]);
+  const outputs = useArray<BlockchainTxOutput>([]);
+
+  const getTx = (
+    txHash: string
+  ):
+    | { place: 'nowhere' }
+    | {
+        place:
+          | 'main-branch'
+          | 'side-branch'
+          | 'block-orphanage'
+          | 'mempool'
+          | 'tx-orphanage';
+        tx: BlockchainTx;
+      } =>
+    hasValue(mainBranchTxLookup[txHash])
+      ? {
+          place: 'main-branch',
+          tx: mainBranchTxLookup[txHash],
+        }
+      : hasValue(mempoolTxLookup[txHash])
+      ? {
+          place: 'mempool',
+          tx: mempoolTxLookup[txHash],
+        }
+      : hasValue(txOrphanageTxLookup[txHash])
+      ? {
+          place: 'tx-orphanage',
+          tx: txOrphanageTxLookup[txHash],
+        }
+      : hasValue(blockOrphanageTxLookup[txHash])
+      ? {
+          place: 'block-orphanage',
+          tx: blockOrphanageTxLookup[txHash],
+        }
+      : hasValue(sideBranchesTxLookup[txHash])
+      ? {
+          place: 'side-branch',
+          tx: sideBranchesTxLookup[txHash],
+        }
+      : { place: 'nowhere' };
+
+  const getOutput = (
+    outPoint: BlockchainTxOutPoint
+  ): BlockchainTxOutput | null => {
+    const txLookup = getTx(outPoint.txHash);
+
+    return txLookup.place === 'nowhere'
+      ? null
+      : txLookup.tx.outputs[outPoint.outputIndex];
+  };
+
+  const outputSum = _.sumBy(outputs.value, (o) => o.value);
+
+  /** NaN if one of the outputs cannot be found. */
+  const inputSum = _.sumBy(inputs.value, (i) => {
+    if (i.isCoinbase) {
+      return 0;
+    }
+
+    const output = getOutput(i.previousOutput);
+    return hasValue(output) ? output.value : Number.NaN;
+  });
 
   return (
     <Modal
@@ -40,7 +134,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
               <Card.Body>
                 <Card.Text>Inputs here.</Card.Text>
               </Card.Body>
-              <Card.Footer>Total: +99.99</Card.Footer>
+              <Card.Footer>Total: +{inputSum}</Card.Footer>
             </Card>
           </Col>
 
@@ -50,7 +144,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
               <Card.Body>
                 <Card.Text>Outputs here.</Card.Text>
               </Card.Body>
-              <Card.Footer>Total: -90.99</Card.Footer>
+              <Card.Footer>Total: -{outputSum}</Card.Footer>
             </Card>
           </Col>
         </Row>

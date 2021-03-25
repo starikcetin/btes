@@ -1,4 +1,6 @@
+import { BlockchainBlock } from '../blockchain/block/BlockchainBlock';
+
 export interface BlocksRemovedFromOrphanagePayload {
   readonly nodeUid: string;
-  readonly removedBlockHashes: string[];
+  readonly removedBlocks: BlockchainBlock[];
 }
