@@ -2233,6 +2233,15 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+"@types/react@^16.9.34":
+  version "16.14.5"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.5.tgz#2c39b5cadefaf4829818f9219e5e093325979f4d"
+  integrity sha512-YRRv9DNZhaVTVRh9Wmmit7Y0UFhEVqXqCSw3uazRWMxa2x85hWQZ5BN24i7GXZbaclaLXEcodEeIHsjBA8eAMw==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
 "@types/ripemd160@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/ripemd160/-/ripemd160-2.0.0.tgz#d33e49cf66edf4668828030d4aa80116bbf8ae81"
@@ -12278,6 +12287,13 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.1:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-use-array@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-use-array/-/react-use-array-1.0.3.tgz#eb26625414b7250671be23805dc2f6391e0f051f"
+  integrity sha512-tXLKr0OA5HkfbLjYAzxPlLiNDLypIz5/r+KdlkcR2IQ0nBc8o2AgyV86PzlgVoa5Pa/hf2aa+bf5oCxICFqzCg==
+  dependencies:
+    "@types/react" "^16.9.34"
 
 react-xarrows@^1.5.2:
   version "1.5.2"
