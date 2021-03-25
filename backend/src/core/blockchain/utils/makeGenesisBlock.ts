@@ -21,9 +21,9 @@ export const makeGenesisBlock = (): BlockchainBlock => {
     },
     txs: [
       {
-        isCoinbase: true,
         inputs: [
           {
+            isCoinbase: true,
             coinbase: 'genesis block coinbase',
           },
         ],

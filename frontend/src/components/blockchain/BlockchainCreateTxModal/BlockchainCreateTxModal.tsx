@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Card, Col, Modal, Row } from 'react-bootstrap';
-
-import { BlockchainCoinbaseTxInput } from '../../../common/blockchain/tx/BlockchainCoinbaseTxInput';
-import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
-import { BlockchainRegularTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
-import { BlockchainTxOutput } from '../../../../../backend/src/common/blockchain/tx/BlockchainTxOutput';
 import useArray from 'react-use-array';
+
+import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
+import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -19,10 +17,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
 ) => {
   const { show, closeHandler, simulationUid, nodeUid } = props;
 
-  const [inputs, manipulateInputs] = useArray<
-    BlockchainRegularTxInput | BlockchainCoinbaseTxInput
-  >([]);
-
+  const [inputs, manipulateInputs] = useArray<BlockchainTxInput>([]);
   const [outputs, manipulateOutputs] = useArray<BlockchainTxOutput>([]);
 
   return (

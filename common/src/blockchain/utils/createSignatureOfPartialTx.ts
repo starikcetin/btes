@@ -1,6 +1,6 @@
 import { createSignature } from '../../crypto/createSignature';
 import { hashJsonObj } from '../../crypto/hashJsonObj';
-import { BlockchainPartialRegularTx } from '../tx/BlockchainPartialRegularTx';
+import { BlockchainPartialTx } from '../tx/BlockchainPartialTx';
 
 /**
  * * Signs the given partial tx.
@@ -8,7 +8,7 @@ import { BlockchainPartialRegularTx } from '../tx/BlockchainPartialRegularTx';
  * @returns the signature. length is `64 bytes = 512 bits`
  */
 export const createSignatureOfPartialTx = (
-  partialTx: BlockchainPartialRegularTx,
+  partialTx: BlockchainPartialTx,
   privateKey: Buffer
 ): Buffer => {
   const hash = hashJsonObj(partialTx);

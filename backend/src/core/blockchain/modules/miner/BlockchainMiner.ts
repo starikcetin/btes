@@ -15,9 +15,9 @@ import { hasValue } from '../../../../common/utils/hasValue';
 import { BlockchainNetwork } from '../BlockchainNetwork';
 import { BlockchainBlock } from '../../../../common/blockchain/block/BlockchainBlock';
 import { BlockchainBlockTemplate } from '../../../../common/blockchain/miner/BlockchainBlockTemplate';
-import { BlockchainCoinbaseTx } from '../../../../common/blockchain/tx/BlockchainTx';
 import { BlockchainBlockDb } from '../BlockchainBlockDb';
 import { BlockchainTxDb } from '../BlockchainTxDb';
+import { BlockchainTx } from '../../../../common/blockchain/tx/BlockchainTx';
 
 export class BlockchainMiner {
   private readonly socketEmitter: SimulationNamespaceEmitter;
@@ -176,11 +176,11 @@ export class BlockchainMiner {
 
   private readonly assembleCoinbaseTx = (
     template: BlockchainBlockTemplate
-  ): BlockchainCoinbaseTx => {
+  ): BlockchainTx => {
     return {
-      isCoinbase: true,
       inputs: [
         {
+          isCoinbase: true,
           coinbase: template.coinbase,
         },
       ],

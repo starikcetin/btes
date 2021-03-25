@@ -1,10 +1,8 @@
 import { encodeBuffer } from './encodeBuffer';
 import { hashJsonObj } from '../../crypto/hashJsonObj';
-import { BlockchainPartialRegularTx } from '../tx/BlockchainPartialRegularTx';
+import { BlockchainPartialTx } from '../tx/BlockchainPartialTx';
 
 /** Hashes the given partial tx and encodes the hash in `hex` encoding. */
-export const hashPartialTx = (
-  partialTx: BlockchainPartialRegularTx
-): string => {
+export const hashPartialTx = (partialTx: BlockchainPartialTx): string => {
   return encodeBuffer(hashJsonObj(partialTx), 'partialTx');
 };

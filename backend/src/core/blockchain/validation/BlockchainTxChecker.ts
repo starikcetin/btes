@@ -1,4 +1,4 @@
-import { BlockchainRegularTx } from '../../../common/blockchain/tx/BlockchainTx';
+import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { BlockchainCommonChecker } from './BlockchainCommonChecker';
 
 export class BlockchainTxChecker {
@@ -9,7 +9,7 @@ export class BlockchainTxChecker {
   }
 
   public readonly checkTxForReceiveTx = (
-    tx: BlockchainRegularTx
+    tx: BlockchainTx
   ): 'invalid' | 'orphan' | 'valid' => {
     // CheckTxContextFree (canSearchMainBranchForDupes = true)
     const contextFreeCheck = this.commonChecker.checkTxContextFree(tx, {

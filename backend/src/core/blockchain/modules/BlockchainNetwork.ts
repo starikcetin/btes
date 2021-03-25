@@ -1,8 +1,8 @@
 import { NodeConnectionMap } from '../../network/NodeConnectionMap';
 import { ControlledTimerService } from '../../network/ControlledTimerService';
 import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
-import { BlockchainRegularTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { BlockchainNetworkSnapshot } from '../../../common/blockchain/snapshots/BlockchainNetworkSnapshot';
+import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 
 export class BlockchainNetwork {
   private readonly connectionMap: NodeConnectionMap;
@@ -41,7 +41,7 @@ export class BlockchainNetwork {
     }
   };
 
-  public readonly broadcastTx = (tx: BlockchainRegularTx): void => {
+  public readonly broadcastTx = (tx: BlockchainTx): void => {
     for (const connection of this.connections) {
       const recipientNode = connection.getOtherNode(this.nodeUid);
 
