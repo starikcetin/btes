@@ -2,14 +2,16 @@ import _ from 'lodash';
 import React from 'react';
 import { Button, Card, Col, Modal, Row } from 'react-bootstrap';
 import { useArray } from 'react-hanger';
-import { useSelector } from 'react-redux';
 
 import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
-import { BlockchainTxOutPoint } from '../../../../../common/src/blockchain/tx/BlockchainTxOutPoint';
-import { RootState } from '../../../state/RootState';
 import { hasValue } from '../../../common/utils/hasValue';
-import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
+import { useTxGetter } from './hooks/useTxGetter';
+import { useTxOutputGetter } from './hooks/useTxOutputGetter';
+import { BlockchainTxInputForm } from './comps/BlockchainTxInputForm/BlockchainTxInputForm';
+import { BlockchainTxOutputForm } from './comps/BlockchainTxOutputForm/BlockchainTxOutputForm';
+import { makeDefaultTxOutput } from './makeDefaultTxOutput';
+import { makeDefaultTxInput } from './makeDefaultTxInput';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -23,84 +25,11 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
 ) => {
   const { show, closeHandler, simulationUid, nodeUid } = props;
 
-  const mainBranchTxLookup = useSelector(
-    (state: RootState) =>
-      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
-        .mainBranchTxLookup
-  );
-  const sideBranchesTxLookup = useSelector(
-    (state: RootState) =>
-      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
-        .sideBranchesTxLookup
-  );
-  const blockOrphanageTxLookup = useSelector(
-    (state: RootState) =>
-      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
-        .orphanageTxLookup
-  );
-  const mempoolTxLookup = useSelector(
-    (state: RootState) =>
-      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.txDb
-        .mempoolTxLookup
-  );
-  const txOrphanageTxLookup = useSelector(
-    (state: RootState) =>
-      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.txDb
-        .orphanageTxLookup
-  );
-
   const inputs = useArray<BlockchainTxInput>([]);
   const outputs = useArray<BlockchainTxOutput>([]);
 
-  const getTx = (
-    txHash: string
-  ):
-    | { place: 'nowhere' }
-    | {
-        place:
-          | 'main-branch'
-          | 'side-branch'
-          | 'block-orphanage'
-          | 'mempool'
-          | 'tx-orphanage';
-        tx: BlockchainTx;
-      } =>
-    hasValue(mainBranchTxLookup[txHash])
-      ? {
-          place: 'main-branch',
-          tx: mainBranchTxLookup[txHash],
-        }
-      : hasValue(mempoolTxLookup[txHash])
-      ? {
-          place: 'mempool',
-          tx: mempoolTxLookup[txHash],
-        }
-      : hasValue(txOrphanageTxLookup[txHash])
-      ? {
-          place: 'tx-orphanage',
-          tx: txOrphanageTxLookup[txHash],
-        }
-      : hasValue(blockOrphanageTxLookup[txHash])
-      ? {
-          place: 'block-orphanage',
-          tx: blockOrphanageTxLookup[txHash],
-        }
-      : hasValue(sideBranchesTxLookup[txHash])
-      ? {
-          place: 'side-branch',
-          tx: sideBranchesTxLookup[txHash],
-        }
-      : { place: 'nowhere' };
-
-  const getOutput = (
-    outPoint: BlockchainTxOutPoint
-  ): BlockchainTxOutput | null => {
-    const txLookup = getTx(outPoint.txHash);
-
-    return txLookup.place === 'nowhere'
-      ? null
-      : txLookup.tx.outputs[outPoint.outputIndex];
-  };
+  const getTx = useTxGetter({ simulationUid, nodeUid });
+  const getOutput = useTxOutputGetter(getTx);
 
   const outputSum = _.sumBy(outputs.value, (o) => o.value);
 
@@ -110,9 +39,37 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
       return 0;
     }
 
-    const output = getOutput(i.previousOutput);
-    return hasValue(output) ? output.value : Number.NaN;
+    const getResult = getOutput(i.previousOutput);
+    return getResult.place !== 'nowhere' && hasValue(getResult.output)
+      ? getResult.output.value
+      : Number.NaN;
   });
+
+  const handleTxInputFormChange = (
+    inputIndex: number,
+    newValue: BlockchainTxInput
+  ) => {
+    inputs.removeIndex(inputIndex);
+    inputs.push(newValue);
+    inputs.move(inputs.value.length - 1, inputIndex);
+  };
+
+  const handleTxOutputFormChange = (
+    outputIndex: number,
+    newValue: BlockchainTxOutput
+  ) => {
+    outputs.removeIndex(outputIndex);
+    outputs.push(newValue);
+    outputs.move(outputs.value.length - 1, outputIndex);
+  };
+
+  const addInput = () => {
+    inputs.push(makeDefaultTxInput(false));
+  };
+
+  const addOutput = () => {
+    outputs.push(makeDefaultTxOutput());
+  };
 
   return (
     <Modal
@@ -130,21 +87,57 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
         <Row>
           <Col lg={6}>
             <Card border="success">
-              <Card.Header>Inputs</Card.Header>
+              <Card.Header>
+                <span>Inputs</span>
+                <Button
+                  className="float-right"
+                  size="sm"
+                  variant="success"
+                  onClick={addInput}
+                >
+                  +
+                </Button>
+              </Card.Header>
               <Card.Body>
-                <Card.Text>Inputs here.</Card.Text>
+                {inputs.value.map((input, index) => (
+                  <div className={index === 0 ? '' : 'mt-3'} key={index}>
+                    <BlockchainTxInputForm
+                      value={input}
+                      onChange={(v) => handleTxInputFormChange(index, v)}
+                    />
+                  </div>
+                ))}
               </Card.Body>
-              <Card.Footer>Total: +{inputSum}</Card.Footer>
+              <Card.Footer>
+                Total: {isNaN(inputSum) ? '?' : inputSum}
+              </Card.Footer>
             </Card>
           </Col>
 
           <Col lg={6} className="mt-4 mt-lg-0">
             <Card border="danger">
-              <Card.Header>Outputs</Card.Header>
+              <Card.Header>
+                <span>Outputs</span>
+                <Button
+                  className="float-right"
+                  size="sm"
+                  variant="success"
+                  onClick={addOutput}
+                >
+                  +
+                </Button>
+              </Card.Header>
               <Card.Body>
-                <Card.Text>Outputs here.</Card.Text>
+                {outputs.value.map((output, index) => (
+                  <div className={index === 0 ? '' : 'mt-3'} key={index}>
+                    <BlockchainTxOutputForm
+                      value={output}
+                      onChange={(v) => handleTxOutputFormChange(index, v)}
+                    />
+                  </div>
+                ))}
               </Card.Body>
-              <Card.Footer>Total: -{outputSum}</Card.Footer>
+              <Card.Footer>Total: {outputSum}</Card.Footer>
             </Card>
           </Col>
         </Row>
