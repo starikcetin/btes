@@ -1,18 +1,18 @@
-# Code Standards BTES <h1> :clipboard:
+#  Code Standards BTES :clipboard: <h1> 
 
 # BTES 
 is a Monorepo for Blockchain Technology Education Software project.
 
 # Folder Structure
-|`Backend`| `Common` | `Frontend` |
+| **`Backend`** | **`Common`** | ** `Frontend`** |
 |:-:|-|-|
 | Sockets and network| Blockhain | Pages |
 
-# Common 
-Both backend and frontend use `common` package. However; Common package cannot import from other packages. 
+# :black_circle: Common 
+Both backend and frontend use *`common`* package. However; Common package cannot import from other packages. 
 
-# Src 
-All three package are inside `Src` folder.
+# :black_circle: Src 
+All three package are inside *`Src`* folder.
 Other folders can not part in build.
 
 
@@ -25,10 +25,10 @@ We add it to the end.
 >The name of the folder is the name of the route.
 >The name of the file is route + controller
 
-# Public
+# :black_circle: Public
 We don't prefer to put something in the `public` folder unless it's possible. Because when we build it clones each one.
 
-# Frontend Folder 
+#  :black_circle: Frontend Folder 
 Component and pages folder are in the src folder of `frontend`.
 Pages are related with its name. 
 `F.e:`
@@ -40,6 +40,16 @@ Pages are related with its name.
 # Components
 Component names start with a **capital letter**.
 However, there are components that do not fall directly on the page.
+
+ # Code Indentation
+ It is always used 2 spaces of code blocks
+
+ # File Extentions
+ >Frontend .tsx & .ts
+ >Backend .ts 
+
+ # Css Extentions
+ >Frontend .scss
 
 # Styles
 Style files start with a `capital letter`.
@@ -54,10 +64,11 @@ Also, the names of the style files have the same name as the pages they are link
   &--sub-class {
     //...
 
-    &--3rd-level-class { [css-formats] (https://github.com/ctisbtes/btes/pull/18)
+    &--3rd-level-class { 
+        [css-formats](https://github.com/ctisbtes/btes/pull/18)
 
 # Functions
-Functions always start with a lowercase letter. [camelCase Format](https://eslint.org/docs/rules/camelcase)
+Functions always start with a lowercase letter.  :camel: [camelCase Format](https://eslint.org/docs/rules/camelcase)
 Also, The first letter must be lowercase, adjacent, and the next word starts with capital.
 
 # Classes
@@ -67,10 +78,10 @@ In class names, the first letter of the words starts with a capital. [`PascalCas
 Also, the Pascal case convention is usually used to signify that an identifier is a type, or interface.
 
 # Singleton 
-CamelCase are used for Singleton naming however; typed same name for Singleton.
+Camel case are used for Singleton naming however; typed same name for Singleton.
 
 # Variables and Constants
-CamelCase are used for variables and constants.
+Camel case are used for variables and constants.
 
 # Global Style
 There is only global styles available in the style folder in root.
@@ -97,6 +108,7 @@ yarn start (both frontend and backend starts)
 yarn frontend start
 yarn backend start
 
+:link: 
 # Git commands 
 [Git cheetsheet education](https://education.github.com/git-cheat-sheet-education.pdf)
 
