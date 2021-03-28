@@ -7,6 +7,7 @@ import Home from '../../pages/Home/Home';
 import Sandbox from '../../pages/Sandbox/Sandbox';
 import Signin from '../../pages/Signin/Signin';
 import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
+import DataExplorer from '../../pages/DataExplorer/DataExplorer';
 
 const App: React.FC = () => {
   return (
@@ -26,10 +27,7 @@ const App: React.FC = () => {
             </div>
           </Route>
           <Route path="/explorer">
-            {/* <Explorer></Explorer> */}
-            <div>
-              <p>Explorer</p>
-            </div>
+            <DataExplorer />
           </Route>
           <Route path="/about">
             {/* <About></About> */}
