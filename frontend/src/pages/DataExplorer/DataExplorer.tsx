@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import DataExplorerLinearChart from '../../components/DataExplorerLinearChart/DataExplorerLinearChart';
 import DataExplorerTopInfo from '../../components/DataExplorerTopInfo/DataExplorerTopInfo';
-import { empty } from '../../common/utils/empty';
 import DataExplorerBlockList from '../../components/DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './DataExplorer.scss';
+import { VsCoins } from '../../utils/API';
 
 const DataExplorer = () => {
   const [chartData, setChartData] = useState({
@@ -13,7 +13,7 @@ const DataExplorer = () => {
     market_caps: [[]],
   });
   const [currency, setCurrency] = useState<string>('bitcoin');
-  const [vsCurrency, setVsCurrency] = useState<string>('usd');
+  const [vsCurrency, setVsCurrency] = useState<VsCoins>(VsCoins.USD);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
@@ -56,6 +56,13 @@ const DataExplorer = () => {
     timeListForVolume.push(new Date(price[0]).getHours() + ':00');
   });
 
+  const changeCurrency = (e: any) => {
+    setCurrency(e);
+  };
+  const changeVsCurrency = (e: any) => {
+    setVsCurrency(e);
+  };
+
   return (
     <div>
       <div className="container">
@@ -66,8 +73,9 @@ const DataExplorer = () => {
                 id="dropdown-basic-button"
                 title="Select Coin"
                 size="sm"
+                onSelect={changeCurrency}
               >
-                <Dropdown.Item href="#/action-1" className="w-100">
+                <Dropdown.Item className="w-100" eventKey="bitcoin">
                   <div>
                     <img
                       src={
@@ -77,14 +85,14 @@ const DataExplorer = () => {
                     <span className="m-2">Bitcoin</span>
                   </div>
                 </Dropdown.Item>
-                <Dropdown.Item href="#/action-1" className="w-100">
+                <Dropdown.Item eventKey="ethereum" className="w-100">
                   <div>
                     <img
                       src={
                         'https://assets.coingecko.com/coins/images/279/thumb/ethereum.png?1595348880'
                       }
                     />
-                    <span className="m-2">Etherium</span>
+                    <span className="m-2">Ethereum</span>
                   </div>
                 </Dropdown.Item>
                 <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
@@ -96,14 +104,15 @@ const DataExplorer = () => {
                 id="dropdown-basic-button"
                 title="Select Currency"
                 size="sm"
+                onSelect={changeVsCurrency}
               >
-                <Dropdown.Item href="#/action-1" className="w-100">
+                <Dropdown.Item eventKey="usd" className="w-100">
                   <div>
                     <i className="fa fa-usd" />
                     <span className="m-2">USD</span>
                   </div>
                 </Dropdown.Item>
-                <Dropdown.Item href="#/action-1" className="w-100">
+                <Dropdown.Item eventKey="eur" className="w-100">
                   <div>
                     <i className="fa fa-eur" />
                     <span className="m-2">EUR</span>

@@ -1,35 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import './DataExplorerTopInfo.scss';
 import LoaderMask from '../LoaderMask/LoaderMask';
+import { fetchSimpleMarketData, VsCoins, MarketData } from '../../utils/API';
 
 interface DataExplorerTopInfoProps {
-  vsCurrency: string;
+  vsCurrency: VsCoins;
   currency: string;
-}
-
-interface Idata {
-  [key: string]: any;
 }
 
 const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
   const { currency, vsCurrency } = props;
-  const [data, setData] = useState<Idata | null>(null);
+  const [data, setData] = useState<MarketData | null>();
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setData({ isFetching: true });
-        fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${currency}&vs_currencies=${vsCurrency}&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true`
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            setData({ data: data, isFetching: false });
-          });
+        setIsFetching(true);
+        const marketData = await fetchSimpleMarketData(currency, vsCurrency);
+        console.log(marketData);
+        setData(marketData);
+        setIsFetching(false);
       } catch (e) {
         console.log(e);
-        setData({ data: null, isFetching: false });
+        setIsFetching(false);
+        setData(null);
       }
     };
     fetchData();
@@ -54,14 +49,16 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
   //   return shortValue + suffixes[suffixNum];
   // };
   return data ? (
-    data.isFetching ? (
+    isFetching && data !== null ? (
       <LoaderMask />
     ) : (
       <div className="container rounded border">
         <div className="row d-flex justify-content-around">
           <div className="col-4 col-md-2 m-3">
             <span className="font-weight-bold">
-              {formatter.format(data.data[currency][vsCurrency])}
+              {vsCurrency === VsCoins.USD
+                ? formatter.format(data.usd)
+                : formatter.format(data.eur)}
             </span>
             <span className="comp-data-explorer-top-info--info-span">
               Price
@@ -69,9 +66,9 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {formatter.format(
-                data.data[currency][vsCurrency + '_market_cap']
-              )}
+              {vsCurrency === VsCoins.USD
+                ? formatter.format(data.usd_market_cap)
+                : formatter.format(data.eur_market_cap)}
             </span>
             <span className="comp-data-explorer-top-info--info-span">
               Market Cap
@@ -79,7 +76,9 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {formatter.format(data.data[currency][vsCurrency + '_24h_vol'])}
+              {vsCurrency === VsCoins.USD
+                ? formatter.format(data.usd_24h_vol)
+                : formatter.format(data.eur_24h_vol)}
             </span>
             <span className="comp-data-explorer-top-info--info-span">
               24H Volume
@@ -87,9 +86,9 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {parseFloat(
-                data.data[currency][vsCurrency + '_24h_change']
-              ).toFixed(2)}
+              {vsCurrency === VsCoins.USD
+                ? parseFloat(data.usd_24h_change).toFixed(2)
+                : parseFloat(data.eur_24h_change).toFixed(2)}
             </span>
             <span className="comp-data-explorer-top-info--info-span">
               24H Change
