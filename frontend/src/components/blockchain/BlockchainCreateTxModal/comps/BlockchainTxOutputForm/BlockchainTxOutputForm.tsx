@@ -1,17 +1,20 @@
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { Card, Form } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 
 import { BlockchainTxOutput } from '../../../../../common/blockchain/tx/BlockchainTxOutput';
 
 interface BlockchainTxOutputFormProps {
   readonly value: BlockchainTxOutput;
   readonly onChange: (value: BlockchainTxOutput) => void;
+  readonly onRemove: () => void;
 }
 
 export const BlockchainTxOutputForm: React.FC<BlockchainTxOutputFormProps> = (
   props
 ) => {
-  const { value: curVal, onChange } = props;
+  const { value: curVal, onChange, onRemove } = props;
 
   const changeValue = (newVal: string) => {
     let parsed = Number.parseInt(newVal);
@@ -34,6 +37,17 @@ export const BlockchainTxOutputForm: React.FC<BlockchainTxOutputFormProps> = (
 
   return (
     <Card>
+      <Card.Header className="d-flex justify-content-between align-items-center">
+        Output
+        <Button
+          className="pt-0 pb-0"
+          size="sm"
+          variant="danger"
+          onClick={onRemove}
+        >
+          <FontAwesomeIcon icon={faMinus} size="sm" />
+        </Button>
+      </Card.Header>
       <Card.Body>
         <Form>
           <Form.Group>

@@ -1,20 +1,23 @@
 import React from 'react';
-import { Card, Form } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 
 import { BlockchainTxInput } from '../../../../../common/blockchain/tx/BlockchainTxInput';
 import { BlockchainCoinbaseTxInput } from '../../../../../../../backend/src/common/blockchain/tx/BlockchainCoinbaseTxInput';
 import { BlockchainRegularTxInput } from '../../../../../common/blockchain/tx/BlockchainRegularTxInput';
 import { makeDefaultTxInput } from '../../makeDefaultTxInput';
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface BlockchainTxInputFormProps {
   readonly value: BlockchainTxInput;
   readonly onChange: (value: BlockchainTxInput) => void;
+  readonly onRemove: () => void;
 }
 
 export const BlockchainTxInputForm: React.FC<BlockchainTxInputFormProps> = (
   props
 ) => {
-  const { value: curVal, onChange } = props;
+  const { value: curVal, onChange, onRemove } = props;
 
   const changeIsCoinbase = (newVal: boolean) => {
     onChange(makeDefaultTxInput(newVal));
@@ -104,7 +107,17 @@ export const BlockchainTxInputForm: React.FC<BlockchainTxInputFormProps> = (
 
   return (
     <Card>
-      <Card.Header></Card.Header>
+      <Card.Header className="d-flex justify-content-between align-items-center">
+        Input
+        <Button
+          className="pt-0 pb-0"
+          size="sm"
+          variant="danger"
+          onClick={onRemove}
+        >
+          <FontAwesomeIcon icon={faMinus} size="sm" />
+        </Button>
+      </Card.Header>
       <Card.Body>
         <Form.Group>
           <Form.Check

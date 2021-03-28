@@ -12,6 +12,8 @@ import { BlockchainTxInputForm } from './comps/BlockchainTxInputForm/BlockchainT
 import { BlockchainTxOutputForm } from './comps/BlockchainTxOutputForm/BlockchainTxOutputForm';
 import { makeDefaultTxOutput } from './makeDefaultTxOutput';
 import { makeDefaultTxInput } from './makeDefaultTxInput';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -71,6 +73,14 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
     outputs.push(makeDefaultTxOutput());
   };
 
+  const handleTxInputRemove = (index: number) => {
+    inputs.removeIndex(index);
+  };
+
+  const handleTxOutputRemove = (index: number) => {
+    outputs.removeIndex(index);
+  };
+
   return (
     <Modal
       show={show}
@@ -87,15 +97,15 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
         <Row>
           <Col lg={6}>
             <Card border="success">
-              <Card.Header>
+              <Card.Header className="d-flex justify-content-between align-items-center">
                 <span>Inputs</span>
                 <Button
-                  className="float-right"
+                  className="pt-0 pb-0"
                   size="sm"
                   variant="success"
                   onClick={addInput}
                 >
-                  +
+                  <FontAwesomeIcon icon={faPlus} size="sm" />
                 </Button>
               </Card.Header>
               <Card.Body>
@@ -104,6 +114,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
                     <BlockchainTxInputForm
                       value={input}
                       onChange={(v) => handleTxInputFormChange(index, v)}
+                      onRemove={() => handleTxInputRemove(index)}
                     />
                   </div>
                 ))}
@@ -116,15 +127,15 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
 
           <Col lg={6} className="mt-4 mt-lg-0">
             <Card border="danger">
-              <Card.Header>
+              <Card.Header className="d-flex justify-content-between align-items-center">
                 <span>Outputs</span>
                 <Button
-                  className="float-right"
+                  className="pt-0 pb-0"
                   size="sm"
                   variant="success"
                   onClick={addOutput}
                 >
-                  +
+                  <FontAwesomeIcon icon={faPlus} size="sm" />
                 </Button>
               </Card.Header>
               <Card.Body>
@@ -133,6 +144,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
                     <BlockchainTxOutputForm
                       value={output}
                       onChange={(v) => handleTxOutputFormChange(index, v)}
+                      onRemove={() => handleTxOutputRemove(index)}
                     />
                   </div>
                 ))}
