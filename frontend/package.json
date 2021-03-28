@@ -59,6 +59,7 @@
     "ripemd160": "^2.0.2",
     "secp256k1": "^4.0.2",
     "socket.io-client": "^3.1.2",
+    "use-deep-compare-effect": "^1.6.1",
     "use-force-update": "^1.0.7"
   },
   "devDependencies": {

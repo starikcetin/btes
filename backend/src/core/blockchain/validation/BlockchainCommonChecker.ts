@@ -4,7 +4,7 @@ import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBloc
 import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { TreeNode } from '../../../common/tree/TreeNode';
 import { checkScriptsUnlock } from '../utils/checkScriptsUnlock';
-import { makePartialTx } from '../utils/makePartialTx';
+import { makePartialTx } from '../../../common/blockchain/utils/makePartialTx';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainBlockDb } from '../modules/BlockchainBlockDb';
 import { BlockchainTxDb } from '../modules/BlockchainTxDb';

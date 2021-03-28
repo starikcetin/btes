@@ -1,5 +1,5 @@
-import { BlockchainPartialTx } from '../../../common/blockchain/tx/BlockchainPartialTx';
-import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
+import { BlockchainPartialTx } from '../tx/BlockchainPartialTx';
+import { BlockchainTx } from '../tx/BlockchainTx';
 
 /**
  * Takes in a tx and returns a partial tx. Namely:

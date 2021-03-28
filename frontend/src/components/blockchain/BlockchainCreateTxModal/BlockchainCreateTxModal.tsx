@@ -2,6 +2,8 @@ import _ from 'lodash';
 import React from 'react';
 import { Button, Card, Col, Modal, Row } from 'react-bootstrap';
 import { useArray } from 'react-hanger';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
@@ -12,8 +14,8 @@ import { BlockchainTxInputForm } from './comps/BlockchainTxInputForm/BlockchainT
 import { BlockchainTxOutputForm } from './comps/BlockchainTxOutputForm/BlockchainTxOutputForm';
 import { makeDefaultTxOutput } from './makeDefaultTxOutput';
 import { makeDefaultTxInput } from './makeDefaultTxInput';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { makePartialTx } from '../../../common/blockchain/utils/makePartialTx';
+import { hashJsonObj } from '../../../common/crypto/hashJsonObj';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -81,6 +83,10 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
     outputs.removeIndex(index);
   };
 
+  const partialTxHash = hashJsonObj(
+    makePartialTx({ inputs: inputs.value, outputs: outputs.value })
+  );
+
   return (
     <Modal
       show={show}
@@ -113,6 +119,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
                   <div className={index === 0 ? '' : 'mt-3'} key={index}>
                     <BlockchainTxInputForm
                       value={input}
+                      partialTxHash={partialTxHash}
                       onChange={(v) => handleTxInputFormChange(index, v)}
                       onRemove={() => handleTxInputRemove(index)}
                     />
