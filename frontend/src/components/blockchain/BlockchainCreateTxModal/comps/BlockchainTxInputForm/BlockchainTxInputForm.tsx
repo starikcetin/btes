@@ -13,6 +13,8 @@ import { decodeString } from '../../../../../common/blockchain/utils/decodeStrin
 import { encodeBuffer } from '../../../../../common/blockchain/utils/encodeBuffer';
 import { createSignature } from '../../../../../common/crypto/createSignature';
 import { verifyPrivateKey } from '../../../../../common/crypto/verifyPrivateKey';
+import { isHexSafe } from '../../../../../common/crypto/isHexSafe';
+import { isBase58Safe } from '../../../../../common/crypto/isBase58Safe';
 
 interface BlockchainTxInputFormProps {
   readonly value: BlockchainTxInput;
@@ -48,6 +50,10 @@ export const BlockchainTxInputForm: React.FC<BlockchainTxInputFormProps> = (
       throw new Error("cannot change 'txHash' of a coinbase tx!");
     }
 
+    if (!isHexSafe(newVal)) {
+      return;
+    }
+
     onChange({
       ...curVal,
       previousOutput: { ...curVal.previousOutput, txHash: newVal },
@@ -73,6 +79,10 @@ export const BlockchainTxInputForm: React.FC<BlockchainTxInputFormProps> = (
   const changePrivateKey = (newVal: string) => {
     if (curVal.isCoinbase === true) {
       throw new Error("cannot change 'privateKey' of a coinbase tx!");
+    }
+
+    if (!isBase58Safe(newVal)) {
+      return;
     }
 
     setPrivateKey(newVal);
@@ -133,6 +143,7 @@ export const BlockchainTxInputForm: React.FC<BlockchainTxInputFormProps> = (
             rows={2}
             value={curValue.coinbase}
             onChange={(e) => changeCoinbase(e.target.value)}
+            title={'Arbitrary text'}
           />
         </Form.Group>
       </Form>
@@ -151,6 +162,7 @@ export const BlockchainTxInputForm: React.FC<BlockchainTxInputFormProps> = (
             type="text"
             value={curValue.previousOutput.txHash}
             onChange={(e) => changeTxHash(e.target.value)}
+            title={'In hex format'}
           />
         </Form.Group>
         <Form.Group>
@@ -169,27 +181,33 @@ export const BlockchainTxInputForm: React.FC<BlockchainTxInputFormProps> = (
           <Form.Control
             className="text-monospace"
             type="text"
-            placeholder="Base58 encoded private key..."
             value={privateKey}
             onChange={(e) => changePrivateKey(e.target.value)}
+            placeholder="Base58 encoded private key..."
+            title={'In base58 format'}
           />
         </Form.Group>
         <Form.Group>
-          <Form.Label>Public key</Form.Label>
+          <Form.Label>Public Key</Form.Label>
           <Form.Control
             className="text-monospace"
-            plaintext
+            type="text"
             readOnly
             value={curValue.unlockingScript.publicKey}
+            placeholder="Private key is not valid"
+            title={'In base58 format'}
           />
         </Form.Group>
         <Form.Group className="mb-0">
           <Form.Label>Signature</Form.Label>
           <Form.Control
             className="text-monospace"
-            plaintext
+            as="textarea"
+            rows={2}
             readOnly
             value={curValue.unlockingScript.signature}
+            placeholder="Private key is not valid"
+            title={'In base58 format'}
           />
         </Form.Group>
       </Form>

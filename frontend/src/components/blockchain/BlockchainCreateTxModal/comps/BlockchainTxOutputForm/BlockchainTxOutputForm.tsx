@@ -4,6 +4,7 @@ import React from 'react';
 import { Button, Card, Form } from 'react-bootstrap';
 
 import { BlockchainTxOutput } from '../../../../../common/blockchain/tx/BlockchainTxOutput';
+import { isBase58Safe } from '../../../../../common/crypto/isBase58Safe';
 
 interface BlockchainTxOutputFormProps {
   readonly value: BlockchainTxOutput;
@@ -29,6 +30,10 @@ export const BlockchainTxOutputForm: React.FC<BlockchainTxOutputFormProps> = (
   };
 
   const changeAddress = (newVal: string) => {
+    if (!isBase58Safe(newVal)) {
+      return;
+    }
+
     onChange({
       ...curVal,
       lockingScript: { ...curVal.lockingScript, address: newVal },
@@ -56,6 +61,7 @@ export const BlockchainTxOutputForm: React.FC<BlockchainTxOutputFormProps> = (
               type="text"
               value={curVal.lockingScript.address}
               onChange={(e) => changeAddress(e.target.value)}
+              title={'In base58 format'}
             />
           </Form.Group>
           <Form.Group>
