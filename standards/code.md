@@ -4,7 +4,7 @@
 is a Monorepo for Blockchain Technology Education Software project.
 
 # Folder Structure
-| **`Backend`** | **`Common`** | ** `Frontend`** |
+| **`Backend`** | **`Common`** | **`Frontend`** |
 |:-:|-|-|
 | Sockets and network| Blockhain | Pages |
 
@@ -108,8 +108,8 @@ yarn start (both frontend and backend starts)
 yarn frontend start
 yarn backend start
 
-:link: 
-# Git commands 
+ 
+# :link: Git commands 
 [Git cheetsheet education](https://education.github.com/git-cheat-sheet-education.pdf)
 
 
