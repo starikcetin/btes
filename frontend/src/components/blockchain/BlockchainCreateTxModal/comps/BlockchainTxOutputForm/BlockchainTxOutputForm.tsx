@@ -18,8 +18,8 @@ export const BlockchainTxOutputForm: React.FC<BlockchainTxOutputFormProps> = (
   const { value: curVal, onChange, onRemove } = props;
 
   const changeValue = (newVal: string) => {
-    let parsed = Number.parseInt(newVal);
-    if (!Number.isSafeInteger(parsed) || parsed < 0) {
+    let parsed = Number.parseFloat(newVal);
+    if (!Number.isFinite(parsed) || parsed < 0) {
       parsed = 0;
     }
 

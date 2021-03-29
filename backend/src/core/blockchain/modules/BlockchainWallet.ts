@@ -4,6 +4,10 @@ import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
 import { BlockchainKeyPair } from '../../../common/blockchain/crypto/BlockchainKeyPair';
 import { hasValue } from '../../../common/utils/hasValue';
 import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
+import { BlockchainNetwork } from './BlockchainNetwork';
+import { BlockchainTxDb } from './BlockchainTxDb';
+import { BlockchainBlockDb } from './BlockchainBlockDb';
+import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
 
 /**
  * Non-deterministic
@@ -11,6 +15,9 @@ import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
  */
 export class BlockchainWallet {
   private readonly socketEmitter: SimulationNamespaceEmitter;
+  private readonly network: BlockchainNetwork;
+  private readonly txDb: BlockchainTxDb;
+  private readonly blockDb: BlockchainBlockDb;
   private readonly nodeUid: string;
   private readonly config: BlockchainConfig;
 
@@ -21,11 +28,17 @@ export class BlockchainWallet {
 
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
+    network: BlockchainNetwork,
+    txDb: BlockchainTxDb,
+    blockDb: BlockchainBlockDb,
     nodeUid: string,
     config: BlockchainConfig,
     keyPair: BlockchainKeyPair | null
   ) {
     this.socketEmitter = socketEmitter;
+    this.network = network;
+    this.txDb = txDb;
+    this.blockDb = blockDb;
     this.nodeUid = nodeUid;
     this.config = config;
     this._keyPair = keyPair;
@@ -55,5 +68,30 @@ export class BlockchainWallet {
       nodeUid: this.nodeUid,
       keyPair: this._keyPair,
     });
+  };
+
+  /** Broadcasts the given transaction to connected peers. */
+  public readonly broadcastTx = (tx: BlockchainTx): void => {
+    // add to self
+    if (this.isTxOrphan(tx)) {
+      this.txDb.addToOrphanage(tx);
+    } else {
+      this.txDb.addToMempool(tx);
+    }
+
+    // broadcast to peers
+    this.network.broadcastTx(tx);
+  };
+
+  private readonly isTxOrphan = (tx: BlockchainTx): boolean => {
+    return tx.inputs.some(this.isInputOrphan);
+  };
+
+  private readonly isInputOrphan = (input: BlockchainTxInput) => {
+    return !(
+      input.isCoinbase ||
+      this.txDb.isTxInMempool(input.previousOutput.txHash) ||
+      this.blockDb.isTxInMainBranch(input.previousOutput.txHash)
+    );
   };
 }

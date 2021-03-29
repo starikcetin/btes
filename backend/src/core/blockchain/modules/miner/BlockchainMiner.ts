@@ -150,6 +150,8 @@ export class BlockchainMiner {
         'miner could not find the parent block in its own database, ignoring: ',
         block.header.previousHash
       );
+
+      // TODO: should we return here? or maybe add the block to self as orphan?
     }
 
     // broadcast to other nodes

@@ -12,10 +12,12 @@ import { useTxGetter } from './hooks/useTxGetter';
 import { useTxOutputGetter } from './hooks/useTxOutputGetter';
 import { BlockchainTxInputForm } from './comps/BlockchainTxInputForm/BlockchainTxInputForm';
 import { BlockchainTxOutputForm } from './comps/BlockchainTxOutputForm/BlockchainTxOutputForm';
-import { makeDefaultTxOutput } from './makeDefaultTxOutput';
-import { makeDefaultTxInput } from './makeDefaultTxInput';
+import { makeDefaultTxOutput } from './utils/makeDefaultTxOutput';
+import { makeDefaultTxInput } from './utils/makeDefaultTxInput';
 import { makePartialTx } from '../../../common/blockchain/utils/makePartialTx';
 import { hashJsonObj } from '../../../common/crypto/hashJsonObj';
+import { hashTx } from '../../../common/blockchain/utils/hashTx';
+import { simulationBridge } from '../../../services/simulationBridge';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -83,9 +85,20 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
     outputs.removeIndex(index);
   };
 
-  const partialTxHash = hashJsonObj(
-    makePartialTx({ inputs: inputs.value, outputs: outputs.value })
-  );
+  const fullTx = { inputs: inputs.value, outputs: outputs.value };
+  const encodedFullTxHash = hashTx(fullTx);
+
+  const partialTx = makePartialTx(fullTx);
+  const decodedPartialTxHash = hashJsonObj(partialTx);
+
+  const sendAndClose = () => {
+    simulationBridge.sendBlockchainBroadcastTx(simulationUid, {
+      nodeUid,
+      tx: fullTx,
+    });
+
+    closeHandler();
+  };
 
   return (
     <Modal
@@ -119,7 +132,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
                   <div className={index === 0 ? '' : 'mt-3'} key={index}>
                     <BlockchainTxInputForm
                       value={input}
-                      partialTxHash={partialTxHash}
+                      partialTxHash={decodedPartialTxHash}
                       onChange={(v) => handleTxInputFormChange(index, v)}
                       onRemove={() => handleTxInputRemove(index)}
                     />
@@ -166,19 +179,23 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
             <Card border="info">
               <Card.Header>Properties</Card.Header>
               <Card.Body>
-                <Card.Text>Is coinbase?</Card.Text>
-                <Card.Text>Hash: sadhafhjfjhafjkd</Card.Text>
-                <Card.Text>Transaction fee: 9.00</Card.Text>
+                <Card.Text>Hash: {encodedFullTxHash}</Card.Text>
+                <Card.Text>
+                  Transaction fee:{' '}
+                  {isNaN(inputSum) ? '?' : inputSum - outputSum}
+                </Card.Text>
               </Card.Body>
             </Card>
           </Col>
         </Row>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-center align-items-center">
-        <Button variant="success" className="mr-3">
+        <Button variant="success" className="mr-3" onClick={sendAndClose}>
           Create and Broadcast
         </Button>
-        <Button variant="danger">Discard</Button>
+        <Button variant="danger" onClick={closeHandler}>
+          Discard
+        </Button>
       </Modal.Footer>
     </Modal>
   );

@@ -23,8 +23,9 @@ import { SimulationConnectionChangeLatencyPayload } from '../common/socketPayloa
 import { BlockchainSaveKeyPairPayload } from '../common/socketPayloads/BlockchainSaveKeyPairPayload';
 import { BlockchainStartMiningPayload } from '../common/socketPayloads/BlockchainStartMiningPayload';
 import { BlockchainAbortMiningPayload } from '../common/socketPayloads/BlockchainAbortMiningPayload';
-import { BlockchainDismissMiningPayload } from '../../../common/src/socketPayloads/BlockchainDismissMiningPayload';
+import { BlockchainDismissMiningPayload } from '../common/socketPayloads/BlockchainDismissMiningPayload';
 import { BlockchainBroadcastMinedBlockPayload } from '../common/socketPayloads/BlockchainBroadcastMinedBlockPayload';
+import { BlockchainBroadcastTxPayload } from '../common/socketPayloads/BlockchainBroadcastTxPayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -254,6 +255,17 @@ class SimulationBridge {
     this.emit(
       simulationUid,
       socketEvents.simulation.blockchainBroadcastMinedBlock,
+      body
+    );
+  }
+
+  public sendBlockchainBroadcastTx(
+    simulationUid: string,
+    body: BlockchainBroadcastTxPayload
+  ) {
+    this.emit(
+      simulationUid,
+      socketEvents.simulation.blockchainBroadcastTx,
       body
     );
   }
