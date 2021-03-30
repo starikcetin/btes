@@ -1,10 +1,7 @@
 import _ from 'lodash';
 
 import { BlockchainTxDbSnapshot } from '../../../common/blockchain/snapshots/BlockchainTxDbSnapshot';
-import {
-  BlockchainRegularTx,
-  BlockchainTx,
-} from '../../../common/blockchain/tx/BlockchainTx';
+import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
 import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 import { removeFirst } from '../../../common/utils/removeFirst';
@@ -16,14 +13,14 @@ import { hasValue } from '../../../common/utils/hasValue';
 export class BlockchainTxDb {
   private readonly socketEmitter: SimulationNamespaceEmitter;
   private readonly nodeUid: string;
-  private readonly mempool: BlockchainRegularTx[];
-  private readonly orphanage: BlockchainRegularTx[];
+  private readonly mempool: BlockchainTx[];
+  private readonly orphanage: BlockchainTx[];
 
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
     nodeUid: string,
-    mempool: BlockchainRegularTx[],
-    orphanage: BlockchainRegularTx[]
+    mempool: BlockchainTx[],
+    orphanage: BlockchainTx[]
   ) {
     this.socketEmitter = socketEmitter;
     this.nodeUid = nodeUid;
@@ -43,8 +40,9 @@ export class BlockchainTxDb {
     outpoint: BlockchainTxOutPoint
   ): boolean => {
     return this.mempool.some((tx) =>
-      tx.inputs.some((input) =>
-        areOutPointsEqual(input.previousOutput, outpoint)
+      tx.inputs.some(
+        (input) =>
+          !input.isCoinbase && areOutPointsEqual(input.previousOutput, outpoint)
       )
     );
   };
@@ -74,7 +72,7 @@ export class BlockchainTxDb {
   };
 
   /** Adds the given tx to mempool unconditionally. Does nothing else. */
-  public readonly addToMempool = (tx: BlockchainRegularTx): void => {
+  public readonly addToMempool = (tx: BlockchainTx): void => {
     this.mempool.push(tx);
 
     this.socketEmitter.sendTxAddedToMempool({
@@ -84,7 +82,7 @@ export class BlockchainTxDb {
   };
 
   /** Adds the given tx to orphanage unconditionally. Does nothing else. */
-  public readonly addToOrphanage = (tx: BlockchainRegularTx): void => {
+  public readonly addToOrphanage = (tx: BlockchainTx): void => {
     this.orphanage.push(tx);
 
     this.socketEmitter.sendTxAddedToOrphanage({
@@ -99,9 +97,11 @@ export class BlockchainTxDb {
    */
   public readonly popOrphansWithTxAsInput = (
     txHash: string
-  ): BlockchainRegularTx[] => {
+  ): BlockchainTx[] => {
     const poppedOrphans = _.remove(this.orphanage, (orphan) =>
-      orphan.inputs.some((input) => input.previousOutput.txHash === txHash)
+      orphan.inputs.some(
+        (input) => !input.isCoinbase && input.previousOutput.txHash === txHash
+      )
     );
 
     if (poppedOrphans.length > 0) {

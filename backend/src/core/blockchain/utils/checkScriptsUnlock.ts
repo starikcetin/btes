@@ -15,7 +15,7 @@ export const checkScriptsUnlock = (
 ): boolean => {
   const address = decodeString(lockingScript.address, 'address');
   const publicKey = decodeString(unlockingScript.publicKey, 'address');
-  const signature = decodeString(unlockingScript.signature, 'address');
+  const signature = decodeString(unlockingScript.signature, 'signature');
 
   const derivedAddress = createAddress(publicKey);
 

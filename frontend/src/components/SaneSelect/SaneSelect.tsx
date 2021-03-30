@@ -2,6 +2,8 @@ import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import Select, { Props as SelectProps } from 'react-select';
 
+import './SaneSelect.scss';
+
 type OptionType = { value: string; label: string };
 
 interface SaneSelectProps extends SelectProps<OptionType> {
@@ -32,6 +34,8 @@ export const SaneSelect: React.FC<SaneSelectProps> = (props) => {
   return (
     <Select
       {...passProps}
+      classNamePrefix="comp-sane-select"
+      menuPortalTarget={document.body}
       options={options}
       value={internalValue}
       onChange={(val) => {

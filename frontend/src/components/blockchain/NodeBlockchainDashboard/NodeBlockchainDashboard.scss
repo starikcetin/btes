@@ -1,10 +1,7 @@
 .comp-node-blockchain-dashboard {
-  overflow: hidden;
+  width: 100%;
 
   &--tab-content-container {
-    height: 100%;
-    max-height: 70vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    width: 100%;
   }
 }

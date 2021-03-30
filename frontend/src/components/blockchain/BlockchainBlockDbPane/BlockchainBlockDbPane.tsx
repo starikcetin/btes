@@ -29,7 +29,7 @@ export const BlockchainBlockDbPane: React.FC<BlockchainBlockDbPaneProps> = (
     } else {
       const selectedBlock =
         state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.blockDb
-          .blockchainLookup[selectedBlockchainBlockHash];
+          .blockchainBlockLookup[selectedBlockchainBlockHash];
 
       if (!hasValue(selectedBlock)) {
         throw new Error(

@@ -1,14 +1,18 @@
 import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
+import { decodeString } from '../../../common/blockchain/utils/decodeString';
 import { encodeBuffer } from '../../../common/blockchain/utils/encodeBuffer';
 import { createAddress } from '../../../common/crypto/createAddress';
-import { createPrivateKey } from '../../../common/crypto/createPrivateKey';
 import { createPublicKey } from '../../../common/crypto/createPublicKey';
 
 export const makeGenesisBlock = (): BlockchainBlock => {
   const zero64 = '0'.repeat(64);
 
-  const privKey = createPrivateKey();
-  const publicKey = createPublicKey(privKey);
+  const privateKey = decodeString(
+    'B9Jg6X65h8XRNMN6z5wef1K5gWzoam25iFMzWkWD9aVG',
+    'address'
+  );
+
+  const publicKey = createPublicKey(privateKey);
   const address = createAddress(publicKey);
   const encodedAddress = encodeBuffer(address, 'address');
 
@@ -21,9 +25,9 @@ export const makeGenesisBlock = (): BlockchainBlock => {
     },
     txs: [
       {
-        isCoinbase: true,
         inputs: [
           {
+            isCoinbase: true,
             coinbase: 'genesis block coinbase',
           },
         ],

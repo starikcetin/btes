@@ -1,0 +1,8 @@
+.comp-sane-select {
+  &__menu-portal {
+    // specificity hack
+    &#{&} {
+      z-index: 999999; // basically infinite
+    }
+  }
+}
