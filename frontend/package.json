@@ -34,7 +34,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@reduxjs/toolkit": "^1.5.1",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "bs58": "^4.0.1",
     "camelcase": "^6.2.0",
