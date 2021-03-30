@@ -1,6 +1,6 @@
-#  Code Standards of BTES :clipboard: <h1> 
+#  Code Standards of BTES :clipboard: <h2>
 
-# BTES 
+## BTES 
 is a Monorepo for Blockchain Technology Education Software project.
 
 # Folder Structure
@@ -11,8 +11,7 @@ is a Monorepo for Blockchain Technology Education Software project.
 All three package have a  *`Src`* folder. Only the source folders goes participate in build.
 
 Component and pages folder are in the src folder of `frontend`. Pages are related with its name. 
-`F.e:`
- >Home page is inside the  Home folder. 
+ > `F.e:` Home page is inside the  Home folder. 
  >Sandbox page is inside the Sandbox folder. 
 
 ## Public 
@@ -24,7 +23,7 @@ For this reason we don't prefer to put something in the `public` folder unless i
 Both backend and frontend use *`common`* package. However; Common package cannot import from other packages. 
 
 
-## Backend 
+## Backend Folder
 The codes that control the **rest end points** are in the ``restController`` folder.
 > Example: "hello word" route + controller 
 > @route ('simulation Insance Broker') ../simulationInstanceBroker/create/
@@ -36,13 +35,12 @@ The codes that control the **rest end points** are in the ``restController`` fol
 ## Components
 Component names start with a **capital letter**. However, there are components that do not fall directly on the page.
 
+## Eslint & Prettier & Stylint
+ We implement ESLint that is static code analysis tool for identifying problematic patterns found in code.  [eslint rule](https://eslint.org/docs/rules/) 
 
- ## Eslint & Prettier & Stylint
- We implement ESLint that is static code analysis tool for identifying problematic patterns found in code.  [eslint rule](https://eslint.org/docs/rules/) \
+ We implement Prettier that is an opinionated code formatter to our code. [prettier rule](https://prettier.io/docs/en/options.html) 
 
- We implement Prettier that is an opinionated code formatter to our code. [prettier rule](https://prettier.io/docs/en/options.html) \ 
-
- We implement stylelint that uses cosmiconfig for our css files to find and load css configuration object. [stylelint rule](https://stylelint.io/user-guide/rules/list) \
+ We implement stylelint that uses cosmiconfig for our css files to find and load css configuration object. [stylelint rule](https://stylelint.io/user-guide/rules/list) 
 
 
 ## Styles
@@ -67,19 +65,18 @@ Also, the names of the style files have the same name as the pages they are link
  ```
 [css-formats](https://github.com/ctisbtes/btes/pull/18)
 
- ## On the naming structure and Syntax
+ ## On the naming structure for css and Syntax
 
 ### page | comp | global - component name | global selector name [ -- sub-class name [ -- 3rd level class name ... ] 
 
 ## Functions
-Functions always start with a lowercase letter.  :camel: [camelCase Format](https://eslint.org/docs/rules/camelcase)
-Also, The first letter must be lowercase, adjacent, and the next word starts with capital.
+Functions always start with a `lowercase` letter. Also, The first letter must be lowercase, adjacent, and the next word starts with capital. :camel: [camelCase Format](https://eslint.org/docs/rules/camelcase)
 
 ## Classes
-We use Pascal Case in class names, the first letter of the words starts with a capital. PascalCase in which the first letter of each word in a compound word is capitalized. [`PascalCase Format`](https://palantir.github.io/tslint/rules/class-name/)
+We use `Pascal Case` in class names, the first letter of the words starts with a capital. PascalCase in which the first letter of each word in a compound word is capitalized. [`PascalCase Format`](https://palantir.github.io/tslint/rules/class-name/)
 
 ## Interfaces and Types
-Also, the Pascal case convention is always used to signify that an identifier is a type, or interface.
+Beside, the Pascal case convention is always used to signify that an identifier is a type, or interface.
 
 ## Singleton 
 Camel case are used for Singleton naming however; typed same name for Singleton.
@@ -104,4 +101,4 @@ We add the extension of the test files as `.spec`.
 >f.e: If the main page named as *Example.ts.* So, *Example.spec.ts* have been given. 
 
 ## Exports
-As much as possible, only one export is kept in a single file. However, there are some exceptions.
+As much as possible, only one export is kept in a `single file`. However, there are some exceptions.
