@@ -4,13 +4,13 @@ import { hashBlock } from './hashBlock';
 it('hard coded test', () => {
   const header: BlockchainBlockHeader = {
     previousHash:
-      'ade8617c80bdad229fdfe3dfce60a12ac74d0fca25b0bbddf993a76066994c06',
+      '339516038c41fa454caea3fb9ef3093044ee00ad2b62420d343f6e985c4a23fb',
     leadingZeroCount: 3,
-    timestamp: 1616072932290,
-    nonce: 4482,
+    timestamp: 1617114965872,
+    nonce: 642,
   };
 
   expect(hashBlock(header)).toBe(
-    '0007c28f0a88c19dab11908051ccb2f809e8de6e2342f99553e1260efc4eabf0'
+    '00083dfd9fbdde6fc65eee3dc6025941447acdd0fb93361a562944daf1bbeb1f'
   );
 });

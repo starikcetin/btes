@@ -40,7 +40,7 @@
     "camelcase": "^6.2.0",
     "date-and-time": "^0.14.2",
     "jquery": "^3.6.0",
-    "jsum": "^0.1.4",
+    "jsum": "^1.0.1",
     "lodash": "^4.17.21",
     "popper.js": "^1.16.1",
     "react": "^16.14.0",
