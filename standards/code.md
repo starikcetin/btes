@@ -4,7 +4,7 @@
 is a Monorepo for Blockchain Technology Education Software project.
 
 # Folder Structure
-| **`Frontend`** | **`Common`** | **`Backend`** |
+| **`Backend`** | **`Common`** | **`Frontend`** |
 |:-:|-|-|
 
 ## Frontend Folder
@@ -16,22 +16,21 @@ Component and pages folder are in the src folder of `frontend`. Pages are relate
  >Sandbox page is inside the Sandbox folder. 
 
 ## Public 
-In frontend public folder is also direcly copied to the build output. 
+For frontend, public folder is also direcly copied to the build output. 
 For this reason we don't prefer to put something in the `public` folder unless it's possible.
 
 
-## :black_circle: Common 
+## Common 
 Both backend and frontend use *`common`* package. However; Common package cannot import from other packages. 
 
 
 ## Backend 
 The codes that control the **rest end points** are in the ``restController`` folder.
-1. Example: "hello word" route + controller 
-2. @route ('simulation Insance Broker') ../simulationInstanceBroker/create/
+> Example: "hello word" route + controller 
+> @route ('simulation Insance Broker') ../simulationInstanceBroker/create/
 
-* We add it to the end.
-* The name of the folder is the name of the route.
-* The name of the file is route + controller
+* We add it to the end. The name of the folder is the name of the route.
+* The name of the file is having route + controller.
 
 
 ## Components
@@ -39,9 +38,11 @@ Component names start with a **capital letter**. However, there are components t
 
 
  ## Eslint & Prettier & Stylint
- We implement ESLint that is static code analysis tool for identifying problematic patterns found in code.  [eslint rule](https://eslint.org/docs/rules/)
- We implement Prettier that is an opinionated code formatter to our code.[prettier rule](https://prettier.io/docs/en/options.html)
- We implement stylelint that uses cosmiconfig for our css files to find and load css configuration object. [stylelint rule](https://stylelint.io/user-guide/rules/list)
+ We implement ESLint that is static code analysis tool for identifying problematic patterns found in code.  [eslint rule](https://eslint.org/docs/rules/) \
+
+ We implement Prettier that is an opinionated code formatter to our code. [prettier rule](https://prettier.io/docs/en/options.html) \ 
+
+ We implement stylelint that uses cosmiconfig for our css files to find and load css configuration object. [stylelint rule](https://stylelint.io/user-guide/rules/list) \
 
 
 ## Styles
@@ -68,7 +69,7 @@ Also, the names of the style files have the same name as the pages they are link
 
  ## On the naming structure and Syntax
 
-### page | comp | global - component name | global selector name [ -- sub-class name [ -- 3rd level class name ... ] ]
+### page | comp | global - component name | global selector name [ -- sub-class name [ -- 3rd level class name ... ] 
 
 ## Functions
 Functions always start with a lowercase letter.  :camel: [camelCase Format](https://eslint.org/docs/rules/camelcase)
