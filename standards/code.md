@@ -35,17 +35,17 @@ The codes that control the **rest end points** are in the ``restController`` fol
 ## Components
 Component names start with a **capital letter**. However, there are components that do not fall directly on the page.
 
-## Eslint & Prettier & Stylint
- We implement ESLint that is static code analysis tool for identifying problematic patterns found in code.  [eslint rule](https://eslint.org/docs/rules/) 
+## Eslint & Prettier & Stylelint
+ We implement `ESLint` that is static code analysis tool for identifying problematic patterns found in code.  [eslint rule](https://eslint.org/docs/rules/) 
 
- We implement Prettier that is an opinionated code formatter to our code. [prettier rule](https://prettier.io/docs/en/options.html) 
+ We implement `Prettier` that is an opinionated code formatter to our code. [prettier rule](https://prettier.io/docs/en/options.html) 
 
- We implement stylelint that uses cosmiconfig for our css files to find and load css configuration object. [stylelint rule](https://stylelint.io/user-guide/rules/list) 
+ We implement `stylelint` that uses cosmiconfig for our css files to find and load css configuration object. [stylelint rule](https://stylelint.io/user-guide/rules/list) 
 
 
 ## Styles
-Style files start with a `capital letter`.
-.Scss, which is more innovative, was preferred as style files.
+Style files start with a `capital letter`. 
+Scss, which is more innovative, was preferred as style files.
 We added the style files to the same place next to the components.
 Also, the names of the style files have the same name as the pages they are linked to.
 
@@ -91,10 +91,10 @@ There is only global styles available in the style folder in root.
 In utils, there are stateless utilities that can be reusable.
 
 ## Functions Typing
-We write our functions as arrow functions assigned to variables. 
+We write our functions as `arrow` functions assigned to variables. 
 
 ## Variables 
-We define variables as const or read only (inside the class) as much as possible.
+We define variables as `const` or read only (inside the class) as much as possible.
 
 ## Tests
 We add the extension of the test files as `.spec`.
