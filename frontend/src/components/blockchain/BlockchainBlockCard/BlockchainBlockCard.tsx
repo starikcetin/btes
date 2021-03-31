@@ -15,7 +15,7 @@ export const BlockchainBlockCard: React.FC<BlockchainBlockCardProps> = (
   const { block } = props;
 
   return (
-    <div className="comp-blockchain-block-db-pane">
+    <div className="comp-blockchain-block-card">
       <Card>
         <Card.Header>
           Details of block <code>{hashBlock(block.header)}</code>
