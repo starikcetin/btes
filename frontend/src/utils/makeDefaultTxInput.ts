@@ -1,4 +1,4 @@
-import { BlockchainTxInput } from '../../../../common/blockchain/tx/BlockchainTxInput';
+import { BlockchainTxInput } from '../common/blockchain/tx/BlockchainTxInput';
 
 /** Creates and returns an empty tx input. String fields are empty string and number fields are 0. */
 export const makeDefaultTxInput = (isCoinbase: boolean): BlockchainTxInput => {

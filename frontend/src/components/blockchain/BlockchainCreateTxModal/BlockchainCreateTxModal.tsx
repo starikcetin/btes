@@ -8,16 +8,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
 import { hasValue } from '../../../common/utils/hasValue';
-import { useTxGetter } from './hooks/useTxGetter';
-import { useTxOutputGetter } from './hooks/useTxOutputGetter';
+import { useTxOutputGetter } from '../../../hooks/txGetters/useTxOutputGetter';
 import { BlockchainTxInputForm } from './comps/BlockchainTxInputForm/BlockchainTxInputForm';
 import { BlockchainTxOutputForm } from './comps/BlockchainTxOutputForm/BlockchainTxOutputForm';
-import { makeDefaultTxOutput } from './utils/makeDefaultTxOutput';
-import { makeDefaultTxInput } from './utils/makeDefaultTxInput';
+import { makeDefaultTxOutput } from '../../../utils/makeDefaultTxOutput';
+import { makeDefaultTxInput } from '../../../utils/makeDefaultTxInput';
 import { makePartialTx } from '../../../common/blockchain/utils/makePartialTx';
 import { hashJsonObj } from '../../../common/crypto/hashJsonObj';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
 import { simulationBridge } from '../../../services/simulationBridge';
+import { useTxGetterEverywhere } from '../../../hooks/txGetters/useTxGetterEverywhere';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -34,7 +34,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
   const inputs = useArray<BlockchainTxInput>([]);
   const outputs = useArray<BlockchainTxOutput>([]);
 
-  const getTx = useTxGetter({ simulationUid, nodeUid });
+  const getTx = useTxGetterEverywhere({ simulationUid, nodeUid });
   const getOutput = useTxOutputGetter(getTx);
 
   const outputSum = _.sumBy(outputs.value, (o) => o.value);
@@ -46,7 +46,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
     }
 
     const getResult = getOutput(i.previousOutput);
-    return getResult.place !== 'nowhere' && hasValue(getResult.output)
+    return hasValue(getResult) && hasValue(getResult.output)
       ? getResult.output.value
       : Number.NaN;
   });
