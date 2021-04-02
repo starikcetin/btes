@@ -19,7 +19,6 @@ import { BlockchainNetwork } from './blockchain/modules/BlockchainNetwork';
 
 // TODO: this should not be here
 const blockchainConfig: BlockchainConfig = {
-  keypairBitLength: 5,
   blockCreationFee: 100,
   coinbaseMaturity: 5,
   targetLeadingZeroCount: 3,

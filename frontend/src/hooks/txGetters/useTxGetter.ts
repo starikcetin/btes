@@ -1,30 +1,18 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
-import { BlockchainTx } from '../../../../common/blockchain/tx/BlockchainTx';
-import { hasValue } from '../../../../common/utils/hasValue';
-import { RootState } from '../../../../state/RootState';
-
-export type TxGetResult =
-  | {
-      place: 'nowhere';
-    }
-  | {
-      place:
-        | 'main-branch'
-        | 'side-branch'
-        | 'block-orphanage'
-        | 'mempool'
-        | 'tx-orphanage';
-      tx: BlockchainTx;
-    };
+import { hasValue } from '../../common/utils/hasValue';
+import { RootState } from '../../state/RootState';
+import { TxGetPlace } from './TxGetPlace';
+import { TxGetter } from './TxGetter';
 
 /** Returns a function that selects from redux the tx with given hash. */
-export const useTxGetter = (args: {
+export const useTxGetter = <TPlaces extends ReadonlyArray<TxGetPlace>>(args: {
   simulationUid: string;
   nodeUid: string;
-}): ((txHash: string) => TxGetResult) => {
-  const { simulationUid, nodeUid } = args;
+  searchIn: TPlaces;
+}): TxGetter<TPlaces> => {
+  const { simulationUid, nodeUid, searchIn } = args;
 
   const mainBranchTxLookup = useSelector(
     (state: RootState) =>
@@ -54,36 +42,40 @@ export const useTxGetter = (args: {
 
   return useCallback(
     (txHash: string) =>
-      hasValue(mainBranchTxLookup[txHash])
+      searchIn.includes('main-branch') && hasValue(mainBranchTxLookup[txHash])
         ? {
             place: 'main-branch',
             tx: mainBranchTxLookup[txHash],
           }
-        : hasValue(mempoolTxLookup[txHash])
+        : searchIn.includes('mempool') && hasValue(mempoolTxLookup[txHash])
         ? {
             place: 'mempool',
             tx: mempoolTxLookup[txHash],
           }
-        : hasValue(txOrphanageTxLookup[txHash])
+        : searchIn.includes('tx-orphanage') &&
+          hasValue(txOrphanageTxLookup[txHash])
         ? {
             place: 'tx-orphanage',
             tx: txOrphanageTxLookup[txHash],
           }
-        : hasValue(blockOrphanageTxLookup[txHash])
+        : searchIn.includes('block-orphanage') &&
+          hasValue(blockOrphanageTxLookup[txHash])
         ? {
             place: 'block-orphanage',
             tx: blockOrphanageTxLookup[txHash],
           }
-        : hasValue(sideBranchesTxLookup[txHash])
+        : searchIn.includes('side-branch') &&
+          hasValue(sideBranchesTxLookup[txHash])
         ? {
             place: 'side-branch',
             tx: sideBranchesTxLookup[txHash],
           }
-        : { place: 'nowhere' },
+        : null,
     [
       blockOrphanageTxLookup,
       mainBranchTxLookup,
       mempoolTxLookup,
+      searchIn,
       sideBranchesTxLookup,
       txOrphanageTxLookup,
     ]

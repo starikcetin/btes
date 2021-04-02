@@ -7,7 +7,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 import { BlockchainTxInput } from '../../../../../common/blockchain/tx/BlockchainTxInput';
 import { BlockchainCoinbaseTxInput } from '../../../../../common/blockchain/tx/BlockchainCoinbaseTxInput';
 import { BlockchainRegularTxInput } from '../../../../../common/blockchain/tx/BlockchainRegularTxInput';
-import { makeDefaultTxInput } from '../../utils/makeDefaultTxInput';
+import { makeDefaultTxInput } from '../../../../../utils/makeDefaultTxInput';
 import { createPublicKey } from '../../../../../common/crypto/createPublicKey';
 import { decodeString } from '../../../../../common/blockchain/utils/decodeString';
 import { encodeBuffer } from '../../../../../common/blockchain/utils/encodeBuffer';

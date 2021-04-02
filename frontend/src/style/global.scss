@@ -1,20 +1,37 @@
-.global-document-container {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
+@import 'bootstrapUtils/responsiveBorders';
 
-.global-bg-img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.global {
+  &-document-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  &-bg-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &-break-all {
+    word-break: break-all;
+  }
+
+  &-badge-standalone {
+    font-size: 100%;
+    font-weight: normal;
+  }
 }
 
 code {
   padding: 0 2px;
   font-size: 100%;
+}
+
+.card-header:only-child {
+  border-bottom: 0;
 }
