@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import { Card, Col, InputGroup, ListGroup, Row } from 'react-bootstrap';
+import { Badge, Card, Col, ListGroup, Row } from 'react-bootstrap';
 
 import './BlockchainTxCard.scss';
 import { hasValue } from '../../../common/utils/hasValue';
@@ -42,7 +42,12 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
   });
 
   const fee = inputSum - outputSum;
-  const isFeePos = !(Number.isNaN(fee) || fee <= 0);
+
+  const feePillVariant = Number.isNaN(fee)
+    ? 'warning'
+    : fee <= 0
+    ? 'danger'
+    : 'success';
 
   const renderInput = (input: BlockchainTxInput) => {
     if (input.isCoinbase) {
@@ -53,9 +58,8 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
               This input is coinbase, it doesn't have a value.
             </small>
           </div>
-          <div>
-            Coinbase: <pre className="border p-1">{input.coinbase}</pre>
-          </div>
+          <div className="mb-1">Coinbase:</div>
+          <pre className="border p-1 mb-1">{input.coinbase}</pre>
         </ListGroup.Item>
       );
     }
@@ -120,11 +124,16 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
         </Card.Header>
         <Card.Body>
           <Row>
-            <Col className={isFeePos ? 'text-success' : 'text-danger'}>
-              Fee:{' '}
-              <code className="text-reset">
-                {Number.isNaN(fee) ? '?' : fee}
-              </code>
+            <Col>
+              <Badge
+                variant={feePillVariant}
+                className="comp-blockchain-tx-card--standalone-badge"
+              >
+                Transaction fee:{' '}
+                <code className="text-reset">
+                  {Number.isNaN(fee) ? '?' : fee}
+                </code>
+              </Badge>
             </Col>
           </Row>
           <Row className="pt-2 no-gutters">
@@ -135,9 +144,15 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
                     prefix: true,
                     zero: 'No',
                   })}
-                  <span className="float-right">
-                    Total: <code className="text-reset">{inputSum}</code>
-                  </span>
+                  <Badge
+                    variant="success"
+                    className="float-right comp-blockchain-tx-card--standalone-badge"
+                  >
+                    Total:{' '}
+                    <code className="text-reset">
+                      {Number.isNaN(inputSum) ? '?' : inputSum}
+                    </code>
+                  </Badge>
                 </ListGroup.Item>
                 {inputs.map(renderInput)}
               </ListGroup>
@@ -149,9 +164,12 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
                     prefix: true,
                     zero: 'No',
                   })}
-                  <span className="float-right">
+                  <Badge
+                    variant="danger"
+                    className="float-right comp-blockchain-tx-card--standalone-badge"
+                  >
                     Total: <code className="text-reset">{outputSum}</code>
-                  </span>
+                  </Badge>
                 </ListGroup.Item>
                 {outputs.map(renderOutput)}
               </ListGroup>

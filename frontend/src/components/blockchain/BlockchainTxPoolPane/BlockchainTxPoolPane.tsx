@@ -34,7 +34,9 @@ export const BlockchainTxPoolPane: React.FC<BlockchainTxPoolPaneProps> = (
         <Card.Header>Mempool ({mempool.length})</Card.Header>
         <Card.Body>
           {mempool.map((tx) => (
-            <BlockchainTxCard {...props} tx={tx} />
+            <div className="comp-blockchain-tx-pool-pane--tx-card">
+              <BlockchainTxCard {...props} tx={tx} />
+            </div>
           ))}
         </Card.Body>
       </Card>
@@ -42,7 +44,9 @@ export const BlockchainTxPoolPane: React.FC<BlockchainTxPoolPaneProps> = (
         <Card.Header>Orphan Transactions ({orphanage.length})</Card.Header>
         <Card.Body>
           {orphanage.map((tx) => (
-            <BlockchainTxCard {...props} tx={tx} />
+            <div className="comp-blockchain-tx-pool-pane--tx-card">
+              <BlockchainTxCard {...props} tx={tx} />
+            </div>
           ))}
         </Card.Body>
       </Card>
