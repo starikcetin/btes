@@ -127,7 +127,7 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
             <Col>
               <Badge
                 variant={feePillVariant}
-                className="comp-blockchain-tx-card--standalone-badge"
+                className="global-badge-standalone"
               >
                 Transaction fee:{' '}
                 <code className="text-reset">
@@ -138,41 +138,49 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
           </Row>
           <Row className="pt-2 no-gutters">
             <Col lg={6} className="pr-lg-1 mb-2 mb-lg-0">
-              <ListGroup>
-                <ListGroup.Item className="py-2 px-3" variant="success">
+              <Card>
+                <Card.Header className="py-2 px-3 list-group-item-success">
                   {makeCountText(inputs.length, 'Input', {
                     prefix: true,
                     zero: 'No',
                   })}
                   <Badge
                     variant="success"
-                    className="float-right comp-blockchain-tx-card--standalone-badge"
+                    className="float-right global-badge-standalone"
                   >
                     Total:{' '}
                     <code className="text-reset">
                       {Number.isNaN(inputSum) ? '?' : inputSum}
                     </code>
                   </Badge>
-                </ListGroup.Item>
-                {inputs.map(renderInput)}
-              </ListGroup>
+                </Card.Header>
+                {inputs.length > 0 && (
+                  <ListGroup variant="flush">
+                    {inputs.map(renderInput)}
+                  </ListGroup>
+                )}
+              </Card>
             </Col>
             <Col lg={6} className="pl-lg-1">
-              <ListGroup>
-                <ListGroup.Item className="py-2 px-3" variant="danger">
+              <Card>
+                <Card.Header className="py-2 px-3 list-group-item-danger">
                   {makeCountText(outputs.length, 'Output', {
                     prefix: true,
                     zero: 'No',
                   })}
                   <Badge
                     variant="danger"
-                    className="float-right comp-blockchain-tx-card--standalone-badge"
+                    className="float-right global-badge-standalone"
                   >
                     Total: <code className="text-reset">{outputSum}</code>
                   </Badge>
-                </ListGroup.Item>
-                {outputs.map(renderOutput)}
-              </ListGroup>
+                </Card.Header>
+                {outputs.length > 0 && (
+                  <ListGroup variant="flush">
+                    {outputs.map(renderOutput)}
+                  </ListGroup>
+                )}
+              </Card>
             </Col>
           </Row>
         </Card.Body>
