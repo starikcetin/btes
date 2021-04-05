@@ -11,6 +11,16 @@ it('verifies private keys', () => {
     '0000000000000000000000000000000000000000000000000000000000000000'
   );
 
+  const small = hexToBuffer(
+    '18e14a7b6a307f426a94f8114701e7c8e774e7f9a47e2c2035db29'
+  );
+
+  const big = hexToBuffer(
+    '18e14a7b6a307f426a94f8114701e7c8e774e7f9a47e2c2035db29a20632172500000000'
+  );
+
   expect(verifyPrivateKey(correct)).toBeTrue();
   expect(verifyPrivateKey(incorrect)).toBeFalse();
+  expect(verifyPrivateKey(small)).toBeFalse();
+  expect(verifyPrivateKey(big)).toBeFalse();
 });

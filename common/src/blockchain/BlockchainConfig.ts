@@ -1,6 +1,4 @@
 export interface BlockchainConfig {
-  readonly keypairBitLength: number;
-
   /** Aka block reward. In satoshis. */
   readonly blockCreationFee: number;
 

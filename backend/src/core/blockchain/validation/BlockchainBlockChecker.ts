@@ -12,6 +12,7 @@ import { BlockchainCommonChecker } from './BlockchainCommonChecker';
 import { BlockchainWallet } from '../modules/BlockchainWallet';
 import { hashBlock } from '../../../common/blockchain/utils/hashBlock';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
+import { getTxType } from '../../../common/blockchain/utils/getTxType';
 
 export type CheckBlockResult =
   | { validity: 'invalid' | 'orphan' }
@@ -134,11 +135,11 @@ export class BlockchainBlockChecker {
     }
 
     // bc6. First transaction must be coinbase, the rest must not be
-    if (txs[0].isCoinbase === false) {
+    if (getTxType(txs[0]) !== 'coinbase') {
       return { validity: 'invalid' };
     }
 
-    if (txs.slice(1).some((t) => t.isCoinbase)) {
+    if (txs.slice(1).some((t) => getTxType(t) !== 'regular')) {
       return { validity: 'invalid' };
     }
 
@@ -262,7 +263,13 @@ export class BlockchainBlockChecker {
   private readonly reclaimTxsToMempool = (...txs: BlockchainTx[]): void => {
     // bc18.5.1. For each non-coinbase transaction in the block:
     for (const tx of txs) {
-      if (tx.isCoinbase) {
+      const txType = getTxType(tx);
+
+      if (txType === 'invalid') {
+        throw new Error('Tx type is invalid!');
+      }
+
+      if (txType === 'coinbase') {
         continue;
       }
 
@@ -290,7 +297,13 @@ export class BlockchainBlockChecker {
 
     // bc16.1. For all but the coinbase transaction, apply the following:
     for (const tx of block.txs) {
-      if (tx.isCoinbase) {
+      const txType = getTxType(tx);
+
+      if (txType === 'invalid') {
+        throw new Error('Tx type is invalid!');
+      }
+
+      if (txType === 'coinbase') {
         continue;
       }
 

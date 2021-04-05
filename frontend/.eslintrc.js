@@ -32,5 +32,9 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     '@typescript-eslint/no-empty-interface': 'off',
+    'react/jsx-filename-extension': [
+      'error',
+      { allow: 'as-needed', extensions: ['.tsx'] },
+    ],
   },
 };

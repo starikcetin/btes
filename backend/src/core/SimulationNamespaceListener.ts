@@ -37,6 +37,8 @@ import { BlockchainBroadcastMinedBlockPayload } from '../common/socketPayloads/B
 import { BlockchainDismissMiningPayload } from '../common/socketPayloads/BlockchainDismissMiningPayload';
 import { BlockchainBroadcastMinedBlockCommand } from './commands/BlockchainBroadcastMinedBlockCommand';
 import { BlockchainDismissMiningCommand } from './commands/BlockchainDismissMiningCommand';
+import { BlockchainBroadcastTxPayload } from '../common/socketPayloads/BlockchainBroadcastTxPayload';
+import { BlockchainBroadcastTxCommand } from './commands/BlockchainBroadcastTxCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -143,6 +145,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.blockchainBroadcastMinedBlock,
       this.handleBlockchainBroadcastMinedBlock
+    );
+    socket.on(
+      socketEvents.simulation.blockchainBroadcastTx,
+      this.handleBlockchainBroadcastTx
     );
   };
 
@@ -320,6 +326,13 @@ export class SimulationNamespaceListener {
       this.simulation,
       body
     );
+    command.execute();
+  };
+
+  private readonly handleBlockchainBroadcastTx = (
+    body: BlockchainBroadcastTxPayload
+  ) => {
+    const command = new BlockchainBroadcastTxCommand(this.simulation, body);
     command.execute();
   };
 

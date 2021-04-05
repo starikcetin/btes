@@ -76,12 +76,9 @@ export class BlockchainBlockDb {
     outPoint: BlockchainTxOutPoint
   ): boolean => {
     for (const { tx } of this.getMainBranchTxIterator()) {
-      if (tx.isCoinbase) {
-        continue;
-      }
-
-      const isUsed = tx.inputs.some((input) =>
-        areOutPointsEqual(input.previousOutput, outPoint)
+      const isUsed = tx.inputs.some(
+        (input) =>
+          !input.isCoinbase && areOutPointsEqual(input.previousOutput, outPoint)
       );
 
       if (isUsed) {
@@ -198,7 +195,7 @@ export class BlockchainBlockDb {
     if (poppedOrphans.length > 0) {
       this.socketEmitter.sendBlocksRemovedFromOrphanage({
         nodeUid: this.nodeUid,
-        removedBlockHashes: poppedOrphans.map((o) => hashBlock(o.header)),
+        removedBlocks: poppedOrphans,
       });
     }
 
