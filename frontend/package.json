@@ -68,7 +68,7 @@
     "@svgr/webpack": "^5.5.0",
     "@testing-library/dom": "^7.30.3",
     "@testing-library/jest-dom": "^5.11.10",
-    "@testing-library/react": "^11.2.5",
+    "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^13.1.1",
     "@types/axios": "^0.14.0",
     "@types/bootstrap": "^5.0.12",
@@ -84,7 +84,7 @@
     "@types/react-dom": "^17.0.3",
     "@types/react-redux": "^7.1.16",
     "@types/react-router-dom": "^5.1.7",
-    "@types/react-select": "^4.0.13",
+    "@types/react-select": "^4.0.14",
     "@types/ripemd160": "^2.0.0",
     "@types/secp256k1": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
@@ -148,7 +148,7 @@
     "url-loader": "^4.1.1",
     "webpack": "^4.46.0",
     "webpack-dev-server": "^3.11.2",
-    "webpack-manifest-plugin": "^3.1.0",
+    "webpack-manifest-plugin": "^3.1.1",
     "workbox-webpack-plugin": "^4.3.1"
   },
   "lint-staged": {
