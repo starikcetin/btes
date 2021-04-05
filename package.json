@@ -22,15 +22,11 @@
     "sync-lock": "yarn sync-lock:root && wsrun -ml --report sync-lock",
     "upgrade-minor": "yarn upgrade --caret && yarn sync-lock && yarn install",
     "test": "jest",
-    "test:coverage": "yarn test --coverage"
+    "test:coverage": "yarn test --coverage",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "husky": "^6.0.0",
     "wsrun": "^5.2.4"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn precommit"
-    }
   }
 }
