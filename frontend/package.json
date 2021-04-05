@@ -115,7 +115,7 @@
     "jest-expect-message": "^1.0.2",
     "jest-extended": "^0.11.5",
     "jest-resolve": "^26.6.2",
-    "jest-watch-typeahead": "^0.4.2",
+    "jest-watch-typeahead": "^0.6.2",
     "kill-port": "^1.6.1",
     "lint-staged": "^10.5.4",
     "mini-css-extract-plugin": "^0.9.0",
