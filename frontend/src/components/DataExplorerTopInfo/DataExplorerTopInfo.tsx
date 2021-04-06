@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './DataExplorerTopInfo.scss';
 import LoaderMask from '../LoaderMask/LoaderMask';
-import {
-  fetchSimpleMarketData,
-  VsCoins,
-  MarketData,
-} from '../../apis/MarketDataAPI';
+import { fetchSimpleMarketData, MarketData } from '../../apis/MarketDataAPI';
+import { VsCurrencies } from '../../apis/CommonTypes';
 
 interface DataExplorerTopInfoProps {
-  vsCurrency: VsCoins;
+  vsCurrency: VsCurrencies;
   currency: string;
 }
 
@@ -22,11 +19,9 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
       try {
         setIsFetching(true);
         const marketData = await fetchSimpleMarketData(currency, vsCurrency);
-        console.log(marketData);
         setData(marketData);
         setIsFetching(false);
       } catch (e) {
-        console.log(e);
         setIsFetching(false);
         setData(null);
       }
@@ -47,7 +42,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
         <div className="row d-flex justify-content-around">
           <div className="col-4 col-md-2 m-3">
             <span className="font-weight-bold">
-              {vsCurrency === VsCoins.USD
+              {vsCurrency === VsCurrencies.USD
                 ? formatter.format(data.usd)
                 : formatter.format(data.eur)}
             </span>
@@ -57,7 +52,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {vsCurrency === VsCoins.USD
+              {vsCurrency === VsCurrencies.USD
                 ? formatter.format(data.usd_market_cap / 1000000)
                 : formatter.format(data.eur_market_cap / 1000000)}
               M
@@ -68,7 +63,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {vsCurrency === VsCoins.USD
+              {vsCurrency === VsCurrencies.USD
                 ? formatter.format(data.usd_24h_vol / 1000000)
                 : formatter.format(data.eur_24h_vol / 1000000)}
               M
@@ -79,7 +74,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {vsCurrency === VsCoins.USD
+              {vsCurrency === VsCurrencies.USD
                 ? parseFloat(data.usd_24h_change).toFixed(2)
                 : parseFloat(data.eur_24h_change).toFixed(2)}
             </span>

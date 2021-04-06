@@ -4,57 +4,33 @@ import DataExplorerTopInfo from '../../components/DataExplorerTopInfo/DataExplor
 import DataExplorerBlockList from '../../components/DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './DataExplorer.scss';
-import { VsCoins } from '../../apis/MarketDataAPI';
+import { VsCurrencies } from '../../apis/CommonTypes';
+import {
+  CurrenciesChartData,
+  fetchCurrencyChartsData,
+} from '../../apis/CurrenciesChartAPI';
 
 const DataExplorer = () => {
-  const [chartData, setChartData] = useState({
-    prices: [[]],
-    total_volumes: [[]],
-    market_caps: [[]],
-  });
+  const [chartsData, setChartsData] = useState<CurrenciesChartData | null>();
   const [currency, setCurrency] = useState<string>('bitcoin');
-  const [vsCurrency, setVsCurrency] = useState<VsCoins>(VsCoins.USD);
+  const [vsCurrency, setVsCurrency] = useState<VsCurrencies>(VsCurrencies.USD);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        fetch(
-          `https://api.coingecko.com/api/v3/coins/${currency}/market_chart?vs_currency=${vsCurrency}&days=1`
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            setChartData(data);
-            console.log(data);
-            setIsFetching(false);
-          });
+        const data = await fetchCurrencyChartsData(currency, vsCurrency);
+        setChartsData(data);
+        setIsFetching(false);
       } catch (e) {
         console.log(e);
         setIsFetching(false);
+        setChartsData(null);
       }
     };
     fetchData();
   }, [currency, vsCurrency]);
-
-  const priceListForPrice: Array<string> = [];
-  const timeListForPrice: Array<string> = [];
-  const priceListForVolume: Array<string> = [];
-  const timeListForVolume: Array<string> = [];
-  const priceListForMarketCap: Array<string> = [];
-  const timeListForMarketCap: Array<string> = [];
-  chartData.prices.forEach((price) => {
-    priceListForPrice.push(parseFloat(price[1]).toFixed(2));
-    timeListForPrice.push(new Date(price[0]).getHours() + ':00');
-  });
-  chartData.market_caps.forEach((price) => {
-    priceListForMarketCap.push(Number(price[1] / 1000000).toFixed(2));
-    timeListForMarketCap.push(new Date(price[0]).getHours() + ':00');
-  });
-  chartData.total_volumes.forEach((price) => {
-    priceListForVolume.push(Number(price[1] / 1000000).toFixed(2));
-    timeListForVolume.push(new Date(price[0]).getHours() + ':00');
-  });
 
   const changeCurrency = (e: any) => {
     setCurrency(e);
@@ -130,32 +106,48 @@ const DataExplorer = () => {
         </div>
         <div className="row">
           <div className="col-12">
-            <DataExplorerLinearChart
-              isFetching={isFetching}
-              label={`Price in ${vsCurrency.toUpperCase()}`}
-              xAxisData={timeListForPrice}
-              yAxisData={priceListForPrice}
-            />
+            {chartsData ? (
+              <DataExplorerLinearChart
+                isFetching={isFetching}
+                label={`Price in ${vsCurrency.toUpperCase()}`}
+                xAxisData={chartsData?.pricesDates}
+                yAxisData={chartsData?.prices}
+              />
+            ) : (
+              <span className="alert-danger">Price Data Couldn't Found</span>
+            )}
           </div>
         </div>
         <hr className="comp-data-explorer-horizontal-divider" />
         <div className="row">
           <div className="col-12 col-md-6">
-            <DataExplorerLinearChart
-              isFetching={isFetching}
-              label={'Total Volume'}
-              xAxisData={timeListForVolume}
-              yAxisData={priceListForVolume}
-            />
+            {chartsData ? (
+              <DataExplorerLinearChart
+                isFetching={isFetching}
+                label={`Total Volume`}
+                xAxisData={chartsData?.totalVolumesDates}
+                yAxisData={chartsData?.totalVolumes}
+              />
+            ) : (
+              <span className="alert-danger">
+                Total Volume Data Couldn't Found
+              </span>
+            )}
           </div>
 
           <div className="col-12 col-md-6">
-            <DataExplorerLinearChart
-              isFetching={isFetching}
-              label={'Market Cap'}
-              xAxisData={timeListForMarketCap}
-              yAxisData={priceListForMarketCap}
-            />
+            {chartsData ? (
+              <DataExplorerLinearChart
+                isFetching={isFetching}
+                label={`Market Cap`}
+                xAxisData={chartsData?.marketCapsDates}
+                yAxisData={chartsData?.marketCaps}
+              />
+            ) : (
+              <span className="alert-danger">
+                Market Cap Data Couldn't Found
+              </span>
+            )}
           </div>
         </div>
         <hr className="comp-data-explorer-horizontal-divider" />
