@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 import './DataExplorerBlockList.scss';
 import LoaderMask from '../LoaderMask/LoaderMask';
 import { Line } from 'react-chartjs-2';
+import { BlockList, fetchBlockList } from '../../apis/BlockListAPI';
 
 interface FormatBytesParams {
   bytes: any;
@@ -10,7 +11,7 @@ interface FormatBytesParams {
 }
 
 const DataExplorerBlockList: React.FC = () => {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<BlockList[] | []>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const formatDate = () => {
@@ -38,16 +39,13 @@ const DataExplorerBlockList: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        fetch(`https://stacks-node-api.mainnet.stacks.co/extended/v1/block`)
-          .then((response) => response.json())
-          .then((data) => {
-            setData(data.results);
-            console.log(data.results);
-          });
+        const blockList = await fetchBlockList();
+        setData(blockList);
         setIsFetching(false);
       } catch (e) {
         console.log(e);
         setIsFetching(false);
+        setData([]);
       }
     };
     fetchData();
@@ -74,12 +72,12 @@ const DataExplorerBlockList: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.slice(0, 10).map((d) => (
+              {data?.slice(0, 10).map((block) => (
                 <tr>
-                  <td>{d.height}</td>
-                  <td>{d.hash}</td>
-                  <td>{d.txs.length}</td>
-                  <td>{d.burn_block_time_iso}</td>
+                  <td>{block.burn_block_height}</td>
+                  <td>{block.hash}</td>
+                  <td>{block.txs.length}</td>
+                  <td>{block.burn_block_time_iso}</td>
                 </tr>
               ))}
             </tbody>
