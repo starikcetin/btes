@@ -68,60 +68,61 @@ const DataExplorer = () => {
       <div className="container">
         <div className="row">
           <div className="col-12 col-md-3 d-flex justify-content-center">
-            <div className="d-block m-2">
-              <DropdownButton
-                id="dropdown-basic-button"
-                title="Select Coin"
-                size="sm"
-                onSelect={changeCurrency}
-              >
-                <Dropdown.Item className="w-100" eventKey="bitcoin">
-                  <div>
-                    <img
-                      src={
-                        'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png?1547033579'
-                      }
-                    />
-                    <span className="m-2">Bitcoin</span>
-                  </div>
-                </Dropdown.Item>
-                <Dropdown.Item eventKey="ethereum" className="w-100">
-                  <div>
-                    <img
-                      src={
-                        'https://assets.coingecko.com/coins/images/279/thumb/ethereum.png?1595348880'
-                      }
-                    />
-                    <span className="m-2">Ethereum</span>
-                  </div>
-                </Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </DropdownButton>
-            </div>
+            <div className="row">
+              <div className="col d-flex m-2">
+                <DropdownButton
+                  id="dropdown-basic-button"
+                  title={currency.toUpperCase()}
+                  size="sm"
+                  onSelect={changeCurrency}
+                >
+                  <Dropdown.Item eventKey="bitcoin">
+                    <div>
+                      <img
+                        src={
+                          'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png?1547033579'
+                        }
+                      />
+                      <span className="m-2">Bitcoin</span>
+                    </div>
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="ethereum">
+                    <div>
+                      <img
+                        src={
+                          'https://assets.coingecko.com/coins/images/279/thumb/ethereum.png?1595348880'
+                        }
+                      />
+                      <span className="m-2">Ethereum</span>
+                    </div>
+                  </Dropdown.Item>
+                </DropdownButton>
+              </div>
 
-            <div className="d-block m-2">
-              <DropdownButton
-                id="dropdown-basic-button"
-                title="Select Currency"
-                size="sm"
-                onSelect={changeVsCurrency}
-              >
-                <Dropdown.Item eventKey="usd" className="w-100">
-                  <div>
-                    <i className="fa fa-usd" />
-                    <span className="m-2">USD</span>
-                  </div>
-                </Dropdown.Item>
-                <Dropdown.Item eventKey="eur" className="w-100">
-                  <div>
-                    <i className="fa fa-eur" />
-                    <span className="m-2">EUR</span>
-                  </div>
-                </Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-              </DropdownButton>
+              <div className="col d-flex m-2">
+                <DropdownButton
+                  id="dropdown-basic-button"
+                  title={vsCurrency.toUpperCase()}
+                  size="sm"
+                  onSelect={changeVsCurrency}
+                >
+                  <Dropdown.Item eventKey="usd" className="w-100">
+                    <div>
+                      <i className="fa fa-usd" />
+                      <span className="m-2">USD</span>
+                    </div>
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="eur" className="w-100">
+                    <div>
+                      <i className="fa fa-eur" />
+                      <span className="m-2">EUR</span>
+                    </div>
+                  </Dropdown.Item>
+                </DropdownButton>
+              </div>
             </div>
           </div>
+
           <div className="col-12 col-md-8 m-2">
             <DataExplorerTopInfo vsCurrency={vsCurrency} currency={currency} />
           </div>
