@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './DataExplorerTopInfo.scss';
 import LoaderMask from '../LoaderMask/LoaderMask';
-import { fetchSimpleMarketData, VsCoins, MarketData } from '../../utils/API';
+import {
+  fetchSimpleMarketData,
+  VsCoins,
+  MarketData,
+} from '../../apis/MarketDataAPI';
 
 interface DataExplorerTopInfoProps {
   vsCurrency: VsCoins;

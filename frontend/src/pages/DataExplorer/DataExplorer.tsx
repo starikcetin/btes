@@ -4,7 +4,7 @@ import DataExplorerTopInfo from '../../components/DataExplorerTopInfo/DataExplor
 import DataExplorerBlockList from '../../components/DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './DataExplorer.scss';
-import { VsCoins } from '../../utils/API';
+import { VsCoins } from '../../apis/MarketDataAPI';
 
 const DataExplorer = () => {
   const [chartData, setChartData] = useState({
