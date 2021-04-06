@@ -11,7 +11,7 @@ interface FormatBytesParams {
 }
 
 const DataExplorerBlockList: React.FC = () => {
-  const [data, setData] = useState<BlockList[] | []>([]);
+  const [data, setData] = useState<BlockList[] | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const formatDate = () => {
@@ -45,7 +45,7 @@ const DataExplorerBlockList: React.FC = () => {
       } catch (e) {
         console.log(e);
         setIsFetching(false);
-        setData([]);
+        setData(null);
       }
     };
     fetchData();
@@ -58,28 +58,34 @@ const DataExplorerBlockList: React.FC = () => {
         <div>
           <Table
             borderless
-            striped
             hover
-            size="sm"
-            className="comp-data-explorer-block-list-table"
+            className="comp-data-explorer-block-list-table border"
           >
             <thead>
-              <tr className="comp-data-explorer-block-list-table-header-row">
-                <th>Height</th>
-                <th>Hash</th>
-                <th>Transaction Count</th>
-                <th>Time</th>
+              <tr className="comp-data-explorer-block-list-table-header-row row">
+                <th className="col-2">Height</th>
+                <th className="col-4">Hash</th>
+                <th className="col-1">Tx Count</th>
+                <th className="col-4">Time</th>
               </tr>
             </thead>
             <tbody>
-              {data?.slice(0, 10).map((block) => (
-                <tr>
-                  <td>{block.burn_block_height}</td>
-                  <td>{block.hash}</td>
-                  <td>{block.txs.length}</td>
-                  <td>{block.burn_block_time_iso}</td>
-                </tr>
-              ))}
+              {data ? (
+                data?.slice(0, 10).map((block) => (
+                  <tr className="row">
+                    <td className="col-2">{block.burn_block_height}</td>
+                    <td className="col-4 text-truncate">{block.hash}</td>
+                    <td className="col-1">{block.txs.length}</td>
+                    <td className="col-4 text-truncate">
+                      {block.burn_block_time_iso}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <span className="alert-danger">
+                  Block List Couldn't Downloaded!
+                </span>
+              )}
             </tbody>
           </Table>
         </div>
