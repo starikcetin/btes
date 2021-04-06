@@ -1,4 +1,4 @@
-import { BlockchainRegularTxInput } from './BlockchainTxInput';
+import { BlockchainRegularTxInput } from './BlockchainRegularTxInput';
 
 /**
  * * Partial tx input data.

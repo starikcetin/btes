@@ -1,6 +1,5 @@
-import { BlockchainRegularTxInput } from './BlockchainTxInput';
-import { BlockchainCoinbaseTxInput } from './BlockchainCoinbaseTxInput';
 import { BlockchainTxOutput } from './BlockchainTxOutput';
+import { BlockchainTxInput } from './BlockchainTxInput';
 
 /*
  * Omitted fields:
@@ -18,46 +17,14 @@ import { BlockchainTxOutput } from './BlockchainTxOutput';
  * * https://en.bitcoin.it/wiki/Protocol_documentation#tx
  * * https://en.bitcoin.it/wiki/Transaction#Generation
  */
-export type BlockchainTx = BlockchainRegularTx | BlockchainCoinbaseTx;
-
-/**
- * https://en.bitcoin.it/wiki/Protocol_documentation#tx
- */
-export interface BlockchainRegularTx {
-  /**
-   * Indicates if this transaction is coinbase.
-   * Not in the actual protocol, intended for ease of development.
-   */
-  readonly isCoinbase: false;
-
+export type BlockchainTx = {
   /**
    * `tx_in`
    */
-  readonly inputs: BlockchainRegularTxInput[];
+  readonly inputs: BlockchainTxInput[];
 
   /**
    * `tx_out`
    */
   readonly outputs: BlockchainTxOutput[];
-}
-
-/**
- * https://en.bitcoin.it/wiki/Transaction#Generation
- */
-export interface BlockchainCoinbaseTx {
-  /**
-   * Indicates if this transaction is coinbase.
-   * Not in the actual protocol, intended for ease of development.
-   */
-  readonly isCoinbase: true;
-
-  /**
-   * `tx_in`
-   */
-  readonly inputs: BlockchainCoinbaseTxInput[];
-
-  /**
-   * `tx_out`
-   */
-  readonly outputs: BlockchainTxOutput[];
-}
+};

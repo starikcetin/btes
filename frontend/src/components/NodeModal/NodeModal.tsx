@@ -33,6 +33,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
       backdrop="static"
       keyboard={false}
       size="xl"
+      scrollable
     >
       <Modal.Header closeButton>
         <Modal.Title>Node Details</Modal.Title>

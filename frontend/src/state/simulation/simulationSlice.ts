@@ -32,6 +32,8 @@ import { BlocksRemovedFromOrphanageActionPayload } from './actionPayloads/Blocks
 import { hashBlock } from '../../common/blockchain/utils/hashBlock';
 import { Tree } from '../../common/tree/Tree';
 import { TreeNode } from '../../common/tree/TreeNode';
+import { makeNodeData } from './utils/makeNodeData';
+import { makeTxLookupsFromBlockTree } from './utils/makeTxLookupsFromBlockTree';
 
 const initialState: SimulationSliceState = {};
 
@@ -101,7 +103,7 @@ export const simulationSlice = createSlice({
         );
       }
 
-      sim.nodeMap[payload.nodeUid] = { logs: [], ...payload.nodeSnapshot };
+      sim.nodeMap[payload.nodeUid] = makeNodeData(null, payload.nodeSnapshot);
     },
     teardown: (
       state,
@@ -137,10 +139,9 @@ export const simulationSlice = createSlice({
 
         // state included in a snapshot, overwrite with the snapshot
         simulationUid: snapshot.simulationUid,
-        nodeMap: _.mapValues(snapshot.nodeMap, (node) => ({
-          logs: old.nodeMap[node.nodeUid]?.logs || [],
-          ...node,
-        })),
+        nodeMap: _.mapValues(snapshot.nodeMap, (node) =>
+          makeNodeData(old.nodeMap[node.nodeUid], node)
+        ),
         connectionMap: snapshot.connectionMap,
         timerService: snapshot.timerService,
       };
@@ -351,6 +352,13 @@ export const simulationSlice = createSlice({
       );
 
       sim.nodeMap[payload.nodeUid].blockchainApp.txDb.orphanage = filtered;
+
+      sim.nodeMap[
+        payload.nodeUid
+      ].blockchainApp.txDb.orphanageTxLookup = _.omit(
+        sim.nodeMap[payload.nodeUid].blockchainApp.txDb.orphanageTxLookup,
+        payload.removedTxHashes
+      );
     },
     txRemovedFromMempool: (
       state,
@@ -373,6 +381,11 @@ export const simulationSlice = createSlice({
       );
 
       sim.nodeMap[payload.nodeUid].blockchainApp.txDb.mempool = filtered;
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.txDb.mempoolTxLookup = _.omit(
+        sim.nodeMap[payload.nodeUid].blockchainApp.txDb.mempoolTxLookup,
+        payload.removedTxHash
+      );
     },
     txAddedToOrphanage: (
       state,
@@ -391,6 +404,10 @@ export const simulationSlice = createSlice({
       sim.nodeMap[payload.nodeUid].blockchainApp.txDb.orphanage.push(
         payload.tx
       );
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.txDb.orphanageTxLookup[
+        hashTx(payload.tx)
+      ] = payload.tx;
     },
     txAddedToMempool: (
       state,
@@ -407,6 +424,10 @@ export const simulationSlice = createSlice({
       }
 
       sim.nodeMap[payload.nodeUid].blockchainApp.txDb.mempool.push(payload.tx);
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.txDb.mempoolTxLookup[
+        hashTx(payload.tx)
+      ] = payload.tx;
     },
     blockAddedToBlockchain: (
       state,
@@ -434,6 +455,23 @@ export const simulationSlice = createSlice({
       sim.nodeMap[
         payload.nodeUid
       ].blockchainApp.blockDb.blockchain = tree.toJsonObject();
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.blockchainBlockLookup[
+        payload.treeNode.id
+      ] = payload.treeNode.data;
+
+      const {
+        mainBranchTxLookup,
+        sideBranchesTxLookup,
+      } = makeTxLookupsFromBlockTree(tree);
+
+      sim.nodeMap[
+        payload.nodeUid
+      ].blockchainApp.blockDb.mainBranchTxLookup = mainBranchTxLookup;
+
+      sim.nodeMap[
+        payload.nodeUid
+      ].blockchainApp.blockDb.sideBranchesTxLookup = sideBranchesTxLookup;
     },
     blockAddedToOrphanage: (
       state,
@@ -452,6 +490,11 @@ export const simulationSlice = createSlice({
       sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.orphanage.push(
         payload.block
       );
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.orphanageTxLookup = {
+        ...sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.orphanageTxLookup,
+        ..._.keyBy(payload.block.txs, hashTx),
+      };
     },
     blocksRemovedFromOrphanage: (
       state,
@@ -470,12 +513,22 @@ export const simulationSlice = createSlice({
       const original =
         sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.orphanage;
 
+      const removedBlockHashes = payload.removedBlocks.map((b) =>
+        hashBlock(b.header)
+      );
+
       const filtered = original.filter(
-        (block) =>
-          !payload.removedBlockHashes.some((r) => r === hashBlock(block.header))
+        (b) => !removedBlockHashes.some((r) => r === hashBlock(b.header))
       );
 
       sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.orphanage = filtered;
+
+      sim.nodeMap[
+        payload.nodeUid
+      ].blockchainApp.blockDb.orphanageTxLookup = _.omit(
+        sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.orphanageTxLookup,
+        payload.removedBlocks.flatMap((b) => b.txs.map(hashTx))
+      );
     },
 
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {

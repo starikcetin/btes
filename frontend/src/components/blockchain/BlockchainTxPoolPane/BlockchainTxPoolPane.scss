@@ -1,3 +1,7 @@
 .comp-blockchain-tx-pool-pane {
   width: 100%;
+
+  &--tx-card:not(:first-child) {
+    margin-top: 15px;
+  }
 }
