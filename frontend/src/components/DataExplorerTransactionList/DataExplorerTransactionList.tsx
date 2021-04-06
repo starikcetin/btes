@@ -34,22 +34,22 @@ const DataExplorerBlockList: React.FC = () => {
               The most recently published unconfirmed transactions
             </span>
           </div>
-          <Table
-            borderless
-            hover
-            className="comp-data-explorer-block-list-table"
-          >
-            <thead>
-              <tr className="comp-data-explorer-block-list-table-header-row row">
-                <th className="col-4">Hash</th>
-                <th className="col-2">Tx Status</th>
-                <th className="col-1">Tx Type</th>
-                <th className="col-4">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data ? (
-                data
+          {data ? (
+            <Table
+              borderless
+              hover
+              className="comp-data-explorer-block-list-table"
+            >
+              <thead>
+                <tr className="comp-data-explorer-block-list-table-header-row row">
+                  <th className="col-4">Hash</th>
+                  <th className="col-2">Tx Status</th>
+                  <th className="col-1">Tx Type</th>
+                  <th className="col-4">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data
                   .filter((tx) => {
                     return tx.tx_type === 'token_transfer';
                   })
@@ -63,14 +63,14 @@ const DataExplorerBlockList: React.FC = () => {
                         {tx?.token_transfer?.amount}
                       </td>
                     </tr>
-                  ))
-              ) : (
-                <span className="alert-danger">
-                  Transaction List Couldn't Downloaded!
-                </span>
-              )}
-            </tbody>
-          </Table>
+                  ))}
+              </tbody>
+            </Table>
+          ) : (
+            <span className="alert-danger">
+              Transaction List Couldn't Downloaded!
+            </span>
+          )}
         </div>
       )}
     </div>

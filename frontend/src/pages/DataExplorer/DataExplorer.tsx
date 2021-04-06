@@ -113,7 +113,7 @@ const DataExplorer = () => {
                 label={`Price in ${vsCurrency.toUpperCase()}`}
                 xAxisData={chartsData?.pricesDates}
                 yAxisData={chartsData?.prices}
-                explanation={'The price of' + currency + '  over the last day'}
+                explanation={'The price of ' + currency + '  over the last day'}
               />
             ) : (
               <span className="alert-danger">Price Data Couldn't Found</span>

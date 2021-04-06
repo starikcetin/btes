@@ -36,22 +36,22 @@ const DataExplorerBlockList: React.FC = () => {
               The most recently mined blocks
             </span>
           </div>
-          <Table
-            borderless
-            hover
-            className="comp-data-explorer-block-list-table"
-          >
-            <thead>
-              <tr className="comp-data-explorer-block-list-table-header-row row">
-                <th className="col-2">Height</th>
-                <th className="col-4">Hash</th>
-                <th className="col-1">Tx Count</th>
-                <th className="col-4">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data ? (
-                data?.slice(0, 6).map((block) => (
+          {data ? (
+            <Table
+              borderless
+              hover
+              className="comp-data-explorer-block-list-table"
+            >
+              <thead>
+                <tr className="comp-data-explorer-block-list-table-header-row row">
+                  <th className="col-2">Height</th>
+                  <th className="col-4">Hash</th>
+                  <th className="col-1">Tx Count</th>
+                  <th className="col-4">Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data?.slice(0, 6).map((block) => (
                   <tr className="row" key={block.burn_block_height}>
                     <td className="col-2">{block.burn_block_height}</td>
                     <td className="col-4 text-truncate">{block.hash}</td>
@@ -60,14 +60,14 @@ const DataExplorerBlockList: React.FC = () => {
                       {formatTimestampForTimeInput(block.burn_block_time)}
                     </td>
                   </tr>
-                ))
-              ) : (
-                <span className="alert-danger">
-                  Block List Couldn't Downloaded!
-                </span>
-              )}
-            </tbody>
-          </Table>
+                ))}
+              </tbody>
+            </Table>
+          ) : (
+            <span className="alert-danger">
+              Block List Couldn't Downloaded!
+            </span>
+          )}
         </div>
       )}
     </div>
