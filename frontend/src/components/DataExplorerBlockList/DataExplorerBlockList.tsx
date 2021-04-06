@@ -25,7 +25,7 @@ const DataExplorerBlockList: React.FC = () => {
     fetchData();
   }, []);
   return (
-    <div>
+    <div className="container">
       {isFetching ? (
         <LoaderMask></LoaderMask>
       ) : (
@@ -37,16 +37,12 @@ const DataExplorerBlockList: React.FC = () => {
             </span>
           </div>
           {data ? (
-            <Table
-              borderless
-              hover
-              className="comp-data-explorer-block-list-table"
-            >
+            <Table hover className="comp-data-explorer-block-list-table p-1">
               <thead>
                 <tr className="comp-data-explorer-block-list-table-header-row row">
                   <th className="col-2">Height</th>
                   <th className="col-4">Hash</th>
-                  <th className="col-1">Tx Count</th>
+                  <th className="col-2">Tx Count</th>
                   <th className="col-4">Time</th>
                 </tr>
               </thead>
@@ -55,7 +51,7 @@ const DataExplorerBlockList: React.FC = () => {
                   <tr className="row" key={block.burn_block_height}>
                     <td className="col-2">{block.burn_block_height}</td>
                     <td className="col-4 text-truncate">{block.hash}</td>
-                    <td className="col-1">{block.txs.length}</td>
+                    <td className="col-2">{block.txs.length}</td>
                     <td className="col-4 text-truncate">
                       {formatTimestampForTimeInput(block.burn_block_time)}
                     </td>

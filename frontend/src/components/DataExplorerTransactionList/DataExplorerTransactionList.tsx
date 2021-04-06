@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import LoaderMask from '../LoaderMask/LoaderMask';
 import { fetchTransactionList, Tx } from '../../apis/TransactionList';
+import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 
 const DataExplorerBlockList: React.FC = () => {
   const [data, setData] = useState<Tx[] | null>(null);
@@ -21,9 +22,17 @@ const DataExplorerBlockList: React.FC = () => {
       }
     };
     fetchData();
+    setInterval(async () => {
+      try {
+        const transactionList = await fetchTransactionList();
+        setData(transactionList);
+      } catch (e) {
+        console.log(e);
+      }
+    }, 10000);
   }, []);
   return (
-    <div>
+    <div className="container">
       {isFetching ? (
         <LoaderMask></LoaderMask>
       ) : (
@@ -35,35 +44,26 @@ const DataExplorerBlockList: React.FC = () => {
             </span>
           </div>
           {data ? (
-            <Table
-              borderless
-              hover
-              className="comp-data-explorer-block-list-table"
-            >
+            <Table hover className="comp-data-explorer-block-list-table">
               <thead>
                 <tr className="comp-data-explorer-block-list-table-header-row row">
                   <th className="col-4">Hash</th>
-                  <th className="col-2">Tx Status</th>
-                  <th className="col-1">Tx Type</th>
-                  <th className="col-4">Amount</th>
+                  <th className="col-2">Time</th>
+                  <th className="col-2">Size</th>
+                  <th className="col-4">Weight</th>
                 </tr>
               </thead>
               <tbody>
-                {data
-                  .filter((tx) => {
-                    return tx.tx_type === 'token_transfer';
-                  })
-                  .slice(0, 6)
-                  .map((tx) => (
-                    <tr className="row" key={tx.tx_id}>
-                      <td className="col-4 text-truncate">{tx.tx_id}</td>
-                      <td className="col-2">{tx.tx_status}</td>
-                      <td className="col-1">{tx.tx_type}</td>
-                      <td className="col-4 text-truncate ml-1">
-                        {tx?.token_transfer?.amount}
-                      </td>
-                    </tr>
-                  ))}
+                {data.slice(0, 6).map((tx) => (
+                  <tr className="row" key={tx.hash}>
+                    <td className="col-4 text-truncate">{tx.hash}</td>
+                    <td className="col-2">
+                      {formatTimestampForTimeInput(tx.time)}
+                    </td>
+                    <td className="col-2">{tx.size} Byte</td>
+                    <td className="col-4 text-truncate">{tx.weight}</td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
           ) : (

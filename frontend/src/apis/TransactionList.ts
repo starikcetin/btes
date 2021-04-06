@@ -1,44 +1,61 @@
-export interface TokenTransfer {
-  recipient_address: string;
-  amount: string;
-  memo: string;
+export interface SpendingOutpoint {
+  tx_index: number;
+  n: number;
 }
 
-export interface Principal {
-  type_id: string;
-  address: string;
+export interface PrevOut {
+  spent: boolean;
+  spending_outpoints: SpendingOutpoint[];
+  tx_index: number;
+  type: number;
+  addr: string;
+  value: number;
+  n: number;
+  script: string;
 }
 
-export interface PostCondition {
-  type: string;
-  condition_code: string;
-  amount: string;
-  principal: Principal;
+export interface Input {
+  sequence: any;
+  witness: string;
+  prev_out: PrevOut;
+  script: string;
 }
 
-export interface ContractCall {
-  contract_id: string;
-  function_name: string;
+export interface SpendingOutpoint2 {
+  tx_index: number;
+  n: number;
+}
+
+export interface Out {
+  spent: boolean;
+  tx_index: number;
+  type: number;
+  addr: string;
+  value: number;
+  n: number;
+  script: string;
+  spending_outpoints: SpendingOutpoint2[];
 }
 
 export interface Tx {
-  tx_id: string;
-  tx_status: string;
-  tx_type: string;
-  receipt_time: number;
-  receipt_time_iso: string;
-  nonce: number;
-  fee_rate: string;
-  sender_address: string;
-  sponsored: boolean;
-  post_condition_mode: string;
-  token_transfer: TokenTransfer;
-  post_conditions: PostCondition[];
-  contract_call: ContractCall;
+  lock_time: number;
+  ver: number;
+  size: number;
+  inputs: Input[];
+  weight: number;
+  time: number;
+  tx_index: number;
+  vin_sz: number;
+  hash: string;
+  vout_sz: number;
+  relayed_by: string;
+  out: Out[];
+  rbf?: boolean;
 }
 
 export const fetchTransactionList = async () => {
-  const url = 'https://stacks-node-api.mainnet.stacks.co/extended/v1/tx';
+  const url =
+    'https://blockchain.info/unconfirmed-transactions?format=json&cors=true';
   const data = await (await fetch(url)).json();
-  return data.results;
+  return data.txs;
 };
