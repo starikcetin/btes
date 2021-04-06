@@ -2,39 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import './DataExplorerBlockList.scss';
 import LoaderMask from '../LoaderMask/LoaderMask';
-import { Line } from 'react-chartjs-2';
 import { BlockList, fetchBlockList } from '../../apis/BlockListAPI';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
-
-interface FormatBytesParams {
-  bytes: any;
-  decimals?: number;
-}
 
 const DataExplorerBlockList: React.FC = () => {
   const [data, setData] = useState<BlockList[] | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
-
-  const formatDate = () => {
-    const dateObj = new Date();
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const year = dateObj.getFullYear();
-    const output = year + month + day;
-    return output;
-  };
-
-  const formatBytes = ({ bytes, decimals = 2 }: FormatBytesParams) => {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  };
 
   useEffect(() => {
     const fetchData = async () => {
