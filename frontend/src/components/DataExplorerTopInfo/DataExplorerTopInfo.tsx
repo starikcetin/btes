@@ -35,19 +35,6 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
     currency: vsCurrency,
   });
 
-  // const intToString = (value: number) => {
-  //   const suffixes = ['', 'k', 'm', 'b', 't'];
-  //   const suffixNum = Math.floor(('' + value).length / 3);
-  //   let shortValue = parseFloat(
-  //     (suffixNum != 0 ? value / Math.pow(1000, suffixNum) : value).toPrecision(
-  //       2
-  //     )
-  //   );
-  //   if (shortValue % 1 != 0) {
-  //     shortValue = shortValue.toFixed(1);
-  //   }
-  //   return shortValue + suffixes[suffixNum];
-  // };
   return data ? (
     isFetching && data !== null ? (
       <LoaderMask />
@@ -67,8 +54,9 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
               {vsCurrency === VsCoins.USD
-                ? formatter.format(data.usd_market_cap)
-                : formatter.format(data.eur_market_cap)}
+                ? formatter.format(data.usd_market_cap / 1000000)
+                : formatter.format(data.eur_market_cap / 1000000)}
+              M
             </span>
             <span className="comp-data-explorer-top-info--info-span">
               Market Cap
@@ -77,8 +65,9 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
               {vsCurrency === VsCoins.USD
-                ? formatter.format(data.usd_24h_vol)
-                : formatter.format(data.eur_24h_vol)}
+                ? formatter.format(data.usd_24h_vol / 1000000)
+                : formatter.format(data.eur_24h_vol / 1000000)}
+              M
             </span>
             <span className="comp-data-explorer-top-info--info-span">
               24H Volume
