@@ -4,6 +4,7 @@ import './DataExplorerBlockList.scss';
 import LoaderMask from '../LoaderMask/LoaderMask';
 import { Line } from 'react-chartjs-2';
 import { BlockList, fetchBlockList } from '../../apis/BlockListAPI';
+import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 
 interface FormatBytesParams {
   bytes: any;
@@ -56,10 +57,16 @@ const DataExplorerBlockList: React.FC = () => {
         <LoaderMask></LoaderMask>
       ) : (
         <div>
+          <div>
+            <span className="h4 text-info d-block">Latest Blocks</span>
+            <span className="text-secondary d-block small">
+              The most recently mined blocks
+            </span>
+          </div>
           <Table
             borderless
             hover
-            className="comp-data-explorer-block-list-table border"
+            className="comp-data-explorer-block-list-table"
           >
             <thead>
               <tr className="comp-data-explorer-block-list-table-header-row row">
@@ -71,13 +78,13 @@ const DataExplorerBlockList: React.FC = () => {
             </thead>
             <tbody>
               {data ? (
-                data?.slice(0, 10).map((block) => (
-                  <tr className="row">
+                data?.slice(0, 6).map((block) => (
+                  <tr className="row" key={block.burn_block_height}>
                     <td className="col-2">{block.burn_block_height}</td>
                     <td className="col-4 text-truncate">{block.hash}</td>
                     <td className="col-1">{block.txs.length}</td>
                     <td className="col-4 text-truncate">
-                      {block.burn_block_time_iso}
+                      {formatTimestampForTimeInput(block.burn_block_time)}
                     </td>
                   </tr>
                 ))

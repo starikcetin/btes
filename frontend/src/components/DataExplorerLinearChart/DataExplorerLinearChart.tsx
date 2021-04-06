@@ -8,18 +8,18 @@ interface DataExplorerLinearChartProps {
   yAxisData: Array<string>;
   label: string;
   isFetching: boolean | undefined;
+  explanation: string;
 }
 
 const DataExplorerLinearChart: React.FC<DataExplorerLinearChartProps> = (
   props
 ) => {
-  const { xAxisData, yAxisData, label, isFetching } = props;
+  const { xAxisData, yAxisData, label, isFetching, explanation } = props;
 
   const data = {
     labels: xAxisData,
     datasets: [
       {
-        label: label,
         lineTension: 0.1,
         fill: false,
         backgroundColor: 'rgba(75,192,192,0.4)',
@@ -57,9 +57,11 @@ const DataExplorerLinearChart: React.FC<DataExplorerLinearChartProps> = (
         <LoaderMask></LoaderMask>
       ) : (
         <div className="m-4">
-          <div className="comp-data-explorer-line-chart-header ml-5">
-            {label}
+          <div>
+            <span className="h4 text-info d-block">{label}</span>
+            <span className="text-secondary d-block small">{explanation}</span>
           </div>
+          <div className="comp-data-explorer-line-chart-header ml-5"></div>
           <Line height={100} data={data} options={options} />
         </div>
       )}

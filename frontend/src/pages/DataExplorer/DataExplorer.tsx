@@ -9,6 +9,7 @@ import {
   CurrenciesChartData,
   fetchCurrencyChartsData,
 } from '../../apis/CurrenciesChartAPI';
+import DataExplorerTransactionList from '../../components/DataExplorerTransactionList/DataExplorerTransactionList';
 
 const DataExplorer = () => {
   const [chartsData, setChartsData] = useState<CurrenciesChartData | null>();
@@ -105,13 +106,14 @@ const DataExplorer = () => {
           <hr className="comp-data-explorer-horizontal-divider" />
         </div>
         <div className="row">
-          <div className="col-12">
+          <div className="col-12 col-md-12">
             {chartsData ? (
               <DataExplorerLinearChart
                 isFetching={isFetching}
                 label={`Price in ${vsCurrency.toUpperCase()}`}
                 xAxisData={chartsData?.pricesDates}
                 yAxisData={chartsData?.prices}
+                explanation={'The price of' + currency + '  over the last day'}
               />
             ) : (
               <span className="alert-danger">Price Data Couldn't Found</span>
@@ -119,14 +121,15 @@ const DataExplorer = () => {
           </div>
         </div>
         <hr className="comp-data-explorer-horizontal-divider" />
-        <div className="row">
-          <div className="col-12 col-md-6">
+        <div className="row d-flex justify-content-around">
+          <div className="col-12 col-md-5">
             {chartsData ? (
               <DataExplorerLinearChart
                 isFetching={isFetching}
                 label={`Total Volume`}
                 xAxisData={chartsData?.totalVolumesDates}
                 yAxisData={chartsData?.totalVolumes}
+                explanation={''}
               />
             ) : (
               <span className="alert-danger">
@@ -135,13 +138,14 @@ const DataExplorer = () => {
             )}
           </div>
 
-          <div className="col-12 col-md-6">
+          <div className="col-12 col-md-5">
             {chartsData ? (
               <DataExplorerLinearChart
                 isFetching={isFetching}
                 label={`Market Cap`}
                 xAxisData={chartsData?.marketCapsDates}
                 yAxisData={chartsData?.marketCaps}
+                explanation={''}
               />
             ) : (
               <span className="alert-danger">
@@ -154,6 +158,9 @@ const DataExplorer = () => {
         <div className="row">
           <div className="col-md-6 col-12">
             <DataExplorerBlockList />
+          </div>
+          <div className="col-md-6 col-12">
+            <DataExplorerTransactionList />
           </div>
         </div>
       </div>
