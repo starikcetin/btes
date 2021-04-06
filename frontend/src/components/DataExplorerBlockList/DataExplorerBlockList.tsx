@@ -38,11 +38,11 @@ const DataExplorerBlockList: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        fetch(`https://chain.api.btc.com/v3/block/date/${formatDate()}`)
+        fetch(`https://stacks-node-api.mainnet.stacks.co/extended/v1/block`)
           .then((response) => response.json())
           .then((data) => {
-            setData(data.data);
-            console.log(data.data);
+            setData(data.results);
+            console.log(data.results);
           });
         setIsFetching(false);
       } catch (e) {
@@ -68,7 +68,7 @@ const DataExplorerBlockList: React.FC = () => {
             <thead>
               <tr className="comp-data-explorer-block-list-table-header-row">
                 <th>Height</th>
-                <th>Size</th>
+                <th>Hash</th>
                 <th>Transaction Count</th>
                 <th>Time</th>
               </tr>
@@ -77,9 +77,9 @@ const DataExplorerBlockList: React.FC = () => {
               {data?.slice(0, 10).map((d) => (
                 <tr>
                   <td>{d.height}</td>
-                  <td>{formatBytes({ bytes: d.size, decimals: 2 })}</td>
-                  <td>{d.tx_count}</td>
-                  <td>{d.timestamp}</td>
+                  <td>{d.hash}</td>
+                  <td>{d.txs.length}</td>
+                  <td>{d.burn_block_time_iso}</td>
                 </tr>
               ))}
             </tbody>
