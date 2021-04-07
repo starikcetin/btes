@@ -1,0 +1,18 @@
+.page-help {
+  width: 100%;
+  min-height: 100%;
+
+  .nav-link {
+    min-width: 10em;
+  }
+
+  &--markdown {
+    scroll-behavior: smooth;
+
+    p img {
+      display: block;
+      max-width: 100%;
+      // margin: auto;
+    }
+  }
+}

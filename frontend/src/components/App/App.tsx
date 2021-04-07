@@ -7,6 +7,7 @@ import Home from '../../pages/Home/Home';
 import Sandbox from '../../pages/Sandbox/Sandbox';
 import Signin from '../../pages/Signin/Signin';
 import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
+import { Help } from '../../pages/Help/Help';
 
 const App: React.FC = () => {
   return (
@@ -42,6 +43,9 @@ const App: React.FC = () => {
           </Route>
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>
+          </Route>
+          <Route path="/help/:id?">
+            <Help></Help>
           </Route>
           <Route path="/">
             <Home></Home>
