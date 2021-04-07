@@ -154,7 +154,7 @@
   "lint-staged": {
     "*": [
       "eslint --fix",
-      "stylelint --fix --allow-empty-input"
+      "stylelint --fix --allow-empty-input --report-needless-disables --report-invalid-scope-disables --report-descriptionless-disables"
     ]
   }
 }
