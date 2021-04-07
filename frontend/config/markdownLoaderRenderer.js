@@ -5,12 +5,13 @@
 var marked = require('marked');
 var renderer = new marked.Renderer();
 
+var isFirstHeading = true;
 var headings = [];
 var counters = {};
 
 renderer.heading = function (text, level, raw) {
   if (raw.includes('$$$TABLE_OF_CONTENTS$$$')) {
-    return makeTableOfContents();
+    return '</div>' + makeTableOfContents();
   }
 
   var anchor =
@@ -28,7 +29,11 @@ renderer.heading = function (text, level, raw) {
     text: text,
   });
 
-  return `<a href="#${anchor}"><h${level} id="${anchor}">${text}</h${level}></a>`;
+  const res =
+    `${isFirstHeading ? '<div id="content">' : ''}` +
+    `<a href="#${anchor}"><h${level} id="${anchor}">${text}</h${level}></a>`;
+  isFirstHeading = false;
+  return res;
 };
 
 function makeTableOfContents() {
@@ -69,6 +74,7 @@ function makeTableOfContents() {
   contentResult += '</li></ul>';
 
   headings = [];
+  isFirstHeading = true;
 
   return `<div id="table-of-contents">${contentResult}</div>`;
 }

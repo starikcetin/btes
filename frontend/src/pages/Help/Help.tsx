@@ -15,23 +15,31 @@ interface HelpParamTypes {
 export const Help: React.FC = () => {
   const { id } = useParams<HelpParamTypes>();
   const activeDocManifest = useMemo(() => getDoc(id), [id]);
-  const contentScrollRoot = useRef<HTMLDivElement>(null);
   const allDocIds = getAllDocIds();
   const location = useLocation();
 
+  const mdRoot = useRef<HTMLDivElement>(null);
+  const mdContent = mdRoot.current?.querySelector('#content') ?? null;
+
   // scroll to anchor tag when it changes
   useEffect(() => {
+    console.log('mdRoot: ', mdContent);
+    console.log('mdContent: ', mdContent);
+
     const element = document.getElementById(location.hash.replace('#', ''));
-    contentScrollRoot.current?.scrollTo({
+    mdContent?.scrollTo({
       behavior: 'smooth',
       top: element ? element.offsetTop : 0,
     });
-  }, [location.hash]);
+  }, [location.hash, mdContent]);
 
   // scroll to top when doc id changes
   useEffect(() => {
-    contentScrollRoot.current?.scrollTo(0, 0);
-  }, [id]);
+    console.log('mdRoot: ', mdContent);
+    console.log('mdContent: ', mdContent);
+
+    mdContent?.scrollTo(0, 0);
+  }, [id, mdContent]);
 
   if (!hasValue(id) || _.isEmpty(id)) {
     return <Redirect to="/help/home" />;
@@ -58,8 +66,8 @@ export const Help: React.FC = () => {
             </Nav>
           </Col>
           <Col
-            className="page-help--markdown mh-100 overflow-auto p-4"
-            ref={contentScrollRoot}
+            className="page-help--markdown overflow-hidden mh-100"
+            ref={mdRoot}
           >
             {hasValue(activeDocManifest) ? (
               <Markdown html={activeDocManifest.content} />

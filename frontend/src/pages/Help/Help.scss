@@ -1,40 +1,70 @@
+/* stylelint-disable selector-max-compound-selectors -- reason: we are dealing with generated html, we need to use these */
+
 .page-help {
-  width: 100%;
   min-height: 100%;
 
   .nav-link {
-    min-width: 10em;
+    min-width: 10rem;
   }
 
   &--markdown {
-    scroll-behavior: smooth;
-    position: relative;
+    a {
+      color: inherit;
 
-    #table-of-contents {
-      position: absolute;
-      top: 0;
-      right: 0;
-      padding: 2em 3em;
-      background: #fff;
-      border-bottom: 1px solid #dee2e6;
-      border-left: 1px solid #dee2e6;
-
-      ul {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-
-        &:not(:first-child) {
-          padding-left: 1em;
-          border-left: 1px solid #dee2e6;
-        }
+      &:hover {
+        color: #007bff;
+        text-decoration: none;
       }
     }
 
-    p img {
-      display: block;
-      max-width: 100%;
-      // margin: auto;
+    div:first-child {
+      display: flex;
+      height: 100%;
+
+      #table-of-contents {
+        display: block;
+        flex-grow: 0;
+        flex-shrink: 0;
+        max-height: 100%;
+        padding: 1rem 1.5rem;
+        overflow-y: auto;
+        color: #99979c;
+        border-left: 1px solid #dee2e6;
+        scroll-behavior: smooth;
+
+        &::before {
+          display: block;
+          margin-bottom: 0.5rem;
+          content: 'Table of Contents';
+          border-bottom: 1px solid #dee2e6;
+        }
+
+        ul {
+          padding: 0;
+          margin: 0;
+          list-style: none;
+
+          &:not(:first-child) {
+            width: max-content;
+            padding-left: 1rem;
+          }
+        }
+      }
+
+      #content {
+        scroll-behavior: smooth;
+        display: block;
+        flex-grow: 1;
+        flex-shrink: 1;
+        padding: 2rem;
+        overflow-y: auto;
+
+        p img {
+          display: block;
+          max-width: 100%;
+          // margin: auto;
+        }
+      }
     }
   }
 }
