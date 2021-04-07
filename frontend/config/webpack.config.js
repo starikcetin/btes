@@ -484,7 +484,7 @@ module.exports = function (webpackEnv) {
                 {
                   loader: 'markdown-loader',
                   options: {
-                    /* options here */
+                    renderer: require('./markdownLoaderRenderer'),
                   },
                 },
               ],

@@ -8,6 +8,28 @@
 
   &--markdown {
     scroll-behavior: smooth;
+    position: relative;
+
+    #table-of-contents {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 2em 3em;
+      background: #fff;
+      border-bottom: 1px solid #dee2e6;
+      border-left: 1px solid #dee2e6;
+
+      ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+
+        &:not(:first-child) {
+          padding-left: 1em;
+          border-left: 1px solid #dee2e6;
+        }
+      }
+    }
 
     p img {
       display: block;
