@@ -17,52 +17,70 @@
       }
     }
 
-    div:first-child {
+    .comp-markdown {
       display: flex;
       height: 100%;
 
-      #table-of-contents {
-        display: block;
-        flex-grow: 0;
-        flex-shrink: 0;
-        max-height: 100%;
-        padding: 1rem 1.5rem;
-        overflow-y: auto;
-        color: #99979c;
-        border-left: 1px solid #dee2e6;
-        scroll-behavior: smooth;
-
-        &::before {
+      .gen-markdown {
+        &--table-of-contents {
           display: block;
-          margin-bottom: 0.5rem;
-          content: 'Table of Contents';
-          border-bottom: 1px solid #dee2e6;
-        }
+          flex-grow: 0;
+          flex-shrink: 0;
+          max-height: 100%;
+          padding: 1rem 1.5rem;
+          overflow-y: auto;
+          color: #99979c;
+          border-left: 1px solid #dee2e6;
+          scroll-behavior: smooth;
 
-        ul {
-          padding: 0;
-          margin: 0;
-          list-style: none;
+          &::before {
+            display: block;
+            margin-bottom: 0.5rem;
+            content: 'Table of Contents';
+            border-bottom: 1px solid #dee2e6;
+          }
 
-          &:not(:first-child) {
+          ul {
             width: max-content;
-            padding-left: 1rem;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+
+            &:not(:first-child) {
+              padding-left: 1rem;
+            }
           }
         }
-      }
 
-      #content {
-        scroll-behavior: smooth;
-        display: block;
-        flex-grow: 1;
-        flex-shrink: 1;
-        padding: 2rem;
-        overflow-y: auto;
-
-        p img {
+        &--content {
+          scroll-behavior: smooth;
           display: block;
-          max-width: 100%;
-          // margin: auto;
+          flex-grow: 1;
+          flex-shrink: 1;
+          padding: 1rem;
+          overflow-y: auto;
+
+          p img {
+            display: block;
+            max-width: 100%;
+            // margin: auto;
+          }
+
+          // scroll target top-padding hack
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            &::before {
+              display: block;
+              height: 1rem;
+              margin-top: -1rem;
+              visibility: hidden;
+              content: '';
+            }
+          }
         }
       }
     }

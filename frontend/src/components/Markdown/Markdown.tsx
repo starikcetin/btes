@@ -7,5 +7,7 @@ interface MarkdownProps {
 export const Markdown: React.FC<MarkdownProps> = (props) => {
   const { html: raw } = props;
 
-  return <div dangerouslySetInnerHTML={{ __html: raw }} />;
+  return (
+    <div className="comp-markdown" dangerouslySetInnerHTML={{ __html: raw }} />
+  );
 };

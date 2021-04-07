@@ -30,7 +30,7 @@ renderer.heading = function (text, level, raw) {
   });
 
   const res =
-    `${isFirstHeading ? '<div id="content">' : ''}` +
+    `${isFirstHeading ? '<div class="gen-markdown--content">' : ''}` +
     `<a href="#${anchor}"><h${level} id="${anchor}">${text}</h${level}></a>`;
   isFirstHeading = false;
   return res;
@@ -38,7 +38,7 @@ renderer.heading = function (text, level, raw) {
 
 function makeTableOfContents() {
   if (headings.length <= 0) {
-    return '<div id="table-of-contents"></div>';
+    return '<div class="gen-markdown--table-of-contents"></div>';
   }
 
   let contentResult = '<ul>';
@@ -76,7 +76,7 @@ function makeTableOfContents() {
   headings = [];
   isFirstHeading = true;
 
-  return `<div id="table-of-contents">${contentResult}</div>`;
+  return `<div class="gen-markdown--table-of-contents">${contentResult}</div>`;
 }
 
 module.exports = renderer;

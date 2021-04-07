@@ -19,7 +19,8 @@ export const Help: React.FC = () => {
   const location = useLocation();
 
   const mdRoot = useRef<HTMLDivElement>(null);
-  const mdContent = mdRoot.current?.querySelector('#content') ?? null;
+  const mdContent =
+    mdRoot.current?.getElementsByClassName('gen-markdown--content')[0] ?? null;
 
   // scroll to anchor tag when it changes
   useEffect(() => {
