@@ -1,3 +1,6 @@
+# $$$START$$$
+
+
 # Foo Title
 
 Foo test document for docs md support test.
@@ -219,4 +222,5 @@ This paragraph has some `code` in it.
 
     ![Alt Text: Cloudy Road](./res/cloudy-road.jpg "Title: Cloudy Road")
 
-# $$$TABLE_OF_CONTENTS$$$
+
+# $$$END$$$

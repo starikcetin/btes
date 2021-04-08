@@ -2,6 +2,7 @@
 
 ![alt text: deneme](./res/bdictionry.jpg "dictionary")
 
+# $$$START$$$
 
 # A
 
@@ -267,7 +268,5 @@ A designated storage location for digital assets (cryptocurrency) that has an ad
 # 51% Attack
 If more than half the computer power or mining hash rate on a network is run by a single person or a single group of people, then a 51% attack is in operation. This means that this entity has full control of the network and can negatively affect a cryptocurrency by taking over mining operations, stopping or changing transactions, and double-spending coins.
 
-# $$$TABLE_OF_CONTENTS$$$
 
-
-
+# $$$END$$$

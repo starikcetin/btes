@@ -1,3 +1,5 @@
+# $$$START$$$
+
 
 ![alt text: ](./res/bchain.jpg  "Blockchain")
 
@@ -211,5 +213,4 @@ once. The nodes make decisions only once in a single consensus cycle.
 * Bitcoin uses blockchain technology which is not governed by any central authority or banks
 
 
-
-# $$$TABLE_OF_CONTENTS$$$
+# $$$END$$$

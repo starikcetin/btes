@@ -60,10 +60,14 @@
           padding: 1rem;
           overflow-y: auto;
 
-          p img {
-            display: block;
-            max-width: 100%;
-            // margin: auto;
+          p {
+            text-align: justify;
+
+            img {
+              display: block;
+              max-width: 100%;
+              margin: auto;
+            }
           }
 
           // scroll target top-padding hack

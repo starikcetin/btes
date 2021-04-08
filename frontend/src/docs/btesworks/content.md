@@ -1,3 +1,6 @@
+# $$$START$$$
+
+
 # HOW BTES WORKS
 
 ![alt text: ](./res/busers.jpg  "thinking")
@@ -27,5 +30,4 @@ Home Page
 > Join Us !
 
 
-# $$$TABLE_OF_CONTENTS$$$
-
+# $$$END$$$

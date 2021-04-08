@@ -2,19 +2,14 @@
 // eslint-disable-next-line strict
 'use strict';
 
-var marked = require('marked');
-var renderer = new marked.Renderer();
+const marked = require('marked');
+const renderer = new marked.Renderer();
 
-var isFirstHeading = true;
-var headings = [];
-var counters = {};
+let headings = [];
+let counters = {};
 
 renderer.heading = function (text, level, raw) {
-  if (raw.includes('$$$TABLE_OF_CONTENTS$$$')) {
-    return '</div>' + makeTableOfContents();
-  }
-
-  var anchor =
+  let anchor =
     this.options.headerPrefix + raw.toLowerCase().replace(/[^\w]+/g, '-');
 
   if (counters[anchor] == null) {
@@ -23,17 +18,21 @@ renderer.heading = function (text, level, raw) {
     anchor += '--' + counters[anchor]++;
   }
 
-  headings.push({
-    anchor: anchor,
-    level: level,
-    text: text,
-  });
-
-  const res =
-    `${isFirstHeading ? '<div class="gen-markdown--content">' : ''}` +
-    `<a href="#${anchor}"><h${level} id="${anchor}">${text}</h${level}></a>`;
-  isFirstHeading = false;
-  return res;
+  if (raw.includes('$$$START$$$')) {
+    return '<div class="gen-markdown--content">';
+  } else if (raw.includes('$$$END$$$')) {
+    const tableOfContents = makeTableOfContents();
+    headings = [];
+    counters = {};
+    return '</div>' + tableOfContents;
+  } else {
+    headings.push({
+      anchor: anchor,
+      level: level,
+      text: text,
+    });
+    return `<a href="#${anchor}"><h${level} id="${anchor}">${text}</h${level}></a>`;
+  }
 };
 
 function makeTableOfContents() {
@@ -72,9 +71,6 @@ function makeTableOfContents() {
   }
 
   contentResult += '</li></ul>';
-
-  headings = [];
-  isFirstHeading = true;
 
   return `<div class="gen-markdown--table-of-contents">${contentResult}</div>`;
 }

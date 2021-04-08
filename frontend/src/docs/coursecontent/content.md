@@ -1,3 +1,6 @@
+# $$$START$$$
+
+
 ![alt text: content ](./res/content.jpg "content")
 
 # Course Content
@@ -15,4 +18,4 @@
 #### 8. Distribution & Consensus
 
 
-# $$$TABLE_OF_CONTENTS$$$
+# $$$END$$$
