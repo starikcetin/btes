@@ -5,6 +5,7 @@ import LoaderMask from '../LoaderMask/LoaderMask';
 import { BlockList, fetchBlockList } from '../../apis/BlockListAPI';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
+import DataExplorerBlockModal from '../DataExplorerBlockModal/DataExplorerBlockModal';
 
 interface DataExplorerBlockListParams {
   isFull: string;
@@ -14,6 +15,7 @@ const DataExplorerBlockList: React.FC = () => {
   const { isFull } = useParams<DataExplorerBlockListParams>();
   const [data, setData] = useState<BlockList[] | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [viewingBlock, setViewingBlock] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +34,10 @@ const DataExplorerBlockList: React.FC = () => {
   }, []);
   return (
     <div className="container">
+      <DataExplorerBlockModal
+        closeHandler={() => setViewingBlock(null)}
+        blockHeight={viewingBlock}
+      />
       {isFetching ? (
         <LoaderMask></LoaderMask>
       ) : (
@@ -56,7 +62,14 @@ const DataExplorerBlockList: React.FC = () => {
                 <tbody>
                   {isFull
                     ? data?.map((block) => (
-                        <tr className="row" key={block.burn_block_height}>
+                        <tr
+                          className="row"
+                          key={block.burn_block_height}
+                          onClick={() => {
+                            console.log(block.burn_block_height);
+                            setViewingBlock(block.burn_block_height);
+                          }}
+                        >
                           <td className="col-2">{block.burn_block_height}</td>
                           <td className="col-4 text-truncate">{block.hash}</td>
                           <td className="col-2">{block.txs.length}</td>
@@ -66,7 +79,13 @@ const DataExplorerBlockList: React.FC = () => {
                         </tr>
                       ))
                     : data?.slice(0, 6).map((block) => (
-                        <tr className="row" key={block.burn_block_height}>
+                        <tr
+                          className="row comp-data-explorer-block-list-table-body-row"
+                          key={block.burn_block_height}
+                          onClick={() => {
+                            setViewingBlock(block.burn_block_height);
+                          }}
+                        >
                           <td className="col-2">{block.burn_block_height}</td>
                           <td className="col-4 text-truncate">{block.hash}</td>
                           <td className="col-2">{block.txs.length}</td>

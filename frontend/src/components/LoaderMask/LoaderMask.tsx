@@ -5,7 +5,7 @@ interface IProps {}
 const LoaderMask: React.FunctionComponent<IProps> = () => (
   <div className="progress">
     <div
-      className="progress-bar progress-bar-striped progress-bar-animated"
+      className="progress-bar progress-bar-striped progress-bar-animated h-100"
       role="progressbar"
       aria-valuenow={75}
       aria-valuemin={0}
