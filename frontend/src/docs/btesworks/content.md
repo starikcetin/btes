@@ -1,6 +1,5 @@
 # $$$START$$$
 
-
 # HOW BTES WORKS
 
 ![alt text: ](./res/busers.jpg  "thinking")
@@ -9,17 +8,17 @@
 Home Page
 
 ##   Sandbox
->> write in details ! 
+>> Write in details ! 
 
 ##  Lessons
 >> Interactive-Guided Course
 
 ##  Explorer 
->  Real world blockchain graphics
+>  Real world blockchain markets, price etc..
 
 ##  Help
 
-> Blockchain documents
+> Blockchain documents and user guide.
 
 ###  About
 

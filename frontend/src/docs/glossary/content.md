@@ -35,6 +35,9 @@ A container or collection of transactions occurring every time period on a block
 ## Blockchain
 A consensus digital ledger comprised of unchangeable, digitally recorded data in packages called blocks. Each block is ‘chained’ to the next block using a cryptographic signature. This allows blockchains to act like a ledger, which can be shared with and accessed by anyone with the appropriate permissions. Click here to learn more about blockchain.
 
+## Block explorer
+An online tool for exploring the blockchain of a particular cryptocurrency, where you can watch and follow live all the transactions happening on the blockchain. Block explorers can serve as blockchain analysis and provide information such as total network hash rate, coin supply, transaction growth, etc.
+
 ## Block Height
 The number of blocks connected together in the blockchain. For example, Height 0 would be the very first block, which is also called the Genesis Block.
 
@@ -45,6 +48,9 @@ The reward given to a miner after it has successfully hashed a transaction block
 A reward that’s paid for the completion of a given task. Tasks include identifying code vulnerabilities, creating content, design work, research, translations, social impact and more.
 
 # C
+## Chain linking
+Chain linking is the process of connecting two blockchains with each other, thus allowing transactions between the chains to take place. This will allow blockchains like Bitcoin to communicate with other sidechains, allowing the exchange of assets between them.
+
 ## Client
 Software that accesses a blockchain via a local computer and helps to process transactions. A client usually includes a cryptocurrency software wallet.
 
@@ -207,8 +213,14 @@ Obtained and used by anyone to encrypt messages before they are sent to a known 
 Any party or entity which hosts an off-chain orderbook. Relayers help traders discover counter-parties and cryptographically move orders between them. 0x is an example of a popular Ethereum relayer protocol.
 
 # S
+## Satoshi
+The smallest unit of Bitcoin, equal to 0.00000001 BTC
+
 ## Sandbox Simulation
  A type of simulation in which the use has total sandbox control, i.e. they are free to whatever they so wish.
+
+# Smart Contracts
+Smart contracts are computer protocols that facilitate, verify, or enforce the negotiation or performance of a contract, or that obviate the need for a contractual clause.
 
 ## Simulation Node
  A copy of the ledger operated by a participant of the blockchain network.

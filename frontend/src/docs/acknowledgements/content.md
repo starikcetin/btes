@@ -1,6 +1,5 @@
 # $$$START$$$
 
-
 ![alt text: link](./res/link.png "link")
 
 
@@ -9,8 +8,9 @@
 ![alt text: deneme](./res/wallstreet-bitcoin.jpg "bitcoin wallstreet")
 
 
-
 >> [1] [BITCI](https://www.bitci.com/ "Bitci API")
+
+#### api name - certificate name - link 
 
 
 # $$$END$$$
