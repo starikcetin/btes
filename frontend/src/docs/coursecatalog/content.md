@@ -1,4 +1,5 @@
-![Alt Text 2](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzI_i9WDKIl3VDuIEebUdb9eKAxkXsIK_rBw&usqp=CAU "blockchain")
+
+![alt text: ](./res/bchain.jpg  "Blockchain")
 
 
 ## What is Blockchain? 
@@ -47,7 +48,7 @@ A block also has a hash. A can be understood as a fingerprint which is unique to
 
  ![Alt Text2](https://limenya.com/wp-content/uploads/2020/09/1-28.jpg "wallet")
 ### Wallet 
-A transaction’s private and public keys are stored in the blockchain wallet store.
+A transaction’s *private* and *public* keys are stored in the blockchain wallet store.
 
 
 #### Wallet types

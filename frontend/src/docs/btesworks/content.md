@@ -1,37 +1,30 @@
 # HOW BTES WORKS
 
-
-![alt text: ](./res/bteswork.jpg   "lg")
+![alt text: ](./res/busers.jpg  "thinking")
 
 ##  Home
+Home Page
 
 ##   Sandbox
->> type here 
+>> write in details ! 
 
-## Lessons
-#### 1. Orientation - Platform Basics
-##### 1.1 Tutorial : Start Learning, Introduction Node
-
-![alt text: ](./res/2-tile-internal-web.jpg "BTES")
-
-#### 2. Introduction - Blockchain Basics
-##### 2.1 What is Blockchain
-#### 3. Core Elements of Blockchain
-#### 4. Peer to Peer Network
-#### 5. Transactions
-#### 6. Blocks
-#### 7. Mining
-#### 8. Distribution & Consensus
-
+##  Lessons
+>> Interactive-Guided Course
 
 ##  Explorer 
-> type type type here
+>  Real world blockchain graphics
 
-####  Help
+##  Help
 
-####  About
+> Blockchain documents
 
-#### Sign in 
+###  About
+
+> Who we are ?
+
+### Sign In 
+
+> Join Us !
 
 
 # $$$TABLE_OF_CONTENTS$$$
