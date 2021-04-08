@@ -3,8 +3,14 @@ import { Table } from 'react-bootstrap';
 import LoaderMask from '../LoaderMask/LoaderMask';
 import { fetchTransactionList, Tx } from '../../apis/TransactionList';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
+import { Link, useParams } from 'react-router-dom';
+
+interface DataExplorerTransactionListParams {
+  isFull: string;
+}
 
 const DataExplorerBlockList: React.FC = () => {
+  const { isFull } = useParams<DataExplorerTransactionListParams>();
   const [data, setData] = useState<Tx[] | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
@@ -44,28 +50,51 @@ const DataExplorerBlockList: React.FC = () => {
             </span>
           </div>
           {data ? (
-            <Table hover className="comp-data-explorer-block-list-table">
-              <thead>
-                <tr className="comp-data-explorer-block-list-table-header-row row">
-                  <th className="col-4">Hash</th>
-                  <th className="col-2">Time</th>
-                  <th className="col-2">Size</th>
-                  <th className="col-4">Weight</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.slice(0, 6).map((tx) => (
-                  <tr className="row" key={tx.hash}>
-                    <td className="col-4 text-truncate">{tx.hash}</td>
-                    <td className="col-2">
-                      {formatTimestampForTimeInput(tx.time)}
-                    </td>
-                    <td className="col-2">{tx.size} Byte</td>
-                    <td className="col-4 text-truncate">{tx.weight}</td>
+            <div>
+              <Table hover className="comp-data-explorer-block-list-table">
+                <thead>
+                  <tr className="comp-data-explorer-block-list-table-header-row row">
+                    <th className="col-4">Hash</th>
+                    <th className="col-2">Time</th>
+                    <th className="col-2">Size</th>
+                    <th className="col-4">Weight</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {isFull
+                    ? data.map((tx) => (
+                        <tr className="row" key={tx.hash}>
+                          <td className="col-4 text-truncate">{tx.hash}</td>
+                          <td className="col-2">
+                            {formatTimestampForTimeInput(tx.time)}
+                          </td>
+                          <td className="col-2">{tx.size} Byte</td>
+                          <td className="col-4 text-truncate">{tx.weight}</td>
+                        </tr>
+                      ))
+                    : data.slice(0, 6).map((tx) => (
+                        <tr className="row" key={tx.hash}>
+                          <td className="col-4 text-truncate">{tx.hash}</td>
+                          <td className="col-2">
+                            {formatTimestampForTimeInput(tx.time)}
+                          </td>
+                          <td className="col-2">{tx.size} Byte</td>
+                          <td className="col-4 text-truncate">{tx.weight}</td>
+                        </tr>
+                      ))}
+                </tbody>
+              </Table>
+              {isFull ? (
+                <></>
+              ) : (
+                <Link
+                  to="/explorer-transactions/full"
+                  className="btn btn-outline-primary mb-3"
+                >
+                  All Transactions
+                </Link>
+              )}
+            </div>
           ) : (
             <span className="alert-danger">
               Transaction List Couldn't Downloaded!

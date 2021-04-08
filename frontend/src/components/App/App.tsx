@@ -8,6 +8,8 @@ import Sandbox from '../../pages/Sandbox/Sandbox';
 import Signin from '../../pages/Signin/Signin';
 import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
 import DataExplorer from '../../pages/DataExplorer/DataExplorer';
+import DataExplorerBlockList from '../DataExplorerBlockList/DataExplorerBlockList';
+import DataExplorerTransactionList from '../DataExplorerTransactionList/DataExplorerTransactionList';
 
 const App: React.FC = () => {
   return (
@@ -40,6 +42,12 @@ const App: React.FC = () => {
           </Route>
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>
+          </Route>
+          <Route path="/explorer-blocks/:isFull">
+            <DataExplorerBlockList />
+          </Route>
+          <Route path="/explorer-transactions/:isFull">
+            <DataExplorerTransactionList />
           </Route>
           <Route path="/">
             <Home></Home>
