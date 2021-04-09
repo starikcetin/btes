@@ -164,6 +164,12 @@ export class BlockchainMiner {
     template: BlockchainBlockTemplate,
     successfulAttempt: MiningAttempt
   ): BlockchainBlock => {
+    const coinbaseTx = this.assembleCoinbaseTx(template);
+
+    const includedTxs = template.includedTxHashes
+      .map(this.txDb.findTxInMempool)
+      .filter(hasValue);
+
     return {
       header: {
         previousHash: template.previousHash,
@@ -171,8 +177,7 @@ export class BlockchainMiner {
         timestamp: successfulAttempt.timestamp,
         nonce: successfulAttempt.nonce,
       },
-      // TODO: take other txs from the template after implementing that on frontend
-      txs: [this.assembleCoinbaseTx(template)],
+      txs: [coinbaseTx, ...includedTxs],
     };
   };
 

@@ -8,4 +8,5 @@ export interface BlockchainBlockTemplate {
   readonly value: number;
   readonly previousHash: string;
   readonly difficultyTarget: number;
+  readonly includedTxHashes: string[];
 }

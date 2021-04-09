@@ -60,6 +60,7 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
           value,
           previousHash,
           difficultyTarget,
+          includedTxHashes: includedTxHashes.value,
         },
       },
     });
