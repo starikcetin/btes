@@ -140,6 +140,11 @@ export class BlockchainMiner {
       this.successfulAttempt
     );
 
+    // Pop included txs from mempool
+    this.currentState.task.blockTemplate.includedTxHashes.forEach(
+      this.txDb.removeFromMempool
+    );
+
     const parent = this.blockDb.getBlockInBlockchain(block.header.previousHash);
 
     // add to own block db
@@ -147,11 +152,10 @@ export class BlockchainMiner {
       this.blockDb.addToBlockchain(block, parent);
     } else {
       console.warn(
-        'miner could not find the parent block in its own database, ignoring: ',
+        'miner could not find the parent block in its own database, adding to orphanage. block hash:',
         block.header.previousHash
       );
-
-      // TODO: should we return here? or maybe add the block to self as orphan?
+      this.blockDb.addToOrphanage(block);
     }
 
     // broadcast to other nodes
