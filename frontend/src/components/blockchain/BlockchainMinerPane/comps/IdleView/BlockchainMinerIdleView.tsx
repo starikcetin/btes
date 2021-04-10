@@ -275,16 +275,21 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                   </Card.Text>
                 ) : (
                   includedTxHashes.value.map((txHash) => (
-                    <BlockchainTxCard {...props} tx={includedTxLookup[txHash]}>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        className="py-0"
-                        onClick={() => excludeTx(txHash)}
+                    <div className="mt-3 global-first-mt-0">
+                      <BlockchainTxCard
+                        {...props}
+                        tx={includedTxLookup[txHash]}
                       >
-                        <FontAwesomeIcon size="sm" icon={faMinus} />
-                      </Button>
-                    </BlockchainTxCard>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          className="py-0"
+                          onClick={() => excludeTx(txHash)}
+                        >
+                          <FontAwesomeIcon size="sm" icon={faMinus} />
+                        </Button>
+                      </BlockchainTxCard>
+                    </div>
                   ))
                 )}
               </Card.Body>
@@ -301,19 +306,21 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                   </Card.Text>
                 ) : (
                   notIncludedTxHashes.map((txHash) => (
-                    <BlockchainTxCard
-                      {...props}
-                      tx={notIncludedTxLookup[txHash]}
-                    >
-                      <Button
-                        variant="success"
-                        size="sm"
-                        className="py-0"
-                        onClick={() => includeTx(txHash)}
+                    <div className="mt-3 global-first-mt-0">
+                      <BlockchainTxCard
+                        {...props}
+                        tx={notIncludedTxLookup[txHash]}
                       >
-                        <FontAwesomeIcon size="sm" icon={faPlus} />
-                      </Button>
-                    </BlockchainTxCard>
+                        <Button
+                          variant="success"
+                          size="sm"
+                          className="py-0"
+                          onClick={() => includeTx(txHash)}
+                        >
+                          <FontAwesomeIcon size="sm" icon={faPlus} />
+                        </Button>
+                      </BlockchainTxCard>
+                    </div>
                   ))
                 )}
               </Card.Body>

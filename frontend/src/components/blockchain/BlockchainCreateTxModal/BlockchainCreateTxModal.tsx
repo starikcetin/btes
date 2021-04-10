@@ -123,7 +123,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
               </Card.Header>
               <Card.Body>
                 {inputs.value.map((input, index) => (
-                  <div className={index === 0 ? '' : 'mt-3'} key={index}>
+                  <div className="mt-3 global-first-mt-0" key={index}>
                     <BlockchainTxInputForm
                       value={input}
                       partialTxHash={decodedPartialTxHash}
@@ -154,7 +154,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
               </Card.Header>
               <Card.Body>
                 {outputs.value.map((output, index) => (
-                  <div className={index === 0 ? '' : 'mt-3'} key={index}>
+                  <div className="mt-3 global-first-mt-0" key={index}>
                     <BlockchainTxOutputForm
                       value={output}
                       onChange={(v) => handleTxOutputFormChange(index, v)}
