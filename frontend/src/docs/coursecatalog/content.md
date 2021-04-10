@@ -1,7 +1,7 @@
 # $$$START$$$
 
 
-![alt text: ](./res/bchain.jpg  "Blockchain")
+![The requested url was not found on this server. ](./res/bchain.jpg  "Blockchain")
 
 
 ## What is Blockchain? 
@@ -14,12 +14,12 @@ A blockchain has certain unique properties. There are rules about how data can b
 
 ### What Blockchain is NOT!
 <p style='text-align: justify;'> 
-Blockchain is not **Bitcoin**, but it is the technology behind Bitcoin
+Blockchain is not <b>bitcoin</b>, but it is the technology behind Bitcoin
 Bitcoin is the digital token and blockchain is the ledger to keep track of who owns the digital tokens
 You can't have Bitcoin without blockchain, but you can have blockchain without Bitcoin.
 </p>
 
-![Alt Text 2](https://miro.medium.com/max/2814/1*Yg9_C7K3y9uzU8Hbab7fMw.jpeg "blockchain is not bitcoin")
+![The requested url was not found on this server.](https://miro.medium.com/max/2814/1*Yg9_C7K3y9uzU8Hbab7fMw.jpeg "blockchain is not bitcoin")
 
 ## What is Cryptocurrency?
 <p style='text-align: justify;'> 
@@ -34,12 +34,39 @@ A Blockchain is a chain of blocks which contain information. The data which is s
 The first block in the chain is called the Genesis block. Each new block in the chain is linked to the previous block.
 </p>
 
+### Generic elements of a blockchain
+In this section, the generic elements of blockchain are presented. More precise elements will
+be discussed in the context of their respective blockchains in later chapters, for example, the
+Ethereum blockchain.
+### Addresses
+<p style='text-align: justify;'> 
+Addresses are unique identifiers that are used in a transaction on the blockchain to denote
+senders and recipients. An address is usually a public key or derived from a public key.
+While addresses can be reused by the same user, addresses themselves are unique. In
+practice, however, a single user may not use the same address again and generate a new
+one for each transaction. This newly generated address will be unique. Bitcoin is in fact a
+pseudonymous system. End users are usually not directly identifiable but some research in
+de-anonymizing bitcoin users have shown that users can be identified successfully. As a
+good practice it is suggested that users generate a new address for each transaction in order
+to avoid linking transactions to the common owner, thus avoiding identification. </p>
+
+### Transaction
+A transaction is the fundamental unit of a blockchain. A transaction represents a transfer of
+value from one address to another.
+
+![The requested url was not found on this server. ](https://feature.undp.org/beyond-bitcoin/assets/mbNja7QNnr/block3.gif "blockchain-block")
+
+### Block
+A block is composed of multiple transactions and some other elements such as the previous
+block hash (hash pointer), timestamp, and nonce.
+
+
 ### Understanding SHA256 - Hash
 <p style='text-align: justify;'> 
 A block also has a hash. A can be understood as a fingerprint which is unique to each block. It identifies a block and all of its contents, and it's always unique, just like a fingerprint. So once a block is created, any change inside the block will cause the hash to change.
 </p>
 
-![Alt Text2](https://miro.medium.com/max/977/1*mNdCyhj2WRSzmgTOVztaUg.png "hash")
+![The requested url was not found on this server.](https://miro.medium.com/max/977/1*mNdCyhj2WRSzmgTOVztaUg.png "hash")
 
 #### Each Block has;
 
@@ -48,7 +75,7 @@ A block also has a hash. A can be understood as a fingerprint which is unique to
 * Hash of the previous block
 
 
- ![Alt Text2](https://limenya.com/wp-content/uploads/2020/09/1-28.jpg "wallet")
+ ![The requested url was not found on this server.](https://limenya.com/wp-content/uploads/2020/09/1-28.jpg "wallet")
 ### Wallet 
 A transaction’s *private* and *public* keys are stored in the blockchain wallet store.
 
@@ -59,16 +86,13 @@ In bitcoin, there are different types of wallets that can be used to store priva
 software program, they also provide some functions to the users to manage and carry out
 transactions on the bitcoin network. </p>
 
-![Alt Text2](https://www.blockchain.com/static/img/home/home-bottom-mobile.png "wallet-mobile")
+![The requested url was not found on this server.](https://www.blockchain.com/static/img/home/home-bottom-mobile.png "wallet-mobile")
 
 ##### Hot Wallets and Cold Wallets
 <p style='text-align: justify;'> 
 Hot wallets are online wallets through which cryptocurrencies can be transferred quickly. They are available online. Examples are Coinbase and Blockchain.info. Cold wallets are digital offline wallets where the transactions are signed offline and then disclosed online. They are not maintained in the cloud on the internet; they are maintained offline to have high security. Examples of cold wallets are Trezor and Ledger. </p>
 
-![Alt Text2](https://img.phemex.com/wp-content/uploads/2020/09/12075902/hot-vs-cold-wallet-1024x576.png "wallet-type")
-
-
-
+![The requested url was not found on this server.](https://img.phemex.com/wp-content/uploads/2020/09/12075902/hot-vs-cold-wallet-1024x576.png "wallet-type")
 
 
 
@@ -80,7 +104,7 @@ bitcoin and other cryptocurrencies. Currently, this is the only algorithm that h
 astonishingly successful against Sybil attacks
 </p>
 
-![Alt Text2](https://miro.medium.com/max/400/0*dVd6NBEP09mWAdyT.jpg "pow")
+![The requested url was not found on this server.](https://miro.medium.com/max/400/0*dVd6NBEP09mWAdyT.jpg "pow")
 
 ### Peer to Peer Protocol 
 <p style='text-align: justify;'> 
@@ -92,7 +116,7 @@ consensus. Discovery messages are exchanged between nodes when starting up in or
 discover other peers on the network.
 </p>
 
-![Alt Text2](https://www.skalex.io/wp-content/uploads/2017/06/p2p-web-model-transparent.png "p2p")
+![The requested url was not found on this server.](https://www.skalex.io/wp-content/uploads/2017/06/p2p-web-model-transparent.png "p2p")
 
 ### How Blockchain Transaction Works?
 <p style='text-align: justify;'> 
@@ -110,7 +134,7 @@ value from one address to another.
 
  </p>
 
- ![Alt Title2](https://bitpanda-academy.imgix.net/nullb38f6ebe-fd30-4a85-b1b2-1f585c236a91/Bitpanda-Infographics_3-blockchain.png?auto=compress%2Cformat&fit=min&fm=jpg&q=80&w=2100 "how-transaction")
+ ![The requested url was not found on this server.](https://bitpanda-academy.imgix.net/nullb38f6ebe-fd30-4a85-b1b2-1f585c236a91/Bitpanda-Infographics_3-blockchain.png?auto=compress%2Cformat&fit=min&fm=jpg&q=80&w=2100 "how-transaction")
 
 ### Why do we need Blockchain?
 `Time reduction`: In the financial industry, blockchain can play a vital role by allowing the quicker settlement of trades as it does not need a lengthy process of verification, settlement, and clearance because a single version of agreed-upon data of the share ledger is available between all stack holders.
@@ -124,10 +148,9 @@ value from one address to another.
 `Decentralized`: There are standards rules on how every node exchanges the blockchain information. This method ensures that all transactions are validated, and all valid transactions are added one by one.
 
 ### Blockchain Versions 
-![Alt Title2](https://www.tutorialandexample.com/wp-content/uploads/2020/02/Blockchain-Versions.png "blockchain ver.") 
+![The requested url was not found on this server.](https://www.tutorialandexample.com/wp-content/uploads/2020/02/Blockchain-Versions.png "blockchain ver.") 
 
 ### Blockchain Uses 
-
 
 
 | Markets  |IOT   |Government   | Finance & Accounting  |  Health |
@@ -158,7 +181,7 @@ the system against frauds and double spending attacks while adding more virtual 
 to the bitcoin ecosystem.
 </p>
 
-![Alt Title2](https://www.edureka.co/blog/wp-content/uploads/2019/03/How-Blockchain-mining-works-blockchain-mining-edureka-3.png "mining")
+![The requested url was not found on this server.](https://www.edureka.co/blog/wp-content/uploads/2019/03/How-Blockchain-mining-works-blockchain-mining-edureka-3.png "mining")
 
 ### Consensus
 <p style='text-align: justify;'> 
@@ -170,7 +193,7 @@ becomes very difficult to achieve consensus. This concept of achieving consensus
 multiple nodes is known as distributed consensus.
 </p>
 
-![Alt Title2](https://openledger.info/insights/wp-content/uploads/2019/01/consensus-blockchain-948x640.png "consensus")
+![The requested url was not found on this server.](https://openledger.info/insights/wp-content/uploads/2019/01/consensus-blockchain-948x640.png "consensus")
 
 #### Consensus mechanisms
 A `consensus` mechanism is a set of steps that are taken by all, or most, nodes in order to
@@ -193,7 +216,7 @@ faulty or malicious nodes (Byzantine nodes).
 once. The nodes make decisions only once in a single consensus cycle.
 
 
-
+![The requested url was not found on this server.](https://cdn.iconscout.com/icon/free/png-256/graduation-cap-2548200-2130742.png "summary")
 
 ### Summary
 * A Blockchain is a chain of blocks that contain information

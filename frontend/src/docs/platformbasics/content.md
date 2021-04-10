@@ -1,13 +1,11 @@
 # $$$START$$$
 
+# <span style="color:#113057;"> Sandbox </span>
+type here
 
-# Sandbox
-here
+![The requested url was not found on this server.](./res/2-tile-internal-web.jpg "BTES")
 
-![alt text: ](./res/2-tile-internal-web.jpg "BTES")
-
-# Lessons
-here
-
+# <span style="color: #113057;"> Lessons </span>
+type here
 
 # $$$END$$$

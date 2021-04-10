@@ -1,8 +1,8 @@
 # $$$START$$$
 
-# HOW BTES WORKS
+# 
 
-![alt text: ](./res/busers.jpg  "thinking")
+![The requested url was not found on this server.](./res/thinkinaboutbck.png  "thinking")
 
 ##  Home
 Home Page
@@ -20,13 +20,12 @@ Home Page
 
 > Blockchain documents and user guide.
 
-###  About
+##  About
 
 > Who we are ?
 
-### Sign In 
+## Sign In 
 
 > Join Us !
-
 
 # $$$END$$$
