@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 //scss
 import './DataExplorerBlockTransactionCard.scss';
 import { BlockTx } from '../../apis/SingleBlockAPI';
@@ -7,7 +7,7 @@ import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
 import { Table } from 'react-bootstrap';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
+import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
 
 interface DataExplorerBlockTransactionCardProps {
   tx: BlockTx;
@@ -31,14 +31,28 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
   props
 ) => {
   const { tx } = props;
+  const [viewingTransaction, setViewingTransaction] = useState<string | null>(
+    null
+  );
   const totalInput = calculateTotalInputValue(tx);
   const totalOut = calculateTotalOutValue(tx);
   return (
     <div className="container p-5 comp-data-explorer-block-transaction-card-container">
+      <DataExplorerTransactionModal
+        closeHandler={() => setViewingTransaction(null)}
+        transactionHash={viewingTransaction}
+      />
       <div className="row d-flex justify-content-between text-secondary mb-2 border p-4">
         <div className="col-10 text-truncate text-left">
           <span className="mr-4">Hash</span>
-          <Link to={tx.hash}>{tx.hash}</Link>
+          <span
+            className="text-info comp-data-explorer-block-transaction-card-header-hash-span"
+            onClick={() => {
+              setViewingTransaction(tx.hash);
+            }}
+          >
+            {tx.hash}
+          </span>
         </div>
         <div className="col-2 text-right">
           {formatTimestampForTimeInput(tx.time)}

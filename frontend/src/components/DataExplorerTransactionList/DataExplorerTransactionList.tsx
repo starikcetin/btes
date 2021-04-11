@@ -4,6 +4,9 @@ import LoaderMask from '../LoaderMask/LoaderMask';
 import { fetchTransactionList, Tx } from '../../apis/TransactionList';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
+import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
+
+import './DataExplorerTransactionList.scss';
 
 interface DataExplorerTransactionListParams {
   isFull: string;
@@ -13,6 +16,9 @@ const DataExplorerBlockList: React.FC = () => {
   const { isFull } = useParams<DataExplorerTransactionListParams>();
   const [data, setData] = useState<Tx[] | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [viewingTransaction, setViewingTransaction] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +45,10 @@ const DataExplorerBlockList: React.FC = () => {
   }, []);
   return (
     <div className="container">
+      <DataExplorerTransactionModal
+        closeHandler={() => setViewingTransaction(null)}
+        transactionHash={viewingTransaction}
+      />
       {isFetching ? (
         <LoaderMask></LoaderMask>
       ) : (
@@ -63,7 +73,13 @@ const DataExplorerBlockList: React.FC = () => {
                 <tbody>
                   {isFull
                     ? data.map((tx) => (
-                        <tr className="row" key={tx.hash}>
+                        <tr
+                          className="row comp-data-explorer-block-list-table-body-row"
+                          key={tx.hash}
+                          onClick={() => {
+                            setViewingTransaction(tx.hash);
+                          }}
+                        >
                           <td className="col-4 text-truncate">{tx.hash}</td>
                           <td className="col-2">
                             {formatTimestampForTimeInput(tx.time)}
@@ -73,7 +89,13 @@ const DataExplorerBlockList: React.FC = () => {
                         </tr>
                       ))
                     : data.slice(0, 6).map((tx) => (
-                        <tr className="row" key={tx.hash}>
+                        <tr
+                          className="row comp-data-explorer-block-list-table-body-row"
+                          key={tx.hash}
+                          onClick={() => {
+                            setViewingTransaction(tx.hash);
+                          }}
+                        >
                           <td className="col-4 text-truncate">{tx.hash}</td>
                           <td className="col-2">
                             {formatTimestampForTimeInput(tx.time)}

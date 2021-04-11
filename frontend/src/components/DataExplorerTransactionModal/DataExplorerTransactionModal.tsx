@@ -6,26 +6,32 @@ import { Block, fetchSingleBlockWithHeight } from '../../apis/SingleBlockAPI';
 import LoaderMask from '../LoaderMask/LoaderMask';
 import DataExplorerBlockDetailTable from '../DataExplorerBlockDetailTable/DataExplorerBlockDetailTable';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
+import {
+  fetchSingleTransactionWithHash,
+  Transaction,
+} from '../../apis/SingleTransactionAPI';
+import DataExplorerTransactionDetailTable from '../DataExplorerTransactionDetailTable/DataExplorerTransactionDetailTable';
 
-interface DataExplorerBlockModalProps {
+interface DataExplorerTransactionModalProps {
   closeHandler: () => void;
-  blockHeight: number | null;
+  transactionHash: string | null;
 }
 
-const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
+const DataExplorerTransactionModal: React.FC<DataExplorerTransactionModalProps> = (
   props
 ) => {
-  const { closeHandler, blockHeight } = props;
-  const [data, setData] = useState<Block | null>(null);
+  const { closeHandler, transactionHash } = props;
+  const [data, setData] = useState<Transaction | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        const block = await fetchSingleBlockWithHeight(blockHeight);
-        console.log(block);
-        setData(block);
+        const transaction = await fetchSingleTransactionWithHash(
+          transactionHash
+        );
+        setData(transaction);
         setIsFetching(false);
       } catch (e) {
         console.log(e);
@@ -34,10 +40,10 @@ const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
       }
     };
     fetchData();
-  }, [blockHeight]);
+  }, [transactionHash]);
   return (
     <Modal
-      show={blockHeight ? true : false}
+      show={transactionHash ? true : false}
       onHide={closeHandler}
       backdrop="static"
       keyboard={false}
@@ -45,24 +51,15 @@ const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
       scrollable
     >
       <Modal.Header closeButton>
-        <Modal.Title>Blok {blockHeight}</Modal.Title>
+        <Modal.Title>Transaction {transactionHash}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {isFetching ? (
           <LoaderMask />
         ) : data ? (
           <div>
-            <DataExplorerBlockDetailTable data={data} />
-            <div className="h4">Block Transactions</div>
-            <Table hover borderless>
-              <tbody>
-                {data.tx.slice(0, 10).map((tx) => (
-                  <tr>
-                    <DataExplorerBlockTransactionCard tx={tx} />
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+            <DataExplorerBlockTransactionCard tx={data} />
+            <DataExplorerTransactionDetailTable data={data} />
           </div>
         ) : (
           <div>Data couldnt downloaded</div>
@@ -72,4 +69,4 @@ const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
   );
 };
 
-export default DataExplorerBlockModal;
+export default DataExplorerTransactionModal;

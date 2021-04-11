@@ -4,19 +4,25 @@ import { Table } from 'react-bootstrap';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
 //scss
-import './DataExplorerBlockTable.scss';
+import './DataExplorerTransactionDetailTable.scss';
+import { Transaction } from '../../apis/SingleTransactionAPI';
 
 interface DataExplorerBlockTableProps {
-  data: Block;
+  data: Transaction;
 }
 
-const DataExplorerBlockTable: React.FC<DataExplorerBlockTableProps> = (
+const DataExplorerTransactionDetailTable: React.FC<DataExplorerBlockTableProps> = (
   props
 ) => {
   const { data } = props;
   return (
     <div className="container d-flex justify-content-center comp-data-explorer-block-table-table-container">
       <Table hover>
+        <thead>
+          <tr>
+            <div className="h4 row">Transaction Details</div>
+          </tr>
+        </thead>
         <tbody className="text-secondary">
           <tr className="row">
             <td className="col-4">Hash</td>
@@ -27,36 +33,20 @@ const DataExplorerBlockTable: React.FC<DataExplorerBlockTableProps> = (
             <td className="col-8">{formatTimestampForTimeInput(data.time)}</td>
           </tr>
           <tr className="row">
-            <td className="col-4">Height</td>
-            <td className="col-8">{data.height}</td>
+            <td className="col-4">Size</td>
+            <td className="col-8">{data.size}</td>
           </tr>
           <tr className="row">
-            <td className="col-4">Tx Count</td>
-            <td className="col-8">{data.tx.length}</td>
+            <td className="col-4">Weight</td>
+            <td className="col-8">{data.weight}</td>
           </tr>
           <tr className="row">
-            <td className="col-4">Merkle Root</td>
-            <td className="col-8">{data.mrkl_root}</td>
+            <td className="col-4">Fee</td>
+            <td className="col-8">{formatNumberToBitcoin(data.fee)}</td>
           </tr>
           <tr className="row">
             <td className="col-4">Version</td>
             <td className="col-8">{data.ver}</td>
-          </tr>
-          <tr className="row">
-            <td className="col-4">Bit Count</td>
-            <td className="col-8">{data.bits}</td>
-          </tr>
-          <tr className="row">
-            <td className="col-4">Size</td>
-            <td className="col-8">{data.size} Bytes</td>
-          </tr>
-          <tr className="row">
-            <td className="col-4">Nonce</td>
-            <td className="col-8">{data.nonce}</td>
-          </tr>
-          <tr className="row">
-            <td className="col-4">Fee Reward</td>
-            <td className="col-8">{formatNumberToBitcoin(data.fee)}</td>
           </tr>
         </tbody>
       </Table>
@@ -64,4 +54,4 @@ const DataExplorerBlockTable: React.FC<DataExplorerBlockTableProps> = (
   );
 };
 
-export default DataExplorerBlockTable;
+export default DataExplorerTransactionDetailTable;

@@ -63,10 +63,9 @@ const DataExplorerBlockList: React.FC = () => {
                   {isFull
                     ? data?.map((block) => (
                         <tr
-                          className="row"
+                          className="row comp-data-explorer-block-list-table-body-row"
                           key={block.burn_block_height}
                           onClick={() => {
-                            console.log(block.burn_block_height);
                             setViewingBlock(block.burn_block_height);
                           }}
                         >
