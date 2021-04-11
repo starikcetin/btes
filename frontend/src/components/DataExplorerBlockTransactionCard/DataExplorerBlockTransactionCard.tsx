@@ -8,6 +8,7 @@ import { Table } from 'react-bootstrap';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
+import DataExplorerAddressDetailModal from '../DataExplorerAddressDetailModal/DataExplorerAddressDetailModal';
 
 interface DataExplorerBlockTransactionCardProps {
   tx: BlockTx;
@@ -34,6 +35,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
   const [viewingTransaction, setViewingTransaction] = useState<string | null>(
     null
   );
+  const [viewingAddress, setViewingAddress] = useState<string | null>(null);
   const totalInput = calculateTotalInputValue(tx);
   const totalOut = calculateTotalOutValue(tx);
   return (
@@ -41,6 +43,10 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
       <DataExplorerTransactionModal
         closeHandler={() => setViewingTransaction(null)}
         transactionHash={viewingTransaction}
+      />
+      <DataExplorerAddressDetailModal
+        closeHandler={() => setViewingAddress(null)}
+        address={viewingAddress}
       />
       <div className="row d-flex justify-content-between text-secondary mb-2 border p-4">
         <div className="col-10 text-truncate text-left">
@@ -61,24 +67,33 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
       <div className="row">
         <div className="col-5">
           <Table>
-            {tx.inputs.map((input) => (
-              <tr className="row">
-                <td className="col-8 text-truncate text-muted">
-                  {input.prev_out?.addr}
-                </td>
-                <td className="col-4">
-                  {input.prev_out?.spent ? (
-                    <span className="text-danger">
-                      {formatNumberToBitcoin(input.prev_out?.value)}
-                    </span>
-                  ) : (
-                    <span className="text-success">
-                      {formatNumberToBitcoin(input.prev_out?.value)}
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
+            <tbody>
+              {tx.inputs.map((input) => (
+                <tr className="row" key={input.index}>
+                  <td
+                    className="col-8 text-truncate text-info"
+                    onClick={() => {
+                      setViewingAddress(
+                        input.prev_out?.addr ? input.prev_out.addr : null
+                      );
+                    }}
+                  >
+                    {input.prev_out?.addr}
+                  </td>
+                  <td className="col-4">
+                    {input.prev_out?.spent ? (
+                      <span className="text-danger">
+                        {formatNumberToBitcoin(input.prev_out?.value)}
+                      </span>
+                    ) : (
+                      <span className="text-success">
+                        {formatNumberToBitcoin(input.prev_out?.value)}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </Table>
         </div>
         <div className="col-1 d-flex justify-content-center align-items-center">
@@ -86,22 +101,31 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
         </div>
         <div className="col-5">
           <Table>
-            {tx.out.map((out) => (
-              <tr className="row">
-                <td className="col-8 text-truncate text-muted">{out.addr}</td>
-                <td className="col-4">
-                  {out.spent ? (
-                    <span className="text-danger">
-                      {formatNumberToBitcoin(out.value)}
-                    </span>
-                  ) : (
-                    <span className="text-success">
-                      {formatNumberToBitcoin(out.value)}
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
+            <tbody>
+              {tx.out.map((out) => (
+                <tr className="row" key={out.addr}>
+                  <td
+                    className="col-8 text-truncate text-info"
+                    onClick={() => {
+                      setViewingAddress(out?.addr ? out.addr : null);
+                    }}
+                  >
+                    {out.addr}
+                  </td>
+                  <td className="col-4">
+                    {out.spent ? (
+                      <span className="text-danger">
+                        {formatNumberToBitcoin(out.value)}
+                      </span>
+                    ) : (
+                      <span className="text-success">
+                        {formatNumberToBitcoin(out.value)}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </Table>
         </div>
       </div>

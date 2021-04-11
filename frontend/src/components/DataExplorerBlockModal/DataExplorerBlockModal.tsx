@@ -24,11 +24,9 @@ const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
       try {
         setIsFetching(true);
         const block = await fetchSingleBlockWithHeight(blockHeight);
-        console.log(block);
         setData(block);
         setIsFetching(false);
       } catch (e) {
-        console.log(e);
         setIsFetching(false);
         setData(null);
       }
@@ -57,7 +55,7 @@ const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
             <Table hover borderless>
               <tbody>
                 {data.tx.slice(0, 10).map((tx) => (
-                  <tr>
+                  <tr key={tx.hash}>
                     <DataExplorerBlockTransactionCard tx={tx} />
                   </tr>
                 ))}

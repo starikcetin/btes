@@ -11,6 +11,7 @@ import {
   Transaction,
 } from '../../apis/SingleTransactionAPI';
 import DataExplorerTransactionDetailTable from '../DataExplorerTransactionDetailTable/DataExplorerTransactionDetailTable';
+import DataExplorerTransactionInputOutputDetail from '../DataExplorerTransactionInputOutputDetail/DataExplorerTransactionInputOutputDetail';
 
 interface DataExplorerTransactionModalProps {
   closeHandler: () => void;
@@ -60,6 +61,10 @@ const DataExplorerTransactionModal: React.FC<DataExplorerTransactionModalProps> 
           <div>
             <DataExplorerBlockTransactionCard tx={data} />
             <DataExplorerTransactionDetailTable data={data} />
+            <DataExplorerTransactionInputOutputDetail
+              inputs={data.inputs}
+              outputs={data.out}
+            />
           </div>
         ) : (
           <div>Data couldnt downloaded</div>

@@ -48,6 +48,10 @@ const DataExplorerTransactionDetailTable: React.FC<DataExplorerBlockTableProps> 
             <td className="col-4">Version</td>
             <td className="col-8">{data.ver}</td>
           </tr>
+          <tr className="row">
+            <td className="col-4">Included In Block</td>
+            <td className="col-8">{data.block_height}</td>
+          </tr>
         </tbody>
       </Table>
     </div>

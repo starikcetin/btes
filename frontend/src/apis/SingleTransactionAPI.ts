@@ -60,7 +60,9 @@ export interface SpendingOutpoint2 {
 export const fetchSingleTransactionWithHash = async (
   transactionHash: string | null
 ) => {
-  const url = `https://blockchain.info/rawtx/${transactionHash}?format=json&cors=true`;
-  const data = await (await fetch(url)).json();
-  return transactionHash ? data : null;
+  if (transactionHash !== null) {
+    const url = `https://blockchain.info/rawtx/${transactionHash}?format=json&cors=true`;
+    const data = await (await fetch(url)).json();
+    return transactionHash ? data : null;
+  } else return null;
 };
