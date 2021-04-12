@@ -18,6 +18,7 @@ it('mines correctly', (done) => {
         'c230b28fbaa23983bbba8f1c8be349863fae3ab3a8d7b1177a8f390c395ba7d7',
         '5c570c8eb5baf908a73f988e57a5e5525eb8aa0ddf67eae9793f6ad4221a92ee',
       ],
+      includedTxsTotalFee: 10,
     },
   };
 

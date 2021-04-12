@@ -27,6 +27,7 @@ interface BlockchainCreateTxModalProps {
   nodeUid: string;
 }
 
+// TODO: reset state on close (separating the modal and the content might be the way to go)
 const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
   props
 ) => {

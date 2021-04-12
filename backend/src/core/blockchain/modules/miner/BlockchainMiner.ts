@@ -153,6 +153,7 @@ export class BlockchainMiner {
   ): BlockchainBlock => {
     const coinbaseTx = this.assembleCoinbaseTx(template);
 
+    // TODO: maybe we should do this before starting mining. that way minimizing the chance of missing or overwritten txs after mining.
     const includedTxs = template.includedTxHashes
       .map(this.txDb.findTxInMempool)
       .filter(hasValue);
@@ -180,7 +181,7 @@ export class BlockchainMiner {
       ],
       outputs: [
         {
-          value: template.value,
+          value: template.value + template.includedTxsTotalFee,
           lockingScript: {
             address: template.recipientAddress,
           },
