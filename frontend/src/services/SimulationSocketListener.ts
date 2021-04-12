@@ -23,7 +23,7 @@ import { TxAddedToMempoolPayload } from '../common/socketPayloads/TxAddedToMempo
 import { TxAddedToOrphanagePayload } from '../common/socketPayloads/TxAddedToOrphanagePayload';
 import { TxRemovedFromMempoolPayload } from '../common/socketPayloads/TxRemovedFromMempoolPayload';
 import { TxsRemovedFromOrphanagePayload } from '../common/socketPayloads/TxsRemovedFromOrphanagePayload';
-import { BlockchainOwnUtxoSetChangedPayload } from '../../../common/src/socketPayloads/BlockchainOwnUtxoSetChangedPayload';
+import { BlockchainOwnUtxoSetChangedPayload } from '../common/socketPayloads/BlockchainOwnUtxoSetChangedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;

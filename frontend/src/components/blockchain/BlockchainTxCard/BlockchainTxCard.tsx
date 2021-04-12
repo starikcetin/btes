@@ -8,8 +8,8 @@ import { useTxOutputGetter } from '../../../hooks/txGetters/useTxOutputGetter';
 import { useTxGetterEverywhere } from '../../../hooks/txGetters/useTxGetterEverywhere';
 import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
-import { BlockchainTxInput } from '../../../../../common/src/blockchain/tx/BlockchainTxInput';
-import { BlockchainTxOutput } from '../../../../../common/src/blockchain/tx/BlockchainTxOutput';
+import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
+import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 import { makeCountText } from '../../../utils/makeCountText';
 
 interface BlockchainTxCardProps {
