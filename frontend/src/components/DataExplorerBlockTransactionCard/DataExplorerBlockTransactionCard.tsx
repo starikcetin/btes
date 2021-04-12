@@ -131,12 +131,14 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
       </div>
       <div className="row d-flex align-items-center">
         <div className="col-6 text-left text-muted h6">
-          <span className="mr-5">Fee</span>
-          <span>
-            {formatNumberToBitcoin(
-              totalInput - totalOut < 0 ? 0 : totalInput - totalOut
-            )}
-          </span>
+          {tx.fee === 0 ? (
+            <span className="mr-5">COINBASE (Newly Generated Coins)</span>
+          ) : (
+            <div>
+              <span className="mr-5">Fee</span>
+              <span>{formatNumberToBitcoin(tx.fee)}</span>
+            </div>
+          )}
         </div>
         <div className="col-6 text-right h6">
           <span className="mr-4 btn btn-outline-success disabled ">
