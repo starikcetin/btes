@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { BlockList, fetchBlockList } from '../../apis/BlockListAPI';
-import { Modal, Table } from 'react-bootstrap';
-import LogTable from '../LogTable/LogTable';
-import { Block, fetchSingleBlockWithHeight } from '../../apis/SingleBlockAPI';
+import { Modal } from 'react-bootstrap';
 import LoaderMask from '../LoaderMask/LoaderMask';
-import DataExplorerBlockDetailTable from '../DataExplorerBlockDetailTable/DataExplorerBlockDetailTable';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import {
   fetchSingleTransactionWithHash,

@@ -11,7 +11,7 @@ interface DataExplorerLinearChartProps {
   explanation: string;
 }
 
-const DataExplorerLinearChart: React.FC<DataExplorerLinearChartProps> = (
+const DataExplorerLineChart: React.FC<DataExplorerLinearChartProps> = (
   props
 ) => {
   const { xAxisData, yAxisData, label, isFetching, explanation } = props;
@@ -69,4 +69,4 @@ const DataExplorerLinearChart: React.FC<DataExplorerLinearChartProps> = (
   );
 };
 
-export default DataExplorerLinearChart;
+export default DataExplorerLineChart;

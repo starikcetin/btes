@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-//scss
-import './DataExplorerBlockTransactionCard.scss';
 import { BlockTx } from '../../apis/SingleBlockAPI';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
@@ -9,6 +7,8 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
 import DataExplorerAddressDetailModal from '../DataExplorerAddressDetailModal/DataExplorerAddressDetailModal';
+//scss
+import './DataExplorerBlockTransactionCard.scss';
 
 interface DataExplorerBlockTransactionCardProps {
   tx: BlockTx;

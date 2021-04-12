@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import DataExplorerLinearChart from '../../components/DataExplorerLinearChart/DataExplorerLinearChart';
+import DataExplorerLineChart from '../../components/DataExplorerLinearChart/DataExplorerLineChart';
 import DataExplorerTopInfo from '../../components/DataExplorerTopInfo/DataExplorerTopInfo';
 import DataExplorerBlockList from '../../components/DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
@@ -108,7 +108,7 @@ const DataExplorer = () => {
         <div className="row">
           <div className="col-12 col-md-12">
             {chartsData ? (
-              <DataExplorerLinearChart
+              <DataExplorerLineChart
                 isFetching={isFetching}
                 label={`Price in ${vsCurrency.toUpperCase()}`}
                 xAxisData={chartsData?.pricesDates}
@@ -124,7 +124,7 @@ const DataExplorer = () => {
         <div className="row d-flex justify-content-around">
           <div className="col-12 col-md-5">
             {chartsData ? (
-              <DataExplorerLinearChart
+              <DataExplorerLineChart
                 isFetching={isFetching}
                 label={`Total Volume`}
                 xAxisData={chartsData?.totalVolumesDates}
@@ -140,7 +140,7 @@ const DataExplorer = () => {
 
           <div className="col-12 col-md-5">
             {chartsData ? (
-              <DataExplorerLinearChart
+              <DataExplorerLineChart
                 isFetching={isFetching}
                 label={`Market Cap`}
                 xAxisData={chartsData?.marketCapsDates}

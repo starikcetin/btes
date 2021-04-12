@@ -5,7 +5,7 @@ import { fetchTransactionList, Tx } from '../../apis/TransactionList';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
 import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
-
+//scss
 import './DataExplorerTransactionList.scss';
 
 interface DataExplorerTransactionListParams {

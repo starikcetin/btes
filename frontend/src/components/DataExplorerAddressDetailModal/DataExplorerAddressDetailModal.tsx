@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Table } from 'react-bootstrap';
 import LoaderMask from '../LoaderMask/LoaderMask';
-import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
 import { AddressBalance, fetchAddressDetail } from '../../apis/AddressAPI';
 
