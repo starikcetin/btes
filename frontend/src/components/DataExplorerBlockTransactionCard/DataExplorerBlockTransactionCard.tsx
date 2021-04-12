@@ -144,6 +144,13 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
           <span className="mr-4 btn btn-outline-success disabled ">
             {formatNumberToBitcoin(totalOut)}
           </span>
+          {tx.block_height ? (
+            <></>
+          ) : (
+            <span className="btn btn-outline-danger disabled ">
+              UNCONFIRMED
+            </span>
+          )}
         </div>
       </div>
       <hr />
