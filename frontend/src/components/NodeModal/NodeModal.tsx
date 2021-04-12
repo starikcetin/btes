@@ -42,7 +42,12 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
         {!hasValue(nodeUid) ? (
           <div>(Node not found)</div>
         ) : (
-          <Tabs defaultActiveKey="summary" id={node.nodeUid}>
+          <Tabs
+            defaultActiveKey="summary"
+            id={`comp-node-modal__tabs__${node.nodeUid}`}
+            unmountOnExit={true}
+            mountOnEnter={true}
+          >
             <Tab
               eventKey="summary"
               title="Summary"
