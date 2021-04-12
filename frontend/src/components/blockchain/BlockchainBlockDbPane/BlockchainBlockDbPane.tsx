@@ -59,7 +59,7 @@ export const BlockchainBlockDbPane: React.FC<BlockchainBlockDbPaneProps> = (
           />
           <div className="mt-3">
             {hasValue(selectedBlockchainBlock) ? (
-              <BlockchainBlockCard block={selectedBlockchainBlock} />
+              <BlockchainBlockCard {...props} block={selectedBlockchainBlock} />
             ) : (
               <Card.Text className="text-muted">
                 Click on a block in the tree above to see its details.
@@ -76,7 +76,7 @@ export const BlockchainBlockDbPane: React.FC<BlockchainBlockDbPaneProps> = (
           ) : (
             orphanBlocks.map((orphan) => (
               <div className="comp-blockchain-block-db-pane--orphan-block-card">
-                <BlockchainBlockCard block={orphan} />
+                <BlockchainBlockCard {...props} block={orphan} />
               </div>
             ))
           )}

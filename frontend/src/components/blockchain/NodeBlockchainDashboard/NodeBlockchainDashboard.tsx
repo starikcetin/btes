@@ -34,8 +34,10 @@ export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
   return (
     <div className="comp-node-blockchain-dashboard">
       <Tab.Container
-        id={`${nodeUid}__blockchain`}
+        id={`comp-node-blockchain-dashboard__tabs__${nodeUid}`}
         defaultActiveKey={tabKey.overview}
+        unmountOnExit={true}
+        mountOnEnter={true}
       >
         <Container>
           <Row>

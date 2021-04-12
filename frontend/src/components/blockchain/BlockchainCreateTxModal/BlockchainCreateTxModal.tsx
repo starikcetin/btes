@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
-import { hasValue } from '../../../common/utils/hasValue';
 import { useTxOutputGetter } from '../../../hooks/txGetters/useTxOutputGetter';
 import { BlockchainTxInputForm } from './comps/BlockchainTxInputForm/BlockchainTxInputForm';
 import { BlockchainTxOutputForm } from './comps/BlockchainTxOutputForm/BlockchainTxOutputForm';
@@ -18,6 +17,8 @@ import { hashJsonObj } from '../../../common/crypto/hashJsonObj';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
 import { simulationBridge } from '../../../services/simulationBridge';
 import { useTxGetterEverywhere } from '../../../hooks/txGetters/useTxGetterEverywhere';
+import { useTxInputSumCalculator } from '../../../hooks/useTxInputSumCalculator';
+import { useTxOutputSumCalculator } from '../../../hooks/useTxOutputSumCalculator';
 
 interface BlockchainCreateTxModalProps {
   show: boolean;
@@ -26,6 +27,7 @@ interface BlockchainCreateTxModalProps {
   nodeUid: string;
 }
 
+// TODO: reset state on close (separating the modal and the content might be the way to go)
 const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
   props
 ) => {
@@ -36,20 +38,13 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
 
   const getTx = useTxGetterEverywhere({ simulationUid, nodeUid });
   const getOutput = useTxOutputGetter(getTx);
+  const inputSumCalculator = useTxInputSumCalculator(getOutput);
+  const outputSumCalculator = useTxOutputSumCalculator();
 
-  const outputSum = _.sumBy(outputs.value, (o) => o.value);
+  const outputSum = outputSumCalculator(outputs.value);
 
   /** NaN if one of the outputs cannot be found. */
-  const inputSum = _.sumBy(inputs.value, (i) => {
-    if (i.isCoinbase) {
-      return 0;
-    }
-
-    const getResult = getOutput(i.previousOutput);
-    return hasValue(getResult) && hasValue(getResult.output)
-      ? getResult.output.value
-      : Number.NaN;
-  });
+  const inputSum = inputSumCalculator(inputs.value);
 
   const handleTxInputFormChange = (
     inputIndex: number,
@@ -129,7 +124,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
               </Card.Header>
               <Card.Body>
                 {inputs.value.map((input, index) => (
-                  <div className={index === 0 ? '' : 'mt-3'} key={index}>
+                  <div className="mt-3 global-first-mt-0" key={index}>
                     <BlockchainTxInputForm
                       value={input}
                       partialTxHash={decodedPartialTxHash}
@@ -160,7 +155,7 @@ const BlockchainCreateTxModal: React.FC<BlockchainCreateTxModalProps> = (
               </Card.Header>
               <Card.Body>
                 {outputs.value.map((output, index) => (
-                  <div className={index === 0 ? '' : 'mt-3'} key={index}>
+                  <div className="mt-3 global-first-mt-0" key={index}>
                     <BlockchainTxOutputForm
                       value={output}
                       onChange={(v) => handleTxOutputFormChange(index, v)}

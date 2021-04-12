@@ -116,7 +116,7 @@ export class BlockchainMiner {
     this.successfulAttempt = null;
   };
 
-  public readonly broadcastMinedBlock = (): void => {
+  public readonly assembleMinedBlock = (): BlockchainBlock => {
     if (this.currentState.state !== 'stopped') {
       throw new Error(
         `Miner expected 'stopepd' state, but it is: ${this.currentState}`
@@ -135,35 +135,29 @@ export class BlockchainMiner {
       );
     }
 
-    const block = this.assembleBlock(
+    return this.assembleBlock(
       this.currentState.task.blockTemplate,
       this.successfulAttempt
     );
 
-    const parent = this.blockDb.getBlockInBlockchain(block.header.previousHash);
-
-    // add to own block db
-    if (hasValue(parent)) {
-      this.blockDb.addToBlockchain(block, parent);
-    } else {
-      console.warn(
-        'miner could not find the parent block in its own database, ignoring: ',
-        block.header.previousHash
-      );
-
-      // TODO: should we return here? or maybe add the block to self as orphan?
-    }
-
-    // broadcast to other nodes
-    this.network.broadcastBlock(block);
-
-    this.dismissStoppedState();
+    // Deprecated: See the comment above the method definition.
+    // this.acceptMinedBlock(
+    //   block,
+    //   this.currentState.task.blockTemplate.includedTxHashes
+    // );
   };
 
   private readonly assembleBlock = (
     template: BlockchainBlockTemplate,
     successfulAttempt: MiningAttempt
   ): BlockchainBlock => {
+    const coinbaseTx = this.assembleCoinbaseTx(template);
+
+    // TODO: maybe we should do this before starting mining. that way minimizing the chance of missing or overwritten txs after mining.
+    const includedTxs = template.includedTxHashes
+      .map(this.txDb.findTxInMempool)
+      .filter(hasValue);
+
     return {
       header: {
         previousHash: template.previousHash,
@@ -171,8 +165,7 @@ export class BlockchainMiner {
         timestamp: successfulAttempt.timestamp,
         nonce: successfulAttempt.nonce,
       },
-      // TODO: take other txs from the template after implementing that on frontend
-      txs: [this.assembleCoinbaseTx(template)],
+      txs: [coinbaseTx, ...includedTxs],
     };
   };
 
@@ -188,7 +181,7 @@ export class BlockchainMiner {
       ],
       outputs: [
         {
-          value: template.value,
+          value: template.value + template.includedTxsTotalFee,
           lockingScript: {
             address: template.recipientAddress,
           },
@@ -266,4 +259,35 @@ export class BlockchainMiner {
 
     console.log('miner stopped: ', report);
   };
+
+  // Previously, I wanted to implement it such that the nodes accept their own blocks without checks.
+  // However, it proved difficult to implement and started to introduce many code duplications.
+  // Therefore I decided to give that up and make nodes run their own blocks through the same procedure
+  // that foreign blocks go through. Therefore, this method is now obsolete, but I am commenting it out
+  // instead of removing it; in case we want to return back to this in the future.
+  // ~~ Tarık, 2021-04-10 23:57
+  //
+  // private readonly acceptMinedBlock = (
+  //   block: BlockchainBlock,
+  //   includedTxHashes: string[]
+  // ) => {
+  //   // Pop included txs from mempool
+  //   includedTxHashes.forEach(this.txDb.removeFromMempool);
+  //
+  //   const parent = this.blockDb.getBlockInBlockchain(block.header.previousHash);
+  //
+  //   // add to own block db
+  //   if (hasValue(parent)) {
+  //     this.blockDb.addToBlockchain(block, parent);
+  //   } else {
+  //     console.warn(
+  //       'miner could not find the parent block in its own database, adding to orphanage. block hash:',
+  //       block.header.previousHash
+  //     );
+  //     this.blockDb.addToOrphanage(block);
+  //   }
+  //
+  //   // broadcast to other nodes
+  //   this.network.broadcastBlock(block);
+  // };
 }

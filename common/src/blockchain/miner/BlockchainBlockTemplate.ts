@@ -8,4 +8,8 @@ export interface BlockchainBlockTemplate {
   readonly value: number;
   readonly previousHash: string;
   readonly difficultyTarget: number;
+  readonly includedTxHashes: string[];
+
+  // TODO: this should be calculated on the backend with the given includedTxHashes
+  readonly includedTxsTotalFee: number;
 }
