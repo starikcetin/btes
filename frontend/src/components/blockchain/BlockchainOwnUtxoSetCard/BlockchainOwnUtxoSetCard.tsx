@@ -1,20 +1,15 @@
-import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 import './BlockchainOwnUtxoSetCard.scss';
 import { RootState } from '../../../state/RootState';
 import { hasValue } from '../../../common/utils/hasValue';
-import { BlockchainKeyPair } from '../../../common/blockchain/crypto/BlockchainKeyPair';
-import { decodeString } from '../../../common/blockchain/utils/decodeString';
-import { createKeyPair } from '../../../common/blockchain/utils/createKeyPair';
-import { verifyPrivateKey } from '../../../common/crypto/verifyPrivateKey';
-import { simulationBridge } from '../../../services/simulationBridge';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
 import { useTxOutputGetter } from '../../../hooks/txGetters/useTxOutputGetter';
 import { useTxGetterEverywhere } from '../../../hooks/txGetters/useTxGetterEverywhere';
 import { txGetPlaceToDisplayString } from '../../../utils/txGetPlaceToDisplayString';
+import { useFundsCalculator } from '../../../hooks/useFundsCalculator';
 
 interface BlockchainOwnUtxoSetCardProps {
   simulationUid: string;
@@ -33,6 +28,9 @@ export const BlockchainOwnUtxoSetCard: React.FC<BlockchainOwnUtxoSetCardProps> =
   );
 
   const outputGetter = useTxOutputGetter(useTxGetterEverywhere({ ...props }));
+  const fundsCalculator = useFundsCalculator(outputGetter);
+
+  const totalFunds = fundsCalculator(ownUtxoSet);
 
   const renderOutpointEntryContent = (outpoint: BlockchainTxOutPoint) => {
     const outputLookup = outputGetter(outpoint);
@@ -60,37 +58,37 @@ export const BlockchainOwnUtxoSetCard: React.FC<BlockchainOwnUtxoSetCardProps> =
     );
   };
 
-  const renderOutpointEntries = () => {
-    return ownUtxoSet.map((outpoint, index) => (
-      <>
-        <hr />
-        <div key={index}>{renderOutpointEntryContent(outpoint)}</div>
-      </>
-    ));
-  };
-
   return (
     <div>
       <Card>
         <Card.Header>
           Unspent Transaction Outputs ({ownUtxoSet.length})
+          <span className="float-right">
+            Total funds: <code>{isNaN(totalFunds) ? '?' : totalFunds}</code>
+          </span>
         </Card.Header>
         <Card.Body>
           <Card.Text>
             <small className="text-muted">
-              <div>
-                This list shows transaction outputs that this node can spend,
-                but has not spent yet. Spending: Referencing a transaction
-                output in the input of another transaction.
-              </div>
+              This list shows transaction outputs that this node can spend, but
+              has not spent yet. Outputs are considered spent when they are
+              referenced by an input of another valid transaction.
             </small>
           </Card.Text>
           {ownUtxoSet.length <= 0 ? (
-            <Card.Text className="text-muted">
-              No unspent transaction outputs.
-            </Card.Text>
+            <>
+              <hr />
+              <Card.Text className="text-muted">
+                No unspent transaction outputs.
+              </Card.Text>
+            </>
           ) : (
-            renderOutpointEntries()
+            ownUtxoSet.map((outpoint) => (
+              <>
+                <hr />
+                <div>{renderOutpointEntryContent(outpoint)}</div>
+              </>
+            ))
           )}
         </Card.Body>
       </Card>
