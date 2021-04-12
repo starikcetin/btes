@@ -7,15 +7,11 @@ import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
 import { BlockchainNetwork } from './BlockchainNetwork';
 import { BlockchainTxDb } from './BlockchainTxDb';
 import { BlockchainBlockDb } from './BlockchainBlockDb';
-import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
 import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
 import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
+// import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
 
-/**
- * Non-deterministic
- * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch05.asciidoc#nondeterministic-random-wallets
- */
 export class BlockchainWallet {
   private readonly socketEmitter: SimulationNamespaceEmitter;
   private readonly network: BlockchainNetwork;
@@ -119,18 +115,18 @@ export class BlockchainWallet {
   //   // broadcast to peers
   //   this.network.broadcastTx(tx);
   // };
-
-  private readonly isTxOrphan = (tx: BlockchainTx): boolean => {
-    return tx.inputs.some(this.isInputOrphan);
-  };
-
-  private readonly isInputOrphan = (input: BlockchainTxInput) => {
-    return !(
-      input.isCoinbase ||
-      this.txDb.isTxInMempool(input.previousOutput.txHash) ||
-      this.blockDb.isTxInMainBranch(input.previousOutput.txHash)
-    );
-  };
+  //
+  // private readonly isTxOrphan = (tx: BlockchainTx): boolean => {
+  //   return tx.inputs.some(this.isInputOrphan);
+  // };
+  //
+  // private readonly isInputOrphan = (input: BlockchainTxInput) => {
+  //   return !(
+  //     input.isCoinbase ||
+  //     this.txDb.isTxInMempool(input.previousOutput.txHash) ||
+  //     this.blockDb.isTxInMainBranch(input.previousOutput.txHash)
+  //   );
+  // };
 
   /** Is the given output sent to this node? */
   private readonly isMine = (output: BlockchainTxOutput) => {
