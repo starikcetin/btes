@@ -15,8 +15,8 @@ export class BlockchainBroadcastTxCommand implements SimulationCommand {
   }
 
   public readonly execute = (): void => {
-    this.simulation.nodeMap[
-      this.eventPayload.nodeUid
-    ].blockchainApp.wallet.broadcastTx(this.eventPayload.tx);
+    this.simulation.nodeMap[this.eventPayload.nodeUid].blockchainApp.receiveTx(
+      this.eventPayload.tx
+    );
   };
 }

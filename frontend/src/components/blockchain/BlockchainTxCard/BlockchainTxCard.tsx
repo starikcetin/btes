@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Badge, Card, Col, ListGroup, Row } from 'react-bootstrap';
 
 import './BlockchainTxCard.scss';
@@ -16,10 +16,13 @@ interface BlockchainTxCardProps {
   simulationUid: string;
   nodeUid: string;
   tx: BlockchainTx;
+  /** Will be rendered in the header, floating right. */
+  children?: ReactNode;
 }
 
+/** Children will be rendered in the header, floating right. */
 export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
-  const { simulationUid, nodeUid, tx } = props;
+  const { simulationUid, nodeUid, tx, children } = props;
   const { inputs, outputs } = tx;
 
   const getTx = useTxGetterEverywhere({ simulationUid, nodeUid });
@@ -120,7 +123,8 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
     <div className="comp-blockchain-tx-card">
       <Card>
         <Card.Header>
-          Transaction <code className="global-break-all">{txHash}</code>
+          Transaction <code className="global-break-all">{txHash}</code>{' '}
+          {hasValue(children) && <div className="float-right">{children}</div>}
         </Card.Header>
         <Card.Body>
           <Row>

@@ -1,13 +1,24 @@
+import _ from 'lodash';
 import React, { useMemo, useState } from 'react';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { useArray } from 'react-hanger';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 import './BlockchainMinerIdleView.scss';
 import { Tree } from '../../../../../common/tree/Tree';
-import { BlockchainMinerIdleState } from '../../../../../../../common/src/blockchain/miner/BlockchainMinerStateData';
+import { BlockchainMinerIdleState } from '../../../../../common/blockchain/miner/BlockchainMinerStateData';
 import { simulationBridge } from '../../../../../services/simulationBridge';
 import { RootState } from '../../../../../state/RootState';
 import { hasValue } from '../../../../../common/utils/hasValue';
+import { useTxsTotalFeeCalculator } from '../../../../../hooks/useTxsTotalFeeCalculator';
+import { useTxFeeCalculator } from '../../../../../hooks/useTxFeeCalculator';
+import { useTxInputSumCalculator } from '../../../../../hooks/useTxInputSumCalculator';
+import { useTxOutputSumCalculator } from '../../../../../hooks/useTxOutputSumCalculator';
+import { useTxOutputGetter } from '../../../../../hooks/txGetters/useTxOutputGetter';
+import { useTxGetterEverywhere } from '../../../../../hooks/txGetters/useTxGetterEverywhere';
+import { BlockchainTxCard } from '../../../BlockchainTxCard/BlockchainTxCard';
 
 interface BlockchainMinerIdleViewProps {
   simulationUid: string;
@@ -15,6 +26,7 @@ interface BlockchainMinerIdleViewProps {
   state: BlockchainMinerIdleState;
 }
 
+// TODO: reset state when not visible
 export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
   props
 ) => {
@@ -49,12 +61,48 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
           value,
           previousHash,
           difficultyTarget,
+          includedTxHashes: includedTxHashes.value,
+          includedTxsTotalFee,
         },
       },
     });
   };
 
   const ownAddress = appData.wallet.keyPair?.address;
+
+  /* other txs */
+  const txGetter = useTxGetterEverywhere({ simulationUid, nodeUid });
+  const outputGetter = useTxOutputGetter(txGetter);
+  const inputSumCalculator = useTxInputSumCalculator(outputGetter);
+  const outputSumCalculator = useTxOutputSumCalculator();
+  const txFeeCalculator = useTxFeeCalculator(
+    inputSumCalculator,
+    outputSumCalculator
+  );
+  const totalTxFeeCalculator = useTxsTotalFeeCalculator(txFeeCalculator);
+
+  const mempoolTxLookup = useSelector(
+    (state: RootState) =>
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.txDb
+        .mempoolTxLookup
+  );
+
+  const mempoolTxHashes = _.keys(mempoolTxLookup);
+
+  const includedTxHashes = useArray<string>([]);
+  const includedTxLookup = _.pick(mempoolTxLookup, includedTxHashes.value);
+
+  const notIncludedTxHashes = _.without(
+    mempoolTxHashes,
+    ...includedTxHashes.value
+  );
+  const notIncludedTxLookup = _.pick(mempoolTxLookup, notIncludedTxHashes);
+
+  const includedTxsTotalFee = totalTxFeeCalculator(_.values(includedTxLookup));
+
+  const includeTx = (txHash: string) => includedTxHashes.push(txHash);
+  const excludeTx = (txHash: string) =>
+    includedTxHashes.removeIndex(includedTxHashes.value.indexOf(txHash));
 
   return (
     <div className="comp-blockchain-miner-idle-view">
@@ -69,7 +117,7 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
               air. This transaction is called a <b>coinbase transaction</b>.
             </Card.Text>
 
-            <Form.Group controlId="formBasicEmail">
+            <Form.Group>
               <Form.Label>Coinbase</Form.Label>
               <Form.Control
                 as="textarea"
@@ -84,7 +132,7 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
               </Form.Text>
             </Form.Group>
 
-            <Form.Group controlId="formBasicPassword">
+            <Form.Group>
               <Form.Label>Recipient Address</Form.Label>
               <InputGroup>
                 <Form.Control
@@ -116,7 +164,7 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
               </Form.Text>
             </Form.Group>
 
-            <Form.Group controlId="formBasicEmail">
+            <Form.Group>
               <Form.Label>Value</Form.Label>
               <InputGroup>
                 <Form.Control
@@ -132,12 +180,19 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                   >
                     Use configuration
                   </Button>
+                  <InputGroup.Text>
+                    + Fees of included transactions
+                  </InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
               <Form.Text className="text-muted">
                 The amount of currency generated by this block, mining reward.
                 Setting this above what the blockchain configuration allows will
                 cause other nodes to reject this block.
+              </Form.Text>
+              <Form.Text className="text-muted">
+                The value you are enetring is the block reward only. Fees of
+                included transactions are added implicitly.
               </Form.Text>
             </Form.Group>
 
@@ -147,7 +202,7 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
               These fields are about the block itself.
             </Card.Text>
 
-            <Form.Group controlId="formBasicEmail">
+            <Form.Group>
               <Form.Label>Previous Hash</Form.Label>
               <InputGroup>
                 <Form.Control
@@ -163,18 +218,18 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
                       setPreviousHash(tree.mainBranchHead?.id ?? '')
                     }
                   >
-                    Set to active branch leaf
+                    Set to main branch head
                   </Button>
                 </InputGroup.Append>
               </InputGroup>
               <Form.Text className="text-muted">
-                Selecting the leaf of the active branch as the previous block
-                (which means extending the main branch) minimises the chances of
-                this block becoming <em>stale</em>.
+                Selecting the head of the main branch as the previous block
+                (which means extending from the latest block on the main branch)
+                minimises the chances of this block becoming <em>stale</em>.
               </Form.Text>
             </Form.Group>
 
-            <Form.Group controlId="formBasicEmail">
+            <Form.Group>
               <Form.Label>Difficulty Target</Form.Label>
               <InputGroup>
                 <Form.Control
@@ -209,7 +264,76 @@ export const BlockchainMinerIdleView: React.FC<BlockchainMinerIdleViewProps> = (
               You can add other transacitons to your block in order to collect
               their <b>transaction fees</b>.
             </Card.Text>
-            <Card.Text className="text-muted">To be implemented</Card.Text>
+
+            <Card>
+              <Card.Header>
+                <span>
+                  Included Transactions ({includedTxHashes.value.length})
+                </span>
+                <span className="float-right">
+                  Total fee:{' '}
+                  <code>
+                    {isNaN(includedTxsTotalFee) ? '?' : includedTxsTotalFee}
+                  </code>
+                </span>
+              </Card.Header>
+              <Card.Body>
+                {includedTxHashes.value.length <= 0 ? (
+                  <Card.Text className="text-muted">
+                    No transactions included.
+                  </Card.Text>
+                ) : (
+                  includedTxHashes.value.map((txHash) => (
+                    <div className="mt-3 global-first-mt-0">
+                      <BlockchainTxCard
+                        {...props}
+                        tx={includedTxLookup[txHash]}
+                      >
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          className="py-0"
+                          onClick={() => excludeTx(txHash)}
+                        >
+                          <FontAwesomeIcon size="sm" icon={faMinus} />
+                        </Button>
+                      </BlockchainTxCard>
+                    </div>
+                  ))
+                )}
+              </Card.Body>
+            </Card>
+
+            <Card className="mt-3">
+              <Card.Header>
+                Available Transactions in Mempool ({notIncludedTxHashes.length})
+              </Card.Header>
+              <Card.Body>
+                {notIncludedTxHashes.length <= 0 ? (
+                  <Card.Text className="text-muted">
+                    No available transactions.
+                  </Card.Text>
+                ) : (
+                  notIncludedTxHashes.map((txHash) => (
+                    <div className="mt-3 global-first-mt-0">
+                      <BlockchainTxCard
+                        {...props}
+                        tx={notIncludedTxLookup[txHash]}
+                      >
+                        <Button
+                          variant="success"
+                          size="sm"
+                          className="py-0"
+                          onClick={() => includeTx(txHash)}
+                        >
+                          <FontAwesomeIcon size="sm" icon={faPlus} />
+                        </Button>
+                      </BlockchainTxCard>
+                    </div>
+                  ))
+                )}
+              </Card.Body>
+            </Card>
           </Form>
         </Card.Body>
         <Card.Footer className="d-flex justify-content-center">

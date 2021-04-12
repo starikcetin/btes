@@ -15,8 +15,12 @@ export class BlockchainBroadcastMinedBlockCommand implements SimulationCommand {
   }
 
   public readonly execute = (): void => {
-    this.simulation.nodeMap[
+    const { blockchainApp } = this.simulation.nodeMap[
       this.eventPayload.nodeUid
-    ].blockchainApp.miner.broadcastMinedBlock();
+    ];
+
+    const minedBock = blockchainApp.miner.assembleMinedBlock();
+    blockchainApp.miner.dismissStoppedState();
+    blockchainApp.receiveBlock(minedBock);
   };
 }
