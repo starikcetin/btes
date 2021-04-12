@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import './BlockchainWalletPane.scss';
 import { BlockchainKeyPairCard } from '../BlockchainKeyPairCard/BlockchainKeyPairCard';
 import BlockchainCreateTxModal from '../BlockchainCreateTxModal/BlockchainCreateTxModal';
+import { BlockchainOwnUtxoSetCard } from '../BlockchainOwnUtxoSetCard/BlockchainOwnUtxoSetCard';
 
 interface BlockchainWalletPaneProps {
   simulationUid: string;
@@ -20,6 +21,12 @@ export const BlockchainWalletPane: React.FC<BlockchainWalletPaneProps> = (
   return (
     <div className="comp-blockchain-wallet-pane">
       <BlockchainKeyPairCard simulationUid={simulationUid} nodeUid={nodeUid} />
+      <div className="mt-3">
+        <BlockchainOwnUtxoSetCard
+          simulationUid={simulationUid}
+          nodeUid={nodeUid}
+        />
+      </div>
       <div className="mt-3 d-flex justify-content-center">
         <Button variant="primary" onClick={() => setIsCreateTxModalOpen(true)}>
           Create Transaction
