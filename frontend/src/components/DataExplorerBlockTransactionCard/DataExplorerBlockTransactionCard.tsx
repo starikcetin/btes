@@ -48,11 +48,11 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
         closeHandler={() => setViewingAddress(null)}
         address={viewingAddress}
       />
-      <div className="row d-flex justify-content-between text-secondary mb-2 border p-4">
+      <div className="row d-flex justify-content-between text-secondary mb-2 h6 p-4">
         <div className="col-10 text-truncate text-left">
           <span className="mr-4">Hash</span>
           <span
-            className="text-info comp-data-explorer-block-transaction-card-header-hash-span"
+            className="text-primary comp-data-explorer-block-transaction-card-header-hash-span"
             onClick={() => {
               setViewingTransaction(tx.hash);
             }}
@@ -63,6 +63,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
         <div className="col-2 text-right">
           {formatTimestampForTimeInput(tx.time)}
         </div>
+        <hr />
       </div>
       <div className="row">
         <div className="col-5">
@@ -71,7 +72,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
               {tx.inputs.map((input) => (
                 <tr className="row" key={input.index}>
                   <td
-                    className="col-8 text-truncate text-info"
+                    className="col-8 text-truncate text-secondary comp-data-explorer-block-transaction-card-address-td"
                     onClick={() => {
                       setViewingAddress(
                         input.prev_out?.addr ? input.prev_out.addr : null
@@ -105,7 +106,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
               {tx.out.map((out) => (
                 <tr className="row" key={out.addr}>
                   <td
-                    className="col-8 text-truncate text-info"
+                    className="col-8 text-truncate text-secondary comp-data-explorer-block-transaction-card-address-td"
                     onClick={() => {
                       setViewingAddress(out?.addr ? out.addr : null);
                     }}
