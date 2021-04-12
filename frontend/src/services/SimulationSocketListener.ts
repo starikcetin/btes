@@ -23,6 +23,7 @@ import { TxAddedToMempoolPayload } from '../common/socketPayloads/TxAddedToMempo
 import { TxAddedToOrphanagePayload } from '../common/socketPayloads/TxAddedToOrphanagePayload';
 import { TxRemovedFromMempoolPayload } from '../common/socketPayloads/TxRemovedFromMempoolPayload';
 import { TxsRemovedFromOrphanagePayload } from '../common/socketPayloads/TxsRemovedFromOrphanagePayload';
+import { BlockchainOwnUtxoSetChangedPayload } from '../../../common/src/socketPayloads/BlockchainOwnUtxoSetChangedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -105,6 +106,10 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.txsRemovedFromOrphanage,
       this.handleTxsRemovedFromOrphanage
+    );
+    socket.on(
+      socketEvents.simulation.blockchainOwnUtxoSetChanged,
+      this.handleBlockchainOwnUtxoSetChanged
     );
 
     socket.onAny(this.handleAny);
@@ -424,6 +429,17 @@ export class SimulationSocketListener {
   ) => {
     store.dispatch(
       simulationSlice.actions.blockAddedToBlockchain({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+  };
+
+  private readonly handleBlockchainOwnUtxoSetChanged = (
+    body: BlockchainOwnUtxoSetChangedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.blockchainOwnUtxoSetChanged({
         simulationUid: this.simulationUid,
         ...body,
       })
