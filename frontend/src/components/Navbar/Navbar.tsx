@@ -63,6 +63,15 @@ const Navbar: React.FC = () => {
             </li>
             <li className="nav-item">
               <NavLink
+                to="/help"
+                className="nav-link "
+                activeClassName="active"
+              >
+                Help
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
                 to="/about"
                 className="nav-link"
                 activeClassName="active"
