@@ -1,4 +1,4 @@
-import { BlockchainTxOutPoint } from '../../../../../backend/src/common/blockchain/tx/BlockchainTxOutPoint';
+import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
 
 export interface BlockchainOwnUtxoSetChangedActionPayload {
   readonly simulationUid: string;
