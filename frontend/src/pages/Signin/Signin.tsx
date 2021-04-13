@@ -93,14 +93,14 @@ const Signin: React.FC = () => {
             <form action="#">
               <div className="form-group">
                 <label htmlFor="page-signin__username" className="form-label">
-                  Username
+                  Username or email address
                 </label>
                 <i className="fa fa-user"></i>
                 <input
                   type="text"
                   className="page-signin--form-control form-control"
                   id="page-signin__username"
-                  placeholder="username"
+                  placeholder="username or email"
                   required
                 />
               </div>
@@ -128,7 +128,7 @@ const Signin: React.FC = () => {
                   className="form-check-label"
                   htmlFor="page-signin__remember"
                 >
-                  Keep me logged in
+                  Keep me signed in
                 </label>
                 <label className="label success">
                   &nbsp;&nbsp;
@@ -141,7 +141,7 @@ const Signin: React.FC = () => {
                 type="submit"
                 className="btn page-signin--btn-custom btn-lg btn-block mt-5 "
               >
-                Login Now
+                Sign in Now
               </button>
               <label className="p-3">
                 Not a member yet?{' '}

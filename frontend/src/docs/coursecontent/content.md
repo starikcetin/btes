@@ -1,9 +1,8 @@
 # $$$START$$$
 
-![The requested url was not found on this server.](./res/content.jpg "content")
+![The requested url was not found on this server.](./res/contentsbanner.jpeg "content")
 
-# <span style="color: #EEA72C;"> Course Content </span>  
-&nbsp;
+# <span style="color: #422420"> Course Content </span>  
 #### **This course includes :** 
 
 ##### 1. Platform Basics
