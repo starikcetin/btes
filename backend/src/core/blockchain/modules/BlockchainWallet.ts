@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { BlockchainWalletSnapshot } from '../../../common/blockchain/snapshots/BlockchainWalletSnapshot';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
@@ -11,6 +13,7 @@ import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTx
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
 import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 // import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
+import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 
 export class BlockchainWallet {
   private readonly socketEmitter: SimulationNamespaceEmitter;
@@ -61,14 +64,29 @@ export class BlockchainWallet {
      */
     let dirtyFlag = false;
 
+    // additions
     for (const tx of txs) {
       const txHash = hashTx(tx);
 
       for (let i = 0; i < tx.outputs.length; i++) {
-        const output = tx.outputs[i];
+        const outPoint = { txHash, outputIndex: i };
 
-        if (this.isMine(output)) {
-          this.ownUtxoSet.push({ txHash, outputIndex: i });
+        if (!this.hasUtxo(outPoint) && this.isMine(tx.outputs[i])) {
+          this.addUtxo(outPoint);
+          dirtyFlag = true;
+        }
+      }
+    }
+
+    // removals
+    for (const tx of txs) {
+      for (const input of tx.inputs) {
+        if (input.isCoinbase) {
+          continue;
+        }
+
+        const poppedUtxos = this.popUtxos(input.previousOutput);
+        if (poppedUtxos.length > 0) {
           dirtyFlag = true;
         }
       }
@@ -81,6 +99,15 @@ export class BlockchainWallet {
       });
     }
   };
+
+  private readonly addUtxo = (utxo: BlockchainTxOutPoint) =>
+    this.ownUtxoSet.push(utxo);
+
+  private readonly hasUtxo = (utxo: BlockchainTxOutPoint) =>
+    this.ownUtxoSet.some((u) => areOutPointsEqual(u, utxo));
+
+  private readonly popUtxos = (outPoint: BlockchainTxOutPoint) =>
+    _.remove(this.ownUtxoSet, (u) => areOutPointsEqual(u, outPoint));
 
   /** Saves the given key pair if we don't already have one. */
   public readonly saveKeyPair = (keyPair: BlockchainKeyPair): void => {
