@@ -33,9 +33,6 @@ export const Help: React.FC = () => {
 
   // scroll to top when doc id changes
   useEffect(() => {
-    console.log('mdRoot: ', mdContent);
-    console.log('mdContent: ', mdContent);
-
     mdContent?.scrollTo(0, 0);
   }, [id, mdContent]);
 
