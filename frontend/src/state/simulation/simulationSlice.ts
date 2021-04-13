@@ -473,6 +473,9 @@ export const simulationSlice = createSlice({
       sim.nodeMap[
         payload.nodeUid
       ].blockchainApp.blockDb.sideBranchesTxLookup = sideBranchesTxLookup;
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.mainBranchHeadHash =
+        tree.mainBranchHead?.id ?? null;
     },
     blockAddedToOrphanage: (
       state,

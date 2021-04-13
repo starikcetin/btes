@@ -55,6 +55,7 @@ export const makeNodeData = (
         orphanageTxLookup: makeTxLookupFromBlockArray(
           blockchainApp.blockDb.orphanage
         ),
+        mainBranchHeadHash: blockchainTree.mainBranchHead?.id ?? null,
       },
     },
   };
