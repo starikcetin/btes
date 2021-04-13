@@ -10,6 +10,7 @@ import { useTxOutputGetter } from '../../../hooks/txGetters/useTxOutputGetter';
 import { useTxGetterEverywhere } from '../../../hooks/txGetters/useTxGetterEverywhere';
 import { txGetPlaceToDisplayString } from '../../../utils/txGetPlaceToDisplayString';
 import { useFundsCalculator } from '../../../hooks/useFundsCalculator';
+import { useKeyGenerator } from '../../../hooks/useKeyGenerator';
 
 interface BlockchainOwnUtxoSetCardProps {
   simulationUid: string;
@@ -20,6 +21,8 @@ export const BlockchainOwnUtxoSetCard: React.FC<BlockchainOwnUtxoSetCardProps> =
   props
 ) => {
   const { simulationUid, nodeUid } = props;
+
+  const keyGen = useKeyGenerator();
 
   const ownUtxoSet = useSelector(
     (state: RootState) =>
@@ -32,20 +35,22 @@ export const BlockchainOwnUtxoSetCard: React.FC<BlockchainOwnUtxoSetCardProps> =
 
   const totalFunds = fundsCalculator(ownUtxoSet);
 
-  const renderOutpointEntryContent = (outpoint: BlockchainTxOutPoint) => {
-    const outputLookup = outputGetter(outpoint);
+  const renderUtxo = (utxo: BlockchainTxOutPoint, index: number) => {
+    const outputLookup = outputGetter(utxo);
+
     return (
-      <>
+      <div key={keyGen(utxo, index)}>
+        <hr />
         <div>
           Value: <code>{outputLookup?.output?.value ?? '?'}</code>{' '}
           <small className="text-muted">(value of the referenced output)</small>
         </div>
         <div>
           Transaction Hash:{' '}
-          <code className="global-break-all">{outpoint.txHash}</code>
+          <code className="global-break-all">{utxo.txHash}</code>
         </div>
         <div>
-          Output Index: <code>{outpoint.outputIndex}</code>
+          Output Index: <code>{utxo.outputIndex}</code>
         </div>
         <div>
           <small className="text-muted">
@@ -54,7 +59,7 @@ export const BlockchainOwnUtxoSetCard: React.FC<BlockchainOwnUtxoSetCardProps> =
               : 'Transaction not found.'}
           </small>
         </div>
-      </>
+      </div>
     );
   };
 
@@ -76,19 +81,14 @@ export const BlockchainOwnUtxoSetCard: React.FC<BlockchainOwnUtxoSetCardProps> =
             </small>
           </Card.Text>
           {ownUtxoSet.length <= 0 ? (
-            <>
+            <div>
               <hr />
               <Card.Text className="text-muted">
                 No unspent transaction outputs.
               </Card.Text>
-            </>
+            </div>
           ) : (
-            ownUtxoSet.map((outpoint) => (
-              <>
-                <hr />
-                <div>{renderOutpointEntryContent(outpoint)}</div>
-              </>
-            ))
+            ownUtxoSet.map(renderUtxo)
           )}
         </Card.Body>
       </Card>

@@ -5,6 +5,7 @@ import './BlockchainBlockCard.scss';
 import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
 import { hashBlock } from '../../../common/blockchain/utils/hashBlock';
 import { BlockchainTxCard } from '../BlockchainTxCard/BlockchainTxCard';
+import { useKeyGenerator } from '../../../hooks/useKeyGenerator';
 
 interface BlockchainBlockCardProps {
   simulationUid: string;
@@ -16,6 +17,7 @@ export const BlockchainBlockCard: React.FC<BlockchainBlockCardProps> = (
   props
 ) => {
   const { simulationUid, nodeUid, block } = props;
+  const keyGen = useKeyGenerator();
 
   return (
     <div className="comp-blockchain-block-card">
@@ -41,8 +43,8 @@ export const BlockchainBlockCard: React.FC<BlockchainBlockCardProps> = (
           <hr />
           <Card.Title>Transactions ({block.txs.length})</Card.Title>
           <div>
-            {block.txs.map((tx) => (
-              <div className="mt-3 global-first-mt-0">
+            {block.txs.map((tx, i) => (
+              <div className="mt-3 global-first-mt-0" key={keyGen(tx, i)}>
                 <BlockchainTxCard
                   simulationUid={simulationUid}
                   nodeUid={nodeUid}
