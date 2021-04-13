@@ -24,9 +24,6 @@ export const Help: React.FC = () => {
 
   // scroll to anchor tag when it changes
   useEffect(() => {
-    console.log('mdRoot: ', mdContent);
-    console.log('mdContent: ', mdContent);
-
     const element = document.getElementById(location.hash.replace('#', ''));
     mdContent?.scrollTo({
       behavior: 'smooth',
