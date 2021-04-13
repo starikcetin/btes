@@ -3,6 +3,8 @@ import { Modal, Table } from 'react-bootstrap';
 import LoaderMask from '../LoaderMask/LoaderMask';
 import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
 import { AddressBalance, fetchAddressDetail } from '../../apis/AddressAPI';
+import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
+import Pagination from '@material-ui/lab/Pagination';
 
 interface DataExplorerAddressDetailModalProps {
   closeHandler: () => void;
@@ -15,6 +17,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
   const { closeHandler, address } = props;
   const [data, setData] = useState<AddressBalance | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [activePage, setActivePage] = useState<number>(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,6 +25,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
         setIsFetching(true);
         const transaction = await fetchAddressDetail(address);
         setData(transaction);
+        setActivePage(1);
         setIsFetching(false);
       } catch (e) {
         setIsFetching(false);
@@ -36,7 +40,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
       onHide={closeHandler}
       backdrop="static"
       keyboard={false}
-      size="lg"
+      size="xl"
       scrollable
     >
       <Modal.Header closeButton>
@@ -46,7 +50,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
         {isFetching ? (
           <LoaderMask />
         ) : data ? (
-          <div className="container d-flex justify-content-center">
+          <div className="container">
             <Table hover>
               <tbody className="text-secondary">
                 <tr className="row">
@@ -79,6 +83,37 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
                 </tr>
               </tbody>
             </Table>
+            <div className="container">
+              <div className="row d-flex justify-content-center">
+                <Pagination
+                  count={Math.ceil((data?.txs ? data.txs.length : 0) / 10)}
+                  color="primary"
+                  variant="outlined"
+                  size="large"
+                  page={activePage}
+                  onChange={(e, value) => setActivePage(value)}
+                  showFirstButton
+                  showLastButton
+                />
+              </div>
+              {data.txs
+                ?.slice((activePage - 1) * 10, (activePage - 1) * 10 + 9)
+                .map((tx) => (
+                  <DataExplorerBlockTransactionCard tx={tx} />
+                ))}
+              <div className="row d-flex justify-content-center">
+                <Pagination
+                  count={Math.ceil((data?.txs ? data.txs.length : 0) / 10)}
+                  color="primary"
+                  variant="outlined"
+                  size="large"
+                  page={activePage}
+                  onChange={(e, value) => setActivePage(value)}
+                  showFirstButton
+                  showLastButton
+                />
+              </div>
+            </div>
           </div>
         ) : (
           <div>Data couldnt downloaded</div>
