@@ -47,5 +47,6 @@ export const socketEvents = {
     txRemovedFromMempool: 'simulation-tx-removed-from-mempool',
     txsRemovedFromOrphanage: 'simulation-txs-removed-from-orphanage',
     blockchainBroadcastTx: 'simulation-blockchain-broadcast-tx',
+    blockchainOwnUtxoSetChanged: 'simulation-blockchain-own-utxo-set-changed',
   },
 } as const;

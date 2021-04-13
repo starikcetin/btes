@@ -1,5 +1,5 @@
 import { hasValue } from '../../../common/utils/hasValue';
-import { SimulationNodeSnapshot } from '../../../../../common/src/SimulationNodeSnapshot';
+import { SimulationNodeSnapshot } from '../../../common/SimulationNodeSnapshot';
 import { NodeData } from '../data/NodeData';
 import { makeBlockLookup } from './makeBlockLookup';
 import { makeTxLookupsFromBlockTree } from './makeTxLookupsFromBlockTree';
@@ -55,6 +55,7 @@ export const makeNodeData = (
         orphanageTxLookup: makeTxLookupFromBlockArray(
           blockchainApp.blockDb.orphanage
         ),
+        mainBranchHeadHash: blockchainTree.mainBranchHead?.id ?? null,
       },
     },
   };

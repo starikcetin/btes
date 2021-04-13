@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { BlockchainBlock } from '../../../../../common/src/blockchain/block/BlockchainBlock';
+import { BlockchainBlock } from '../../../common/blockchain/block/BlockchainBlock';
 import { TreeNodeJsonObject } from '../../../common/tree/TreeNodeJsonObject';
 import { BlockLookup } from '../data/blockchain/BlockLookup';
 

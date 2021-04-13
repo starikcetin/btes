@@ -36,5 +36,12 @@ module.exports = {
       'error',
       { allow: 'as-needed', extensions: ['.tsx'] },
     ],
+    'react-hooks/exhaustive-deps': [
+      'warn',
+      {
+        enableDangerousAutofixThisMayCauseInfiniteLoops: true,
+        additionalHooks: '(useDeepCompareEffect|useDeepCompareEffectNoCheck)',
+      },
+    ],
   },
 };

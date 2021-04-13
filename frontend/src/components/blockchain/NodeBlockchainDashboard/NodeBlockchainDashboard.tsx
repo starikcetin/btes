@@ -1,6 +1,7 @@
+import _ from 'lodash';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Col, Container, Nav, Row, Tab } from 'react-bootstrap';
-import { hasValue } from '../../../common/utils/hasValue';
 
 import './NodeBlockchainDashboard.scss';
 import { BlockchainOverviewPane } from '../BlockchainOverviewPane/BlockchainOverviewPane';
@@ -8,6 +9,8 @@ import { BlockchainBlockDbPane } from '../BlockchainBlockDbPane/BlockchainBlockD
 import { BlockchainMinerPane } from '../BlockchainMinerPane/BlockchainMinerPane';
 import { BlockchainTxPoolPane } from '../BlockchainTxPoolPane/BlockchainTxPoolPane';
 import { BlockchainWalletPane } from '../BlockchainWalletPane/BlockchainWalletPane';
+import { hasValue } from '../../../common/utils/hasValue';
+import { RootState } from '../../../state/RootState';
 
 const tabKey = {
   overview: 'overview',
@@ -19,13 +22,25 @@ const tabKey = {
 
 interface NodeBlockchainDashboardProps {
   simulationUid: string;
-  nodeUid: string | null;
+  nodeUid: string;
 }
 
 export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
   props
 ) => {
   const { simulationUid, nodeUid } = props;
+
+  const minerState = useSelector((state: RootState) => {
+    const currentState =
+      state.simulation[simulationUid].nodeMap[nodeUid].blockchainApp.miner
+        .currentState;
+
+    if (currentState.state === 'stopped') {
+      return currentState.stopReason;
+    } else {
+      return currentState.state;
+    }
+  });
 
   if (!hasValue(nodeUid)) {
     return <div>Node not found</div>;
@@ -56,7 +71,9 @@ export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
                   <Nav.Link eventKey={tabKey.wallet}>Wallet</Nav.Link>
                 </Nav.Item>
                 <Nav.Item className="text-lg-right">
-                  <Nav.Link eventKey={tabKey.miner}>Miner</Nav.Link>
+                  <Nav.Link eventKey={tabKey.miner}>
+                    Miner <small>({_.capitalize(minerState)})</small>
+                  </Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>

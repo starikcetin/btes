@@ -34,6 +34,7 @@ import { Tree } from '../../common/tree/Tree';
 import { TreeNode } from '../../common/tree/TreeNode';
 import { makeNodeData } from './utils/makeNodeData';
 import { makeTxLookupsFromBlockTree } from './utils/makeTxLookupsFromBlockTree';
+import { BlockchainOwnUtxoSetChangedActionPayload } from './actionPayloads/BlockchainOwnUtxoSetChangedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -472,6 +473,9 @@ export const simulationSlice = createSlice({
       sim.nodeMap[
         payload.nodeUid
       ].blockchainApp.blockDb.sideBranchesTxLookup = sideBranchesTxLookup;
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.mainBranchHeadHash =
+        tree.mainBranchHead?.id ?? null;
     },
     blockAddedToOrphanage: (
       state,
@@ -529,6 +533,24 @@ export const simulationSlice = createSlice({
         sim.nodeMap[payload.nodeUid].blockchainApp.blockDb.orphanageTxLookup,
         payload.removedBlocks.flatMap((b) => b.txs.map(hashTx))
       );
+    },
+
+    blockchainOwnUtxoSetChanged: (
+      state,
+      { payload }: PayloadAction<BlockchainOwnUtxoSetChangedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+
+      if (!sim) {
+        console.warn(
+          'Ignoring `blockchainOwnUtxoSetChanged`: no simulation with given uid. Payload:',
+          payload
+        );
+        return;
+      }
+
+      sim.nodeMap[payload.nodeUid].blockchainApp.wallet.ownUtxoSet =
+        payload.newOwnUtxoSet;
     },
 
     log: (state, { payload }: PayloadAction<SimulationLogActionPayload>) => {

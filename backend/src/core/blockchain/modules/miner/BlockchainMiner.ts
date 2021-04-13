@@ -257,7 +257,7 @@ export class BlockchainMiner {
     this.attemptBuffer.length = 0;
     this.activeMinerAborter = null;
 
-    console.log('miner stopped: ', report);
+    // console.log('miner stopped: ', report);
   };
 
   // Previously, I wanted to implement it such that the nodes accept their own blocks without checks.
