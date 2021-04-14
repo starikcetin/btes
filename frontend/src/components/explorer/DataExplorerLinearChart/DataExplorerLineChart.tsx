@@ -52,7 +52,7 @@ const DataExplorerLineChart: React.FC<DataExplorerLinearChartProps> = (
     scaleLabel: "<%= Number(value).toFixed(0).replace('.', ',') + '°C'%>",
   };
   return (
-    <div>
+    <div className="comp-data-explorer-line-chart">
       {isFetching ? (
         <LoaderMask></LoaderMask>
       ) : (
@@ -61,7 +61,7 @@ const DataExplorerLineChart: React.FC<DataExplorerLinearChartProps> = (
             <span className="h4 text-info d-block">{label}</span>
             <span className="text-secondary d-block small">{explanation}</span>
           </div>
-          <div className="comp-data-explorer-line-chart-header ml-5"></div>
+          <div className="comp-data-explorer-line-chart--header ml-5"></div>
           <Line height={100} data={data} options={options} />
         </div>
       )}

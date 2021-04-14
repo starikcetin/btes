@@ -8,6 +8,7 @@ import {
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
 import DataExplorerTransactionModal from '../../components/explorer/DataExplorerTransactionModal/DataExplorerTransactionModal';
+import './DataExplorerTransactionList.scss';
 
 interface DataExplorerTransactionListParams {
   isFull: string;
@@ -62,9 +63,12 @@ const DataExplorerBlockList: React.FC = () => {
           </div>
           {data ? (
             <div>
-              <Table hover className="comp-data-explorer-block-list-table">
+              <Table
+                hover
+                className="page-data-explorer-transaction-list--table"
+              >
                 <thead>
-                  <tr className="comp-data-explorer-block-list-table-header-row row">
+                  <tr className="page-data-explorer-transaction-list--table-header-row row">
                     <th className="col-4">Hash</th>
                     <th className="col-2">Time</th>
                     <th className="col-2">Size</th>
@@ -75,7 +79,7 @@ const DataExplorerBlockList: React.FC = () => {
                   {isFull
                     ? data.map((tx) => (
                         <tr
-                          className="row comp-data-explorer-block-list-table-body-row"
+                          className="row page-data-explorer-transaction-list--table-body-row"
                           key={tx.hash}
                           onClick={() => {
                             setViewingTransaction(tx.hash);
@@ -91,7 +95,7 @@ const DataExplorerBlockList: React.FC = () => {
                       ))
                     : data.slice(0, 6).map((tx) => (
                         <tr
-                          className="row comp-data-explorer-block-list-table-body-row"
+                          className="row page-data-explorer-transaction-list--table-body-row"
                           key={tx.hash}
                           onClick={() => {
                             setViewingTransaction(tx.hash);

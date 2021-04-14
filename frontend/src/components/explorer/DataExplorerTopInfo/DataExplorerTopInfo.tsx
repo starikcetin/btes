@@ -41,7 +41,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
     isFetching && data !== null ? (
       <LoaderMask />
     ) : (
-      <div className="container rounded border">
+      <div className="comp-data-explorer-top-info container rounded border">
         <div className="row d-flex justify-content-around">
           <div className="col-4 col-md-2 m-3">
             <span className="font-weight-bold">

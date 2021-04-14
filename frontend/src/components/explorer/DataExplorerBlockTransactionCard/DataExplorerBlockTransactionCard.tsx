@@ -39,7 +39,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
   const totalInput = calculateTotalInputValue(tx);
   const totalOut = calculateTotalOutValue(tx);
   return (
-    <div className="container p-5 comp-data-explorer-block-transaction-card-container">
+    <div className="container p-5 comp-data-explorer-block-transaction-card">
       <DataExplorerTransactionModal
         closeHandler={() => setViewingTransaction(null)}
         transactionHash={viewingTransaction}
@@ -52,7 +52,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
         <div className="col-10 text-truncate text-left">
           <span className="mr-4">Hash</span>
           <span
-            className="text-primary comp-data-explorer-block-transaction-card-header-hash-span"
+            className="text-primary comp-data-explorer-block-transaction-card--header-hash-span"
             onClick={() => {
               setViewingTransaction(tx.hash);
             }}
@@ -72,7 +72,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
               {tx.inputs.map((input) => (
                 <tr className="row" key={input.index}>
                   <td
-                    className="col-8 text-truncate text-secondary comp-data-explorer-block-transaction-card-address-td"
+                    className="col-8 text-truncate text-secondary comp-data-explorer-block-transaction-card--address-td"
                     onClick={() => {
                       setViewingAddress(
                         input.prev_out?.addr ? input.prev_out.addr : null
@@ -106,7 +106,7 @@ const DataExplorerBlockTransactionCard: React.FC<DataExplorerBlockTransactionCar
               {tx.out.map((out) => (
                 <tr className="row" key={out.addr}>
                   <td
-                    className="col-8 text-truncate text-secondary comp-data-explorer-block-transaction-card-address-td"
+                    className="col-8 text-truncate text-secondary comp-data-explorer-block-transaction-card--address-td"
                     onClick={() => {
                       setViewingAddress(out?.addr ? out.addr : null);
                     }}

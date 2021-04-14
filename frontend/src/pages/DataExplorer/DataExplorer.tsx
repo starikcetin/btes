@@ -41,7 +41,7 @@ const DataExplorer = () => {
   };
 
   return (
-    <div>
+    <div className="page-data-explorer">
       <div className="container">
         <div className="row">
           <div className="col-12 col-md-3 d-flex justify-content-center">
@@ -103,7 +103,7 @@ const DataExplorer = () => {
           <div className="col-12 col-md-8 m-2">
             <DataExplorerTopInfo vsCurrency={vsCurrency} currency={currency} />
           </div>
-          <hr className="comp-data-explorer-horizontal-divider" />
+          <hr className="page-data-explorer--horizontal-divider" />
         </div>
         <div className="row">
           <div className="col-12 col-md-12">
@@ -120,7 +120,7 @@ const DataExplorer = () => {
             )}
           </div>
         </div>
-        <hr className="comp-data-explorer-horizontal-divider" />
+        <hr className="page-data-explorer--horizontal-divider" />
         <div className="row d-flex justify-content-around">
           <div className="col-12 col-md-5">
             {chartsData ? (
@@ -154,7 +154,7 @@ const DataExplorer = () => {
             )}
           </div>
         </div>
-        <hr className="comp-data-explorer-horizontal-divider" />
+        <hr className="page-data-explorer--horizontal-divider" />
         <div className="row">
           <div className="col-md-6 col-12">
             <DataExplorerBlockList />

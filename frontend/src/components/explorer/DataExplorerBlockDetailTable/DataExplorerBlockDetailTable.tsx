@@ -15,7 +15,7 @@ const DataExplorerBlockDetailTable: React.FC<DataExplorerBlockTableProps> = (
 ) => {
   const { data } = props;
   return (
-    <div className="container d-flex justify-content-center comp-data-explorer-block-table-table-container">
+    <div className="container d-flex justify-content-center comp-data-explorer-block-detail-table">
       <Table hover>
         <tbody className="text-secondary">
           <tr className="row">

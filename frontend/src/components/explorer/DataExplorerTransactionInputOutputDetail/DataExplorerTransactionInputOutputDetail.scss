@@ -1,7 +1,7 @@
-.comp-data-explorer-transaction-input-output-detail-container {
+.comp-data-explorer-transaction-input-output-detail {
   font-size: small;
-}
 
-.comp-data-explorer-transaction-input-output-detail-address-td {
-  cursor: pointer;
+  &--address-td {
+    cursor: pointer;
+  }
 }

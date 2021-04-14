@@ -16,7 +16,7 @@ const DataExplorerTransactionInputOutputDetail: React.FC<DataExplorerTransaction
   const { inputs, outputs } = props;
   const [viewingAddress, setViewingAddress] = useState<string | null>(null);
   return (
-    <div className="container comp-data-explorer-transaction-input-output-detail-container">
+    <div className="container comp-data-explorer-transaction-input-output-detail">
       <DataExplorerAddressDetailModal
         closeHandler={() => setViewingAddress(null)}
         address={viewingAddress}
@@ -37,7 +37,7 @@ const DataExplorerTransactionInputOutputDetail: React.FC<DataExplorerTransaction
             <tr className="row">
               <td className="col-2">Address</td>
               <td
-                className="col-10 text-info comp-data-explorer-transaction-input-output-detail-address-td"
+                className="col-10 text-info comp-data-explorer-transaction-input-output-detail--address-td"
                 onClick={() => {
                   setViewingAddress(
                     input.prev_out?.addr ? input.prev_out.addr : null
@@ -77,7 +77,7 @@ const DataExplorerTransactionInputOutputDetail: React.FC<DataExplorerTransaction
             <tr className="row">
               <td className="col-2">Address</td>
               <td
-                className="col-4 text-info comp-data-explorer-transaction-input-output-detail-address-td"
+                className="col-4 text-info comp-data-explorer-transaction-input-output-detail--address-td"
                 onClick={() => {
                   setViewingAddress(out?.addr ? out.addr : null);
                 }}

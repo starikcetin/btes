@@ -36,7 +36,7 @@ const DataExplorerBlockList: React.FC = () => {
     fetchData();
   }, []);
   return (
-    <div className="container">
+    <div className="page-data-explorer-block-list container">
       <DataExplorerBlockModal
         closeHandler={() => setViewingBlock(null)}
         blockHeight={viewingBlock}
@@ -53,9 +53,9 @@ const DataExplorerBlockList: React.FC = () => {
           </div>
           {data ? (
             <div>
-              <Table hover className="comp-data-explorer-block-list-table p-1">
+              <Table hover className="page-data-explorer-block-list--table p-1">
                 <thead>
-                  <tr className="comp-data-explorer-block-list-table-header-row row">
+                  <tr className="page-data-explorer-block-list--table-header-row row">
                     <th className="col-2">Height</th>
                     <th className="col-4">Hash</th>
                     <th className="col-2">Tx Count</th>
@@ -66,7 +66,7 @@ const DataExplorerBlockList: React.FC = () => {
                   {isFull
                     ? data?.map((block) => (
                         <tr
-                          className="row comp-data-explorer-block-list-table-body-row"
+                          className="row page-data-explorer-block-list--table-body-row"
                           key={block.burn_block_height}
                           onClick={() => {
                             setViewingBlock(block.burn_block_height);
@@ -82,7 +82,7 @@ const DataExplorerBlockList: React.FC = () => {
                       ))
                     : data?.slice(0, 6).map((block) => (
                         <tr
-                          className="row comp-data-explorer-block-list-table-body-row"
+                          className="row page-data-explorer-block-list--table-body-row"
                           key={block.burn_block_height}
                           onClick={() => {
                             setViewingBlock(block.burn_block_height);

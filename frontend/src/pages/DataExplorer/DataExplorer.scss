@@ -1,8 +1,10 @@
-.comp-data-explorer-horizontal-divider {
-  width: 100%;
-  margin-left: 0;
-}
+.page-data-explorer {
+  &--horizontal-divider {
+    width: 100%;
+    margin-left: 0;
+  }
 
-.comp-data-explorer-vertical-divider {
-  border-left: 1px solid #808080;
+  &--vertical-divider {
+    border-left: 1px solid #808080;
+  }
 }

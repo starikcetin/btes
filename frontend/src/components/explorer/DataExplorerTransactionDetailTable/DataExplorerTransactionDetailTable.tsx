@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import { Transaction } from '../../../services/explorer/SingleTransactionAPI';
+import './DataExplorerTransactionDetailTable.scss';
 
 interface DataExplorerBlockTableProps {
   data: Transaction;
@@ -13,7 +14,7 @@ const DataExplorerTransactionDetailTable: React.FC<DataExplorerBlockTableProps> 
 ) => {
   const { data } = props;
   return (
-    <div className="container d-flex justify-content-center comp-data-explorer-block-table-table-container">
+    <div className="container d-flex justify-content-center comp-data-explorer-transaction-detail-table">
       <Table hover>
         <thead>
           <tr>
