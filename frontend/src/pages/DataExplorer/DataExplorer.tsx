@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataExplorerLineChart from '../../components/explorer/DataExplorerLinearChart/DataExplorerLineChart';
 import DataExplorerTopInfo from '../../components/explorer/DataExplorerTopInfo/DataExplorerTopInfo';
-import DataExplorerBlockList from '../../components/explorer/DataExplorerBlockList/DataExplorerBlockList';
+import DataExplorerBlockList from '../DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './DataExplorer.scss';
 import { VsCurrencies } from '../../services/explorer/CommonTypes';
@@ -9,7 +9,7 @@ import {
   CurrenciesChartData,
   fetchCurrencyChartsData,
 } from '../../services/explorer/CurrenciesChartAPI';
-import DataExplorerTransactionList from '../../components/explorer/DataExplorerTransactionList/DataExplorerTransactionList';
+import DataExplorerTransactionList from '../DataExplorerTransactionList/DataExplorerTransactionList';
 
 const DataExplorer = () => {
   const [chartsData, setChartsData] = useState<CurrenciesChartData | null>();
