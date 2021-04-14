@@ -8,9 +8,10 @@ import { useTxOutputGetter } from '../../../hooks/txGetters/useTxOutputGetter';
 import { useTxGetterEverywhere } from '../../../hooks/txGetters/useTxGetterEverywhere';
 import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { hashTx } from '../../../common/blockchain/utils/hashTx';
-import { BlockchainTxInput } from '../../../../../common/src/blockchain/tx/BlockchainTxInput';
-import { BlockchainTxOutput } from '../../../../../common/src/blockchain/tx/BlockchainTxOutput';
+import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
+import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
 import { makeCountText } from '../../../utils/makeCountText';
+import { useKeyGenerator } from '../../../hooks/useKeyGenerator';
 
 interface BlockchainTxCardProps {
   simulationUid: string;
@@ -24,6 +25,8 @@ interface BlockchainTxCardProps {
 export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
   const { simulationUid, nodeUid, tx, children } = props;
   const { inputs, outputs } = tx;
+
+  const keyGen = useKeyGenerator();
 
   const getTx = useTxGetterEverywhere({ simulationUid, nodeUid });
   const getOutput = useTxOutputGetter(getTx);
@@ -52,10 +55,10 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
     ? 'danger'
     : 'success';
 
-  const renderInput = (input: BlockchainTxInput) => {
+  const renderInput = (input: BlockchainTxInput, index: number) => {
     if (input.isCoinbase) {
       return (
-        <ListGroup.Item className="py-2 px-3">
+        <ListGroup.Item className="py-2 px-3" key={keyGen(input, index)}>
           <div className="mb-1">
             <small className="text-muted">
               This input is coinbase, it doesn't have a value.
@@ -70,7 +73,7 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
     const refOutput = getOutput(input.previousOutput);
 
     return (
-      <ListGroup.Item className="py-2 px-3">
+      <ListGroup.Item className="py-2 px-3" key={keyGen(input, index)}>
         <div className="mb-2">
           Value: <code>{refOutput?.output?.value ?? '?'}</code>{' '}
           <small className="text-muted">(value of the referenced output)</small>
@@ -103,9 +106,9 @@ export const BlockchainTxCard: React.FC<BlockchainTxCardProps> = (props) => {
     );
   };
 
-  const renderOutput = (output: BlockchainTxOutput) => {
+  const renderOutput = (output: BlockchainTxOutput, index: number) => {
     return (
-      <ListGroup.Item className="py-2 px-3">
+      <ListGroup.Item className="py-2 px-3" key={keyGen(output, index)}>
         <div className="mb-2">
           Value: <code className="global-break-all">{output.value}</code>
         </div>

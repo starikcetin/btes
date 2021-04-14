@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { BlockchainTx } from '../../../common/blockchain/tx/BlockchainTx';
 import { BlockchainWalletSnapshot } from '../../../common/blockchain/snapshots/BlockchainWalletSnapshot';
 import { BlockchainConfig } from '../../../common/blockchain/BlockchainConfig';
@@ -7,12 +9,12 @@ import { SimulationNamespaceEmitter } from '../../SimulationNamespaceEmitter';
 import { BlockchainNetwork } from './BlockchainNetwork';
 import { BlockchainTxDb } from './BlockchainTxDb';
 import { BlockchainBlockDb } from './BlockchainBlockDb';
-import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
+import { BlockchainTxOutPoint } from '../../../common/blockchain/tx/BlockchainTxOutPoint';
+import { hashTx } from '../../../common/blockchain/utils/hashTx';
+import { BlockchainTxOutput } from '../../../common/blockchain/tx/BlockchainTxOutput';
+// import { BlockchainTxInput } from '../../../common/blockchain/tx/BlockchainTxInput';
+import { areOutPointsEqual } from '../utils/areOutPointsEqual';
 
-/**
- * Non-deterministic
- * https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch05.asciidoc#nondeterministic-random-wallets
- */
 export class BlockchainWallet {
   private readonly socketEmitter: SimulationNamespaceEmitter;
   private readonly network: BlockchainNetwork;
@@ -20,6 +22,7 @@ export class BlockchainWallet {
   private readonly blockDb: BlockchainBlockDb;
   private readonly nodeUid: string;
   private readonly config: BlockchainConfig;
+  private readonly ownUtxoSet: BlockchainTxOutPoint[];
 
   private _keyPair: BlockchainKeyPair | null;
   public get keyPair(): BlockchainKeyPair | null {
@@ -33,6 +36,7 @@ export class BlockchainWallet {
     blockDb: BlockchainBlockDb,
     nodeUid: string,
     config: BlockchainConfig,
+    ownUtxoSet: BlockchainTxOutPoint[],
     keyPair: BlockchainKeyPair | null
   ) {
     this.socketEmitter = socketEmitter;
@@ -41,11 +45,13 @@ export class BlockchainWallet {
     this.blockDb = blockDb;
     this.nodeUid = nodeUid;
     this.config = config;
+    this.ownUtxoSet = ownUtxoSet;
     this._keyPair = keyPair;
   }
 
   public readonly takeSnapshot = (): BlockchainWalletSnapshot => {
     return {
+      ownUtxoSet: this.ownUtxoSet,
       keyPair: this._keyPair,
     };
   };
@@ -54,9 +60,54 @@ export class BlockchainWallet {
     /*
      * AddToWalletIfMine:
      *   bc16.4. & bc18.3.5. For each transaction, "Add to wallet if mine"
+     *   tx18. "Add to wallet if mine"
      */
-    // TODO: implement
+    let dirtyFlag = false;
+
+    // additions
+    for (const tx of txs) {
+      const txHash = hashTx(tx);
+
+      for (let i = 0; i < tx.outputs.length; i++) {
+        const outPoint = { txHash, outputIndex: i };
+
+        if (!this.hasUtxo(outPoint) && this.isMine(tx.outputs[i])) {
+          this.addUtxo(outPoint);
+          dirtyFlag = true;
+        }
+      }
+    }
+
+    // removals
+    for (const tx of txs) {
+      for (const input of tx.inputs) {
+        if (input.isCoinbase) {
+          continue;
+        }
+
+        const poppedUtxos = this.popUtxos(input.previousOutput);
+        if (poppedUtxos.length > 0) {
+          dirtyFlag = true;
+        }
+      }
+    }
+
+    if (dirtyFlag) {
+      this.socketEmitter.sendBlockchainOwnUtxoSetChanged({
+        nodeUid: this.nodeUid,
+        newOwnUtxoSet: [...this.ownUtxoSet],
+      });
+    }
   };
+
+  private readonly addUtxo = (utxo: BlockchainTxOutPoint) =>
+    this.ownUtxoSet.push(utxo);
+
+  private readonly hasUtxo = (utxo: BlockchainTxOutPoint) =>
+    this.ownUtxoSet.some((u) => areOutPointsEqual(u, utxo));
+
+  private readonly popUtxos = (outPoint: BlockchainTxOutPoint) =>
+    _.remove(this.ownUtxoSet, (u) => areOutPointsEqual(u, outPoint));
 
   /** Saves the given key pair if we don't already have one. */
   public readonly saveKeyPair = (keyPair: BlockchainKeyPair): void => {
@@ -68,6 +119,8 @@ export class BlockchainWallet {
       nodeUid: this.nodeUid,
       keyPair: this._keyPair,
     });
+
+    // TODO: ownUtxoSet needs an init here. it is very unlikely, but the key we generated might unlock some UTXOs.
   };
 
   // Previously, I wanted to implement it such that the nodes accept their own txs without checks.
@@ -89,16 +142,21 @@ export class BlockchainWallet {
   //   // broadcast to peers
   //   this.network.broadcastTx(tx);
   // };
+  //
+  // private readonly isTxOrphan = (tx: BlockchainTx): boolean => {
+  //   return tx.inputs.some(this.isInputOrphan);
+  // };
+  //
+  // private readonly isInputOrphan = (input: BlockchainTxInput) => {
+  //   return !(
+  //     input.isCoinbase ||
+  //     this.txDb.isTxInMempool(input.previousOutput.txHash) ||
+  //     this.blockDb.isTxInMainBranch(input.previousOutput.txHash)
+  //   );
+  // };
 
-  private readonly isTxOrphan = (tx: BlockchainTx): boolean => {
-    return tx.inputs.some(this.isInputOrphan);
-  };
-
-  private readonly isInputOrphan = (input: BlockchainTxInput) => {
-    return !(
-      input.isCoinbase ||
-      this.txDb.isTxInMempool(input.previousOutput.txHash) ||
-      this.blockDb.isTxInMainBranch(input.previousOutput.txHash)
-    );
+  /** Is the given output sent to this node? */
+  private readonly isMine = (output: BlockchainTxOutput) => {
+    return output.lockingScript.address === this._keyPair?.address;
   };
 }

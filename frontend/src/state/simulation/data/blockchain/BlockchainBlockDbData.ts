@@ -13,4 +13,5 @@ export interface BlockchainBlockDbData {
   readonly mainBranchTxLookup: TxLookup;
   readonly sideBranchesTxLookup: TxLookup;
   readonly orphanageTxLookup: TxLookup;
+  readonly mainBranchHeadHash: string | null;
 }

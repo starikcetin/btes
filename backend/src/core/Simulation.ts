@@ -77,6 +77,7 @@ export class Simulation {
       blockchainBlockDb,
       nodeUid,
       blockchainConfig,
+      [],
       null
     );
 
@@ -150,6 +151,7 @@ export class Simulation {
       blockchainBlockDb,
       nodeSnapshot.nodeUid,
       nodeSnapshot.blockchainApp.config,
+      nodeSnapshot.blockchainApp.wallet.ownUtxoSet,
       nodeSnapshot.blockchainApp.wallet.keyPair
     );
 

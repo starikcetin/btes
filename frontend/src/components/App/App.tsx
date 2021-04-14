@@ -10,6 +10,7 @@ import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
 import DataExplorer from '../../pages/DataExplorer/DataExplorer';
 import DataExplorerBlockList from '../DataExplorerBlockList/DataExplorerBlockList';
 import DataExplorerTransactionList from '../DataExplorerTransactionList/DataExplorerTransactionList';
+import { Help } from '../../pages/Help/Help';
 
 const App: React.FC = () => {
   return (
@@ -48,6 +49,9 @@ const App: React.FC = () => {
           </Route>
           <Route path="/explorer-transactions/:isFull">
             <DataExplorerTransactionList />
+          </Route>
+          <Route path="/help/:id?">
+            <Help></Help>
           </Route>
           <Route path="/">
             <Home></Home>

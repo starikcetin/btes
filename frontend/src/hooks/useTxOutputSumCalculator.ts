@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { useCallback } from 'react';
 
-import { BlockchainTxOutput } from '../../../common/src/blockchain/tx/BlockchainTxOutput';
+import { BlockchainTxOutput } from '../common/blockchain/tx/BlockchainTxOutput';
 
 export type TxOutputSumCalculator = (outputs: BlockchainTxOutput[]) => number;
 

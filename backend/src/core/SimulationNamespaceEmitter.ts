@@ -20,6 +20,7 @@ import { TxAddedToOrphanagePayload } from '../common/socketPayloads/TxAddedToOrp
 import { BlocksRemovedFromOrphanagePayload } from '../common/socketPayloads/BlocksRemovedFromOrphanagePayload';
 import { TxRemovedFromMempoolPayload } from '../common/socketPayloads/TxRemovedFromMempoolPayload';
 import { TxsRemovedFromOrphanagePayload } from '../common/socketPayloads/TxsRemovedFromOrphanagePayload';
+import { BlockchainOwnUtxoSetChangedPayload } from '../common/socketPayloads/BlockchainOwnUtxoSetChangedPayload';
 
 export class SimulationNamespaceEmitter {
   private readonly ns: Namespace;
@@ -146,5 +147,11 @@ export class SimulationNamespaceEmitter {
     body: TxsRemovedFromOrphanagePayload
   ): void => {
     this.ns.emit(socketEvents.simulation.txsRemovedFromOrphanage, body);
+  };
+
+  public readonly sendBlockchainOwnUtxoSetChanged = (
+    body: BlockchainOwnUtxoSetChangedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.blockchainOwnUtxoSetChanged, body);
   };
 }
