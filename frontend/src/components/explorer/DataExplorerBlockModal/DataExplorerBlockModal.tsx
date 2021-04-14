@@ -3,8 +3,8 @@ import { Modal, Table } from 'react-bootstrap';
 import {
   Block,
   fetchSingleBlockWithHeight,
-} from '../../services/explorer/SingleBlockAPI';
-import LoaderMask from '../LoaderMask/LoaderMask';
+} from '../../../services/explorer/SingleBlockAPI';
+import LoaderMask from '../../LoaderMask/LoaderMask';
 import DataExplorerBlockDetailTable from '../DataExplorerBlockDetailTable/DataExplorerBlockDetailTable';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import Pagination from '@material-ui/lab/Pagination';

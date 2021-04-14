@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
-import LoaderMask from '../LoaderMask/LoaderMask';
+import LoaderMask from '../../LoaderMask/LoaderMask';
 import {
   fetchTransactionList,
   Tx,
-} from '../../services/explorer/TransactionList';
-import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
+} from '../../../services/explorer/TransactionList';
+import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
 import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
 

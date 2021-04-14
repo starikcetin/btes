@@ -1,8 +1,8 @@
 import React from 'react';
-import { Block } from '../../services/explorer/SingleBlockAPI';
+import { Block } from '../../../services/explorer/SingleBlockAPI';
 import { Table } from 'react-bootstrap';
-import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
-import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
+import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
+import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 //scss
 import './DataExplorerBlockDetailTable.scss';
 

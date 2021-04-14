@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import './DataExplorerBlockList.scss';
-import LoaderMask from '../LoaderMask/LoaderMask';
+import LoaderMask from '../../LoaderMask/LoaderMask';
 import {
   BlockList,
   fetchBlockList,
-} from '../../services/explorer/BlockListAPI';
-import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
+} from '../../../services/explorer/BlockListAPI';
+import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
 import DataExplorerBlockModal from '../DataExplorerBlockModal/DataExplorerBlockModal';
 

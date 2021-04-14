@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Table } from 'react-bootstrap';
-import LoaderMask from '../LoaderMask/LoaderMask';
-import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
+import LoaderMask from '../../LoaderMask/LoaderMask';
+import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import {
   AddressBalance,
   fetchAddressDetail,
-} from '../../services/explorer/AddressAPI';
+} from '../../../services/explorer/AddressAPI';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import Pagination from '@material-ui/lab/Pagination';
 

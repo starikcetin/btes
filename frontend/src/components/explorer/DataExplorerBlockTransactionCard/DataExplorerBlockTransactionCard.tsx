@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { BlockTx } from '../../services/explorer/SingleBlockAPI';
-import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
-import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
+import { BlockTx } from '../../../services/explorer/SingleBlockAPI';
+import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
+import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import { Table } from 'react-bootstrap';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

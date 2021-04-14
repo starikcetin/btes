@@ -8,8 +8,8 @@ import Sandbox from '../../pages/Sandbox/Sandbox';
 import Signin from '../../pages/Signin/Signin';
 import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
 import DataExplorer from '../../pages/DataExplorer/DataExplorer';
-import DataExplorerBlockList from '../DataExplorerBlockList/DataExplorerBlockList';
-import DataExplorerTransactionList from '../DataExplorerTransactionList/DataExplorerTransactionList';
+import DataExplorerBlockList from '../explorer/DataExplorerBlockList/DataExplorerBlockList';
+import DataExplorerTransactionList from '../explorer/DataExplorerTransactionList/DataExplorerTransactionList';
 import { Help } from '../../pages/Help/Help';
 
 const App: React.FC = () => {

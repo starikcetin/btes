@@ -1,5 +1,5 @@
 import React from 'react';
-import LoaderMask from '../LoaderMask/LoaderMask';
+import LoaderMask from '../../LoaderMask/LoaderMask';
 import { Line } from 'react-chartjs-2';
 import './DataExplorerLineChart.scss';
 

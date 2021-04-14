@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
-import LoaderMask from '../LoaderMask/LoaderMask';
+import LoaderMask from '../../LoaderMask/LoaderMask';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import {
   fetchSingleTransactionWithHash,
   Transaction,
-} from '../../services/explorer/SingleTransactionAPI';
+} from '../../../services/explorer/SingleTransactionAPI';
 import DataExplorerTransactionDetailTable from '../DataExplorerTransactionDetailTable/DataExplorerTransactionDetailTable';
 import DataExplorerTransactionInputOutputDetail from '../DataExplorerTransactionInputOutputDetail/DataExplorerTransactionInputOutputDetail';
 
