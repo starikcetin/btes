@@ -76,10 +76,10 @@ export interface SpendingOutpoint2 {
   n: number;
 }
 
-export const fetchSingleBlockWithHeight = async (height: number | null) => {
-  if (height !== null) {
-    const url = `https://blockchain.info/block-height/${height}?format=json&cors=true`;
-    const data = await (await fetch(url)).json();
-    return height ? data.blocks[0] : null;
-  } else return null;
+export const fetchSingleBlockWithHeight = async (
+  height: number
+): Promise<Block> => {
+  const url = `https://blockchain.info/block-height/${height}?format=json&cors=true`;
+  const data = await (await fetch(url)).json();
+  return data.blocks[0];
 };

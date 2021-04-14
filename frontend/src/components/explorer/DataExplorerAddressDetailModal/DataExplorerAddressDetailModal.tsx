@@ -8,6 +8,7 @@ import {
 } from '../../../services/explorer/AddressAPI';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import Pagination from '@material-ui/lab/Pagination';
+import { hasValue } from '../../../common/utils/hasValue';
 
 interface DataExplorerAddressDetailModalProps {
   closeHandler: () => void;
@@ -26,7 +27,9 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        const transaction = await fetchAddressDetail(address);
+        const transaction = hasValue(address)
+          ? await fetchAddressDetail(address)
+          : null;
         setData(transaction);
         setActivePage(1);
         setIsFetching(false);
@@ -119,7 +122,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
             </div>
           </div>
         ) : (
-          <div>Data couldnt downloaded</div>
+          <div>Could not fetch data.</div>
         )}
       </Modal.Body>
     </Modal>

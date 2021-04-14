@@ -8,6 +8,7 @@ import {
 } from '../../../services/explorer/SingleTransactionAPI';
 import DataExplorerTransactionDetailTable from '../DataExplorerTransactionDetailTable/DataExplorerTransactionDetailTable';
 import DataExplorerTransactionInputOutputDetail from '../DataExplorerTransactionInputOutputDetail/DataExplorerTransactionInputOutputDetail';
+import { hasValue } from '../../../common/utils/hasValue';
 
 interface DataExplorerTransactionModalProps {
   closeHandler: () => void;
@@ -25,9 +26,9 @@ const DataExplorerTransactionModal: React.FC<DataExplorerTransactionModalProps> 
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        const transaction = await fetchSingleTransactionWithHash(
-          transactionHash
-        );
+        const transaction = hasValue(transactionHash)
+          ? await fetchSingleTransactionWithHash(transactionHash)
+          : null;
         setData(transaction);
         setIsFetching(false);
       } catch (e) {

@@ -4,17 +4,19 @@ import DataExplorerTopInfo from '../../components/explorer/DataExplorerTopInfo/D
 import DataExplorerBlockList from '../DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './DataExplorer.scss';
-import { VsCurrencies } from '../../services/explorer/CommonTypes';
+import { VsCurrency, isVsCurrency } from '../../services/explorer/CommonTypes';
 import {
   CurrenciesChartData,
   fetchCurrencyChartsData,
 } from '../../services/explorer/CurrenciesChartAPI';
 import DataExplorerTransactionList from '../DataExplorerTransactionList/DataExplorerTransactionList';
+import { SelectCallback } from 'react-bootstrap/esm/helpers';
+import { hasValue } from '../../common/utils/hasValue';
 
-const DataExplorer = () => {
+const DataExplorer: React.FC = () => {
   const [chartsData, setChartsData] = useState<CurrenciesChartData | null>();
   const [currency, setCurrency] = useState<string>('bitcoin');
-  const [vsCurrency, setVsCurrency] = useState<VsCurrencies>(VsCurrencies.USD);
+  const [vsCurrency, setVsCurrency] = useState<VsCurrency>('usd');
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
@@ -33,10 +35,19 @@ const DataExplorer = () => {
     fetchData();
   }, [currency, vsCurrency]);
 
-  const changeCurrency = (e: any) => {
+  const changeCurrency: SelectCallback = (e) => {
+    if (!hasValue(e)) {
+      throw new Error(`invalid currency: ${e}`);
+    }
+
     setCurrency(e);
   };
-  const changeVsCurrency = (e: any) => {
+
+  const changeVsCurrency: SelectCallback = (e) => {
+    if (!hasValue(e) || !isVsCurrency(e)) {
+      throw new Error(`invalid vsCurrency: ${e}`);
+    }
+
     setVsCurrency(e);
   };
 
@@ -56,6 +67,7 @@ const DataExplorer = () => {
                   <Dropdown.Item eventKey="bitcoin">
                     <div>
                       <img
+                        alt="Bitcoin Icon"
                         src={
                           'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png?1547033579'
                         }
@@ -66,6 +78,7 @@ const DataExplorer = () => {
                   <Dropdown.Item eventKey="ethereum">
                     <div>
                       <img
+                        alt="Ethereum Icon"
                         src={
                           'https://assets.coingecko.com/coins/images/279/thumb/ethereum.png?1595348880'
                         }

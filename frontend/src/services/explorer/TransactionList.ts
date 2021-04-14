@@ -15,7 +15,7 @@ export interface PrevOut {
 }
 
 export interface Input {
-  sequence: any;
+  sequence: number;
   witness: string;
   prev_out: PrevOut;
   script: string;
@@ -53,7 +53,7 @@ export interface Tx {
   rbf?: boolean;
 }
 
-export const fetchTransactionList = async () => {
+export const fetchTransactionList = async (): Promise<Tx[]> => {
   const url =
     'https://blockchain.info/unconfirmed-transactions?format=json&cors=true';
   const data = await (await fetch(url)).json();

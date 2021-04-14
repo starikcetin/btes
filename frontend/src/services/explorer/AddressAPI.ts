@@ -70,10 +70,10 @@ export interface SpendingOutpoint2 {
   n: number;
 }
 
-export const fetchAddressDetail = async (address: string | null) => {
-  if (address !== null) {
-    const url = `https://blockchain.info/rawaddr/${address}`;
-    const data = await (await fetch(url)).json();
-    return address ? data : null;
-  } else return null;
+export const fetchAddressDetail = async (
+  address: string
+): Promise<AddressBalance> => {
+  const url = `https://blockchain.info/rawaddr/${address}`;
+  const data = await (await fetch(url)).json();
+  return data;
 };

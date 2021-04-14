@@ -8,6 +8,7 @@ import LoaderMask from '../../LoaderMask/LoaderMask';
 import DataExplorerBlockDetailTable from '../DataExplorerBlockDetailTable/DataExplorerBlockDetailTable';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import Pagination from '@material-ui/lab/Pagination';
+import { hasValue } from '../../../common/utils/hasValue';
 
 interface DataExplorerBlockModalProps {
   closeHandler: () => void;
@@ -26,7 +27,9 @@ const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        const block = await fetchSingleBlockWithHeight(blockHeight);
+        const block = hasValue(blockHeight)
+          ? await fetchSingleBlockWithHeight(blockHeight)
+          : null;
         setData(block);
         setActivePage(1);
         setIsFetching(false);

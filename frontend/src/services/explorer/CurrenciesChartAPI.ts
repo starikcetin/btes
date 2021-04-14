@@ -1,4 +1,4 @@
-import { VsCurrencies } from './CommonTypes';
+import { VsCurrency } from './CommonTypes';
 
 export interface CurrenciesChartDataRaw {
   prices: number[][];
@@ -15,7 +15,7 @@ export interface CurrenciesChartData {
   totalVolumesDates: string[];
 }
 
-const formatData = (dataRaw: CurrenciesChartDataRaw) => {
+const formatData = (dataRaw: CurrenciesChartDataRaw): CurrenciesChartData => {
   const data: CurrenciesChartData = {
     marketCapsDates: [],
     totalVolumes: [],
@@ -42,8 +42,8 @@ const formatData = (dataRaw: CurrenciesChartDataRaw) => {
 
 export const fetchCurrencyChartsData = async (
   coin: string,
-  vsCurrencies: VsCurrencies
-) => {
+  vsCurrencies: VsCurrency
+): Promise<CurrenciesChartData> => {
   const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=${vsCurrencies}&days=1`;
   const dataRaw = await (await fetch(url)).json();
 

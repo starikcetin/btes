@@ -5,10 +5,10 @@ import {
   fetchSimpleMarketData,
   MarketData,
 } from '../../../services/explorer/MarketDataAPI';
-import { VsCurrencies } from '../../../services/explorer/CommonTypes';
+import { VsCurrency } from '../../../services/explorer/CommonTypes';
 
 interface DataExplorerTopInfoProps {
-  vsCurrency: VsCurrencies;
+  vsCurrency: VsCurrency;
   currency: string;
 }
 
@@ -45,7 +45,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
         <div className="row d-flex justify-content-around">
           <div className="col-4 col-md-2 m-3">
             <span className="font-weight-bold">
-              {vsCurrency === VsCurrencies.USD
+              {vsCurrency === 'usd'
                 ? formatter.format(data.usd)
                 : formatter.format(data.eur)}
             </span>
@@ -55,7 +55,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {vsCurrency === VsCurrencies.USD
+              {vsCurrency === 'usd'
                 ? formatter.format(data.usd_market_cap / 1000000)
                 : formatter.format(data.eur_market_cap / 1000000)}
               M
@@ -66,7 +66,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {vsCurrency === VsCurrencies.USD
+              {vsCurrency === 'usd'
                 ? formatter.format(data.usd_24h_vol / 1000000)
                 : formatter.format(data.eur_24h_vol / 1000000)}
               M
@@ -77,7 +77,7 @@ const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
           </div>
           <div className="col-4 col-md-2 m-3 ">
             <span className="font-weight-bold">
-              {vsCurrency === VsCurrencies.USD
+              {vsCurrency === 'usd'
                 ? parseFloat(data.usd_24h_change).toFixed(2)
                 : parseFloat(data.eur_24h_change).toFixed(2)}
             </span>

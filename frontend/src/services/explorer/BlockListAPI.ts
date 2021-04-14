@@ -11,7 +11,7 @@ export interface BlockList {
   txs: string[];
 }
 
-export const fetchBlockList = async () => {
+export const fetchBlockList = async (): Promise<BlockList[]> => {
   const url = `https://stacks-node-api.mainnet.stacks.co/extended/v1/block`;
   const data = await (await fetch(url)).json();
   return data.results;

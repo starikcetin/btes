@@ -110,9 +110,7 @@ const DataExplorerBlockList: React.FC = () => {
               )}
             </div>
           ) : (
-            <span className="alert-danger">
-              Block List Couldn't Downloaded!
-            </span>
+            <span className="alert-danger">Could not fetch block list!</span>
           )}
         </div>
       )}
