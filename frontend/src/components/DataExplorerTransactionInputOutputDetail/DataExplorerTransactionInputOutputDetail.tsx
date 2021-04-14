@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Out } from '../../apis/SingleTransactionAPI';
+import { Input, Out } from '../../services/explorer/SingleTransactionAPI';
 import { Table } from 'react-bootstrap';
 import './DataExplorerTransactionInputOutputDetail.scss';
 import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BlockTx } from '../../apis/SingleBlockAPI';
+import { BlockTx } from '../../services/explorer/SingleBlockAPI';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../utils/formatNumberToBitcoin';
 import { Table } from 'react-bootstrap';

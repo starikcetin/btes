@@ -5,7 +5,7 @@ import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCar
 import {
   fetchSingleTransactionWithHash,
   Transaction,
-} from '../../apis/SingleTransactionAPI';
+} from '../../services/explorer/SingleTransactionAPI';
 import DataExplorerTransactionDetailTable from '../DataExplorerTransactionDetailTable/DataExplorerTransactionDetailTable';
 import DataExplorerTransactionInputOutputDetail from '../DataExplorerTransactionInputOutputDetail/DataExplorerTransactionInputOutputDetail';
 

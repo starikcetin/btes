@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import LoaderMask from '../LoaderMask/LoaderMask';
-import { fetchTransactionList, Tx } from '../../apis/TransactionList';
+import {
+  fetchTransactionList,
+  Tx,
+} from '../../services/explorer/TransactionList';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
 import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
-//scss
-import './DataExplorerTransactionList.scss';
 
 interface DataExplorerTransactionListParams {
   isFull: string;

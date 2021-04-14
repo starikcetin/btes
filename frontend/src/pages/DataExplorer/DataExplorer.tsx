@@ -4,11 +4,11 @@ import DataExplorerTopInfo from '../../components/DataExplorerTopInfo/DataExplor
 import DataExplorerBlockList from '../../components/DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './DataExplorer.scss';
-import { VsCurrencies } from '../../apis/CommonTypes';
+import { VsCurrencies } from '../../services/explorer/CommonTypes';
 import {
   CurrenciesChartData,
   fetchCurrencyChartsData,
-} from '../../apis/CurrenciesChartAPI';
+} from '../../services/explorer/CurrenciesChartAPI';
 import DataExplorerTransactionList from '../../components/DataExplorerTransactionList/DataExplorerTransactionList';
 
 const DataExplorer = () => {
