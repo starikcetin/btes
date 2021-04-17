@@ -20,7 +20,9 @@
     "kill": "dotenv cross-var kill-port $REST_PORT $SOCKET_PORT",
     "sync-lock": "node scripts/yarn-sync.js --workspace",
     "test": "jest",
-    "test:coverage": "yarn test --coverage"
+    "test:coverage": "yarn test --coverage",
+    "db:start": "dotenv cross-var -- mongod --dbpath=$DB_PATH",
+    "db:stop": "mongo admin --eval \"db.shutdownServer();quit();\""
   },
   "dependencies": {
     "body-parser": "^1.19.0",
