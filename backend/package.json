@@ -17,7 +17,7 @@
     "serve:prod": "run-s build launch:prod",
     "start": "nodemon",
     "precommit": "lint-staged",
-    "kill": "dotenv cross-var kill-port %REST_PORT% %SOCKET_PORT%",
+    "kill": "dotenv cross-var kill-port $REST_PORT $SOCKET_PORT",
     "sync-lock": "node scripts/yarn-sync.js --workspace",
     "test": "jest",
     "test:coverage": "yarn test --coverage"
