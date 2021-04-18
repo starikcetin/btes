@@ -1,22 +1,12 @@
-import { VsCurrency } from './CommonTypes';
+import { VsCurrency } from './data/CommonTypes';
+import { DataExplorerCurrenciesChartDataRaw } from './data/market/DataExplorerCurrenciesChartDataRaw';
+import { DataExplorerCurrenciesChartData } from './data/market/DataExplorerCurrenciesChartData';
+import axios from 'axios';
 
-export interface CurrenciesChartDataRaw {
-  prices: number[][];
-  market_caps: number[][];
-  total_volumes: number[][];
-}
-
-export interface CurrenciesChartData {
-  prices: string[];
-  pricesDates: string[];
-  marketCaps: string[];
-  marketCapsDates: string[];
-  totalVolumes: string[];
-  totalVolumesDates: string[];
-}
-
-const formatData = (dataRaw: CurrenciesChartDataRaw): CurrenciesChartData => {
-  const data: CurrenciesChartData = {
+const formatData = (
+  dataRaw: DataExplorerCurrenciesChartDataRaw
+): DataExplorerCurrenciesChartData => {
+  const data: DataExplorerCurrenciesChartData = {
     marketCapsDates: [],
     totalVolumes: [],
     totalVolumesDates: [],
@@ -43,9 +33,13 @@ const formatData = (dataRaw: CurrenciesChartDataRaw): CurrenciesChartData => {
 export const fetchCurrencyChartsData = async (
   coin: string,
   vsCurrencies: VsCurrency
-): Promise<CurrenciesChartData> => {
+): Promise<DataExplorerCurrenciesChartData | null> => {
   const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=${vsCurrencies}&days=1`;
-  const dataRaw = await (await fetch(url)).json();
-
-  return formatData(dataRaw);
+  try {
+    const response = await axios.get(url);
+    return formatData(response.data);
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };

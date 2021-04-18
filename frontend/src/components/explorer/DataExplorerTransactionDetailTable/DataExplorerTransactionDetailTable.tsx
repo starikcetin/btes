@@ -2,11 +2,12 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
-import { Transaction } from '../../../services/explorer/SingleTransactionAPI';
+
 import './DataExplorerTransactionDetailTable.scss';
+import { DataExplorerTransaction } from '../../../services/explorer/data/transaction/DataExplorerTransaction';
 
 interface DataExplorerBlockTableProps {
-  data: Transaction;
+  data: DataExplorerTransaction;
 }
 
 const DataExplorerTransactionDetailTable: React.FC<DataExplorerBlockTableProps> = (

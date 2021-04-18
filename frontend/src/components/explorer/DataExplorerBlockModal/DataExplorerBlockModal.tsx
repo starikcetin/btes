@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Table } from 'react-bootstrap';
-import {
-  Block,
-  fetchSingleBlockWithHeight,
-} from '../../../services/explorer/SingleBlockAPI';
+import { fetchSingleBlockWithHeight } from '../../../services/explorer/SingleBlockAPI';
 import LoaderMask from '../../LoaderMask/LoaderMask';
 import DataExplorerBlockDetailTable from '../DataExplorerBlockDetailTable/DataExplorerBlockDetailTable';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import Pagination from '@material-ui/lab/Pagination';
 import { hasValue } from '../../../common/utils/hasValue';
+import { DataExplorerBlockWithTransactions } from '../../../services/explorer/data/block/DataExplorerBlockWithTransactions';
 
 interface DataExplorerBlockModalProps {
   closeHandler: () => void;
@@ -19,7 +17,9 @@ const DataExplorerBlockModal: React.FC<DataExplorerBlockModalProps> = (
   props
 ) => {
   const { closeHandler, blockHeight } = props;
-  const [data, setData] = useState<Block | null>(null);
+  const [data, setData] = useState<DataExplorerBlockWithTransactions | null>(
+    null
+  );
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<number>(1);
 

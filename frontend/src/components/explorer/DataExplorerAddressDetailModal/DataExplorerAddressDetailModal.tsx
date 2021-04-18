@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Table } from 'react-bootstrap';
 import LoaderMask from '../../LoaderMask/LoaderMask';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
-import {
-  AddressBalance,
-  fetchAddressDetail,
-} from '../../../services/explorer/AddressAPI';
+import { fetchAddressDetail } from '../../../services/explorer/AddressAPI';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import Pagination from '@material-ui/lab/Pagination';
 import { hasValue } from '../../../common/utils/hasValue';
+import { DataExplorerAddressBalance } from '../../../services/explorer/data/address/DataExplorerAddressBalance';
 
 interface DataExplorerAddressDetailModalProps {
   closeHandler: () => void;
@@ -19,7 +17,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
   props
 ) => {
   const { closeHandler, address } = props;
-  const [data, setData] = useState<AddressBalance | null>(null);
+  const [data, setData] = useState<DataExplorerAddressBalance | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [activePage, setActivePage] = useState<number>(1);
 

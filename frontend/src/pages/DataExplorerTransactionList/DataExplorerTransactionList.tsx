@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import LoaderMask from '../../components/LoaderMask/LoaderMask';
-import {
-  fetchTransactionList,
-  Tx,
-} from '../../services/explorer/TransactionList';
+import { fetchTransactionList } from '../../services/explorer/TransactionListAPI';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
 import DataExplorerTransactionModal from '../../components/explorer/DataExplorerTransactionModal/DataExplorerTransactionModal';
 import './DataExplorerTransactionList.scss';
+import { DataExplorerUnconfirmedTransaction } from '../../services/explorer/data/transaction/DataExplorerUnconfirmedTransaction';
 
 interface DataExplorerTransactionListParams {
   isFull: string;
@@ -16,7 +14,9 @@ interface DataExplorerTransactionListParams {
 
 const DataExplorerBlockList: React.FC = () => {
   const { isFull } = useParams<DataExplorerTransactionListParams>();
-  const [data, setData] = useState<Tx[] | null>(null);
+  const [data, setData] = useState<DataExplorerUnconfirmedTransaction[] | null>(
+    null
+  );
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [viewingTransaction, setViewingTransaction] = useState<string | null>(
     null

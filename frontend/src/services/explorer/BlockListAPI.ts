@@ -1,18 +1,13 @@
-export interface BlockList {
-  canonical: boolean;
-  height: number;
-  hash: string;
-  parent_block_hash: string;
-  burn_block_time: number;
-  burn_block_time_iso: Date;
-  burn_block_hash: string;
-  burn_block_height: number;
-  miner_txid: string;
-  txs: string[];
-}
+import axios from 'axios';
+import { DataExplorerBlock } from './data/block/DataExplorerBlock';
 
-export const fetchBlockList = async (): Promise<BlockList[]> => {
+export const fetchBlockList = async (): Promise<DataExplorerBlock[] | null> => {
   const url = `https://stacks-node-api.mainnet.stacks.co/extended/v1/block`;
-  const data = await (await fetch(url)).json();
-  return data.results;
+  try {
+    const response = await axios.get(url);
+    return response.data.results;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };

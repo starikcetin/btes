@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Input, Out } from '../../../services/explorer/SingleTransactionAPI';
 import { Table } from 'react-bootstrap';
 import './DataExplorerTransactionInputOutputDetail.scss';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import DataExplorerAddressDetailModal from '../DataExplorerAddressDetailModal/DataExplorerAddressDetailModal';
+import { DataExplorerTransactionInput } from '../../../services/explorer/data/transaction/DataExplorerTransactionInput';
+import { DataExplorerTransactionOut } from '../../../services/explorer/data/transaction/DataExplorerTransactionOut';
 
 interface DataExplorerTransactionInputOutputDetailProps {
-  inputs: Input[];
-  outputs: Out[];
+  inputs: DataExplorerTransactionInput[];
+  outputs: DataExplorerTransactionOut[];
 }
 
 const DataExplorerTransactionInputOutputDetail: React.FC<DataExplorerTransactionInputOutputDetailProps> = (

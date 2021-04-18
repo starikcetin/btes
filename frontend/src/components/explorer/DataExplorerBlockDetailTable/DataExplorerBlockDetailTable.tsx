@@ -1,13 +1,13 @@
 import React from 'react';
-import { Block } from '../../../services/explorer/SingleBlockAPI';
 import { Table } from 'react-bootstrap';
 import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 //scss
 import './DataExplorerBlockDetailTable.scss';
+import { DataExplorerBlockWithTransactions } from '../../../services/explorer/data/block/DataExplorerBlockWithTransactions';
 
 interface DataExplorerBlockTableProps {
-  data: Block;
+  data: DataExplorerBlockWithTransactions;
 }
 
 const DataExplorerBlockDetailTable: React.FC<DataExplorerBlockTableProps> = (

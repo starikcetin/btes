@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import LoaderMask from '../../LoaderMask/LoaderMask';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
-import {
-  fetchSingleTransactionWithHash,
-  Transaction,
-} from '../../../services/explorer/SingleTransactionAPI';
+import { fetchSingleTransactionWithHash } from '../../../services/explorer/SingleTransactionAPI';
 import DataExplorerTransactionDetailTable from '../DataExplorerTransactionDetailTable/DataExplorerTransactionDetailTable';
 import DataExplorerTransactionInputOutputDetail from '../DataExplorerTransactionInputOutputDetail/DataExplorerTransactionInputOutputDetail';
 import { hasValue } from '../../../common/utils/hasValue';
+import { DataExplorerTransaction } from '../../../services/explorer/data/transaction/DataExplorerTransaction';
 
 interface DataExplorerTransactionModalProps {
   closeHandler: () => void;
@@ -19,7 +17,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerTransactionModalProps> 
   props
 ) => {
   const { closeHandler, transactionHash } = props;
-  const [data, setData] = useState<Transaction | null>(null);
+  const [data, setData] = useState<DataExplorerTransaction | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {

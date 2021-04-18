@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import './DataExplorerBlockList.scss';
 import LoaderMask from '../../components/LoaderMask/LoaderMask';
-import {
-  BlockList,
-  fetchBlockList,
-} from '../../services/explorer/BlockListAPI';
+import { fetchBlockList } from '../../services/explorer/BlockListAPI';
 import { formatTimestampForTimeInput } from '../../utils/formatTimestampForTimeInput';
 import { Link, useParams } from 'react-router-dom';
 import DataExplorerBlockModal from '../../components/explorer/DataExplorerBlockModal/DataExplorerBlockModal';
+import { DataExplorerBlock } from '../../services/explorer/data/block/DataExplorerBlock';
 
 interface DataExplorerBlockListParams {
   isFull: string;
@@ -16,7 +14,7 @@ interface DataExplorerBlockListParams {
 
 const DataExplorerBlockList: React.FC = () => {
   const { isFull } = useParams<DataExplorerBlockListParams>();
-  const [data, setData] = useState<BlockList[] | null>(null);
+  const [data, setData] = useState<DataExplorerBlock[] | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [viewingBlock, setViewingBlock] = useState<number | null>(null);
 

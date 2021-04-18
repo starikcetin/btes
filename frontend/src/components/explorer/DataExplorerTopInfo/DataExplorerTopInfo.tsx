@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './DataExplorerTopInfo.scss';
 import LoaderMask from '../../LoaderMask/LoaderMask';
-import {
-  fetchSimpleMarketData,
-  MarketData,
-} from '../../../services/explorer/MarketDataAPI';
-import { VsCurrency } from '../../../services/explorer/CommonTypes';
+import { fetchSimpleMarketData } from '../../../services/explorer/MarketDataAPI';
+import { VsCurrency } from '../../../services/explorer/data/CommonTypes';
+import { DataExplorerMarketData } from '../../../services/explorer/data/market/DataExplorerMarketData';
 
 interface DataExplorerTopInfoProps {
   vsCurrency: VsCurrency;
@@ -14,7 +12,7 @@ interface DataExplorerTopInfoProps {
 
 const DataExplorerTopInfo: React.FC<DataExplorerTopInfoProps> = (props) => {
   const { currency, vsCurrency } = props;
-  const [data, setData] = useState<MarketData | null>();
+  const [data, setData] = useState<DataExplorerMarketData | null>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { BlockTx } from '../../../services/explorer/SingleBlockAPI';
 import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import { Table } from 'react-bootstrap';
@@ -9,12 +8,13 @@ import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataEx
 import DataExplorerAddressDetailModal from '../DataExplorerAddressDetailModal/DataExplorerAddressDetailModal';
 //scss
 import './DataExplorerBlockTransactionCard.scss';
+import { DataExplorerTransaction } from '../../../services/explorer/data/transaction/DataExplorerTransaction';
 
 interface DataExplorerBlockTransactionCardProps {
-  tx: BlockTx;
+  tx: DataExplorerTransaction;
 }
 
-const calculateTotalInputValue = (tx: BlockTx) => {
+const calculateTotalInputValue = (tx: DataExplorerTransaction) => {
   let total = 0;
   tx.inputs.map(
     (input) => (total += input.prev_out ? input.prev_out.value : 0)
@@ -22,7 +22,7 @@ const calculateTotalInputValue = (tx: BlockTx) => {
   return total;
 };
 
-const calculateTotalOutValue = (tx: BlockTx) => {
+const calculateTotalOutValue = (tx: DataExplorerTransaction) => {
   let total = 0;
   tx.out.map((out) => (total += out.value ? out.value : 0));
   return total;

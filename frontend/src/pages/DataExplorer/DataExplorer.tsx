@@ -4,17 +4,21 @@ import DataExplorerTopInfo from '../../components/explorer/DataExplorerTopInfo/D
 import DataExplorerBlockList from '../DataExplorerBlockList/DataExplorerBlockList';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './DataExplorer.scss';
-import { VsCurrency, isVsCurrency } from '../../services/explorer/CommonTypes';
 import {
-  CurrenciesChartData,
-  fetchCurrencyChartsData,
-} from '../../services/explorer/CurrenciesChartAPI';
+  VsCurrency,
+  isVsCurrency,
+} from '../../services/explorer/data/CommonTypes';
+import { fetchCurrencyChartsData } from '../../services/explorer/CurrenciesChartAPI';
 import DataExplorerTransactionList from '../DataExplorerTransactionList/DataExplorerTransactionList';
 import { SelectCallback } from 'react-bootstrap/esm/helpers';
 import { hasValue } from '../../common/utils/hasValue';
+import { DataExplorerCurrenciesChartData } from '../../services/explorer/data/market/DataExplorerCurrenciesChartData';
 
 const DataExplorer: React.FC = () => {
-  const [chartsData, setChartsData] = useState<CurrenciesChartData | null>();
+  const [
+    chartsData,
+    setChartsData,
+  ] = useState<DataExplorerCurrenciesChartData | null>();
   const [currency, setCurrency] = useState<string>('bitcoin');
   const [vsCurrency, setVsCurrency] = useState<VsCurrency>('usd');
   const [isFetching, setIsFetching] = useState<boolean>(false);
