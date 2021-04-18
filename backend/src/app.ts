@@ -3,6 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import { RegisterRoutes } from './__gen/routes';
 import * as expressPing from 'express-ping';
+import { requestLoggerMiddleware } from './restMiddlewares/requestLoggerMiddleware';
 
 export const app = express();
 
@@ -26,5 +27,7 @@ app.use(
 );
 
 app.use(expressPing.ping());
+
+app.use(requestLoggerMiddleware);
 
 RegisterRoutes(app);
