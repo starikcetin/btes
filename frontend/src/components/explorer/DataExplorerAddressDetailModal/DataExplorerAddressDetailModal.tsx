@@ -4,7 +4,7 @@ import LoaderMask from '../../LoaderMask/LoaderMask';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import { fetchAddressDetail } from '../../../services/explorer/AddressAPI';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
-import Pagination from '@material-ui/lab/Pagination';
+import Pagination from '@vlsergey/react-bootstrap-pagination';
 import { hasValue } from '../../../common/utils/hasValue';
 import { DataExplorerAddressBalance } from '../../../services/explorer/data/address/DataExplorerAddressBalance';
 
@@ -19,7 +19,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
   const { closeHandler, address } = props;
   const [data, setData] = useState<DataExplorerAddressBalance | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [activePage, setActivePage] = useState<number>(1);
+  const [activePage, setActivePage] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +29,7 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
           ? await fetchAddressDetail(address)
           : null;
         setData(transaction);
-        setActivePage(1);
+        setActivePage(0);
         setIsFetching(false);
       } catch (e) {
         setIsFetching(false);
@@ -90,31 +90,21 @@ const DataExplorerTransactionModal: React.FC<DataExplorerAddressDetailModalProps
             <div className="container">
               <div className="row d-flex justify-content-center">
                 <Pagination
-                  count={Math.ceil((data?.txs ? data.txs.length : 0) / 10)}
-                  color="primary"
-                  variant="outlined"
-                  size="large"
-                  page={activePage}
-                  onChange={(e, value) => setActivePage(value)}
-                  showFirstButton
-                  showLastButton
+                  totalPages={Math.ceil((data?.txs ? data.txs.length : 0) / 10)}
+                  value={activePage}
+                  onChange={({ target: { value } }) => setActivePage(value)}
                 />
               </div>
               {data.txs
-                ?.slice((activePage - 1) * 10, (activePage - 1) * 10 + 9)
+                ?.slice(activePage * 10, activePage * 10 + 9)
                 .map((tx) => (
                   <DataExplorerBlockTransactionCard tx={tx} />
                 ))}
               <div className="row d-flex justify-content-center">
                 <Pagination
-                  count={Math.ceil((data?.txs ? data.txs.length : 0) / 10)}
-                  color="primary"
-                  variant="outlined"
-                  size="large"
-                  page={activePage}
-                  onChange={(e, value) => setActivePage(value)}
-                  showFirstButton
-                  showLastButton
+                  totalPages={Math.ceil((data?.txs ? data.txs.length : 0) / 10)}
+                  value={activePage}
+                  onChange={({ target: { value } }) => setActivePage(value)}
                 />
               </div>
             </div>
