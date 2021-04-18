@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+
 import LoaderMask from '../../LoaderMask/LoaderMask';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
 import { fetchSingleTransactionWithHash } from '../../../services/explorer/SingleTransactionAPI';

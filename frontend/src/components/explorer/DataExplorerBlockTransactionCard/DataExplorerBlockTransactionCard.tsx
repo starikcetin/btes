@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
-import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import { Table } from 'react-bootstrap';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import './DataExplorerBlockTransactionCard.scss';
+import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
+import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import DataExplorerTransactionModal from '../DataExplorerTransactionModal/DataExplorerTransactionModal';
 import DataExplorerAddressDetailModal from '../DataExplorerAddressDetailModal/DataExplorerAddressDetailModal';
-//scss
-import './DataExplorerBlockTransactionCard.scss';
 import { DataExplorerTransaction } from '../../../services/explorer/data/transaction/DataExplorerTransaction';
 
 interface DataExplorerBlockTransactionCardProps {

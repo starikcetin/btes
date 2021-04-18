@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Table } from 'react-bootstrap';
+import Pagination from '@vlsergey/react-bootstrap-pagination';
+
 import { fetchSingleBlockWithHeight } from '../../../services/explorer/SingleBlockAPI';
 import LoaderMask from '../../LoaderMask/LoaderMask';
 import DataExplorerBlockDetailTable from '../DataExplorerBlockDetailTable/DataExplorerBlockDetailTable';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
-import Pagination from '@vlsergey/react-bootstrap-pagination';
 import { hasValue } from '../../../common/utils/hasValue';
 import { DataExplorerBlockWithTransactions } from '../../../services/explorer/data/block/DataExplorerBlockWithTransactions';
 

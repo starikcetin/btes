@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Table } from 'react-bootstrap';
+import Pagination from '@vlsergey/react-bootstrap-pagination';
+
 import LoaderMask from '../../LoaderMask/LoaderMask';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import { fetchAddressDetail } from '../../../services/explorer/AddressAPI';
 import DataExplorerBlockTransactionCard from '../DataExplorerBlockTransactionCard/DataExplorerBlockTransactionCard';
-import Pagination from '@vlsergey/react-bootstrap-pagination';
-import { hasValue } from '../../../common/utils/hasValue';
 import { DataExplorerAddressBalance } from '../../../services/explorer/data/address/DataExplorerAddressBalance';
+import { hasValue } from '../../../common/utils/hasValue';
 
 interface DataExplorerAddressDetailModalProps {
   closeHandler: () => void;

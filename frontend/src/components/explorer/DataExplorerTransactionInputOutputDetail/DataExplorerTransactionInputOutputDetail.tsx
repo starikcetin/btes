@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
+
 import './DataExplorerTransactionInputOutputDetail.scss';
 import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import DataExplorerAddressDetailModal from '../DataExplorerAddressDetailModal/DataExplorerAddressDetailModal';

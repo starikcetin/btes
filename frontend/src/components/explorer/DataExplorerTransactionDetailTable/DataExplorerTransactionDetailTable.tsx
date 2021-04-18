@@ -1,9 +1,9 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
-import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 
 import './DataExplorerTransactionDetailTable.scss';
+import { formatTimestampForTimeInput } from '../../../utils/formatTimestampForTimeInput';
+import { formatNumberToBitcoin } from '../../../utils/formatNumberToBitcoin';
 import { DataExplorerTransaction } from '../../../services/explorer/data/transaction/DataExplorerTransaction';
 
 interface DataExplorerBlockTableProps {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import './DataExplorerTopInfo.scss';
 import LoaderMask from '../../LoaderMask/LoaderMask';
 import { fetchSimpleMarketData } from '../../../services/explorer/MarketDataAPI';

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import loaderIcon from './three-dots.svg';
-interface IProps {}
 
-const LoaderMask: React.FunctionComponent<IProps> = () => (
+import loaderIcon from './three-dots.svg';
+
+const LoaderMask = () => (
   <div className="container">
     <div className="row d-flex justify-content-center align-items-center mt-4">
       <img src={loaderIcon} className="loader-mask d-block" alt="loaderMask" />
