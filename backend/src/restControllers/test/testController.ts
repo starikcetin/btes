@@ -1,9 +1,20 @@
-import { Body, Controller, Delete, Get, Post, Put, Res, Route } from 'tsoa';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Res,
+  Route,
+  Tags,
+} from 'tsoa';
 import { TestModel } from '../../database/TestModel';
 import { hasValue } from '../../common/utils/hasValue';
 import { TestData, TestDataRaw } from '../../common/database/TestData';
 import { SuccessResponse, TsoaResponse } from '@tsoa/runtime';
 
+@Tags('Test')
 @Route('test')
 export class TestController extends Controller {
   /**

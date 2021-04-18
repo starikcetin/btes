@@ -1,8 +1,9 @@
-import { Controller, Get, Query, Route } from 'tsoa';
+import { Controller, Get, Query, Route, Tags } from 'tsoa';
 import { simulationManager } from '../../core/simulationManager';
 import { socketManager } from '../../socketManager';
 import { simulationUidGenerator } from '../../utils/uidGenerators';
 
+@Tags('Simulation Instance Broker')
 @Route('simulationInstanceBroker')
 export class SimulationInstanceBrokerController extends Controller {
   /**
