@@ -1,0 +1,10 @@
+.page-data-explorer {
+  &--horizontal-divider {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  &--vertical-divider {
+    border-left: 1px solid #808080;
+  }
+}

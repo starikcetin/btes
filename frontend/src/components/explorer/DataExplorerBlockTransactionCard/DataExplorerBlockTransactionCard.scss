@@ -1,0 +1,11 @@
+.comp-data-explorer-block-transaction-card {
+  font-size: small;
+
+  &--header-hash-span {
+    cursor: pointer;
+  }
+
+  &--address-td {
+    cursor: pointer;
+  }
+}

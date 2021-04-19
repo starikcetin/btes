@@ -7,6 +7,9 @@ import Home from '../../pages/Home/Home';
 import Sandbox from '../../pages/Sandbox/Sandbox';
 import Signin from '../../pages/Signin/Signin';
 import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
+import DataExplorer from '../../pages/DataExplorer/DataExplorer';
+import DataExplorerBlockList from '../../pages/DataExplorerBlockList/DataExplorerBlockList';
+import DataExplorerTransactionList from '../../pages/DataExplorerTransactionList/DataExplorerTransactionList';
 import { Help } from '../../pages/Help/Help';
 
 const App: React.FC = () => {
@@ -27,10 +30,7 @@ const App: React.FC = () => {
             </div>
           </Route>
           <Route path="/explorer">
-            {/* <Explorer></Explorer> */}
-            <div>
-              <p>Explorer</p>
-            </div>
+            <DataExplorer />
           </Route>
           <Route path="/about">
             {/* <About></About> */}
@@ -43,6 +43,12 @@ const App: React.FC = () => {
           </Route>
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>
+          </Route>
+          <Route path="/explorer-blocks/:isFull">
+            <DataExplorerBlockList />
+          </Route>
+          <Route path="/explorer-transactions/:isFull">
+            <DataExplorerTransactionList />
           </Route>
           <Route path="/help/:id?">
             <Help></Help>
