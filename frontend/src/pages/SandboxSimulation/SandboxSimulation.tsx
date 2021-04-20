@@ -248,8 +248,16 @@ const SandboxSimulation: React.FC = () => {
                     onChange={handleTimeScaleInputChange}
                   />
                 </InputGroup>
+                <Button
+                  type="button"
+                  className="btn btn-info ml-auto"
+                  title="Save Simulation"
+                >
+                  Save Simulation{' '}
+                </Button>
               </ButtonToolbar>
             </div>
+
             <div className="page-sandbox-simulation--board-container">
               <div
                 className="page-sandbox-simulation--board"
