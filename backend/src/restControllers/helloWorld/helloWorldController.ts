@@ -1,5 +1,6 @@
-import { Controller, Get, Route } from 'tsoa';
+import { Controller, Get, Route, Tags } from 'tsoa';
 
+@Tags('Hello World')
 @Route('helloWorld')
 export class HelloWorldController extends Controller {
   /**

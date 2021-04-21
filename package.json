@@ -23,7 +23,9 @@
     "upgrade-minor": "yarn upgrade --caret && yarn sync-lock && yarn install",
     "test": "jest",
     "test:coverage": "yarn test --coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "db:start": "yarn backend db:start",
+    "db:stop": "yarn backend db:stop"
   },
   "devDependencies": {
     "husky": "^6.0.0",

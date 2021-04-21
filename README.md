@@ -22,6 +22,8 @@ Monorepo for Blockchain Technology Education Software project.
 |:-:|-|-|
 |✅|`start`|Launches the development servers.|
 |✅|`build`|Builds the project in production config.|
+|✅|`db:start`|Starts the MongoDB server.|
+|⚠|`db:stop`|Stops the MongoDB server.|
 |✅|`lint:check`|Lints the project and outputs the result, but doesn't fix anything.|
 |⚠|`lint:fix`|Lints the project and tries to automatically the fix errors.|
 |⚠|`kill`|Kills processes that currently occupy the ports defined in `.env` files of the packages.|
