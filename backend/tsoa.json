@@ -4,9 +4,17 @@
     "controllerPathGlobs": ["src/**/*Controller.ts"],
     "spec": {
         "outputDirectory": "src/__gen",
-        "specVersion": 3
+        "specVersion": 3,
+        "securityDefinitions": {
+            "jwt": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
     },
     "routes": {
-        "routesDir": "src/__gen"
+        "routesDir": "src/__gen",
+        "authenticationModule": "./src/auth/tsoaAuthModule.ts"
     }
 }
