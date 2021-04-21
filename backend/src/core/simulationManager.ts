@@ -7,6 +7,7 @@ import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
+import { SimulationSnapshot } from '../common/SimulationSnapshot';
 
 class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -60,6 +61,23 @@ class SimulationManager {
     );
 
     return simulationExists;
+  };
+
+  public readonly getSimulationSnapshot = (
+    simulationUid: string
+  ): SimulationSnapshot => {
+    if (!this.checkSimulationExists(simulationUid)) {
+      throw new Error(`No simulation found with uid  ${simulationUid}!`);
+    }
+
+    return this.simulationMap[simulationUid].takeSnapshot();
+  };
+
+  public readonly createSimulationWithSnapshot = (
+    snapshot: SimulationSnapshot
+  ): string => {
+    // TODO: implement
+    throw new Error('Not implemented yet.');
   };
 }
 

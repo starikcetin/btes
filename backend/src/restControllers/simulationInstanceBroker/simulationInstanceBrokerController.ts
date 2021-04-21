@@ -1,5 +1,7 @@
-import { Controller, Get, Query, Route, Tags } from 'tsoa';
+import { Controller, Get, Post, Query, Route, Tags } from 'tsoa';
+import { hasValue } from '../../common/utils/hasValue';
 import { simulationManager } from '../../core/simulationManager';
+import { SimulationSaveModel } from '../../database/SimulationSaveDataModel';
 import { socketManager } from '../../socketManager';
 import { simulationUidGenerator } from '../../utils/uidGenerators';
 
@@ -28,6 +30,45 @@ export class SimulationInstanceBrokerController extends Controller {
     );
 
     return uidStr;
+  }
+
+  /**
+   * Loads a saved simulation.
+   */
+  @Get('load/{simulationSaveDataId}')
+  public async load(simulationSaveDataId: string): Promise<string> {
+    const saveData = await SimulationSaveModel.findById(simulationSaveDataId);
+    if (!hasValue(saveData)) {
+      throw new Error('No save data found with given Id');
+    }
+
+    if (
+      simulationManager.checkSimulationExists(saveData.snapshot.simulationUid)
+    ) {
+      throw new Error(
+        `A simulation with ID ${saveData.snapshot.simulationUid} already exists! Refusing to create.`
+      );
+    }
+
+    const ns = socketManager.getOrCreateNamespace(
+      saveData.snapshot.simulationUid
+    );
+    simulationManager.createSimulationWithSnapshot(saveData.snapshot);
+
+    console.log(
+      `restored simulation instance with uid: ${saveData.snapshot.simulationUid} name: ${ns.name}`
+    );
+
+    return saveData.snapshot.simulationUid;
+  }
+
+  /**
+   * Saves an active simulation.
+   */
+  @Post('save/{simulationUid}')
+  public async save(simulationUid: string): Promise<void> {
+    const snapshot = simulationManager.getSimulationSnapshot(simulationUid);
+    await SimulationSaveModel.create({ snapshot });
   }
 
   /**
