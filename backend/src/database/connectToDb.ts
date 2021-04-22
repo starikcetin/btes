@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 const mongoOptions: mongoose.ConnectOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
   poolSize: 50,
 };
 
