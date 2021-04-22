@@ -14,6 +14,7 @@ import {
   faPause,
   faPlay,
   faRedo,
+  faSave,
   faTachometerAlt,
   faUndo,
 } from '@fortawesome/free-solid-svg-icons';
@@ -249,11 +250,12 @@ const SandboxSimulation: React.FC = () => {
                   />
                 </InputGroup>
                 <Button
-                  type="button"
-                  className="btn btn-info ml-auto"
+                  /*onClick={saveData}*/
+                  className="ml-auto"
                   title="Save Simulation"
+                  variant="light"
                 >
-                  Save Simulation{' '}
+                  <FontAwesomeIcon icon={faSave} background-color="black" />
                 </Button>
               </ButtonToolbar>
             </div>
