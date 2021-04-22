@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Res, Route, Tags, Request } from 'tsoa';
-import { Get, Security, SuccessResponse, TsoaResponse } from '@tsoa/runtime';
+import { Security, SuccessResponse, TsoaResponse } from '@tsoa/runtime';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as express from 'express';
@@ -7,18 +7,9 @@ import * as express from 'express';
 import { UserModel } from '../../database/UserModel';
 import { hasValue } from '../../common/utils/hasValue';
 import { UserData } from '../../common/database/UserData';
-import { authService } from '../../auth/authService';
-
-export interface AuthRegisterBody {
-  username: string;
-  password: string;
-  email: string;
-}
-
-export interface AuthLoginBody {
-  username: string;
-  password: string;
-}
+import { authTokenBlacklistService } from '../../auth/authTokenBlacklistService';
+import { AuthRegisterRequestBody } from '../../common/auth/AuthRegisterBody';
+import { AuthLoginRequestBody } from '../../common/auth/AuthLoginBody';
 
 const authTokenSecret = process.env.AUTH_TOKEN_SECRET;
 
@@ -31,8 +22,10 @@ export class AuthController extends Controller {
    */
   @SuccessResponse(201, 'Created')
   @Post('register')
-  public async register(@Body() data: AuthRegisterBody): Promise<UserData> {
-    const { username, password, email } = data;
+  public async register(
+    @Body() body: AuthRegisterRequestBody
+  ): Promise<UserData> {
+    const { username, password, email } = body;
     const passwordHash = await bcrypt.hash(password, 10);
     const createdUser = await UserModel.create({
       username,
@@ -50,10 +43,10 @@ export class AuthController extends Controller {
    */
   @Post('login')
   public async login(
-    @Body() data: AuthLoginBody,
+    @Body() body: AuthLoginRequestBody,
     @Res() unauthorizedResponse: TsoaResponse<401, { reason: string }>
   ): Promise<string> {
-    const { username, password } = data;
+    const { username, password } = body;
 
     const existingUser = await UserModel.findOne({ username });
     if (!hasValue(existingUser)) {
@@ -77,7 +70,7 @@ export class AuthController extends Controller {
       expiresIn: '30m',
     });
 
-    authService.removeFromBlacklist(authToken);
+    authTokenBlacklistService.removeFromBlacklist(authToken);
 
     return authToken;
   }
@@ -98,7 +91,7 @@ export class AuthController extends Controller {
       return unauthorizedResponse(401, { reason: 'No auth token.' });
     }
 
-    await authService.addToBlacklist(authToken);
+    await authTokenBlacklistService.addToBlacklist(authToken);
   }
 
   /**

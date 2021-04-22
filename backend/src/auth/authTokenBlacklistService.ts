@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-class AuthService {
+class AuthTokenBlacklistService {
   private readonly blacklistedTokens: string[] = [];
 
   public readonly addToBlacklist = async (authToken: string): Promise<void> => {
@@ -30,4 +30,4 @@ class AuthService {
   };
 }
 
-export const authService = new AuthService();
+export const authTokenBlacklistService = new AuthTokenBlacklistService();

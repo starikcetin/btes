@@ -4,13 +4,13 @@ import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 
 import { hasValue } from '../common/utils/hasValue';
-import { authService } from './authService';
+import { authTokenBlacklistService } from './authTokenBlacklistService';
 
 export async function expressAuthentication(
   request: express.Request,
   securityName: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  scopes?: string[]
+  _scopes?: string[]
 ): Promise<object> {
   if (securityName !== 'jwt') {
     throw new Error('Security method not supported.');
@@ -33,7 +33,7 @@ export async function expressAuthentication(
   }
   const strippedAuthToken = splitAuthToken[1];
 
-  if (await authService.isInBlacklist(strippedAuthToken)) {
+  if (await authTokenBlacklistService.isInBlacklist(strippedAuthToken)) {
     throw new Error('This token has logged-out.');
   }
 
