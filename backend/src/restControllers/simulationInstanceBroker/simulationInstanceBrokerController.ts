@@ -25,9 +25,7 @@ export class SimulationInstanceBrokerController extends Controller {
     const ns = socketManager.getOrCreateNamespace(uidStr);
     simulationManager.createSimulation(uidStr, ns);
 
-    console.log(
-      `created simulation instance with uid: ${uidStr} name: ${ns.name}`
-    );
+    console.log(`Created simulation instance with uid: ${uidStr}`);
 
     return uidStr;
   }
@@ -46,17 +44,17 @@ export class SimulationInstanceBrokerController extends Controller {
       simulationManager.checkSimulationExists(saveData.snapshot.simulationUid)
     ) {
       throw new Error(
-        `A simulation with ID ${saveData.snapshot.simulationUid} already exists! Refusing to create.`
+        `A simulation with ID ${saveData.snapshot.simulationUid} already exists! Refusing to load.`
       );
     }
 
     const ns = socketManager.getOrCreateNamespace(
       saveData.snapshot.simulationUid
     );
-    simulationManager.createSimulationWithSnapshot(saveData.snapshot);
+    simulationManager.createSimulationWithSnapshot(saveData.snapshot, ns);
 
     console.log(
-      `restored simulation instance with uid: ${saveData.snapshot.simulationUid} name: ${ns.name}`
+      `Loaded simulation instance with uid: ${saveData.snapshot.simulationUid}`
     );
 
     return saveData.snapshot.simulationUid;
@@ -69,6 +67,10 @@ export class SimulationInstanceBrokerController extends Controller {
   public async save(simulationUid: string): Promise<void> {
     const snapshot = simulationManager.getSimulationSnapshot(simulationUid);
     await SimulationSaveModel.create({ snapshot });
+
+    console.log(
+      `Saved simulation instance with uid: ${snapshot.simulationUid}`
+    );
   }
 
   /**

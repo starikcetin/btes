@@ -74,10 +74,37 @@ class SimulationManager {
   };
 
   public readonly createSimulationWithSnapshot = (
-    snapshot: SimulationSnapshot
-  ): string => {
-    // TODO: implement
-    throw new Error('Not implemented yet.');
+    snapshot: SimulationSnapshot,
+    ns: Namespace
+  ): void => {
+    const commandHistoryManager = new CommandHistoryManager();
+    const socketEmitter = new SimulationNamespaceEmitter(ns);
+    const connectionMap = new NodeConnectionMap(socketEmitter);
+    const timerService = new ControlledTimerService(socketEmitter);
+
+    const simulation = new Simulation(
+      socketEmitter,
+      connectionMap,
+      timerService,
+      snapshot.simulationUid
+    );
+
+    const listener = new SimulationNamespaceListener(
+      simulation,
+      ns,
+      commandHistoryManager,
+      connectionMap,
+      timerService,
+      socketEmitter
+    );
+
+    this.simulationMap[snapshot.simulationUid] = simulation;
+    this.nsMap[snapshot.simulationUid] = ns;
+    this.listenerMap[snapshot.simulationUid] = listener;
+    this.emitterMap[snapshot.simulationUid] = socketEmitter;
+
+    timerService.begin();
+    simulation.importSnapshot(snapshot);
   };
 }
 
