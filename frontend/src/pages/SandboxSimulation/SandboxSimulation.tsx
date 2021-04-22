@@ -255,7 +255,7 @@ const SandboxSimulation: React.FC = () => {
                   title="Save Simulation"
                   variant="light"
                 >
-                  <FontAwesomeIcon icon={faSave} background-color="black" />
+                  <FontAwesomeIcon icon={faSave} />
                 </Button>
               </ButtonToolbar>
             </div>
