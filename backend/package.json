@@ -37,7 +37,8 @@
     "secp256k1": "^4.0.2",
     "socket.io": "^4.0.1",
     "swagger-ui-express": "^4.1.6",
-    "tsoa": "^3.6.1"
+    "tsoa": "^3.6.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
@@ -51,6 +52,7 @@
     "@types/ripemd160": "^2.0.0",
     "@types/secp256k1": "^4.0.1",
     "@types/swagger-ui-express": "^4.1.2",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
     "cross-var": "^1.1.0",
