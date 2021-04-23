@@ -66,7 +66,14 @@ export class SimulationInstanceBrokerController extends Controller {
   @Post('save/{simulationUid}')
   public async save(simulationUid: string): Promise<void> {
     const snapshot = simulationManager.getSimulationSnapshot(simulationUid);
-    await SimulationSaveModel.create({ snapshot });
+
+    await SimulationSaveModel.updateOne(
+      { 'snapshot.simulationUid': simulationUid },
+      { snapshot },
+      {
+        upsert: true,
+      }
+    );
 
     console.log(
       `Saved simulation instance with uid: ${snapshot.simulationUid}`

@@ -40,6 +40,7 @@ import { hasValue } from '../../common/utils/hasValue';
 import { SimulationNodeConnection } from '../../components/SimulationNodeConnection/SimulationNodeConnection';
 import NodeConnectionModal from '../../components/NodeConnectionModal/NodeConnectionModal';
 import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
+import { simulationInstanceService } from '../../services/simulationInstanceService';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -188,6 +189,10 @@ const SandboxSimulation: React.FC = () => {
     [handleRedo, handleUndo]
   );
 
+  const handleSave = useCallback(() => {
+    simulationInstanceService.save(simulationUid);
+  }, [simulationUid]);
+
   useEffect(() => {
     document.addEventListener('keyup', handleKeyUp);
     connect();
@@ -250,10 +255,15 @@ const SandboxSimulation: React.FC = () => {
                   />
                 </InputGroup>
                 <Button
-                  /*onClick={saveData}*/
+                  onClick={handleSave}
                   className="ml-auto"
-                  title="Save Simulation"
                   variant="light"
+                  disabled={!isPaused}
+                  title={
+                    isPaused
+                      ? 'Saving a running simulation is not supported. Pause first.'
+                      : 'Save this simulation'
+                  }
                 >
                   <FontAwesomeIcon icon={faSave} />
                 </Button>

@@ -29,6 +29,27 @@ class SimulationInstanceService {
 
     return checkResult;
   }
+
+  public async save(simulationUid: string): Promise<void> {
+    console.log('saving simulation instance: ', simulationUid);
+    await axios.post(
+      `/api/rest/simulationInstanceBroker/save/${simulationUid}`
+    );
+    console.log('saved simulation instance: ', simulationUid);
+  }
+
+  /**
+   * @returns the simulationUid not simulationSaveDataUid!
+   */
+  public async load(simulationSaveDataId: string): Promise<string> {
+    console.log('loading simulation instance: ', simulationSaveDataId);
+    const resp = await axios.get<string>(
+      `/api/rest/simulationInstanceBroker/load/${simulationSaveDataId}`
+    );
+    const simulationUid = resp.data;
+    console.log('loaded simulation instance: ', simulationUid);
+    return simulationUid;
+  }
 }
 
 export const simulationInstanceService = new SimulationInstanceService();
