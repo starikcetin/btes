@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { SimulationSaveMetadata } from '../../../common/src/saveLoad/SimulationSaveMetadata';
+import { SimulationSaveMetadataList } from '../../../common/src/saveLoad/SimulationSaveMetadataList';
 
 class SimulationInstanceService {
   public async create(): Promise<string> {
@@ -55,9 +56,9 @@ class SimulationInstanceService {
   /**
    * @returns metadatas of all saved simulations.
    */
-  public async getSavedSimulations(): Promise<SimulationSaveMetadata> {
-    const resp = await axios.get<SimulationSaveMetadata>(
-      `/api/rest/simulationInstanceBroker/listSavedSimulations`
+  public async getSavedSimulations(): Promise<SimulationSaveMetadataList> {
+    const resp = await axios.get<SimulationSaveMetadataList>(
+      `/api/rest/simulationInstanceBroker/savedSimulations`
     );
     return resp.data;
   }

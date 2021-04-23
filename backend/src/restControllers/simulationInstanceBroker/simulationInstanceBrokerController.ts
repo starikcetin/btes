@@ -95,7 +95,7 @@ export class SimulationInstanceBrokerController extends Controller {
    * Returns all saved simulations.
    */
   @Get('savedSimulations')
-  public async listSavedSimulations(): Promise<SimulationSaveMetadataList> {
+  public async savedSimulations(): Promise<SimulationSaveMetadataList> {
     const allSaved = await SimulationSaveModel.find();
     const filtered = _.chain(allSaved)
       .filter(hasValue)

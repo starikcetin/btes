@@ -1,12 +1,28 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+import { Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
+
 import './Sandbox.scss';
 import background from './sandbox_bg.jpg';
-import { useHistory } from 'react-router-dom';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
+import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/SimulationSaveMetadata';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
   const [simulationUid, setSimulationUid] = useState('');
+
+  const [saveMetadatas, setSaveMetadatas] = useState<SimulationSaveMetadata[]>(
+    []
+  );
+
+  const [isSaveMetadatasLoading, setIsSaveMetadatasLoading] = useState<boolean>(
+    true
+  );
+
+  const [
+    doesSaveMetadatasHaveError,
+    setDoesSaveMetadatasHaveError,
+  ] = useState<boolean>(false);
 
   const simulationIdOnInput = (event: FormEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
@@ -34,54 +50,123 @@ const Sandbox: React.FC = () => {
     }
   };
 
+  const handleLoadSimulation = useCallback(
+    (simulationSaveDocumentId: string) => {
+      simulationInstanceService.load(simulationSaveDocumentId);
+    },
+    []
+  );
+
+  const fetchSavedSimulations = useCallback(async () => {
+    setIsSaveMetadatasLoading(true);
+
+    try {
+      const savedSimulations = await simulationInstanceService.getSavedSimulations();
+      setSaveMetadatas(savedSimulations.metadatas);
+      setDoesSaveMetadatasHaveError(false);
+    } catch {
+      setDoesSaveMetadatasHaveError(true);
+    }
+
+    setIsSaveMetadatasLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchSavedSimulations();
+  }, [fetchSavedSimulations]);
+
+  const renderSaveMetadataListItem = (metadata: SimulationSaveMetadata) => {
+    return (
+      <ListGroup.Item key={metadata.documentId}>
+        <Row>
+          <Col xs={12} xl>
+            <Row>
+              <Col>Simulation UID: {metadata.simulationUid}</Col>
+            </Row>
+            <Row>
+              <Col>
+                <span className="small text-muted">
+                  Last change: {metadata.lastUpdate}
+                </span>
+              </Col>
+            </Row>
+          </Col>
+          <Col
+            xs={12}
+            xl="auto"
+            className="d-flex align-items-center justify-content-end"
+          >
+            <Button
+              variant="primary"
+              onClick={() => handleLoadSimulation(metadata.documentId)}
+            >
+              Load
+            </Button>
+          </Col>
+        </Row>
+      </ListGroup.Item>
+    );
+  };
+
   return (
-    <div className="page-sandbox d-flex justify-content-center col-12">
+    <div className="page-sandbox">
       <img
         className="global-bg-img page-sandbox--bg-img"
         src={background}
         alt="background"
       />
-      <div className="row d-flex justify-content-center">
-        <div className="page-sandbox--header d-flex justify-content-center align-items-center mt-3 col-12 text-center">
-          <span>
-            <b>Welcome to SandBox Module</b>
-          </span>
-        </div>
-        <div className="page-sandbox--header-info d-flex justify-content-center col-lg-8 col-12 text-center">
-          <span>
-            <i>
-              In this module, you can create your own simulation without any
-              restrictions
-            </i>
-          </span>
-        </div>
-        <div className="buttons col-12 d-flex align-content-center justify-content-center align-items-center">
-          <button
-            className="btn btn-success m-2 col-lg-2 col-6"
-            onClick={createSimulationOnClick}
+      <Container fluid={true} className="h-100">
+        <Row className="h-100">
+          <Col xs={5} className="h-100 p-5">
+            <Card className="h-100 w-100">
+              <Card.Header>Saved Simulations</Card.Header>
+              <ListGroup variant="flush" className="overflow-auto">
+                {saveMetadatas.map(renderSaveMetadataListItem)}
+              </ListGroup>
+            </Card>
+          </Col>
+          <Col
+            xs={7}
+            className="h-100 d-flex flex-column justify-content-start"
           >
-            Create
-          </button>
-          <div className="input-group m-2 col-lg-3 col-6">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Simulation ID"
-              aria-label="Simulation ID"
-              aria-describedby="basic-addon2"
-              onInput={simulationIdOnInput}
-            />
-            <div className="input-group-append">
-              <button
-                className="btn btn-primary"
-                onClick={resumeSimulationOnClick}
-              >
-                Resume
-              </button>
+            <div className="page-sandbox--header text-center font-weight-bold mt-5">
+              Welcome to Sandbox Module
             </div>
-          </div>
-        </div>
-      </div>
+            <div className="page-sandbox--header-info text-center font-italic mt-5">
+              In this module, you can create your own simulation without any
+              restrictions.
+            </div>
+            <div className="row d-flex justify-content-center mt-auto mb-auto">
+              <div className="buttons col-12 d-flex align-content-center justify-content-center align-items-center">
+                <button
+                  className="btn btn-success m-2 col-lg-2 col-6"
+                  onClick={createSimulationOnClick}
+                >
+                  Create
+                </button>
+                <div className="input-group m-2 col-lg-3 col-6">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Simulation ID"
+                    aria-label="Simulation ID"
+                    aria-describedby="basic-addon2"
+                    onInput={simulationIdOnInput}
+                  />
+                  <div className="input-group-append">
+                    <button
+                      className="btn btn-primary"
+                      onClick={resumeSimulationOnClick}
+                    >
+                      Resume
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };
