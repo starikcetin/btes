@@ -7,7 +7,7 @@ const SimulationSaveSchema = new mongoose.Schema<SimulationSaveDocument>(
   {
     snapshot: { type: mongoose.Schema.Types.Mixed, required: true },
   },
-  { timestamps: true }
+  { timestamps: true, minimize: false }
 );
 
 export const SimulationSaveModel = mongoose.model<SimulationSaveDocument>(
