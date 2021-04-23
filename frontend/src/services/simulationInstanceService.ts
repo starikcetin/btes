@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SimulationSaveMetadata } from '../../../common/src/saveLoad/SimulationSaveMetadata';
 
 class SimulationInstanceService {
   public async create(): Promise<string> {
@@ -49,6 +50,16 @@ class SimulationInstanceService {
     const simulationUid = resp.data;
     console.log('loaded simulation instance: ', simulationUid);
     return simulationUid;
+  }
+
+  /**
+   * @returns metadatas of all saved simulations.
+   */
+  public async getSavedSimulations(): Promise<SimulationSaveMetadata> {
+    const resp = await axios.get<SimulationSaveMetadata>(
+      `/api/rest/simulationInstanceBroker/listSavedSimulations`
+    );
+    return resp.data;
   }
 }
 

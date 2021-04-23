@@ -1,9 +1,12 @@
+import _ from 'lodash';
 import { Controller, Get, Post, Query, Route, Tags } from 'tsoa';
+
 import { hasValue } from '../../common/utils/hasValue';
 import { simulationManager } from '../../core/simulationManager';
 import { SimulationSaveModel } from '../../database/SimulationSaveDataModel';
 import { socketManager } from '../../socketManager';
 import { simulationUidGenerator } from '../../utils/uidGenerators';
+import { SimulationSaveMetadataList } from '../../common/saveLoad/SimulationSaveMetadataList';
 
 @Tags('Simulation Instance Broker')
 @Route('simulationInstanceBroker')
@@ -86,5 +89,23 @@ export class SimulationInstanceBrokerController extends Controller {
   @Get('check')
   public async check(@Query() simulationUid: string): Promise<boolean> {
     return simulationManager.checkSimulationExists(simulationUid);
+  }
+
+  /**
+   * Returns all saved simulations.
+   */
+  @Get('savedSimulations')
+  public async listSavedSimulations(): Promise<SimulationSaveMetadataList> {
+    const allSaved = await SimulationSaveModel.find();
+    const filtered = _.chain(allSaved)
+      .filter(hasValue)
+      .map((d) => ({
+        documentId: d._id,
+        simulationUid: d.snapshot.simulationUid,
+        lastUpdate: d.updatedAt,
+      }))
+      .value();
+
+    return { metadatas: filtered };
   }
 }
