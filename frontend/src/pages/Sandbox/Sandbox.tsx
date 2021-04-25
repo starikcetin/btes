@@ -1,12 +1,22 @@
 import React, { FormEvent, useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  ListGroup,
+  Row,
+  Spinner,
+} from 'react-bootstrap';
 
 import './Sandbox.scss';
 import background from './sandbox_bg.jpg';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/SimulationSaveMetadata';
 import { SimulationSaveListItem } from '../../components/SimulationSaveListItem/SimulationSaveListItem';
+import { faSync, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -59,8 +69,10 @@ const Sandbox: React.FC = () => {
     [resumeSimulation, simulationUid]
   );
 
-  const fetchSavedSimulations = useCallback(async () => {
-    setIsSaveMetadatasLoading(true);
+  const fetchSavedSimulations = useCallback(async (setIsLoading: boolean) => {
+    if (setIsLoading) {
+      setIsSaveMetadatasLoading(true);
+    }
 
     try {
       const savedSimulations = await simulationInstanceService.getSavedSimulations();
@@ -70,12 +82,54 @@ const Sandbox: React.FC = () => {
       setDoesSaveMetadatasHaveError(true);
     }
 
-    setIsSaveMetadatasLoading(false);
+    if (setIsLoading) {
+      setIsSaveMetadatasLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    fetchSavedSimulations();
+    fetchSavedSimulations(true);
   }, [fetchSavedSimulations]);
+
+  const renderSimulationSaveListBody = () => {
+    if (isSaveMetadatasLoading) {
+      return (
+        <Card.Body className="d-flex justify-content-center">
+          <div className="mt-5">
+            <Spinner animation="grow" />
+          </div>
+        </Card.Body>
+      );
+    }
+
+    if (doesSaveMetadatasHaveError) {
+      return (
+        <Card.Body className="d-flex flex-column align-items-center">
+          <div className="mt-5">Could not fetch saved simulations.</div>
+          <div className="mt-3">
+            <Button
+              variant="primary"
+              onClick={() => fetchSavedSimulations(true)}
+            >
+              Try Again
+            </Button>
+          </div>
+        </Card.Body>
+      );
+    }
+
+    return (
+      <ListGroup variant="flush" className="overflow-auto">
+        {saveMetadatas.map((metadata) => (
+          <SimulationSaveListItem
+            metadata={metadata}
+            joinHandler={resumeSimulation}
+            onLoadSuccess={() => fetchSavedSimulations(false)}
+          />
+        ))}
+      </ListGroup>
+    );
+  };
 
   return (
     <div className="page-sandbox">
@@ -88,21 +142,35 @@ const Sandbox: React.FC = () => {
         <Row className="h-100">
           <Col xs={5} className="h-100 p-5">
             <Card className="h-100 w-100">
-              <Card.Header>Saved Simulations</Card.Header>
-              <ListGroup variant="flush" className="overflow-auto">
-                {saveMetadatas.map((metadata) => (
-                  <SimulationSaveListItem
-                    metadata={metadata}
-                    joinHandler={resumeSimulation}
-                    onLoadSuccess={fetchSavedSimulations}
-                  />
-                ))}
-              </ListGroup>
+              <Card.Header>
+                <Row>
+                  <Col className="d-flex align-items-center">
+                    <span>Saved Simulations</span>
+                  </Col>
+                  <Col xs="auto">
+                    <Button
+                      variant="info"
+                      className="m-0"
+                      onClick={() => fetchSavedSimulations(true)}
+                      disabled={
+                        isSaveMetadatasLoading || doesSaveMetadatasHaveError
+                      }
+                      title="Refresh"
+                    >
+                      <FontAwesomeIcon
+                        icon={faSyncAlt}
+                        spin={isSaveMetadatasLoading}
+                      />
+                    </Button>
+                  </Col>
+                </Row>
+              </Card.Header>
+              {renderSimulationSaveListBody()}
             </Card>
           </Col>
           <Col
             xs={7}
-            className="h-100 d-flex flex-column justify-content-start"
+            className="h-100 d-flex flex-column justify-content-start pt-5"
           >
             <div className="page-sandbox--header text-center font-weight-bold mt-5">
               Welcome to Sandbox Module
@@ -111,32 +179,29 @@ const Sandbox: React.FC = () => {
               In this module, you can create your own simulation without any
               restrictions.
             </div>
-            <div className="row d-flex justify-content-center mt-auto mb-auto">
-              <div className="buttons col-12 d-flex align-content-center justify-content-center align-items-center">
+            <div className="d-flex justify-content-center mt-auto mb-auto">
+              <div className="page-sandbox--button-container input-group">
                 <button
-                  className="btn btn-success m-2 col-lg-2 col-6"
+                  className="page-sandbox--standalone-button btn btn-success"
                   onClick={createSimulationOnClick}
                 >
                   Create
                 </button>
-                <div className="input-group m-2 col-lg-3 col-6">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Simulation ID"
-                    aria-label="Simulation ID"
-                    aria-describedby="basic-addon2"
-                    onInput={simulationIdOnInput}
-                  />
-                  <div className="input-group-append">
-                    <button
-                      className="btn btn-primary"
-                      onClick={resumeSimulationOnClick}
-                    >
-                      Resume
-                    </button>
-                  </div>
-                </div>
+              </div>
+              <div className="page-sandbox--button-container input-group ml-4">
+                <input
+                  type="text"
+                  className="page-sandbox--input form-control"
+                  placeholder="Simulation ID"
+                  aria-label="Simulation ID"
+                  onInput={simulationIdOnInput}
+                />
+                <button
+                  className="btn btn-primary input-group-append"
+                  onClick={resumeSimulationOnClick}
+                >
+                  Resume
+                </button>
               </div>
             </div>
           </Col>
