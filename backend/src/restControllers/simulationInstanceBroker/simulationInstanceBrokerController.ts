@@ -103,6 +103,9 @@ export class SimulationInstanceBrokerController extends Controller {
         documentId: d._id,
         simulationUid: d.snapshot.simulationUid,
         lastUpdate: d.updatedAt,
+        isActive: simulationManager.checkSimulationExists(
+          d.snapshot.simulationUid
+        ),
       }))
       .value();
 
