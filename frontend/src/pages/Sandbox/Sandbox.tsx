@@ -9,14 +9,14 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import './Sandbox.scss';
 import background from './sandbox_bg.jpg';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/SimulationSaveMetadata';
 import { SimulationSaveListItem } from '../../components/SimulationSaveListItem/SimulationSaveListItem';
-import { faSync, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -45,7 +45,7 @@ const Sandbox: React.FC = () => {
     history.push('/sandboxSimulation/' + simulationUid);
   };
 
-  const resumeSimulation = useCallback(
+  const joinSimulation = useCallback(
     async (simulationUid: string): Promise<void> => {
       const simulationExists = await simulationInstanceService.check(
         simulationUid
@@ -64,9 +64,9 @@ const Sandbox: React.FC = () => {
     [history]
   );
 
-  const resumeSimulationOnClick = useCallback(
-    async () => resumeSimulation(simulationUid),
-    [resumeSimulation, simulationUid]
+  const joinSimulationOnClick = useCallback(
+    async () => joinSimulation(simulationUid),
+    [joinSimulation, simulationUid]
   );
 
   const fetchSavedSimulations = useCallback(async (setIsLoading: boolean) => {
@@ -123,7 +123,7 @@ const Sandbox: React.FC = () => {
         {saveMetadatas.map((metadata) => (
           <SimulationSaveListItem
             metadata={metadata}
-            joinHandler={resumeSimulation}
+            joinHandler={joinSimulation}
             onLoadSuccess={() => fetchSavedSimulations(false)}
           />
         ))}
@@ -198,9 +198,9 @@ const Sandbox: React.FC = () => {
                 />
                 <button
                   className="btn btn-primary input-group-append"
-                  onClick={resumeSimulationOnClick}
+                  onClick={joinSimulationOnClick}
                 >
-                  Resume
+                  Join
                 </button>
               </div>
             </div>
