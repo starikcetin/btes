@@ -6,6 +6,7 @@ import './Sandbox.scss';
 import background from './sandbox_bg.jpg';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/SimulationSaveMetadata';
+import { RelativeDate } from '../../components/RelativeDate/RelativeDate';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -86,7 +87,7 @@ const Sandbox: React.FC = () => {
             <Row>
               <Col>
                 <span className="small text-muted">
-                  Last change: {metadata.lastUpdate}
+                  Last change: <RelativeDate date={metadata.lastUpdate} />
                 </span>
               </Col>
             </Row>

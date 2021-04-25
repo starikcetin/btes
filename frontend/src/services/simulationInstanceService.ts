@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { SimulationSaveMetadata } from '../../../common/src/saveLoad/SimulationSaveMetadata';
+
 import { SimulationSaveMetadataList } from '../../../common/src/saveLoad/SimulationSaveMetadataList';
+import { ensureDate } from '../utils/ensureDate';
 
 class SimulationInstanceService {
   public async create(): Promise<string> {
@@ -60,8 +61,20 @@ class SimulationInstanceService {
     const resp = await axios.get<SimulationSaveMetadataList>(
       `/api/rest/simulationInstanceBroker/savedSimulations`
     );
-    return resp.data;
+    return this.prepareSavedSimulations(resp.data);
   }
+
+  private readonly prepareSavedSimulations = (
+    rawData: SimulationSaveMetadataList
+  ): SimulationSaveMetadataList => {
+    return {
+      ...rawData,
+      metadatas: rawData.metadatas.map((metadata) => ({
+        ...metadata,
+        lastUpdate: ensureDate(metadata.lastUpdate),
+      })),
+    };
+  };
 }
 
 export const simulationInstanceService = new SimulationInstanceService();

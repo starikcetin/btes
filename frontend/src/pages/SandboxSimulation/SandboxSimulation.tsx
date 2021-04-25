@@ -208,7 +208,7 @@ const SandboxSimulation: React.FC = () => {
       {connected ? (
         <>
           <div className="page-sandbox-simulation--body">
-            <div className="page-sandbox-simulation--toolbox bg-light border-bottom pl-2">
+            <div className="page-sandbox-simulation--toolbox bg-light border-bottom px-2">
               <ButtonToolbar>
                 <ButtonGroup className="mr-4">
                   <Button
@@ -261,8 +261,8 @@ const SandboxSimulation: React.FC = () => {
                   disabled={!isPaused}
                   title={
                     isPaused
-                      ? 'Saving a running simulation is not supported. Pause first.'
-                      : 'Save this simulation'
+                      ? 'Save this simulation'
+                      : 'Saving a running simulation is not supported. Pause first.'
                   }
                 >
                   <FontAwesomeIcon icon={faSave} />
