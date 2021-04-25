@@ -6,7 +6,7 @@ import './Sandbox.scss';
 import background from './sandbox_bg.jpg';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/SimulationSaveMetadata';
-import { RelativeDate } from '../../components/RelativeDate/RelativeDate';
+import { SimulationSaveListItem } from '../../components/SimulationSaveListItem/SimulationSaveListItem';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -35,27 +35,28 @@ const Sandbox: React.FC = () => {
     history.push('/sandboxSimulation/' + simulationUid);
   };
 
-  const resumeSimulationOnClick = async () => {
-    const simulationExists = await simulationInstanceService.check(
-      simulationUid
-    );
-    if (simulationExists) {
-      history.push('/sandboxSimulation/' + simulationUid);
-    } else {
-      console.log(
-        'Refusing to connect: simulation with id ',
-        simulationUid,
-        " doesn't exist!"
+  const resumeSimulation = useCallback(
+    async (simulationUid: string): Promise<void> => {
+      const simulationExists = await simulationInstanceService.check(
+        simulationUid
       );
-      // TODO: Prompt the user.
-    }
-  };
-
-  const handleLoadSimulation = useCallback(
-    (simulationSaveDocumentId: string) => {
-      simulationInstanceService.load(simulationSaveDocumentId);
+      if (simulationExists) {
+        history.push('/sandboxSimulation/' + simulationUid);
+      } else {
+        console.log(
+          'Refusing to connect: simulation with id ',
+          simulationUid,
+          " doesn't exist!"
+        );
+        // TODO: Prompt the user.
+      }
     },
-    []
+    [history]
+  );
+
+  const resumeSimulationOnClick = useCallback(
+    async () => resumeSimulation(simulationUid),
+    [resumeSimulation, simulationUid]
   );
 
   const fetchSavedSimulations = useCallback(async () => {
@@ -76,39 +77,6 @@ const Sandbox: React.FC = () => {
     fetchSavedSimulations();
   }, [fetchSavedSimulations]);
 
-  const renderSaveMetadataListItem = (metadata: SimulationSaveMetadata) => {
-    return (
-      <ListGroup.Item key={metadata.documentId}>
-        <Row>
-          <Col xs={12} xl>
-            <Row>
-              <Col>Simulation UID: {metadata.simulationUid}</Col>
-            </Row>
-            <Row>
-              <Col>
-                <span className="small text-muted">
-                  Last change: <RelativeDate date={metadata.lastUpdate} />
-                </span>
-              </Col>
-            </Row>
-          </Col>
-          <Col
-            xs={12}
-            xl="auto"
-            className="d-flex align-items-center justify-content-end"
-          >
-            <Button
-              variant="primary"
-              onClick={() => handleLoadSimulation(metadata.documentId)}
-            >
-              Load
-            </Button>
-          </Col>
-        </Row>
-      </ListGroup.Item>
-    );
-  };
-
   return (
     <div className="page-sandbox">
       <img
@@ -122,7 +90,13 @@ const Sandbox: React.FC = () => {
             <Card className="h-100 w-100">
               <Card.Header>Saved Simulations</Card.Header>
               <ListGroup variant="flush" className="overflow-auto">
-                {saveMetadatas.map(renderSaveMetadataListItem)}
+                {saveMetadatas.map((metadata) => (
+                  <SimulationSaveListItem
+                    metadata={metadata}
+                    joinHandler={resumeSimulation}
+                    onLoadSuccess={fetchSavedSimulations}
+                  />
+                ))}
               </ListGroup>
             </Card>
           </Col>
