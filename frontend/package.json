@@ -61,6 +61,7 @@
     "redux": "^4.0.5",
     "resolve": "^1.20.0",
     "ripemd160": "^2.0.2",
+    "s-ago": "^2.2.0",
     "secp256k1": "^4.0.2",
     "socket.io-client": "^4.0.1",
     "use-deep-compare-effect": "^1.6.1",

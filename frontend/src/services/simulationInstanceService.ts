@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+import { SimulationSaveMetadataList } from '../../../common/src/saveLoad/SimulationSaveMetadataList';
+import { ensureDate } from '../utils/ensureDate';
+
 class SimulationInstanceService {
   public async create(): Promise<string> {
     console.log('requesting simulation instance');
@@ -29,6 +32,49 @@ class SimulationInstanceService {
 
     return checkResult;
   }
+
+  public async save(simulationUid: string): Promise<void> {
+    console.log('saving simulation instance: ', simulationUid);
+    await axios.post(
+      `/api/rest/simulationInstanceBroker/save/${simulationUid}`
+    );
+    console.log('saved simulation instance: ', simulationUid);
+  }
+
+  /**
+   * @returns the simulationUid not simulationSaveDataUid!
+   */
+  public async load(simulationSaveDataId: string): Promise<string> {
+    console.log('loading simulation instance: ', simulationSaveDataId);
+    const resp = await axios.get<string>(
+      `/api/rest/simulationInstanceBroker/load/${simulationSaveDataId}`
+    );
+    const simulationUid = resp.data;
+    console.log('loaded simulation instance: ', simulationUid);
+    return simulationUid;
+  }
+
+  /**
+   * @returns metadatas of all saved simulations.
+   */
+  public async getSavedSimulations(): Promise<SimulationSaveMetadataList> {
+    const resp = await axios.get<SimulationSaveMetadataList>(
+      `/api/rest/simulationInstanceBroker/savedSimulations`
+    );
+    return this.prepareSavedSimulations(resp.data);
+  }
+
+  private readonly prepareSavedSimulations = (
+    rawData: SimulationSaveMetadataList
+  ): SimulationSaveMetadataList => {
+    return {
+      ...rawData,
+      metadatas: rawData.metadatas.map((metadata) => ({
+        ...metadata,
+        lastUpdate: ensureDate(metadata.lastUpdate),
+      })),
+    };
+  };
 }
 
 export const simulationInstanceService = new SimulationInstanceService();

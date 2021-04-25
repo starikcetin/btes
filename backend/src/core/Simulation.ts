@@ -16,6 +16,7 @@ import { Tree } from '../common/tree/Tree';
 import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
 import { BlockchainMiner } from './blockchain/modules/miner/BlockchainMiner';
 import { BlockchainNetwork } from './blockchain/modules/BlockchainNetwork';
+import { NodeConnection } from './network/NodeConnection';
 
 // TODO: this should not be here
 const blockchainConfig: BlockchainConfig = {
@@ -43,6 +44,34 @@ export class Simulation {
     this.timerService = timerService;
     this.simulationUid = simulationUid;
   }
+
+  public readonly importSnapshot = (snapshot: SimulationSnapshot): void => {
+    // nodeMap
+    _.forEach(snapshot.nodeMap, this.createNodeWithSnapshot);
+
+    // timerService
+    this.timerService.setTimeScale(snapshot.timerService.timeScale);
+    if (snapshot.timerService.isPaused) {
+      this.timerService.pause();
+    }
+
+    // connectionMap
+    _.forEach(snapshot.connectionMap.connectionMap, (secondLevel) =>
+      _.forEach(secondLevel, (connSnapshot) => {
+        const firstNode = this.nodeMap[connSnapshot.firstNodeUid];
+        const secondNode = this.nodeMap[connSnapshot.secondNodeUid];
+
+        const conn = new NodeConnection(
+          this.socketEmitter,
+          firstNode,
+          secondNode,
+          connSnapshot.latencyInMs
+        );
+
+        this.connectionMap.add(conn);
+      })
+    );
+  };
 
   public readonly createNode = (
     positionX: number,

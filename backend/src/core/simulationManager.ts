@@ -7,6 +7,7 @@ import { CommandHistoryManager } from './undoRedo/CommandHistoryManager';
 import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
+import { SimulationSnapshot } from '../common/SimulationSnapshot';
 
 class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -60,6 +61,50 @@ class SimulationManager {
     );
 
     return simulationExists;
+  };
+
+  public readonly getSimulationSnapshot = (
+    simulationUid: string
+  ): SimulationSnapshot => {
+    if (!this.checkSimulationExists(simulationUid)) {
+      throw new Error(`No simulation found with uid  ${simulationUid}!`);
+    }
+
+    return this.simulationMap[simulationUid].takeSnapshot();
+  };
+
+  public readonly createSimulationWithSnapshot = (
+    snapshot: SimulationSnapshot,
+    ns: Namespace
+  ): void => {
+    const commandHistoryManager = new CommandHistoryManager();
+    const socketEmitter = new SimulationNamespaceEmitter(ns);
+    const connectionMap = new NodeConnectionMap(socketEmitter);
+    const timerService = new ControlledTimerService(socketEmitter);
+
+    const simulation = new Simulation(
+      socketEmitter,
+      connectionMap,
+      timerService,
+      snapshot.simulationUid
+    );
+
+    const listener = new SimulationNamespaceListener(
+      simulation,
+      ns,
+      commandHistoryManager,
+      connectionMap,
+      timerService,
+      socketEmitter
+    );
+
+    this.simulationMap[snapshot.simulationUid] = simulation;
+    this.nsMap[snapshot.simulationUid] = ns;
+    this.listenerMap[snapshot.simulationUid] = listener;
+    this.emitterMap[snapshot.simulationUid] = socketEmitter;
+
+    timerService.begin();
+    simulation.importSnapshot(snapshot);
   };
 }
 

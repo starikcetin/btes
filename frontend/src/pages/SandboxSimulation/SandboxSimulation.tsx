@@ -14,6 +14,7 @@ import {
   faPause,
   faPlay,
   faRedo,
+  faSave,
   faTachometerAlt,
   faUndo,
 } from '@fortawesome/free-solid-svg-icons';
@@ -39,6 +40,7 @@ import { hasValue } from '../../common/utils/hasValue';
 import { SimulationNodeConnection } from '../../components/SimulationNodeConnection/SimulationNodeConnection';
 import NodeConnectionModal from '../../components/NodeConnectionModal/NodeConnectionModal';
 import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
+import { simulationInstanceService } from '../../services/simulationInstanceService';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -187,6 +189,10 @@ const SandboxSimulation: React.FC = () => {
     [handleRedo, handleUndo]
   );
 
+  const handleSave = useCallback(() => {
+    simulationInstanceService.save(simulationUid);
+  }, [simulationUid]);
+
   useEffect(() => {
     document.addEventListener('keyup', handleKeyUp);
     connect();
@@ -202,7 +208,7 @@ const SandboxSimulation: React.FC = () => {
       {connected ? (
         <>
           <div className="page-sandbox-simulation--body">
-            <div className="page-sandbox-simulation--toolbox bg-light border-bottom pl-2">
+            <div className="page-sandbox-simulation--toolbox bg-light border-bottom px-2">
               <ButtonToolbar>
                 <ButtonGroup className="mr-4">
                   <Button
@@ -248,8 +254,22 @@ const SandboxSimulation: React.FC = () => {
                     onChange={handleTimeScaleInputChange}
                   />
                 </InputGroup>
+                <Button
+                  onClick={handleSave}
+                  className="ml-auto"
+                  variant="light"
+                  disabled={!isPaused}
+                  title={
+                    isPaused
+                      ? 'Save this simulation'
+                      : 'Saving a running simulation is not supported. Pause first.'
+                  }
+                >
+                  <FontAwesomeIcon icon={faSave} />
+                </Button>
               </ButtonToolbar>
             </div>
+
             <div className="page-sandbox-simulation--board-container">
               <div
                 className="page-sandbox-simulation--board"
