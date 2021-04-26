@@ -35,4 +35,13 @@
       width: 20em;
     }
   }
+
+  &--file-input {
+    &#{&} {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      padding: 0.25em;
+    }
+  }
 }

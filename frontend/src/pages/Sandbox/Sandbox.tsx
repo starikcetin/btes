@@ -36,6 +36,8 @@ const Sandbox: React.FC = () => {
     null
   );
 
+  const [isImporting, setIsImporting] = useState<boolean>(false);
+
   const [
     doesSaveMetadatasHaveError,
     setDoesSaveMetadatasHaveError,
@@ -99,12 +101,21 @@ const Sandbox: React.FC = () => {
       return;
     }
 
-    const simulationUid = await simulationInstanceService.import(importContent);
-    joinSimulation(simulationUid);
+    setIsImporting(true);
+
+    try {
+      const simulationUid = await simulationInstanceService.import(
+        importContent
+      );
+      await joinSimulation(simulationUid);
+    } finally {
+      setIsImporting(false);
+    }
   }, [importContent, joinSimulation]);
 
   const fileOnInput: React.FormEventHandler<HTMLInputElement> = useCallback(
     async (event) => {
+      setIsImporting(true);
       return new Promise<void>((resolve, reject) => {
         const elm = event.currentTarget;
 
@@ -122,14 +133,20 @@ const Sandbox: React.FC = () => {
             const rawText = e.target.result;
             const parsed = JSON.parse(rawText) as SimulationExport;
             setImportContent(parsed);
+
+            setIsImporting(false);
+            resolve();
           } else {
             elm.value = '';
             setImportContent(null);
+
+            setIsImporting(false);
+            reject();
           }
         };
 
         reader.onerror = (e) => {
-          console.log(e);
+          setIsImporting(false);
           reject(e);
         };
       });
@@ -229,7 +246,7 @@ const Sandbox: React.FC = () => {
               In this module, you can create your own simulation without any
               restrictions.
             </div>
-            <div className="d-flex justify-content-center mt-auto mb-auto">
+            <div className="d-flex justify-content-center mt-auto mb-5">
               <div className="page-sandbox--button-container input-group">
                 <button
                   className="page-sandbox--standalone-button btn btn-success"
@@ -253,19 +270,34 @@ const Sandbox: React.FC = () => {
                   Join
                 </button>
               </div>
+            </div>
+            <div className="d-flex justify-content-center mb-auto">
               <div className="page-sandbox--button-container input-group ml-4">
-                <input
-                  type="file"
-                  className="page-sandbox--input form-control"
-                  placeholder="Select a file..."
-                  onInput={fileOnInput}
-                />
-                <button
-                  className="btn btn-primary input-group-append"
-                  onClick={importOnClick}
-                >
-                  Import
-                </button>
+                <div className="page-sandbox--file-input form-control">
+                  <input
+                    type="file"
+                    placeholder="Select a file..."
+                    onInput={fileOnInput}
+                    disabled={isImporting}
+                  />
+                </div>
+                <div className="input-group-append">
+                  <button
+                    className="btn btn-primary"
+                    onClick={importOnClick}
+                    disabled={!hasValue(importContent) || isImporting}
+                  >
+                    {isImporting && (
+                      <Spinner
+                        as="span"
+                        animation="grow"
+                        size="sm"
+                        className="mr-2"
+                      />
+                    )}
+                    Import
+                  </button>
+                </div>
               </div>
             </div>
           </Col>
