@@ -17,6 +17,8 @@ import background from './sandbox_bg.jpg';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/SimulationSaveMetadata';
 import { SimulationSaveListItem } from '../../components/SimulationSaveListItem/SimulationSaveListItem';
+import { hasValue } from '../../common/utils/hasValue';
+import { SimulationExport } from '../../../../backend/src/common/importExport/SimulationExport';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -28,6 +30,10 @@ const Sandbox: React.FC = () => {
 
   const [isSaveMetadatasLoading, setIsSaveMetadatasLoading] = useState<boolean>(
     true
+  );
+
+  const [importContent, setImportContent] = useState<SimulationExport | null>(
+    null
   );
 
   const [
@@ -86,6 +92,50 @@ const Sandbox: React.FC = () => {
       setIsSaveMetadatasLoading(false);
     }
   }, []);
+
+  const importOnClick = useCallback(async () => {
+    if (!hasValue(importContent)) {
+      console.warn('Ignoring import: no import content');
+      return;
+    }
+
+    const simulationUid = await simulationInstanceService.import(importContent);
+    joinSimulation(simulationUid);
+  }, [importContent, joinSimulation]);
+
+  const fileOnInput: React.FormEventHandler<HTMLInputElement> = useCallback(
+    async (event) => {
+      return new Promise<void>((resolve, reject) => {
+        const elm = event.currentTarget;
+
+        if (!hasValue(elm.files) || elm.files.length <= 0) {
+          console.warn('Ignoring file import, no files.');
+          return;
+        }
+
+        const filePath = elm.files[0];
+        const reader = new FileReader();
+        reader.readAsText(filePath);
+
+        reader.onload = (e) => {
+          if (hasValue(e.target) && typeof e.target.result === 'string') {
+            const rawText = e.target.result;
+            const parsed = JSON.parse(rawText) as SimulationExport;
+            setImportContent(parsed);
+          } else {
+            elm.value = '';
+            setImportContent(null);
+          }
+        };
+
+        reader.onerror = (e) => {
+          console.log(e);
+          reject(e);
+        };
+      });
+    },
+    []
+  );
 
   useEffect(() => {
     fetchSavedSimulations(true);
@@ -201,6 +251,20 @@ const Sandbox: React.FC = () => {
                   onClick={joinSimulationOnClick}
                 >
                   Join
+                </button>
+              </div>
+              <div className="page-sandbox--button-container input-group ml-4">
+                <input
+                  type="file"
+                  className="page-sandbox--input form-control"
+                  placeholder="Select a file..."
+                  onInput={fileOnInput}
+                />
+                <button
+                  className="btn btn-primary input-group-append"
+                  onClick={importOnClick}
+                >
+                  Import
                 </button>
               </div>
             </div>
