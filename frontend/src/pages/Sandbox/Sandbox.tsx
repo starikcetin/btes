@@ -17,6 +17,8 @@ import background from './sandbox_bg.jpg';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/SimulationSaveMetadata';
 import { SimulationSaveListItem } from '../../components/SimulationSaveListItem/SimulationSaveListItem';
+import { hasValue } from '../../common/utils/hasValue';
+import { SimulationExport } from '../../../../backend/src/common/importExport/SimulationExport';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -29,6 +31,12 @@ const Sandbox: React.FC = () => {
   const [isSaveMetadatasLoading, setIsSaveMetadatasLoading] = useState<boolean>(
     true
   );
+
+  const [importContent, setImportContent] = useState<SimulationExport | null>(
+    null
+  );
+
+  const [isImporting, setIsImporting] = useState<boolean>(false);
 
   const [
     doesSaveMetadatasHaveError,
@@ -86,6 +94,65 @@ const Sandbox: React.FC = () => {
       setIsSaveMetadatasLoading(false);
     }
   }, []);
+
+  const importOnClick = useCallback(async () => {
+    if (!hasValue(importContent)) {
+      console.warn('Ignoring import: no import content');
+      return;
+    }
+
+    setIsImporting(true);
+
+    try {
+      const simulationUid = await simulationInstanceService.import(
+        importContent
+      );
+      await joinSimulation(simulationUid);
+    } finally {
+      setIsImporting(false);
+    }
+  }, [importContent, joinSimulation]);
+
+  const fileOnInput: React.FormEventHandler<HTMLInputElement> = useCallback(
+    async (event) => {
+      setIsImporting(true);
+      return new Promise<void>((resolve, reject) => {
+        const elm = event.currentTarget;
+
+        if (!hasValue(elm.files) || elm.files.length <= 0) {
+          console.warn('Ignoring file import, no files.');
+          return;
+        }
+
+        const filePath = elm.files[0];
+        const reader = new FileReader();
+        reader.readAsText(filePath);
+
+        reader.onload = (e) => {
+          if (hasValue(e.target) && typeof e.target.result === 'string') {
+            const rawText = e.target.result;
+            const parsed = JSON.parse(rawText) as SimulationExport;
+            setImportContent(parsed);
+
+            setIsImporting(false);
+            resolve();
+          } else {
+            elm.value = '';
+            setImportContent(null);
+
+            setIsImporting(false);
+            reject();
+          }
+        };
+
+        reader.onerror = (e) => {
+          setIsImporting(false);
+          reject(e);
+        };
+      });
+    },
+    []
+  );
 
   useEffect(() => {
     fetchSavedSimulations(true);
@@ -179,7 +246,7 @@ const Sandbox: React.FC = () => {
               In this module, you can create your own simulation without any
               restrictions.
             </div>
-            <div className="d-flex justify-content-center mt-auto mb-auto">
+            <div className="d-flex justify-content-center mt-auto mb-5">
               <div className="page-sandbox--button-container input-group">
                 <button
                   className="page-sandbox--standalone-button btn btn-success"
@@ -202,6 +269,35 @@ const Sandbox: React.FC = () => {
                 >
                   Join
                 </button>
+              </div>
+            </div>
+            <div className="d-flex justify-content-center mb-auto">
+              <div className="page-sandbox--button-container input-group ml-4">
+                <div className="page-sandbox--file-input form-control">
+                  <input
+                    type="file"
+                    placeholder="Select a file..."
+                    onInput={fileOnInput}
+                    disabled={isImporting}
+                  />
+                </div>
+                <div className="input-group-append">
+                  <button
+                    className="btn btn-primary"
+                    onClick={importOnClick}
+                    disabled={!hasValue(importContent) || isImporting}
+                  >
+                    {isImporting && (
+                      <Spinner
+                        as="span"
+                        animation="grow"
+                        size="sm"
+                        className="mr-2"
+                      />
+                    )}
+                    Import
+                  </button>
+                </div>
               </div>
             </div>
           </Col>

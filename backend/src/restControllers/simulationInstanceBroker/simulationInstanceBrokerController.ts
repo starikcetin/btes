@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Controller, Get, Post, Query, Route, Tags } from 'tsoa';
+import { Body, Controller, Get, Post, Query, Route, Tags } from 'tsoa';
 
 import { hasValue } from '../../common/utils/hasValue';
 import { simulationManager } from '../../core/simulationManager';
@@ -7,6 +7,8 @@ import { SimulationSaveModel } from '../../database/SimulationSaveDataModel';
 import { socketManager } from '../../socketManager';
 import { simulationUidGenerator } from '../../utils/uidGenerators';
 import { SimulationSaveMetadataList } from '../../common/saveLoad/SimulationSaveMetadataList';
+import { SimulationSaveDataRaw } from '../../common/database/SimulationSaveData';
+import { SimulationExport } from '../../common/importExport/SimulationExport';
 
 @Tags('Simulation Instance Broker')
 @Route('simulationInstanceBroker')
@@ -81,6 +83,57 @@ export class SimulationInstanceBrokerController extends Controller {
     console.log(
       `Saved simulation instance with uid: ${snapshot.simulationUid}`
     );
+  }
+
+  /**
+   * Imports a simulation save from the request body.
+   * Returns the simulationUid.
+   */
+  @Post('import')
+  public async import(@Body() body: SimulationExport): Promise<string> {
+    const { base64 } = body;
+    const json = Buffer.from(base64, 'base64').toString();
+    const rawSave: SimulationSaveDataRaw = JSON.parse(json);
+    const { snapshot } = rawSave;
+
+    if (simulationManager.checkSimulationExists(snapshot.simulationUid)) {
+      throw new Error(
+        `A simulation with ID ${snapshot.simulationUid} already exists! Refusing to import.`
+      );
+    }
+
+    const ns = socketManager.getOrCreateNamespace(snapshot.simulationUid);
+    simulationManager.createSimulationWithSnapshot(snapshot, ns);
+
+    console.log(
+      `Imported simulation instance with uid: ${snapshot.simulationUid}`
+    );
+
+    return snapshot.simulationUid;
+  }
+
+  /**
+   * Exports an active simulation's save as a file.
+   * Returns the snapshot as a file to download.
+   */
+  @Get('export/{simulationUid}')
+  public async export(simulationUid: string): Promise<SimulationExport> {
+    const snapshot = simulationManager.getSimulationSnapshot(simulationUid);
+
+    this.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${simulationUid}.btes"`
+    );
+
+    console.log(
+      `Exported simulation instance with uid: ${snapshot.simulationUid}`
+    );
+
+    const rawSave: SimulationSaveDataRaw = { snapshot };
+    const json = JSON.stringify(rawSave);
+    const base64 = Buffer.from(json).toString('base64');
+
+    return { base64 };
   }
 
   /**

@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { SimulationSaveMetadataList } from '../../../common/src/saveLoad/SimulationSaveMetadataList';
 import { ensureDate } from '../utils/ensureDate';
+import { SimulationExport } from '../../../backend/src/common/importExport/SimulationExport';
 
 class SimulationInstanceService {
   public async create(): Promise<string> {
@@ -62,6 +63,29 @@ class SimulationInstanceService {
       `/api/rest/simulationInstanceBroker/savedSimulations`
     );
     return this.prepareSavedSimulations(resp.data);
+  }
+
+  /**
+   * Launches the export url in a new page (tab/window).
+   */
+  public openExportUrl(simulationUid: string): void {
+    window.open(
+      `/api/rest/simulationInstanceBroker/export/${simulationUid}`,
+      '_blank'
+    );
+  }
+
+  /**
+   * @param simulaitonExport The exported data.
+   * @returns The simulationUid.
+   */
+  public async import(simulaitonExport: SimulationExport): Promise<string> {
+    const resp = await axios.post<string>(
+      '/api/rest/simulationInstanceBroker/import',
+      simulaitonExport
+    );
+
+    return resp.data;
   }
 
   private readonly prepareSavedSimulations = (

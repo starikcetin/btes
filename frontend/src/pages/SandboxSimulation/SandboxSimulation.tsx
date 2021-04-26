@@ -10,6 +10,7 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faFileExport,
   faNetworkWired,
   faPause,
   faPlay,
@@ -193,6 +194,10 @@ const SandboxSimulation: React.FC = () => {
     simulationInstanceService.save(simulationUid);
   }, [simulationUid]);
 
+  const handleExport = useCallback(() => {
+    simulationInstanceService.openExportUrl(simulationUid);
+  }, [simulationUid]);
+
   useEffect(() => {
     document.addEventListener('keyup', handleKeyUp);
     connect();
@@ -254,19 +259,32 @@ const SandboxSimulation: React.FC = () => {
                     onChange={handleTimeScaleInputChange}
                   />
                 </InputGroup>
-                <Button
-                  onClick={handleSave}
-                  className="ml-auto"
-                  variant="light"
-                  disabled={!isPaused}
-                  title={
-                    isPaused
-                      ? 'Save this simulation'
-                      : 'Saving a running simulation is not supported. Pause first.'
-                  }
-                >
-                  <FontAwesomeIcon icon={faSave} />
-                </Button>
+                <ButtonGroup className="ml-auto">
+                  <Button
+                    onClick={handleSave}
+                    variant="light"
+                    disabled={!isPaused}
+                    title={
+                      isPaused
+                        ? 'Save this simulation'
+                        : 'Saving a running simulation is not supported. Pause first.'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faSave} />
+                  </Button>
+                  <Button
+                    onClick={handleExport}
+                    variant="light"
+                    disabled={!isPaused}
+                    title={
+                      isPaused
+                        ? 'Export this simulation'
+                        : 'Exporting a running simulation is not supported. Pause first.'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faFileExport} />
+                  </Button>
+                </ButtonGroup>
               </ButtonToolbar>
             </div>
 
