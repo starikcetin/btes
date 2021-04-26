@@ -13,7 +13,7 @@ import { SimulationSaveMetadataList } from '../../common/saveLoad/SimulationSave
 export class SimulationInstanceBrokerController extends Controller {
   /**
    * Create a new simulation instance, associate a new socket.io namespace for it and return the namespce.
-   * @returns The socket.io namespace for the new simulation instance.
+   * Returns the socket.io namespace for the new simulation instance.
    */
   @Get('create')
   public async create(): Promise<string> {

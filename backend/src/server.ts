@@ -9,8 +9,8 @@ import { fatalAssert } from './common/utils/fatalAssert';
 import { connectToDb } from './database/connectToDb';
 
 // Get ports to use from environment parameters
-const restPort = process.env.REST_PORT || 3001;
-const socketPort = process.env.SOCKET_PORT || 3002;
+const restPort = process.env.REST_PORT ?? 3001;
+const socketPort = process.env.SOCKET_PORT ?? 3002;
 const dbUri = process.env.DB_URI ?? 'mongodb://localhost:27017/btes';
 
 fatalAssert(
@@ -34,6 +34,5 @@ socketManager.start(socketPort, () =>
 connectToDb(dbUri)
   .then(() => console.log(`Connected to MongoDB at ${dbUri}`))
   .catch((err) => {
-    console.error(`Could not connect to MongoDB at ${dbUri}`);
-    throw err;
+    console.error(`Could not connect to MongoDB at ${dbUri}\nDetails:`, err);
   });
