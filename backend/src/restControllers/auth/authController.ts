@@ -1,8 +1,7 @@
-import { Body, Controller, Post, Res, Route, Tags, Request } from 'tsoa';
+import { Body, Controller, Post, Res, Route, Tags, Request, Get } from 'tsoa';
 import { Security, SuccessResponse, TsoaResponse } from '@tsoa/runtime';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import * as express from 'express';
 
 import { UserModel } from '../../database/UserModel';
 import { hasValue } from '../../common/utils/hasValue';
@@ -10,6 +9,9 @@ import { UserData } from '../../common/database/UserData';
 import { authTokenBlacklistService } from '../../auth/authTokenBlacklistService';
 import { AuthRegisterRequestBody } from '../../common/auth/AuthRegisterBody';
 import { AuthLoginRequestBody } from '../../common/auth/AuthLoginBody';
+import { decodeAuthToken } from '../../auth/decodeAuthToken';
+import { AuthenticatedExpressRequest } from '../../auth/AuthenticatedExpressRequest';
+import { TokenValidationResponse } from '../../common/auth/TokenValidationResponse';
 
 const authTokenSecret = process.env.AUTH_TOKEN_SECRET;
 
@@ -82,7 +84,7 @@ export class AuthController extends Controller {
   @Post('logout')
   @Security('jwt')
   public async logout(
-    @Request() req: express.Request,
+    @Request() req: AuthenticatedExpressRequest,
     @Res() unauthorizedResponse: TsoaResponse<401, { reason: string }>
   ): Promise<void> {
     const authToken = req.headers.authorization;
@@ -92,6 +94,46 @@ export class AuthController extends Controller {
     }
 
     await authTokenBlacklistService.addToBlacklist(authToken);
+  }
+
+  /**
+   * Returns whether the given auth token is still valid.
+   * Format must be: `Bearer auth_token_here`
+   */
+  @Get('validateAuthToken/{authToken}')
+  public async validateAuthToken(
+    authToken: string
+  ): Promise<TokenValidationResponse> {
+    try {
+      const decoded = await decodeAuthToken(authToken);
+      return hasValue(decoded) && hasValue(decoded.username)
+        ? { isTokenValid: true }
+        : {
+            isTokenValid: false,
+            reason: 'Decoded token is invalid.',
+          };
+    } catch (err) {
+      return { isTokenValid: false, reason: err.toString() };
+    }
+  }
+
+  /**
+   * Return the details of the user that bears the token in the authorization header.
+   */
+  @Get('userDetails')
+  @Security('jwt')
+  public async userDetails(
+    @Request() req: AuthenticatedExpressRequest
+  ): Promise<UserData> {
+    const { username } = req.user;
+
+    const foundUser = await UserModel.findOne({ username });
+
+    if (!hasValue(foundUser)) {
+      throw new Error(`User not found. Username: ${username}`);
+    }
+
+    return foundUser;
   }
 
   /**
