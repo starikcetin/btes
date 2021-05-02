@@ -1,10 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import './Home.scss';
 import background from './mainPageBackground.jpg';
+import { authenticationService } from '../../services/authenticationService';
 
 const Home: React.FC = () => {
+  const [authenticated, setAuthenticated] = useState(false);
+  const history = useHistory();
+
+  useEffect(() => {
+    const validate = async () => {
+      const response = await authenticationService.isTokenValid();
+      response === 200 ? setAuthenticated(true) : setAuthenticated(false);
+    };
+    validate();
+    setInterval(validate, 1000);
+  }, []);
+
+  const logut = async () => {
+    await authenticationService.logout();
+    setAuthenticated(false);
+  };
+
   return (
     <div className="page-home d-flex justify-content-center col-12">
       <img
@@ -36,9 +54,18 @@ const Home: React.FC = () => {
           <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-4">
             Explore
           </Link>
-          <Link to="/signin" className="btn btn-danger m-2 col-lg-2 col-4">
-            Sign In
-          </Link>
+          {authenticated ? (
+            <button
+              onClick={logut}
+              className="btn btn-danger m-2 col-lg-2 col-4"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link to="/signin" className="btn btn-danger m-2 col-lg-2 col-4">
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
     </div>

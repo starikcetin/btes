@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, Route, Tags, Request } from 'tsoa';
+import { Body, Controller, Post, Res, Route, Tags, Request, Get } from 'tsoa';
 import { Security, SuccessResponse, TsoaResponse } from '@tsoa/runtime';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -67,7 +67,7 @@ export class AuthController extends Controller {
     }
 
     const authToken = jwt.sign({ username }, authTokenSecret, {
-      expiresIn: '30m',
+      expiresIn: '1m',
     });
 
     authTokenBlacklistService.removeFromBlacklist(authToken);
@@ -104,5 +104,31 @@ export class AuthController extends Controller {
     @Body() body: { message: string }
   ): Promise<{ message: string }> {
     return body;
+  }
+
+  /**
+   * Check username is available or not
+   * return boolean.
+   */
+  @Get('isUsernameAvailable/{username}')
+  public async isUsernameAvailable(username: string): Promise<boolean> {
+    const existingUser = await UserModel.findOne({ username });
+    if (!hasValue(existingUser)) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Check email is available or not
+   * return boolean.
+   */
+  @Get('isEmailAvailable/{email}')
+  public async isEmailAvailable(email: string): Promise<boolean> {
+    const existingUser = await UserModel.findOne({ email });
+    if (!hasValue(existingUser)) {
+      return true;
+    }
+    return false;
   }
 }
