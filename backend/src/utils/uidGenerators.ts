@@ -1,8 +1,8 @@
-class UidGenerator {
-  private counter = 0;
+import { v1 as uuidv1 } from 'uuid';
 
+class UidGenerator {
   public next() {
-    return this.counter++;
+    return uuidv1();
   }
 }
 

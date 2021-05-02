@@ -1,6 +1,6 @@
 .page-sandbox {
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   font-family: 'Lucida Console', Monaco, monospace;
 
   &--bg-img {
@@ -17,5 +17,31 @@
     font-size: 25px;
     color: #fff;
     text-shadow: 2px 2px #808080;
+  }
+
+  &--button-container {
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: fit-content;
+  }
+
+  &--standalone-button {
+    padding: 0 3em;
+  }
+
+  &--input {
+    &#{&} {
+      width: 20em;
+    }
+  }
+
+  &--file-input {
+    &#{&} {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      padding: 0.25em;
+    }
   }
 }
