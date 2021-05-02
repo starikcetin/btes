@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import './Home.scss';
 import background from './mainPageBackground.jpg';
@@ -7,16 +7,6 @@ import { authenticationService } from '../../services/authenticationService';
 
 const Home: React.FC = () => {
   const [authenticated, setAuthenticated] = useState(false);
-  const history = useHistory();
-
-  useEffect(() => {
-    const validate = async () => {
-      const response = await authenticationService.isTokenValid();
-      response === 200 ? setAuthenticated(true) : setAuthenticated(false);
-    };
-    validate();
-    setInterval(validate, 1000);
-  }, []);
 
   const logut = async () => {
     await authenticationService.logout();
