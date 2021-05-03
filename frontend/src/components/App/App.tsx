@@ -17,6 +17,7 @@ import { userSlice } from '../../state/user/userSlice';
 import { authenticationService } from '../../services/authenticationService';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
+import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
 
 const App: React.FC = () => {
   const currentUserName = useSelector(
@@ -60,6 +61,11 @@ const App: React.FC = () => {
           {currentUserName === null && (
             <Route path="/signin">
               <Signin></Signin>
+            </Route>
+          )}
+          {currentUserName !== null && (
+            <Route path="/profileDetail">
+              <ProfileDetail></ProfileDetail>
             </Route>
           )}
 

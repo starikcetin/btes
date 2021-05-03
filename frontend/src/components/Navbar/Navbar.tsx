@@ -87,7 +87,11 @@ const Navbar: React.FC = () => {
             </li>
             {currentUser?.username !== null ? (
               <li className="nav-item">
-                <NavLink to="/" className="nav-link" activeClassName="active">
+                <NavLink
+                  to="/profileDetail"
+                  className="nav-link"
+                  activeClassName="active"
+                >
                   {currentUser ? currentUser.username : ''}
                 </NavLink>
               </li>

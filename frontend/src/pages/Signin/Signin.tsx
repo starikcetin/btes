@@ -1,13 +1,11 @@
 import React, { SyntheticEvent, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import './Signin.scss';
 import background from './sand.jpg';
 import { authenticationService } from '../../services/authenticationService';
 import { AuthLoginRequestBody } from '../../../../common/src/auth/AuthLoginBody';
 import { AuthRegisterRequestBody } from '../../../../common/src/auth/AuthRegisterBody';
-import { useHistory } from 'react-router-dom';
-import { store } from '../../state/store';
-import { userSlice } from '../../state/user/userSlice';
 
 interface IFormError {
   username: string;

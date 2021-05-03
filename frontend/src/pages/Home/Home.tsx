@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   const currentUser = useSelector(
     (state: RootState) => state.currentUser || null
   );
-  const logut = async () => {
+  const logout = async () => {
     await authenticationService.logout();
   };
 
@@ -48,7 +48,7 @@ const Home: React.FC = () => {
           </Link>
           {currentUser?.username !== null ? (
             <button
-              onClick={logut}
+              onClick={logout}
               className="btn btn-danger m-2 col-lg-2 col-4"
             >
               LOGOUT
