@@ -6,6 +6,8 @@ import { authenticationService } from '../../services/authenticationService';
 import { AuthLoginRequestBody } from '../../../../common/src/auth/AuthLoginBody';
 import { AuthRegisterRequestBody } from '../../../../common/src/auth/AuthRegisterBody';
 import { useHistory } from 'react-router-dom';
+import { store } from '../../state/store';
+import { userSlice } from '../../state/user/userSlice';
 
 interface IFormError {
   username: string;
@@ -20,6 +22,7 @@ const Signin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const [email, setEmail] = useState('');
+  const [loginFormError, setLoginFormError] = useState('');
   const [formError, setFormError] = useState<IFormError>({
     username: '',
     email: '',
@@ -74,14 +77,13 @@ const Signin: React.FC = () => {
       username: username,
       password: password,
     };
-    console.log('login called');
-    const response = await authenticationService.login(body);
-    console.log(response);
-    if (response === null) {
-      console.log('username or password wrong');
-    } else {
-      localStorage.setItem('username', username);
+    try {
+      await authenticationService.login(body);
+      await authenticationService.userDetails();
       history.push('/');
+    } catch (e) {
+      console.log(e.reason);
+      setLoginFormError(e.reason);
     }
   };
 
@@ -252,6 +254,7 @@ const Signin: React.FC = () => {
                   }}
                 />
               </div>
+              <span className="text-danger">{loginFormError}</span>
               <div className="form-check">
                 <input
                   className="form-check-input"

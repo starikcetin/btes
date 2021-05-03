@@ -69,7 +69,7 @@ export class AuthController extends Controller {
     }
 
     const authToken = jwt.sign({ username }, authTokenSecret, {
-      expiresIn: '1m',
+      expiresIn: '30m',
     });
 
     authTokenBlacklistService.removeFromBlacklist(authToken);

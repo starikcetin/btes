@@ -4,13 +4,15 @@ import { Link } from 'react-router-dom';
 import './Home.scss';
 import background from './mainPageBackground.jpg';
 import { authenticationService } from '../../services/authenticationService';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/RootState';
 
 const Home: React.FC = () => {
-  const [authenticated, setAuthenticated] = useState(false);
-
+  const currentUser = useSelector(
+    (state: RootState) => state.currentUser || null
+  );
   const logut = async () => {
     await authenticationService.logout();
-    setAuthenticated(false);
   };
 
   return (
@@ -44,7 +46,7 @@ const Home: React.FC = () => {
           <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-4">
             EXPLORER
           </Link>
-          {authenticated ? (
+          {currentUser?.username !== null ? (
             <button
               onClick={logut}
               className="btn btn-danger m-2 col-lg-2 col-4"

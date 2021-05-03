@@ -1,11 +1,13 @@
 import { AuthLoginRequestBody } from '../common/auth/AuthLoginBody';
 import { AuthRegisterRequestBody } from '../common/auth/AuthRegisterBody';
+import { UserData } from '../common/database/UserData';
 import axios from 'axios';
 import axiosAuth from '../helpers/axiosAuth';
-import { Simulate } from 'react-dom/test-utils';
+import { store } from '../state/store';
+import { userSlice } from '../state/user/userSlice';
 
 class AuthenticationService {
-  public async login(body: AuthLoginRequestBody) {
+  public async login(body: AuthLoginRequestBody): Promise<string> {
     return await axios
       .post('api/rest/auth/login', {
         ...body,
@@ -13,13 +15,10 @@ class AuthenticationService {
       .then((response) => {
         localStorage.setItem('jwt', response.data);
         return response.data;
-        console.log(response);
       })
       .catch((error) => {
         return new Promise((resolve, reject) => {
-          console.log('ERROR', error?.response.data);
-          reject(error);
-          return null;
+          reject(error?.response.data);
         });
       });
   }
@@ -29,7 +28,7 @@ class AuthenticationService {
       .post('api/rest/auth/logout')
       .catch((err) => console.log(err));
     localStorage.removeItem('jwt');
-    localStorage.removeItem('username');
+    store.dispatch(userSlice.actions.removeCurrentUser());
   }
 
   public async register(body: AuthRegisterRequestBody): Promise<string | null> {
@@ -46,26 +45,6 @@ class AuthenticationService {
         return response.data;
       })
       .catch((err) => console.log(err));
-  }
-
-  public async loginWithFetch(
-    body: AuthLoginRequestBody
-  ): Promise<string | null> {
-    try {
-      const response = await fetch('api/rest/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(body),
-      });
-      const result = await response.json();
-      console.log(result);
-      localStorage.setItem('jwt', result);
-      return result;
-    } catch (e) {
-      console.log(e);
-    }
-    return null;
   }
 
   public async isUsernameAvailable(username: string): Promise<boolean> {
@@ -106,6 +85,26 @@ class AuthenticationService {
         });
     }
     return null;
+  }
+
+  public async userDetails(): Promise<UserData> {
+    return await axiosAuth()
+      .get('api/rest/auth/userDetails')
+      .then((response) => {
+        store.dispatch(
+          userSlice.actions.setCurrentUser({
+            username: response.data.username,
+            email: response.data.email,
+          })
+        );
+        return response.data;
+      })
+      .catch((error) => {
+        return new Promise((resolve, reject) => {
+          console.log('ERROR', error?.response.data);
+          reject(error?.response.data);
+        });
+      });
   }
 }
 

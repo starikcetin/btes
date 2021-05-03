@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import './App.scss';
@@ -12,8 +12,26 @@ import DataExplorer from '../../pages/DataExplorer/DataExplorer';
 import DataExplorerBlockList from '../../pages/DataExplorerBlockList/DataExplorerBlockList';
 import DataExplorerTransactionList from '../../pages/DataExplorerTransactionList/DataExplorerTransactionList';
 import { Help } from '../../pages/Help/Help';
+import { store } from '../../state/store';
+import { userSlice } from '../../state/user/userSlice';
+import { authenticationService } from '../../services/authenticationService';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/RootState';
 
 const App: React.FC = () => {
+  const currentUserName = useSelector(
+    (state: RootState) => state.currentUser.username || null
+  );
+
+  const getCurrentUser = () => {
+    if (localStorage.getItem('jwt')) {
+      authenticationService.userDetails();
+    }
+  };
+  useEffect(() => {
+    getCurrentUser();
+  });
+
   return (
     <div className="global-document-container comp-app">
       <div className="comp-app--header-container">
@@ -39,9 +57,12 @@ const App: React.FC = () => {
               <p>About</p>
             </div>
           </Route>
-          <Route path="/signin">
-            <Signin></Signin>
-          </Route>
+          {currentUserName === null && (
+            <Route path="/signin">
+              <Signin></Signin>
+            </Route>
+          )}
+
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>
           </Route>
