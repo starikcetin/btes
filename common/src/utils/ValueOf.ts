@@ -1,12 +1,12 @@
 /**
- * Converts an array type to a union type of its members.
+ * Like `keyof`, but for values instead of keys.
  *
- * @example <caption>With an array type</caption>
- * type FooArray = ['a', 'b', 'c'];
- * type FooUnion = ValueOf<FooArray>; // 'a' | 'b' | 'c'
+ * @example <caption>With an object type</caption>
+ * type FooObject = { a: 'foo', b: 'bar', c: 'baz' };
+ * type FooValues = ValueOf<FooObject>; // 'foo' | 'bar' | 'baz'
  *
- * @example <caption>With a literal array</caption>
- * const fooArray = ['a', 'b', 'c'] as const;
- * type FooUnion = ValueOf<typeof fooArray>; // 'a' | 'b' | 'c'
+ * @example <caption>With an object literal</caption>
+ * const fooObject = { a: 'foo', b: 'bar', c: 'baz' } as const;
+ * type FooValues = ValueOf<typeof fooObject>; // 'foo' | 'bar' | 'baz'
  */
-export type ValueOf<T extends ReadonlyArray<unknown>> = T[number];
+export type ValueOf<T> = T[keyof T];
