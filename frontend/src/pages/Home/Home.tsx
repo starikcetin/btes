@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import './Home.scss';
 import background from './mainPageBackground.jpg';
 import { authenticationService } from '../../services/authenticationService';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
 
 const Home: React.FC = () => {

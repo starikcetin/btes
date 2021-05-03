@@ -1,7 +1,8 @@
+import axios from 'axios';
+
 import { AuthLoginRequestBody } from '../common/auth/AuthLoginBody';
 import { AuthRegisterRequestBody } from '../common/auth/AuthRegisterBody';
 import { UserData } from '../common/database/UserData';
-import axios from 'axios';
 import axiosAuth from '../helpers/axiosAuth';
 import { store } from '../state/store';
 import { userSlice } from '../state/user/userSlice';
@@ -69,22 +70,6 @@ class AuthenticationService {
       console.log(e);
     }
     return true;
-  }
-
-  public async isTokenValid(): Promise<number | null> {
-    if (localStorage.getItem('jwt')) {
-      return await axiosAuth()
-        .post('api/rest/auth/secure-echo', { message: 'test' })
-        .then((res) => {
-          return res.status;
-        })
-        .catch((err) => {
-          console.log(err);
-          localStorage.removeItem('jwt');
-          return null;
-        });
-    }
-    return null;
   }
 
   public async userDetails(): Promise<UserData> {

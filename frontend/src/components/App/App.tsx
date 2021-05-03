@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import './App.scss';
 import Navbar from '../Navbar/Navbar';
@@ -12,10 +13,7 @@ import DataExplorer from '../../pages/DataExplorer/DataExplorer';
 import DataExplorerBlockList from '../../pages/DataExplorerBlockList/DataExplorerBlockList';
 import DataExplorerTransactionList from '../../pages/DataExplorerTransactionList/DataExplorerTransactionList';
 import { Help } from '../../pages/Help/Help';
-import { store } from '../../state/store';
-import { userSlice } from '../../state/user/userSlice';
 import { authenticationService } from '../../services/authenticationService';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
 import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
 
