@@ -102,10 +102,6 @@ const Signin: React.FC = () => {
     }
   };
 
-  const logout = () => {
-    authenticationService.logout();
-  };
-
   return (
     <div className="page-signin">
       <img

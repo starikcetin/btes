@@ -9,6 +9,14 @@
   font-family: 'Lucida Console', Monaco, monospace;
   color: #fff;
 
+  &--alert{
+    position: fixed;
+    bottom: 10px;
+    font-size: small;
+    right: 10px;
+    width: 20%;
+  }
+
   &--form-container {
     width: fit-content;
     height: fit-content;
