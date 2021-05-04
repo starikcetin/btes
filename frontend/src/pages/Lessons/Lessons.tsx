@@ -151,11 +151,9 @@ export const Lessons: React.FC = () => {
               You can use the lessons module without logging-in, but your
               progress won't be saved.
             </p>
-            <div className="mt-4">
-              <LinkContainer to="/signin">
-                <Button className="border-0 rounded-0">Sign In</Button>
-              </LinkContainer>
-            </div>
+            <LinkContainer to="/signin">
+              <Button className="border-0 rounded-0">Sign In</Button>
+            </LinkContainer>
           </Col>
         </Row>
       );
@@ -198,7 +196,7 @@ export const Lessons: React.FC = () => {
         src={background}
         alt="background"
       />
-      <Container fluid={true}>
+      <Container fluid={true} className="py-5">
         <Row className="page-lessons--header">
           <Col className="p-5 text-center">
             <h1 className="font-weight-bold">Welcome to Lessons Module</h1>
@@ -212,7 +210,7 @@ export const Lessons: React.FC = () => {
 
         {renderInfoBar()}
 
-        <Row className="pb-5">
+        <Row>
           <Col>{renderLessonEntries()}</Col>
         </Row>
       </Container>
