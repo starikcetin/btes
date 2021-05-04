@@ -16,6 +16,7 @@ import { Help } from '../../pages/Help/Help';
 import { authenticationService } from '../../services/authenticationService';
 import { RootState } from '../../state/RootState';
 import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
+import { LessonSimulation } from '../../pages/LessonSimulation/LessonSimulation';
 
 const App: React.FC = () => {
   const currentUserName = useSelector(
@@ -69,6 +70,9 @@ const App: React.FC = () => {
 
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>
+          </Route>
+          <Route path="/lessonSimulation/:simulationUid">
+            <LessonSimulation></LessonSimulation>
           </Route>
           <Route path="/explorer-blocks/:isFull">
             <DataExplorerBlockList />
