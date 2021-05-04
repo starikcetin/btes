@@ -2,21 +2,18 @@
   width: 100%;
   height: 100%;
   font-family: 'Lucida Console', Monaco, monospace;
+  color: #fff;
 
-  &--bg-img {
-    opacity: 0.8;
+  &--lesson-entry {
+    background-color: #0009;
   }
 
   &--header {
-    font-size: 50px;
-    color: #fff;
-    text-shadow: 2px 2px #808080;
+    background-color: #0009;
   }
 
-  &--header-info {
-    font-size: 25px;
-    color: #fff;
-    text-shadow: 2px 2px #808080;
+  &--bg-img {
+    opacity: 0.8;
   }
 
   &--button-container {

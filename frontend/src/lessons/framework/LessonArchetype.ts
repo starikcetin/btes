@@ -1,7 +1,9 @@
 import { SocketEvent } from '../../common/constants/socketEvents';
 
 export type LessonArchetype = {
-  readonly name: string;
+  readonly lessonUid: string;
+  readonly displayName: string;
+  readonly summary: string;
   readonly steps: ReadonlyArray<LessonStepArchetype>;
 };
 
