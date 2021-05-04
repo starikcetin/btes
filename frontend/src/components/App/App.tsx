@@ -17,6 +17,7 @@ import { authenticationService } from '../../services/authenticationService';
 import { RootState } from '../../state/RootState';
 import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
 import { LessonSimulation } from '../../pages/LessonSimulation/LessonSimulation';
+import { Lessons } from '../../pages/Lessons/Lessons';
 
 const App: React.FC = () => {
   const currentUserName = useSelector(
@@ -43,10 +44,7 @@ const App: React.FC = () => {
             <Sandbox></Sandbox>
           </Route>
           <Route path="/lessons">
-            {/* <Lessons></Lessons> */}
-            <div>
-              <p>Lessons</p>
-            </div>
+            <Lessons></Lessons>
           </Route>
           <Route path="/explorer">
             <DataExplorer />
