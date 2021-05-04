@@ -147,4 +147,30 @@ export class AuthController extends Controller {
   ): Promise<{ message: string }> {
     return body;
   }
+
+  /**
+   * Check username is available or not
+   * return boolean.
+   */
+  @Get('isUsernameAvailable/{username}')
+  public async isUsernameAvailable(username: string): Promise<boolean> {
+    const existingUser = await UserModel.findOne({ username });
+    if (!hasValue(existingUser)) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Check email is available or not
+   * return boolean.
+   */
+  @Get('isEmailAvailable/{email}')
+  public async isEmailAvailable(email: string): Promise<boolean> {
+    const existingUser = await UserModel.findOne({ email });
+    if (!hasValue(existingUser)) {
+      return true;
+    }
+    return false;
+  }
 }

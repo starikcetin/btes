@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import './Home.scss';
 import background from './mainPageBackground.jpg';
+import { authenticationService } from '../../services/authenticationService';
+import { RootState } from '../../state/RootState';
 
 const Home: React.FC = () => {
+  const currentUser = useSelector(
+    (state: RootState) => state.currentUser || null
+  );
+  const logout = async () => {
+    await authenticationService.logout();
+  };
+
   return (
     <div className="page-home d-flex justify-content-center col-12">
       <img
@@ -36,9 +46,18 @@ const Home: React.FC = () => {
           <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-4">
             EXPLORER
           </Link>
-          <Link to="/signin" className="btn btn-danger m-2 col-lg-2 col-4">
-            SIGN IN
-          </Link>
+          {currentUser?.username !== null ? (
+            <button
+              onClick={logout}
+              className="btn btn-danger m-2 col-lg-2 col-4"
+            >
+              LOGOUT
+            </button>
+          ) : (
+            <Link to="/signin" className="btn btn-danger m-2 col-lg-2 col-4">
+              SIGN IN
+            </Link>
+          )}
         </div>
       </div>
     </div>

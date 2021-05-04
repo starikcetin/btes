@@ -2,8 +2,14 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 import './Navbar.scss';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/RootState';
 
 const Navbar: React.FC = () => {
+  const currentUser = useSelector(
+    (state: RootState) => state.currentUser || null
+  );
+
   return (
     <div className="comp-navbar">
       <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
@@ -79,15 +85,27 @@ const Navbar: React.FC = () => {
                 About
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink
-                to="/signin"
-                className="nav-link"
-                activeClassName="active"
-              >
-                Sign In
-              </NavLink>
-            </li>
+            {currentUser?.username !== null ? (
+              <li className="nav-item">
+                <NavLink
+                  to="/profileDetail"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  {currentUser ? currentUser.username : ''}
+                </NavLink>
+              </li>
+            ) : (
+              <li className="nav-item">
+                <NavLink
+                  to="/signin"
+                  className="nav-link"
+                  activeClassName="active"
+                >
+                  Sign In
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </nav>
