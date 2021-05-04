@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import ReactTypingEffect from 'react-typing-effect';
 
 import './Home.scss';
 import background from './mainPageBackground.jpg';
@@ -30,16 +31,33 @@ const Home: React.FC = () => {
         </div>
         <div className="page-home--header-info d-flex justify-content-center col-lg-8 col-12 text-center">
           <span>
-            <i>
-              BTES is an educational tool for learning Blockchain technology.
-              Our platform is designed for everyone including software
-              developers, information systems’ designers and students wants to
-              learn this technology.
-            </i>
+            <p>
+              What is{' '}
+              <ReactTypingEffect
+                text={[
+                  'blockchain?',
+                  'Bitcoin?',
+                  'P2P?',
+                  'Ethereum?',
+                  'block?',
+                  'transaction?',
+                  'key pair?',
+                  'public ledger?',
+                  'wallet?',
+                  'mining?',
+                  'consensus?',
+                ]}
+                // speed={2}  not actually working, it just works for only passing the new words, not typing..
+                // Alternative: Learn/Comprehend concept of blockchain, bitcoin, P2P etc..
+              />
+            </p>
           </span>
         </div>
 
         <div className="buttons col-12 d-flex align-content-center justify-content-center align-items-center">
+          <Link to="/sandbox" className="btn btn-info m-2 col-lg-2 col-4">
+            SANDBOX
+          </Link>
           <Link to="/lessons" className="btn btn-success m-2 col-lg-2 col-4">
             START LEARNING
           </Link>
