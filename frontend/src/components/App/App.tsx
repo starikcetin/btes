@@ -8,7 +8,7 @@ import Home from '../../pages/Home/Home';
 import Sandbox from '../../pages/Sandbox/Sandbox';
 import Signin from '../../pages/Signin/Signin';
 /* import About from '../../pages/About/About'; */
-import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
+import { SandboxSimulation } from '../../pages/SandboxSimulation/SandboxSimulation';
 import DataExplorer from '../../pages/DataExplorer/DataExplorer';
 import DataExplorerBlockList from '../../pages/DataExplorerBlockList/DataExplorerBlockList';
 import DataExplorerTransactionList from '../../pages/DataExplorerTransactionList/DataExplorerTransactionList';
