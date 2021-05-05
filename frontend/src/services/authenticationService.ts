@@ -6,6 +6,7 @@ import { UserData } from '../common/database/UserData';
 import axiosAuth from '../helpers/axiosAuth';
 import { store } from '../state/store';
 import { userSlice } from '../state/user/userSlice';
+import { AuthUpdateRequestBody } from '../common/auth/AuthUpdateBody';
 
 class AuthenticationService {
   public async login(body: AuthLoginRequestBody): Promise<string> {
@@ -86,7 +87,27 @@ class AuthenticationService {
       })
       .catch((error) => {
         return new Promise((resolve, reject) => {
-          console.log('ERROR', error?.response.data);
+          reject(error?.response.data);
+        });
+      });
+  }
+
+  public async update(body: AuthUpdateRequestBody) {
+    return await axiosAuth()
+      .post('api/rest/auth/update', {
+        ...body,
+      })
+      .then((response) => {
+        store.dispatch(
+          userSlice.actions.setCurrentUser({
+            username: body.username,
+            email: body.email,
+          })
+        );
+        return response.data;
+      })
+      .catch((error) => {
+        return new Promise((resolve, reject) => {
           reject(error?.response.data);
         });
       });

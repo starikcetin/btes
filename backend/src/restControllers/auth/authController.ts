@@ -8,6 +8,7 @@ import { hasValue } from '../../common/utils/hasValue';
 import { UserData } from '../../common/database/UserData';
 import { authTokenBlacklistService } from '../../auth/authTokenBlacklistService';
 import { AuthRegisterRequestBody } from '../../common/auth/AuthRegisterBody';
+import { AuthUpdateRequestBody } from '../../common/auth/AuthUpdateBody';
 import { AuthLoginRequestBody } from '../../common/auth/AuthLoginBody';
 import { decodeAuthToken } from '../../auth/decodeAuthToken';
 import { AuthenticatedExpressRequest } from '../../auth/AuthenticatedExpressRequest';
@@ -172,5 +173,37 @@ export class AuthController extends Controller {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Update a User.
+   * Returns the updated User.
+   */
+  @SuccessResponse(201, 'Updated')
+  @Post('update')
+  @Security('jwt')
+  public async update(
+    @Body() body: AuthUpdateRequestBody,
+    @Res() unauthorizedResponse: TsoaResponse<401, { reason: string }>
+  ): Promise<boolean> {
+    const { oldUsername, username, email, newPassword } = body;
+    const existingUser = await UserModel.findOne({ username: oldUsername });
+    if (!hasValue(existingUser)) {
+      return unauthorizedResponse(401, { reason: 'Incorrect username.' });
+    }
+    try {
+      const result = await UserModel.updateOne(
+        { username: oldUsername },
+        {
+          username,
+          passwordHash: await bcrypt.hash(newPassword, 10),
+          email,
+        }
+      );
+      return result.ok === 1 ? true : false;
+    } catch (e) {
+      console.log(e.toString());
+      return e.toString();
+    }
   }
 }
