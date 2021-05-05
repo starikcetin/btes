@@ -19,6 +19,8 @@ import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/Simulati
 import { SimulationSaveListItem } from '../../components/SimulationSaveListItem/SimulationSaveListItem';
 import { hasValue } from '../../common/utils/hasValue';
 import { SimulationExport } from '../../../../backend/src/common/importExport/SimulationExport';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/RootState';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -42,6 +44,10 @@ const Sandbox: React.FC = () => {
     doesSaveMetadatasHaveError,
     setDoesSaveMetadatasHaveError,
   ] = useState<boolean>(false);
+
+  const currentUser = useSelector(
+    (state: RootState) => state.currentUser || null
+  );
 
   const simulationIdOnInput = (event: FormEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
@@ -159,6 +165,19 @@ const Sandbox: React.FC = () => {
   }, [fetchSavedSimulations]);
 
   const renderSimulationSaveListBody = () => {
+    if (currentUser?.username === null) {
+      return (
+        <Card.Body className="d-flex flex-column align-items-center">
+          <div className="mt-5">To see the saved simulation please login!</div>
+          <div className="mt-3">
+            <Button variant="primary" onClick={() => history.push('/signin')}>
+              Login
+            </Button>
+          </div>
+        </Card.Body>
+      );
+    }
+
     if (isSaveMetadatasLoading) {
       return (
         <Card.Body className="d-flex justify-content-center">
