@@ -3,6 +3,7 @@ import axios from 'axios';
 import { SimulationSaveMetadataList } from '../../../common/src/saveLoad/SimulationSaveMetadataList';
 import { ensureDate } from '../utils/ensureDate';
 import { SimulationExport } from '../../../backend/src/common/importExport/SimulationExport';
+import axiosAuth from '../helpers/axiosAuth';
 
 class SimulationInstanceService {
   public async create(): Promise<string> {
@@ -36,7 +37,7 @@ class SimulationInstanceService {
 
   public async save(simulationUid: string): Promise<void> {
     console.log('saving simulation instance: ', simulationUid);
-    await axios.post(
+    await axiosAuth().post(
       `/api/rest/simulationInstanceBroker/save/${simulationUid}`
     );
     console.log('saved simulation instance: ', simulationUid);
@@ -56,11 +57,11 @@ class SimulationInstanceService {
   }
 
   /**
-   * @returns metadatas of all saved simulations.
+   * @returns metadatas of user's saved simulations.
    */
-  public async getSavedSimulations(): Promise<SimulationSaveMetadataList> {
-    const resp = await axios.get<SimulationSaveMetadataList>(
-      `/api/rest/simulationInstanceBroker/savedSimulations`
+  public async getUserSavedSimulations(): Promise<SimulationSaveMetadataList> {
+    const resp = await axiosAuth().get<SimulationSaveMetadataList>(
+      `/api/rest/simulationInstanceBroker/userSavedSimulations`
     );
     return this.prepareSavedSimulations(resp.data);
   }

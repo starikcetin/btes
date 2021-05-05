@@ -89,7 +89,7 @@ const Sandbox: React.FC = () => {
     }
 
     try {
-      const savedSimulations = await simulationInstanceService.getSavedSimulations();
+      const savedSimulations = await simulationInstanceService.getUserSavedSimulations();
       setSaveMetadatas(savedSimulations.metadatas);
       setDoesSaveMetadatasHaveError(false);
     } catch {
@@ -161,8 +161,8 @@ const Sandbox: React.FC = () => {
   );
 
   useEffect(() => {
-    fetchSavedSimulations(true);
-  }, [fetchSavedSimulations]);
+    if (currentUser?.username !== null) fetchSavedSimulations(true);
+  }, [currentUser?.username, fetchSavedSimulations]);
 
   const renderSimulationSaveListBody = () => {
     if (currentUser?.username === null) {
