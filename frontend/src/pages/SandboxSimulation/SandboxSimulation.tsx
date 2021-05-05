@@ -42,6 +42,7 @@ import { SimulationNodeConnection } from '../../components/SimulationNodeConnect
 import NodeConnectionModal from '../../components/NodeConnectionModal/NodeConnectionModal';
 import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
+import AlertMessage from '../../components/Alert/AlertMessage';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -49,7 +50,9 @@ interface SandboxSimulationParamTypes {
 
 const SandboxSimulation: React.FC = () => {
   const forceUpdate = useForceUpdate();
-
+  const currentUser = useSelector(
+    (state: RootState) => state.currentUser || null
+  );
   const [connected, setConnected] = useState(false);
   const [shouldShowLogs, setShouldShowLogs] = useState(false);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
@@ -108,6 +111,12 @@ const SandboxSimulation: React.FC = () => {
     setViewingConnectionFirstNodeUid(conn?.firstNodeUid ?? null);
     setViewingConnectionSecondNodeUid(conn?.secondNodeUid ?? null);
   };
+
+  const [alertShow, setAlertShow] = useState<boolean>(false);
+  const [alertMessage, setAlerMessage] = useState<{
+    message: string;
+    variant: string;
+  }>({ message: '', variant: '' });
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);
@@ -191,8 +200,13 @@ const SandboxSimulation: React.FC = () => {
   );
 
   const handleSave = useCallback(() => {
-    simulationInstanceService.save(simulationUid);
-  }, [simulationUid]);
+    if (currentUser?.username !== null) {
+      simulationInstanceService.save(simulationUid);
+    } else {
+      setAlertShow(true);
+      setAlerMessage({ message: 'To save please login!', variant: 'danger' });
+    }
+  }, [currentUser?.username, simulationUid]);
 
   const handleExport = useCallback(() => {
     simulationInstanceService.openExportUrl(simulationUid);
@@ -210,6 +224,12 @@ const SandboxSimulation: React.FC = () => {
 
   return (
     <div className="page-sandbox-simulation">
+      <AlertMessage
+        closeHandler={() => setAlertShow(false)}
+        show={alertShow}
+        message={alertMessage.message}
+        variantType={alertMessage.variant}
+      />
       {connected ? (
         <>
           <div className="page-sandbox-simulation--body">
