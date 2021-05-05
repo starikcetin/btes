@@ -46,7 +46,7 @@ const Sandbox: React.FC = () => {
   ] = useState<boolean>(false);
 
   const currentUser = useSelector(
-    (state: RootState) => state.currentUser || null
+    (state: RootState) => state.currentUser ?? null
   );
 
   const simulationIdOnInput = (event: FormEvent<HTMLInputElement>) => {
@@ -161,14 +161,16 @@ const Sandbox: React.FC = () => {
   );
 
   useEffect(() => {
-    if (currentUser?.username !== null) fetchSavedSimulations(true);
+    if (hasValue(currentUser?.username)) fetchSavedSimulations(true);
   }, [currentUser?.username, fetchSavedSimulations]);
 
   const renderSimulationSaveListBody = () => {
-    if (currentUser?.username === null) {
+    if (!hasValue(currentUser?.username)) {
       return (
         <Card.Body className="d-flex flex-column align-items-center">
-          <div className="mt-5">To see the saved simulation please login!</div>
+          <div className="mt-5">
+            Log in to be able to save and load simulations.
+          </div>
           <div className="mt-3">
             <Button variant="primary" onClick={() => history.push('/signin')}>
               Login

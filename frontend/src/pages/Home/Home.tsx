@@ -7,10 +7,11 @@ import './Home.scss';
 import background from './mainPageBackground.jpg';
 import { authenticationService } from '../../services/authenticationService';
 import { RootState } from '../../state/RootState';
+import { hasValue } from '../../common/utils/hasValue';
 
 const Home: React.FC = () => {
   const currentUser = useSelector(
-    (state: RootState) => state.currentUser || null
+    (state: RootState) => state.currentUser ?? null
   );
   const logout = async () => {
     await authenticationService.logout();
@@ -64,7 +65,7 @@ const Home: React.FC = () => {
           <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-4">
             EXPLORER
           </Link>
-          {currentUser?.username !== null ? (
+          {hasValue(currentUser.username) ? (
             <button
               onClick={logout}
               className="btn btn-danger m-2 col-lg-2 col-4"

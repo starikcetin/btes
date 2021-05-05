@@ -51,7 +51,7 @@ interface SandboxSimulationParamTypes {
 const SandboxSimulation: React.FC = () => {
   const forceUpdate = useForceUpdate();
   const currentUser = useSelector(
-    (state: RootState) => state.currentUser || null
+    (state: RootState) => state.currentUser ?? null
   );
   const [connected, setConnected] = useState(false);
   const [shouldShowLogs, setShouldShowLogs] = useState(false);
@@ -200,7 +200,7 @@ const SandboxSimulation: React.FC = () => {
   );
 
   const handleSave = useCallback(() => {
-    if (currentUser?.username !== null) {
+    if (hasValue(currentUser?.username)) {
       simulationInstanceService.save(simulationUid);
     } else {
       setAlertShow(true);

@@ -6,15 +6,16 @@ import background from '../Signin/sand.jpg';
 import { RootState } from '../../state/RootState';
 import { authenticationService } from '../../services/authenticationService';
 import AlertMessage from '../../components/Alert/AlertMessage';
+import { hasValue } from '../../common/utils/hasValue';
 
 const ProfileDetail: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [alertShow, setAlertShow] = useState(false);
   const currentUser = useSelector(
-    (state: RootState) => state.currentUser || null
+    (state: RootState) => state.currentUser ?? null
   );
   const [userName, setUsername] = useState(
-    currentUser?.username ? currentUser.username : ''
+    hasValue(currentUser?.username) ? currentUser.username : ''
   );
   const [email, setEmail] = useState(
     currentUser?.email ? currentUser.email : ''
@@ -33,7 +34,7 @@ const ProfileDetail: React.FC = () => {
       username: userName,
       newPassword: password,
       email,
-      oldUsername: currentUser?.username ? currentUser.username : '',
+      oldUsername: hasValue(currentUser?.username) ? currentUser.username : '',
     };
     try {
       const response = await authenticationService.update(body);

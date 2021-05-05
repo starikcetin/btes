@@ -19,7 +19,7 @@ import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
 
 const App: React.FC = () => {
   const currentUserName = useSelector(
-    (state: RootState) => state.currentUser.username || null
+    (state: RootState) => state.currentUser.username ?? null
   );
 
   const getCurrentUser = () => {
