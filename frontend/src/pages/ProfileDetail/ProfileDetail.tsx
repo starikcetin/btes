@@ -5,7 +5,7 @@ import './ProfileDetail.scss';
 import background from '../Signin/sand.jpg';
 import { RootState } from '../../state/RootState';
 import { authenticationService } from '../../services/authenticationService';
-import { Alert, Button } from 'react-bootstrap';
+import AlertMessage from '../../components/Alert/AlertMessage';
 
 const ProfileDetail: React.FC = () => {
   const [error, setError] = useState<string>('');
@@ -52,17 +52,12 @@ const ProfileDetail: React.FC = () => {
 
   return (
     <div className="page-profile-detail">
-      <Alert
-        className="page-profile-detail--alert mr-4"
-        size={10}
+      <AlertMessage
+        closeHandler={() => setAlertShow(false)}
         show={alertShow}
-        variant={error === '' ? 'success' : 'danger'}
-        onClose={() => setAlertShow(false)}
-        dismissible
-      >
-        {error === '' ? 'Successfully Updated' : 'Error'}
-        <p>{error}</p>
-      </Alert>
+        message={error === '' ? 'Successfully Updated' : 'Error ' + error}
+        variantType={error === '' ? 'success' : 'danger'}
+      />
 
       <img
         className="global-bg-img page-profile-detail--bg-img"

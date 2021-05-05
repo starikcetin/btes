@@ -1,0 +1,11 @@
+.comp-alert-message{
+  &--alert{
+    display: flex;
+    position: fixed;
+    bottom: 10px;
+    font-size: small;
+    right: 10px;
+    width: 20%;
+  }
+
+}
