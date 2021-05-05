@@ -49,7 +49,9 @@ interface SandboxSimulationParamTypes {
 
 const SandboxSimulation: React.FC = () => {
   const forceUpdate = useForceUpdate();
-
+  const currentUser = useSelector(
+    (state: RootState) => state.currentUser ?? null
+  );
   const [connected, setConnected] = useState(false);
   const [shouldShowLogs, setShouldShowLogs] = useState(false);
   const { simulationUid } = useParams<SandboxSimulationParamTypes>();
@@ -191,8 +193,10 @@ const SandboxSimulation: React.FC = () => {
   );
 
   const handleSave = useCallback(() => {
-    simulationInstanceService.save(simulationUid);
-  }, [simulationUid]);
+    if (hasValue(currentUser?.username)) {
+      simulationInstanceService.save(simulationUid);
+    }
+  }, [currentUser?.username, simulationUid]);
 
   const handleExport = useCallback(() => {
     simulationInstanceService.openExportUrl(simulationUid);
@@ -263,11 +267,13 @@ const SandboxSimulation: React.FC = () => {
                   <Button
                     onClick={handleSave}
                     variant="light"
-                    disabled={!isPaused}
+                    disabled={!isPaused || !hasValue(currentUser.username)}
                     title={
-                      isPaused
+                      isPaused && hasValue(currentUser.username)
                         ? 'Save this simulation'
-                        : 'Saving a running simulation is not supported. Pause first.'
+                        : !isPaused
+                        ? 'Saving a running simulation is not supported. Pause first.'
+                        : 'Log in to be able to save your simulations.'
                     }
                   >
                     <FontAwesomeIcon icon={faSave} />
