@@ -7,7 +7,7 @@ import {
 /** Data type for Simulation */
 export type SimulationSaveDataRaw = {
   snapshot: SimulationSnapshot;
-  username?: string;
+  username: string;
 };
 
 /** Data type for Simulation */

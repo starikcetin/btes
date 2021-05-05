@@ -11,6 +11,7 @@ import { SimulationSaveDataRaw } from '../../common/database/SimulationSaveData'
 import { SimulationExport } from '../../common/importExport/SimulationExport';
 import { AuthenticatedExpressRequest } from '../../auth/AuthenticatedExpressRequest';
 import { SimulationSaveModel } from '../../database/SimulationSaveDataModel';
+import { SimulationExportData } from '../../common/importExport/SimulationExportData';
 
 @Tags('Simulation Instance Broker')
 @Route('simulationInstanceBroker')
@@ -136,7 +137,7 @@ export class SimulationInstanceBrokerController extends Controller {
       `Exported simulation instance with uid: ${snapshot.simulationUid}`
     );
 
-    const rawSave: SimulationSaveDataRaw = { snapshot };
+    const rawSave: SimulationExportData = { snapshot };
     const json = JSON.stringify(rawSave);
     const base64 = Buffer.from(json).toString('base64');
 
