@@ -42,7 +42,6 @@ import { SimulationNodeConnection } from '../../components/SimulationNodeConnect
 import NodeConnectionModal from '../../components/NodeConnectionModal/NodeConnectionModal';
 import { NodeConnectionData } from '../../state/simulation/data/ConnectionData';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
-import AlertMessage from '../../components/Alert/AlertMessage';
 
 interface SandboxSimulationParamTypes {
   simulationUid: string;
@@ -111,12 +110,6 @@ const SandboxSimulation: React.FC = () => {
     setViewingConnectionFirstNodeUid(conn?.firstNodeUid ?? null);
     setViewingConnectionSecondNodeUid(conn?.secondNodeUid ?? null);
   };
-
-  const [alertShow, setAlertShow] = useState<boolean>(false);
-  const [alertMessage, setAlerMessage] = useState<{
-    message: string;
-    variant: string;
-  }>({ message: '', variant: '' });
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);
@@ -202,9 +195,6 @@ const SandboxSimulation: React.FC = () => {
   const handleSave = useCallback(() => {
     if (hasValue(currentUser?.username)) {
       simulationInstanceService.save(simulationUid);
-    } else {
-      setAlertShow(true);
-      setAlerMessage({ message: 'To save please login!', variant: 'danger' });
     }
   }, [currentUser?.username, simulationUid]);
 
@@ -224,12 +214,6 @@ const SandboxSimulation: React.FC = () => {
 
   return (
     <div className="page-sandbox-simulation">
-      <AlertMessage
-        closeHandler={() => setAlertShow(false)}
-        show={alertShow}
-        message={alertMessage.message}
-        variantType={alertMessage.variant}
-      />
       {connected ? (
         <>
           <div className="page-sandbox-simulation--body">
@@ -283,11 +267,13 @@ const SandboxSimulation: React.FC = () => {
                   <Button
                     onClick={handleSave}
                     variant="light"
-                    disabled={!isPaused}
+                    disabled={!isPaused || !hasValue(currentUser.username)}
                     title={
-                      isPaused
+                      isPaused && hasValue(currentUser.username)
                         ? 'Save this simulation'
-                        : 'Saving a running simulation is not supported. Pause first.'
+                        : !isPaused
+                        ? 'Saving a running simulation is not supported. Pause first.'
+                        : 'Log in to be able to save your simulations.'
                     }
                   >
                     <FontAwesomeIcon icon={faSave} />
