@@ -1,31 +1,29 @@
 # $$$START$$$
 
 # 
-
 ![The requested url was not found on this server.](./res/btesbanner.jpg  "thinking")
 
 ##  Home
-Home Page
+<samp> Welcome Page. Direct route for related topics. </samp>
 
 ##   Sandbox
->> Write in details ! 
+<samp>Sandbox simulation environment, enabling total control.</samp>
+<br>
+<samp> Various control options will include pausing, undoing/redoing, inspecting the simulation, controlling the timescale, and so on.  </samp>
 
 ##  Lessons
->> Interactive-Guided Course
+<samp> Interactive-guided module which works with Sandbox. Also, the progress track showing the current performance and completion. </samp>
 
 ##  Explorer 
->  Real world blockchain markets, price etc..
+<samp> Real world blockchain and top cryptocurrency prices, market size, growth, trends and forecast. </samp>
 
 ##  Help
-
-> Blockchain documents and user guide.
+<samp> Blockchain documents and user manual. </samp>
 
 ##  About
-
-> Who we are ?
+<samp> Who we are ? </samp>
 
 ## Sign In 
-
-> Join Us !
+<samp> Join Us ! </samp>
 
 # $$$END$$$

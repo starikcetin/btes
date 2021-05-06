@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { GithubCircle } from '@fortawesome/free-solid-svg-icons';
 
 import './AboutUs.scss';
-import { faLink } from '@fortawesome/free-solid-svg-icons';
+import { faLink, faMailBulk } from '@fortawesome/free-solid-svg-icons';
 
 const AboutUs: React.FC = () => {
   return (
@@ -18,7 +18,7 @@ const AboutUs: React.FC = () => {
                   {' '}
                   Our aim is making a educational web-based platform about
                   blockchain technology, catering towards absolutely everyone,
-                  as a senior student.{' '}
+                  as senior students.{' '}
                 </p>
               </p>
               <p className="lead text-muted">
@@ -68,7 +68,7 @@ const AboutUs: React.FC = () => {
           <div className="row align-items-center">
             <div className="col-lg-5 px-5 mx-auto">
               <img
-                src="https://res.cloudinary.com/mhmd/image/upload/v1556834136/img-2_vdgqgn.jpg"
+                src="https://st4.depositphotos.com/8956546/27303/v/450/depositphotos_273035242-stock-illustration-blockchain-modern-flat-design-isometric.jpg%20?%3E"
                 alt=""
                 className="img-fluid mb-4 mb-lg-0"
               />
@@ -97,6 +97,7 @@ const AboutUs: React.FC = () => {
                 Two different simulation types: Lesson-based simulations for
                 step by step learning.
               </li>
+              <p> </p>
               <a href="#" className="btn btn-light px-5 rounded-pill shadow-sm">
                 Learn More
               </a>
@@ -121,14 +122,18 @@ const AboutUs: React.FC = () => {
             <div className="col-xl-3 col-sm-6 mb-5">
               <div className="bg-white rounded shadow-sm py-5 px-4">
                 <img
-                  src="https://res.cloudinary.com/mhmd/image/upload/v1556834132/avatar-4_ozhrib.png"
+                  src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
                   alt=""
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
                 <h5 className="mb-0">Beste Kulözü</h5>
                 <span className="small text-uppercase text-muted">
-                  Co - Founder
+                  Co - Founder{' '}
+                  <a href="mailto:bkklz@outlook.com">
+                    {' '}
+                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                  </a>
                 </span>
               </div>
             </div>
@@ -136,14 +141,18 @@ const AboutUs: React.FC = () => {
             <div className="col-xl-3 col-sm-6 mb-5">
               <div className="bg-white rounded shadow-sm py-5 px-4">
                 <img
-                  src="https://res.cloudinary.com/mhmd/image/upload/v1556834130/avatar-3_hzlize.png"
+                  src="https://img.freepik.com/free-vector/man-avatar-profile-on-round-icon_24640-14044.jpg?size=338&ext=jpg"
                   alt=""
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
                 <h5 className="mb-0">Şükrü Kırman</h5>
                 <span className="small text-uppercase text-muted">
-                  Co - Founder
+                  Co - Founder{' '}
+                  <a href="mailto:sukru.kirman@ug.bilkent.edu.tr">
+                    {' '}
+                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                  </a>
                 </span>
               </div>
             </div>
@@ -151,14 +160,18 @@ const AboutUs: React.FC = () => {
             <div className="col-xl-3 col-sm-6 mb-5">
               <div className="bg-white rounded shadow-sm py-5 px-4">
                 <img
-                  src="https://res.cloudinary.com/mhmd/image/upload/v1556834133/avatar-2_f8dowd.png"
+                  src="https://img.freepik.com/free-vector/man-avatar-profile-on-round-icon_24640-14044.jpg?size=338&ext=jpg"
                   alt=""
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
                 <h5 className="mb-0">S. Tarık Çetin </h5>
                 <span className="small text-uppercase text-muted">
-                  Co - Founder
+                  Co - Founder{' '}
+                  <a href="mailto:cetinsamedtarik@gmail.com">
+                    {' '}
+                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                  </a>
                 </span>
               </div>
             </div>
@@ -166,14 +179,18 @@ const AboutUs: React.FC = () => {
             <div className="col-xl-3 col-sm-6 mb-5">
               <div className="bg-white rounded shadow-sm py-5 px-4">
                 <img
-                  src="https://res.cloudinary.com/mhmd/image/upload/v1556834133/avatar-1_s02nlg.png"
+                  src="https://img.freepik.com/free-vector/man-avatar-profile-on-round-icon_24640-14044.jpg?size=338&ext=jpg"
                   alt=""
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
                 <h5 className="mb-0">Elnur Alizada</h5>
                 <span className="small text-uppercase text-muted">
-                  Co - Founder
+                  Co - Founder{' '}
+                  <a href="mailto:elnur.alizada@ug.bilkent.edu.tr">
+                    {' '}
+                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                  </a>
                 </span>
               </div>
             </div>
