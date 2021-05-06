@@ -56,6 +56,7 @@ export const LessonPopupStepRunner: React.FC<LessonPopupStepRunnerProps> = (
       run={show}
       stepIndex={popupStepIndex}
       callback={handleJoyrideCallback}
+      disableScrollParentFix={true}
       disableCloseOnEsc={true}
       disableOverlayClose={true}
       hideBackButton={true}
