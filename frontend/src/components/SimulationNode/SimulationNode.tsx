@@ -11,6 +11,7 @@ import nodeIcon from './pc.png';
 import { NodeData } from '../../state/simulation/data/NodeData';
 import { simulationBridge } from '../../services/simulationBridge';
 import { nodeCardIdFormatter } from '../../utils/nodeIdFormatters';
+import { hasValue } from '../../common/utils/hasValue';
 
 interface SimulationNodeProps {
   simulationUid: string;
@@ -82,8 +83,8 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
             src={nodeIcon}
             alt="nodeIcon"
           />
-          <span className="position-absolute comp-simulation-node--node-id text-truncate ml-2 mb-3">
-            {nodeUid}
+          <span className="position-absolute comp-simulation-node--node-id text-truncate mb-3">
+            {hasValue(nodeUid.split('-')[0]) ? nodeUid.split('-')[0] : nodeUid}
           </span>
         </div>
       </Draggable>
