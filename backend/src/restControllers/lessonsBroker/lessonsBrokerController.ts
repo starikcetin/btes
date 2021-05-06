@@ -1,4 +1,4 @@
-import { Controller, Get, Route, Tags, Request, Security } from 'tsoa';
+import { Controller, Get, Route, Tags, Request, Security, Post } from 'tsoa';
 
 import { AuthenticatedExpressRequest } from '../../auth/AuthenticatedExpressRequest';
 import { UserModel } from '../../database/UserModel';
@@ -46,5 +46,24 @@ export class LessonsBrokerController extends Controller {
     console.log(`Created ${lessonUid} lesson with simulationUid: ${uidStr}`);
 
     return uidStr;
+  }
+
+  /** Marks a lesson as completed for the user. */
+  @Post('complete/{lessonUid}')
+  @Security('jwt')
+  public async complete(
+    @Request() req: AuthenticatedExpressRequest,
+    lessonUid: string
+  ): Promise<void> {
+    const { username } = req.user;
+
+    await UserModel.findOneAndUpdate(
+      { username },
+      {
+        [`lessonData.lessonCompletionDatas.${lessonUid}`]: {
+          timestamp: Date.now(),
+        },
+      }
+    );
   }
 }

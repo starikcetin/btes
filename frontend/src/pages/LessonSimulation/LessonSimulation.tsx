@@ -7,6 +7,8 @@ import { Simulation } from '../../components/Simulation/Simulation';
 import { lessonArchetypes } from '../../lessons/lessonArchetypes';
 import { hasValue } from '../../common/utils/hasValue';
 import { LessonRunner } from '../../components/LessonRunner/LessonRunner';
+import { lessonsService } from '../../services/lessonsService';
+import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
 
 interface LessonSimulationParamTypes {
   lessonUid: string;
@@ -15,6 +17,7 @@ interface LessonSimulationParamTypes {
 
 export const LessonSimulation: React.FC = () => {
   const history = useHistory();
+  const isAuthenticated = useIsAuthenticated();
 
   const [connected, setConnected] = useState(false);
   const { simulationUid, lessonUid } = useParams<LessonSimulationParamTypes>();
@@ -34,18 +37,18 @@ export const LessonSimulation: React.FC = () => {
   }, [simulationUid]);
 
   const handleLessonOnCompleted = useCallback(
-    (args: { shouldQuit: boolean }) => {
+    async (args: { shouldQuit: boolean }) => {
       const { shouldQuit } = args;
 
-      console.log('completed lesson:', lessonUid);
-
-      // TODO: save progress
+      if (isAuthenticated) {
+        await lessonsService.complete(lessonUid);
+      }
 
       if (shouldQuit) {
         history.push('/lessons');
       }
     },
-    [history, lessonUid]
+    [history, isAuthenticated, lessonUid]
   );
 
   useEffect(() => {

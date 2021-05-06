@@ -1,18 +1,8 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
-
-import './Lessons.scss';
-import background from './lessons_bg.jpg';
-import { lessonArchetypes } from '../../lessons/lessonArchetypes';
-import { RootState } from '../../state/RootState';
-import { hasValue } from '../../common/utils/hasValue';
-import { UserLessonData } from '../../common/database/UserLessonData';
-import { lessonsService } from '../../services/lessonsService';
 import { LinkContainer } from 'react-router-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { RelativeDate } from '../../components/RelativeDate/RelativeDate';
 import {
   faCheckCircle,
   faExclamationTriangle,
@@ -20,12 +10,18 @@ import {
   faWifi,
 } from '@fortawesome/free-solid-svg-icons';
 
+import './Lessons.scss';
+import background from './lessons_bg.jpg';
+import { lessonArchetypes } from '../../lessons/lessonArchetypes';
+import { hasValue } from '../../common/utils/hasValue';
+import { UserLessonData } from '../../common/database/UserLessonData';
+import { lessonsService } from '../../services/lessonsService';
+import { RelativeDate } from '../../components/RelativeDate/RelativeDate';
+import { useIsAuthenticated } from '../../hooks/useIsAuthenticated';
+
 export const Lessons: React.FC = () => {
   const history = useHistory();
-
-  const currentUsername = useSelector(
-    (state: RootState) => state.currentUser.username
-  );
+  const isAuthenticated = useIsAuthenticated();
 
   const [userLessonData, setUserLessonData] = useState<UserLessonData | null>(
     null
@@ -40,10 +36,6 @@ export const Lessons: React.FC = () => {
     doesUserLessonDataLoadHaveError,
     setDoesUserLessonDataLoadHaveError,
   ] = useState<boolean>(false);
-
-  const isAuthenticated = useMemo(() => hasValue(currentUsername), [
-    currentUsername,
-  ]);
 
   const handleLessonStartClick = async (lessonUid: string) => {
     const simulationUid = await lessonsService.create(lessonUid);
