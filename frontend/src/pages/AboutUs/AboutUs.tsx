@@ -174,7 +174,7 @@ const AboutUs: React.FC = () => {
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
-                <h5>Enur Alizada</h5>
+                <h5>Elnur Alizada</h5>
                 <p className="small text-uppercase text-muted">Co - Founder</p>
                 <p>
                   <a href="mailto:elnur.alizada@ug.bilkent.edu.tr">
