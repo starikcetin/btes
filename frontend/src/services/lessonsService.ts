@@ -8,6 +8,13 @@ class LessonsService {
     );
     return response.data;
   }
+
+  public async create(lessonUid: string): Promise<string> {
+    const response = await axiosAuth().get<string>(
+      `/api/rest/lessonsBroker/create/${lessonUid}`
+    );
+    return response.data;
+  }
 }
 
 export const lessonsService = new LessonsService();

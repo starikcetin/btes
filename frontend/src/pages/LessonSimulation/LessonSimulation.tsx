@@ -6,12 +6,13 @@ import { simulationBridge } from '../../services/simulationBridge';
 import { Simulation } from '../../components/Simulation/Simulation';
 
 interface LessonSimulationParamTypes {
+  lessonUid: string;
   simulationUid: string;
 }
 
 export const LessonSimulation: React.FC = () => {
   const [connected, setConnected] = useState(false);
-  const { simulationUid } = useParams<LessonSimulationParamTypes>();
+  const { simulationUid, lessonUid } = useParams<LessonSimulationParamTypes>();
 
   const connect = useCallback(async () => {
     await simulationBridge.connect(simulationUid);

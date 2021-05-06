@@ -14,7 +14,6 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { RelativeDate } from '../../components/RelativeDate/RelativeDate';
 import {
-  faCheck,
   faCheckCircle,
   faExclamationTriangle,
   faKey,
@@ -46,8 +45,9 @@ export const Lessons: React.FC = () => {
     currentUsername,
   ]);
 
-  const handleLessonStartClick = (lessonUid: string) => {
-    console.log('start lesson', lessonUid);
+  const handleLessonStartClick = async (lessonUid: string) => {
+    const simulationUid = await lessonsService.create(lessonUid);
+    history.push(`/lessonSimulation/${lessonUid}/${simulationUid}`);
   };
 
   const loadUserLessonData = useCallback(async () => {

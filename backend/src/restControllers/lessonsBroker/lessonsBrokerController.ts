@@ -4,6 +4,9 @@ import { AuthenticatedExpressRequest } from '../../auth/AuthenticatedExpressRequ
 import { UserModel } from '../../database/UserModel';
 import { hasValue } from '../../common/utils/hasValue';
 import { UserLessonData } from '../../common/database/UserLessonData';
+import { simulationManager } from '../../core/simulationManager';
+import { socketManager } from '../../socketManager';
+import { simulationUidGenerator } from '../../utils/uidGenerators';
 
 @Tags('Lessons Broker')
 @Route('lessonsBroker')
@@ -24,5 +27,24 @@ export class LessonsBrokerController extends Controller {
     }
 
     return user.lessonData;
+  }
+
+  /** Creates a lesson simulation. Returns the `simulationUid`. */
+  @Get('create/{lessonUid}')
+  public async create(lessonUid: string): Promise<string> {
+    const uidStr = simulationUidGenerator.next().toString();
+
+    if (simulationManager.checkSimulationExists(uidStr)) {
+      throw new Error(
+        `A simulation with ID ${uidStr} already exists! Refusing to create.`
+      );
+    }
+
+    const ns = socketManager.getOrCreateNamespace(uidStr);
+    simulationManager.createSimulation(uidStr, ns);
+
+    console.log(`Created ${lessonUid} lesson with simulationUid: ${uidStr}`);
+
+    return uidStr;
   }
 }

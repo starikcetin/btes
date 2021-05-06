@@ -69,7 +69,7 @@ const App: React.FC = () => {
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>
           </Route>
-          <Route path="/lessonSimulation/:simulationUid">
+          <Route path="/lessonSimulation/:lessonUid/:simulationUid">
             <LessonSimulation></LessonSimulation>
           </Route>
           <Route path="/explorer-blocks/:isFull">
