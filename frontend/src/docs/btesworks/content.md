@@ -1,31 +1,26 @@
 # $$$START$$$
 
-# 
+![btesbanner.jpg](./res/btesbanner.jpg)
 
-![The requested url was not found on this server.](./res/btesbanner.jpg  "thinking")
+#  Home
+Welcome page. Direct route for related topics.
 
-##  Home
-Home Page
+#   Sandbox
+Sandbox simulation environment, enabling total control. Various control options will include pausing, undoing/redoing, inspecting the simulation, controlling the timescale, and so on.
 
-##   Sandbox
->> Write in details ! 
+#  Lessons
+Interactive guided-learning module that includes step-by-step lessons. Also, the progress track showing the current performance and completion.
 
-##  Lessons
->> Interactive-Guided Course
+#  Explorer 
+Real world blockchain and top cryptocurrency prices, market size, growth, trends and forecast.
 
-##  Explorer 
->  Real world blockchain markets, price etc..
+#  Help
+Documentation and user manual.
 
-##  Help
+#  About
+Who we are?
 
-> Blockchain documents and user guide.
-
-##  About
-
-> Who we are ?
-
-## Sign In 
-
-> Join Us !
+# Sign In 
+Join Us!
 
 # $$$END$$$

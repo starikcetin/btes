@@ -219,7 +219,7 @@ The smallest unit of Bitcoin, equal to 0.00000001 BTC
 ## Sandbox Simulation
  A type of simulation in which the use has total sandbox control, i.e. they are free to whatever they so wish.
 
-# Smart Contracts
+## Smart Contracts
 Smart contracts are computer protocols that facilitate, verify, or enforce the negotiation or performance of a contract, or that obviate the need for a contractual clause.
 
 ## Simulation Node

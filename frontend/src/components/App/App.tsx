@@ -16,6 +16,7 @@ import { Help } from '../../pages/Help/Help';
 import { authenticationService } from '../../services/authenticationService';
 import { RootState } from '../../state/RootState';
 import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
+import AboutUs from '../../pages/AboutUs/AboutUs';
 
 const App: React.FC = () => {
   const currentUserName = useSelector(
@@ -51,10 +52,7 @@ const App: React.FC = () => {
             <DataExplorer />
           </Route>
           <Route path="/about">
-            {/* <About></About> */}
-            <div>
-              <p>About</p>
-            </div>
+            <AboutUs />
           </Route>
           {currentUserName === null && (
             <Route path="/signin">
