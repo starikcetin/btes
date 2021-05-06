@@ -8,6 +8,7 @@ import {
   faExclamationTriangle,
   faKey,
   faWifi,
+  faArrowRight,
 } from '@fortawesome/free-solid-svg-icons';
 
 import './Lessons.scss';
@@ -45,12 +46,11 @@ export const Lessons: React.FC = () => {
   const loadUserLessonData = useCallback(async () => {
     try {
       setDoesUserLessonDataLoadHaveError(false);
+      setIsLoadingUserLessonData(true);
       const lessonData = await lessonsService.getUserLessonData();
       setUserLessonData(lessonData);
-      setIsLoadingUserLessonData(true);
-      console.log('fetched lesson data:', lessonData);
     } catch (e) {
-      console.error(e);
+      console.error('Error while fetching lessons:', e);
       setDoesUserLessonDataLoadHaveError(true);
     } finally {
       setIsLoadingUserLessonData(false);
@@ -102,14 +102,32 @@ export const Lessons: React.FC = () => {
             lg={3}
             className="d-flex align-items-center mt-3 mt-lg-0"
           >
-            {hasValue(lessonCompletionData) ? (
+            {!isAuthenticated ? (
+              <span>
+                <FontAwesomeIcon icon={faKey} />
+                <span> Log in to see your progress</span>
+              </span>
+            ) : doesUserLessonDataLoadHaveError ? (
+              <span>
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+                <span> Could not fetch progress</span>
+              </span>
+            ) : isLoadingUserLessonData ? (
+              <span>
+                <Spinner animation="grow" size="sm" />
+                <span> Loading your progress...</span>
+              </span>
+            ) : hasValue(lessonCompletionData) ? (
               <span>
                 <FontAwesomeIcon icon={faCheckCircle} />
                 <span> Completed </span>
                 <RelativeDate date={new Date(lessonCompletionData.timestamp)} />
               </span>
             ) : (
-              <span>Did not complete</span>
+              <span>
+                <FontAwesomeIcon icon={faArrowRight} />
+                <span> Did not complete</span>
+              </span>
             )}
           </Col>
           <Col
