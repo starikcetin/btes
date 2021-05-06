@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import './LessonSimulation.scss';
@@ -14,6 +14,8 @@ interface LessonSimulationParamTypes {
 }
 
 export const LessonSimulation: React.FC = () => {
+  const history = useHistory();
+
   const [connected, setConnected] = useState(false);
   const { simulationUid, lessonUid } = useParams<LessonSimulationParamTypes>();
 
@@ -30,6 +32,21 @@ export const LessonSimulation: React.FC = () => {
   const teardown = useCallback(() => {
     simulationBridge.teardown(simulationUid);
   }, [simulationUid]);
+
+  const handleLessonOnCompleted = useCallback(
+    (args: { shouldQuit: boolean }) => {
+      const { shouldQuit } = args;
+
+      console.log('completed lesson:', lessonUid);
+
+      // TODO: save progress
+
+      if (shouldQuit) {
+        history.push('/lessons');
+      }
+    },
+    [history, lessonUid]
+  );
 
   useEffect(() => {
     connect();
@@ -59,7 +76,10 @@ export const LessonSimulation: React.FC = () => {
     return (
       <>
         <Simulation simulationUid={simulationUid} />
-        <LessonRunner lesson={lessonArchetype} />
+        <LessonRunner
+          lesson={lessonArchetype}
+          onCompleted={handleLessonOnCompleted}
+        />
       </>
     );
   };

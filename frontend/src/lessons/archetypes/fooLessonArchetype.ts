@@ -13,15 +13,15 @@ export const fooLessonArchetype: LessonArchetype = {
     },
     {
       type: 'popup',
-      targetElementId: '#i-am-an-element-id',
+      targetElementId: '.comp-simulation--board',
       title: 'I am a popup title',
-      body: 'I am a popp body',
+      body: 'I am a popup body',
     },
     {
       type: 'popup',
-      targetElementId: '#i-am-another-element-id',
+      targetElementId: '.comp-simulation--toolbox',
       title: 'I am a popup title',
-      body: 'I am a popp body',
+      body: 'I am a popup body',
     },
   ],
 };
