@@ -1,9 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { GithubCircle } from '@fortawesome/free-solid-svg-icons';
 
 import './AboutUs.scss';
-import { faLink, faMailBulk } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 
 const AboutUs: React.FC = () => {
   return (
@@ -12,21 +12,17 @@ const AboutUs: React.FC = () => {
         <div className="container py-5">
           <div className="row h-100 align-items-center py-5">
             <div className="col-lg-6">
-              <h1 className="display-4">About Us </h1>
-              <p className="lead text-muted mb-0">
-                <p>
-                  {' '}
-                  Our aim is making a educational web-based platform about
-                  blockchain technology, catering towards absolutely everyone,
-                  as senior students.{' '}
-                </p>
+              <h1 className="display-4">About Us</h1>
+              <p className="lead text-muted">
+                Our aim is making a educational web-based platform about
+                blockchain technology, catering towards absolutely everyone.
               </p>
               <p className="lead text-muted">
                 <a
                   href="http://www.ctis.bilkent.edu.tr/ctis_seniorProject.php?semester=27&id=4968"
                   className="text-muted"
                 >
-                  <u>CTIS -Senior Project</u>
+                  <u>Bilkent CTIS - Senior Project</u>
                 </a>
               </p>
             </div>
@@ -46,16 +42,13 @@ const AboutUs: React.FC = () => {
           <div className="row align-items-center mb-5">
             <div className="col-lg-6 order-2 order-lg-1">
               <i className="fa fa-bar-chart fa-2x mb-3 text-primary"></i>
-              <h2 className="font-weight-light">Contact us </h2>
+              <h2 className="font-weight-light mb-4">Contact Us </h2>
               <p className="font text-muted mb-4">
-                You can contact us from: {''}
+                <FontAwesomeIcon icon={faGithub} /> GitHub repository:{' '}
                 <a href="https://github.com/ctisbtes/btes" className="link">
                   ctisbtes/btes
                 </a>
               </p>
-              <a href="#" className="btn btn-light px-5 rounded-pill shadow-sm">
-                Learn More
-              </a>
             </div>
             <div className="col-lg-5 px-5 mx-auto order-1 order-lg-2">
               <img
@@ -75,32 +68,26 @@ const AboutUs: React.FC = () => {
             </div>
             <div className="col-lg-6">
               <i className="fa fa-leaf fa-2x mb-3 text-primary"></i>
-              <h2 className="font-weight-light">
+              <h2 className="font-weight-light mb-4">
                 How can we help you? Having trouble understanding blockchain?
                 Are you looking for an environment explain blockchain
                 collectively?
               </h2>
               <p className="text-muted mb-4">
-                Simulation, documentation and teaching tools all meet
+                Simulation, documentation, and teaching tools all meet
                 interactively at BTES. Providing a colloborative and interactive
                 platform with the aim of making it simplier and easier for
                 everyone to learn the blockchain technology.
               </p>
-              <li className="font-italic text -muted mb3">
-                {' '}
+              <li className="text-muted mb3">
                 Real bitcoin protocol running in a simulated environment.
               </li>
-              <li className="font-italic text -muted mb3">
-                Interaction-first design.{' '}
-              </li>
-              <li className="font-italic text -muted mb3">
+              <li className="text-muted mb3">Interaction-first design.</li>
+              <li className="text-muted mb3">
                 Two different simulation types: Lesson-based simulations for
-                step by step learning.
+                step by step learning, and sandbox simulatons that give you
+                total freedom.
               </li>
-              <p> </p>
-              <a href="#" className="btn btn-light px-5 rounded-pill shadow-sm">
-                Learn More
-              </a>
             </div>
           </div>
         </div>
@@ -110,11 +97,8 @@ const AboutUs: React.FC = () => {
         <div className="container py-5">
           <div className="row mb-4">
             <div className="col-lg-5">
-              <h2 className="display-4 font-weight-light">Our team</h2>
-              <p className="font-italic text-muted">
-                {' '}
-                Our team is ready to help
-              </p>
+              <h2 className="display-4 font-weight-light">Our Team</h2>
+              <p className="text-muted">We are ready to help</p>
             </div>
           </div>
 
@@ -127,14 +111,16 @@ const AboutUs: React.FC = () => {
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
-                <h5 className="mb-0">Beste Kulözü</h5>
-                <span className="small text-uppercase text-muted">
-                  Co - Founder{' '}
+                <h5>Beste Kulözü</h5>
+                <p className="small text-uppercase text-muted">Co - Founder</p>
+                <p>
                   <a href="mailto:bkklz@outlook.com">
-                    {' '}
-                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                    <FontAwesomeIcon icon={faEnvelope} />
                   </a>
-                </span>
+                  <a href="https://github.com/bkkulozu" className="ml-3">
+                    <FontAwesomeIcon icon={faGithub} />
+                  </a>
+                </p>
               </div>
             </div>
 
@@ -146,14 +132,16 @@ const AboutUs: React.FC = () => {
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
-                <h5 className="mb-0">Şükrü Kırman</h5>
-                <span className="small text-uppercase text-muted">
-                  Co - Founder{' '}
+                <h5>Şükrü Kırman</h5>
+                <p className="small text-uppercase text-muted">Co - Founder</p>
+                <p>
                   <a href="mailto:sukru.kirman@ug.bilkent.edu.tr">
-                    {' '}
-                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                    <FontAwesomeIcon icon={faEnvelope} />
                   </a>
-                </span>
+                  <a href="https://github.com/sukrukirman" className="ml-3">
+                    <FontAwesomeIcon icon={faGithub} />
+                  </a>
+                </p>
               </div>
             </div>
 
@@ -165,14 +153,16 @@ const AboutUs: React.FC = () => {
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
-                <h5 className="mb-0">S. Tarık Çetin </h5>
-                <span className="small text-uppercase text-muted">
-                  Co - Founder{' '}
+                <h5>S. Tarık Çetin</h5>
+                <p className="small text-uppercase text-muted">Co - Founder</p>
+                <p>
                   <a href="mailto:cetinsamedtarik@gmail.com">
-                    {' '}
-                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                    <FontAwesomeIcon icon={faEnvelope} />
                   </a>
-                </span>
+                  <a href="https://github.com/starikcetin" className="ml-3">
+                    <FontAwesomeIcon icon={faGithub} />
+                  </a>
+                </p>
               </div>
             </div>
 
@@ -184,14 +174,16 @@ const AboutUs: React.FC = () => {
                   width="100"
                   className="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm"
                 />
-                <h5 className="mb-0">Elnur Alizada</h5>
-                <span className="small text-uppercase text-muted">
-                  Co - Founder{' '}
+                <h5>Enur Alizada</h5>
+                <p className="small text-uppercase text-muted">Co - Founder</p>
+                <p>
                   <a href="mailto:elnur.alizada@ug.bilkent.edu.tr">
-                    {' '}
-                    <FontAwesomeIcon icon={faMailBulk} />{' '}
+                    <FontAwesomeIcon icon={faEnvelope} />
                   </a>
-                </span>
+                  <a href="https://github.com/elnurali0" className="ml-3">
+                    <FontAwesomeIcon icon={faGithub} />
+                  </a>
+                </p>
               </div>
             </div>
           </div>
