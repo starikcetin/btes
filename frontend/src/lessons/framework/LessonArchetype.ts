@@ -1,5 +1,3 @@
-import { SocketEvent } from '../../common/constants/socketEvents';
-
 export type LessonArchetype = {
   readonly lessonUid: string;
   readonly displayName: string;
@@ -9,14 +7,12 @@ export type LessonArchetype = {
 
 export type LessonStepArchetype =
   | LessonModalStepArchetype
-  | LessonPopupStepArchetype
-  | LessonWaitStepArchetype;
+  | LessonPopupStepArchetype;
 
 export type LessonModalStepArchetype = {
   readonly type: 'modal';
   readonly title: string;
   readonly body: string;
-  readonly footer: string;
 };
 
 export type LessonPopupStepArchetype = {
@@ -24,12 +20,4 @@ export type LessonPopupStepArchetype = {
   readonly title: string;
   readonly body: string;
   readonly targetElementId: string;
-};
-
-export type LessonWaitStepArchetype = LessonWaitSocketEventStepArchetype;
-
-export type LessonWaitSocketEventStepArchetype = {
-  readonly type: 'wait';
-  readonly waitType: 'socketEvent';
-  readonly socketEvent: SocketEvent;
 };
