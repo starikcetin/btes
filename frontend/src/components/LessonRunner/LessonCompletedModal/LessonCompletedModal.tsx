@@ -25,17 +25,23 @@ export const LessonCompletedModal: React.FC<LessonCompletedModalProps> = (
   return (
     <Modal show={show} backdrop="static" keyboard={false} size="xl" scrollable>
       <Modal.Header closeButton={false}>
-        <Modal.Title>Lesson completed</Modal.Title>
+        <Modal.Title>Lesson Complete</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Congratulations! You completed the {lesson.displayName} lesson.</p>
         <p>
-          You can stick around the simulation if you want. To quit, simply go
-          back to the Lessons page.
+          Congratulations! You completed the <b>{lesson.displayName}</b> lesson.
+        </p>
+        <p>
+          You can stick around the simulation and examine it more, or quit and
+          go back to the lessons page.
+        </p>
+        <p>
+          If you are logged-in, your progress will be saved automatically when
+          you close this modal.
         </p>
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-center align-items-center">
-        <Button variant="success" onClick={handleStayOnClick}>
+        <Button variant="success" onClick={handleStayOnClick} className="mr-3">
           Stick Around
         </Button>
         <Button variant="danger" onClick={handleQuitOnClick}>

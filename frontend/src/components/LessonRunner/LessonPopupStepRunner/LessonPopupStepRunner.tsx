@@ -6,6 +6,18 @@ import Joyride, {
 
 import { LessonPopupStepArchetype } from '../../../lessons/framework/LessonArchetype';
 
+const joyrideDefaultStyles = {
+  arrowColor: '#fff',
+  backgroundColor: '#fff',
+  beaconSize: 36,
+  overlayColor: 'rgba(0, 0, 0, 0.5)',
+  primaryColor: '#f04',
+  spotlightShadow: '0 0 15px rgba(0, 0, 0, 0.5)',
+  textColor: '#333',
+  width: undefined,
+  zIndex: 100,
+};
+
 interface LessonPopupStepRunnerProps {
   popupSteps: LessonPopupStepArchetype[];
   show: boolean;
@@ -49,6 +61,13 @@ export const LessonPopupStepRunner: React.FC<LessonPopupStepRunnerProps> = (
       hideBackButton={true}
       scrollToFirstStep={true}
       spotlightClicks={true}
+      locale={{ close: 'Continue' }}
+      styles={{
+        options: {
+          ...joyrideDefaultStyles,
+          primaryColor: '#28a745',
+        },
+      }}
     />
   );
 };
