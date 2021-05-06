@@ -7,10 +7,11 @@ import Draggable, {
 import { animation, Item, Menu, theme, useContextMenu } from 'react-contexify';
 
 import './SimulationNode.scss';
-// import nodeIcon from './pcIcon.png';
+import nodeIcon from './pc.png';
 import { NodeData } from '../../state/simulation/data/NodeData';
 import { simulationBridge } from '../../services/simulationBridge';
 import { nodeCardIdFormatter } from '../../utils/nodeIdFormatters';
+import { hasValue } from '../../common/utils/hasValue';
 
 interface SimulationNodeProps {
   simulationUid: string;
@@ -71,14 +72,20 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
         onDrag={onDrag}
       >
         <div
-          className="comp-simulation-node--node-card card position-absolute justify-content-center"
+          className="d-flex comp-simulation-node--node-card position-absolute justify-content-center align-items-center text-center"
           onDoubleClick={handleDoubleClick}
           ref={draggableNodeRef}
           onContextMenu={onContextMenu}
           id={nodeCardIdFormatter(simulationUid, nodeUid)}
         >
-          <span className="alert-info">NODE</span>
-          <p className="card-text text-center">{nodeUid}</p>
+          <img
+            className="comp-simulation-node--node-icon position-absolute"
+            src={nodeIcon}
+            alt="nodeIcon"
+          />
+          <span className="position-absolute comp-simulation-node--node-id text-truncate mb-3">
+            {hasValue(nodeUid.split('-')[0]) ? nodeUid.split('-')[0] : nodeUid}
+          </span>
         </div>
       </Draggable>
       <Menu id={contextMenuId} theme={theme.light} animation={animation.fade}>
