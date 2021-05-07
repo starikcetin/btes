@@ -8,6 +8,7 @@ import { SimulationNamespaceEmitter } from './SimulationNamespaceEmitter';
 import { NodeConnectionMap } from './network/NodeConnectionMap';
 import { ControlledTimerService } from './network/ControlledTimerService';
 import { SimulationSnapshot } from '../common/SimulationSnapshot';
+import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
 
 class SimulationManager {
   private readonly simulationMap: { [simulationUid: string]: Simulation } = {};
@@ -21,7 +22,11 @@ class SimulationManager {
     [simulaitonUid: string]: SimulationNamespaceEmitter;
   } = {};
 
-  public readonly createSimulation = (simulationUid: string, ns: Namespace) => {
+  public readonly createSimulation = (
+    simulationUid: string,
+    ns: Namespace,
+    blockchainConfig: BlockchainConfig
+  ) => {
     const commandHistoryManager = new CommandHistoryManager();
     const socketEmitter = new SimulationNamespaceEmitter(ns);
     const connectionMap = new NodeConnectionMap(socketEmitter);
@@ -31,7 +36,8 @@ class SimulationManager {
       socketEmitter,
       connectionMap,
       timerService,
-      simulationUid
+      simulationUid,
+      blockchainConfig
     );
 
     const listener = new SimulationNamespaceListener(
@@ -86,7 +92,8 @@ class SimulationManager {
       socketEmitter,
       connectionMap,
       timerService,
-      snapshot.simulationUid
+      snapshot.simulationUid,
+      snapshot.blockchainConfig
     );
 
     const listener = new SimulationNamespaceListener(

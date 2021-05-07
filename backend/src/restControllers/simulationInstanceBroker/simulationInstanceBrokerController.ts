@@ -12,6 +12,7 @@ import { SimulationExport } from '../../common/importExport/SimulationExport';
 import { AuthenticatedExpressRequest } from '../../auth/AuthenticatedExpressRequest';
 import { SimulationSaveModel } from '../../database/SimulationSaveDataModel';
 import { SimulationExportData } from '../../common/importExport/SimulationExportData';
+import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 
 @Tags('Simulation Instance Broker')
 @Route('simulationInstanceBroker')
@@ -20,10 +21,9 @@ export class SimulationInstanceBrokerController extends Controller {
    * Create a new simulation instance, associate a new socket.io namespace for it and return the namespce.
    * Returns the socket.io namespace for the new simulation instance.
    */
-  @Get('create')
-  public async create(): Promise<string> {
+  @Post('create')
+  public async create(@Body() body: BlockchainConfig): Promise<string> {
     const uidStr = simulationUidGenerator.next().toString();
-
     if (simulationManager.checkSimulationExists(uidStr)) {
       throw new Error(
         `A simulation with ID ${uidStr} already exists! Refusing to create.`
@@ -31,7 +31,7 @@ export class SimulationInstanceBrokerController extends Controller {
     }
 
     const ns = socketManager.getOrCreateNamespace(uidStr);
-    simulationManager.createSimulation(uidStr, ns);
+    simulationManager.createSimulation(uidStr, ns, body);
 
     console.log(`Created simulation instance with uid: ${uidStr}`);
 

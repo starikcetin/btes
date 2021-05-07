@@ -7,10 +7,14 @@ import { UserLessonData } from '../../common/database/UserLessonData';
 import { simulationManager } from '../../core/simulationManager';
 import { socketManager } from '../../socketManager';
 import { simulationUidGenerator } from '../../utils/uidGenerators';
+import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 
 @Tags('Lessons Broker')
 @Route('lessonsBroker')
 export class LessonsBrokerController extends Controller {
+  constructor() {
+    super();
+  }
   /** Returns the data of user regarding the lessons. Progression is in this data. */
   @Get('userLessonData')
   @Security('jwt')
@@ -39,9 +43,13 @@ export class LessonsBrokerController extends Controller {
         `A simulation with ID ${uidStr} already exists! Refusing to create.`
       );
     }
-
+    const config: BlockchainConfig = {
+      blockCreationFee: 100,
+      coinbaseMaturity: 5,
+      targetLeadingZeroCount: 3,
+    };
     const ns = socketManager.getOrCreateNamespace(uidStr);
-    simulationManager.createSimulation(uidStr, ns);
+    simulationManager.createSimulation(uidStr, ns, config);
 
     console.log(`Created ${lessonUid} lesson with simulationUid: ${uidStr}`);
 
