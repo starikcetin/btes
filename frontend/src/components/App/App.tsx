@@ -8,7 +8,7 @@ import Home from '../../pages/Home/Home';
 import Sandbox from '../../pages/Sandbox/Sandbox';
 import Signin from '../../pages/Signin/Signin';
 /* import About from '../../pages/About/About'; */
-import SandboxSimulation from '../../pages/SandboxSimulation/SandboxSimulation';
+import { SandboxSimulation } from '../../pages/SandboxSimulation/SandboxSimulation';
 import DataExplorer from '../../pages/DataExplorer/DataExplorer';
 import DataExplorerBlockList from '../../pages/DataExplorerBlockList/DataExplorerBlockList';
 import DataExplorerTransactionList from '../../pages/DataExplorerTransactionList/DataExplorerTransactionList';
@@ -16,6 +16,8 @@ import { Help } from '../../pages/Help/Help';
 import { authenticationService } from '../../services/authenticationService';
 import { RootState } from '../../state/RootState';
 import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
+import { LessonSimulation } from '../../pages/LessonSimulation/LessonSimulation';
+import { Lessons } from '../../pages/Lessons/Lessons';
 import AboutUs from '../../pages/AboutUs/AboutUs';
 
 const App: React.FC = () => {
@@ -43,10 +45,7 @@ const App: React.FC = () => {
             <Sandbox></Sandbox>
           </Route>
           <Route path="/lessons">
-            {/* <Lessons></Lessons> */}
-            <div>
-              <p>Lessons</p>
-            </div>
+            <Lessons></Lessons>
           </Route>
           <Route path="/explorer">
             <DataExplorer />
@@ -67,6 +66,9 @@ const App: React.FC = () => {
 
           <Route path="/sandboxSimulation/:simulationUid">
             <SandboxSimulation></SandboxSimulation>
+          </Route>
+          <Route path="/lessonSimulation/:lessonUid/:simulationUid">
+            <LessonSimulation></LessonSimulation>
           </Route>
           <Route path="/explorer-blocks/:isFull">
             <DataExplorerBlockList />

@@ -1,3 +1,5 @@
+import { ValueOf } from '../utils/ValueOf';
+
 export const socketEvents = {
   native: {
     connect: 'connect',
@@ -50,3 +52,14 @@ export const socketEvents = {
     blockchainOwnUtxoSetChanged: 'simulation-blockchain-own-utxo-set-changed',
   },
 } as const;
+
+type socketEventsType = typeof socketEvents;
+type socketEventCategories = keyof socketEventsType;
+
+type socketEventValues<
+  TCat extends socketEventCategories
+> = TCat extends socketEventCategories
+  ? ValueOf<socketEventsType[TCat]>
+  : never;
+
+export type SocketEvent = socketEventValues<socketEventCategories>;

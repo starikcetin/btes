@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema<UserDocument>(
     username: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    lessonData: { type: mongoose.Schema.Types.Mixed, required: true },
   },
   { timestamps: true }
 );
