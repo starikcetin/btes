@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ReactTypingEffect from 'react-typing-effect';
@@ -7,77 +7,90 @@ import './Home.scss';
 import background from './mainPageBackground.jpg';
 import { authenticationService } from '../../services/authenticationService';
 import { RootState } from '../../state/RootState';
+import { hasValue } from '../../common/utils/hasValue';
+import { Container, Row, Col } from 'react-bootstrap';
 
 const Home: React.FC = () => {
   const currentUser = useSelector(
-    (state: RootState) => state.currentUser || null
+    (state: RootState) => state.currentUser ?? null
   );
   const logout = async () => {
     await authenticationService.logout();
   };
 
   return (
-    <div className="page-home d-flex justify-content-center col-12">
+    <div className="page-home text-center">
       <img
         className="global-bg-img page-home--bg-img"
         src={background}
         alt="background"
       />
-      <div className="row d-flex justify-content-center">
-        <div className="page-home--header d-flex justify-content-center align-items-center mt-3 col-12 text-center">
-          <span>
-            <b>Blockchain Technology For Everyone</b>
-          </span>
-        </div>
-        <div className="page-home--header-info d-flex justify-content-center col-lg-8 col-12 text-center">
-          <span>
-            <p>
+      <Container fluid={true}>
+        <Row>
+          <Col>
+            <div className="page-home--header">
+              Blockchain Technology For Everyone
+            </div>
+            <div className="page-home--header-info">
               What is{' '}
               <ReactTypingEffect
+                className="text-warning"
                 text={[
-                  'blockchain?',
+                  'a blockchain?',
                   'Bitcoin?',
+                  'mining?',
+                  'a transaction?',
                   'P2P?',
                   'Ethereum?',
-                  'block?',
-                  'transaction?',
-                  'key pair?',
-                  'public ledger?',
-                  'wallet?',
-                  'mining?',
+                  'a block?',
+                  'a key pair?',
+                  'a distributed ledger?',
+                  'a wallet?',
                   'consensus?',
                 ]}
-                // speed={2}  not actually working, it just works for only passing the new words, not typing..
-                // Alternative: Learn/Comprehend concept of blockchain, bitcoin, P2P etc..
+                typingDelay={1000}
+                eraseDelay={2000}
+                eraseSpeed={100}
+                speed={200}
               />
-            </p>
-          </span>
-        </div>
-
-        <div className="buttons col-12 d-flex align-content-center justify-content-center align-items-center">
-          <Link to="/sandbox" className="btn btn-info m-2 col-lg-2 col-4">
-            SANDBOX
-          </Link>
-          <Link to="/lessons" className="btn btn-success m-2 col-lg-2 col-4">
-            START LEARNING
-          </Link>
-          <Link to="/explorer" className="btn btn-primary m-2 col-lg-2 col-4">
-            EXPLORER
-          </Link>
-          {currentUser?.username !== null ? (
-            <button
-              onClick={logout}
-              className="btn btn-danger m-2 col-lg-2 col-4"
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col className="page-home--lesson-button-container d-flex flex-wrap justify-content-center align-items-center">
+            <Link
+              to="/lessons"
+              className="page-home--lesson-button btn btn-success"
             >
-              LOGOUT
-            </button>
-          ) : (
-            <Link to="/signin" className="btn btn-danger m-2 col-lg-2 col-4">
-              SIGN IN
+              Start Learning
             </Link>
-          )}
-        </div>
-      </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col className="page-home--buttons d-flex flex-wrap justify-content-center align-items-center">
+            <Link to="/sandbox" className="page-home--button btn btn-info">
+              Sandbox
+            </Link>
+
+            <Link to="/explorer" className="page-home--button btn btn-primary">
+              Explorer
+            </Link>
+
+            {hasValue(currentUser.username) ? (
+              <button
+                onClick={logout}
+                className="page-home--button btn btn-danger"
+              >
+                Log Out
+              </button>
+            ) : (
+              <Link to="/signin" className="page-home--button btn btn-danger">
+                Sign In
+              </Link>
+            )}
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };

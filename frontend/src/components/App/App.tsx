@@ -18,10 +18,11 @@ import { RootState } from '../../state/RootState';
 import ProfileDetail from '../../pages/ProfileDetail/ProfileDetail';
 import { LessonSimulation } from '../../pages/LessonSimulation/LessonSimulation';
 import { Lessons } from '../../pages/Lessons/Lessons';
+import AboutUs from '../../pages/AboutUs/AboutUs';
 
 const App: React.FC = () => {
   const currentUserName = useSelector(
-    (state: RootState) => state.currentUser.username || null
+    (state: RootState) => state.currentUser.username ?? null
   );
 
   const getCurrentUser = () => {
@@ -50,10 +51,7 @@ const App: React.FC = () => {
             <DataExplorer />
           </Route>
           <Route path="/about">
-            {/* <About></About> */}
-            <div>
-              <p>About</p>
-            </div>
+            <AboutUs />
           </Route>
           {currentUserName === null && (
             <Route path="/signin">

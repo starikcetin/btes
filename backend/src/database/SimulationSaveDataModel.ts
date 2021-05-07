@@ -6,6 +6,7 @@ type SimulationSaveDocument = SimulationSaveData & mongoose.Document;
 const SimulationSaveSchema = new mongoose.Schema<SimulationSaveDocument>(
   {
     snapshot: { type: mongoose.Schema.Types.Mixed, required: true },
+    username: { type: String, required: true },
   },
   { timestamps: true, minimize: false }
 );

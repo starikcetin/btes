@@ -1,14 +1,17 @@
 import _ from 'lodash';
-import { Body, Controller, Get, Post, Query, Route, Tags } from 'tsoa';
+import { Body, Controller, Get, Post, Query, Request, Route, Tags } from 'tsoa';
+import { Security } from '@tsoa/runtime';
 
 import { hasValue } from '../../common/utils/hasValue';
 import { simulationManager } from '../../core/simulationManager';
-import { SimulationSaveModel } from '../../database/SimulationSaveDataModel';
 import { socketManager } from '../../socketManager';
 import { simulationUidGenerator } from '../../utils/uidGenerators';
 import { SimulationSaveMetadataList } from '../../common/saveLoad/SimulationSaveMetadataList';
 import { SimulationSaveDataRaw } from '../../common/database/SimulationSaveData';
 import { SimulationExport } from '../../common/importExport/SimulationExport';
+import { AuthenticatedExpressRequest } from '../../auth/AuthenticatedExpressRequest';
+import { SimulationSaveModel } from '../../database/SimulationSaveDataModel';
+import { SimulationExportData } from '../../common/importExport/SimulationExportData';
 
 @Tags('Simulation Instance Broker')
 @Route('simulationInstanceBroker')
@@ -69,12 +72,17 @@ export class SimulationInstanceBrokerController extends Controller {
    * Saves an active simulation.
    */
   @Post('save/{simulationUid}')
-  public async save(simulationUid: string): Promise<void> {
+  @Security('jwt')
+  public async save(
+    @Request() req: AuthenticatedExpressRequest,
+    simulationUid: string
+  ): Promise<void> {
+    const { username } = req.user;
     const snapshot = simulationManager.getSimulationSnapshot(simulationUid);
 
     await SimulationSaveModel.updateOne(
       { 'snapshot.simulationUid': simulationUid },
-      { snapshot },
+      { username, snapshot },
       {
         upsert: true,
       }
@@ -129,7 +137,7 @@ export class SimulationInstanceBrokerController extends Controller {
       `Exported simulation instance with uid: ${snapshot.simulationUid}`
     );
 
-    const rawSave: SimulationSaveDataRaw = { snapshot };
+    const rawSave: SimulationExportData = { snapshot };
     const json = JSON.stringify(rawSave);
     const base64 = Buffer.from(json).toString('base64');
 
@@ -145,13 +153,17 @@ export class SimulationInstanceBrokerController extends Controller {
   }
 
   /**
-   * Returns all saved simulations.
+   * Returns user's saved simulations.
    */
-  @Get('savedSimulations')
-  public async savedSimulations(): Promise<SimulationSaveMetadataList> {
+  @Get('userSavedSimulations')
+  @Security('jwt')
+  public async userSavedSimulations(
+    @Request() req: AuthenticatedExpressRequest
+  ): Promise<SimulationSaveMetadataList> {
+    const { username } = req.user;
     const allSaved = await SimulationSaveModel.find();
     const filtered = _.chain(allSaved)
-      .filter(hasValue)
+      .filter((sim) => hasValue(sim) && sim.username === username)
       .map((d) => ({
         documentId: d._id,
         simulationUid: d.snapshot.simulationUid,

@@ -1,10 +1,25 @@
 .comp-simulation-node {
-  &--node-icon {
-    z-index: 10;
-    height: 50px;
+  &--node-icon{
+    height: 100%;
+    width: 100%;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+  &--node-id {
+    width: 90%;
+   z-index: 2;
+    font-size: small;
+    font-weight: bold;
+
+  }
+  &--node-card {
+    height: 7em;
+    width: 7em;
+    cursor: move !important;
+    z-index: 3;
   }
 
-  &--node-card {
-    cursor: move !important;
-  }
 }

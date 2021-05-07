@@ -4,10 +4,11 @@ import { Link, NavLink } from 'react-router-dom';
 import './Navbar.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
+import { hasValue } from '../../common/utils/hasValue';
 
 const Navbar: React.FC = () => {
   const currentUser = useSelector(
-    (state: RootState) => state.currentUser || null
+    (state: RootState) => state.currentUser ?? null
   );
 
   return (
@@ -85,14 +86,14 @@ const Navbar: React.FC = () => {
                 About
               </NavLink>
             </li>
-            {currentUser?.username !== null ? (
+            {hasValue(currentUser.username) ? (
               <li className="nav-item">
                 <NavLink
                   to="/profileDetail"
                   className="nav-link"
                   activeClassName="active"
                 >
-                  {currentUser ? currentUser.username : ''}
+                  {currentUser.username}
                 </NavLink>
               </li>
             ) : (

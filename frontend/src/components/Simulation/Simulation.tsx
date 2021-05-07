@@ -50,6 +50,11 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
   const { simulationUid } = props;
 
   const forceUpdate = useForceUpdate();
+
+  const currentUser = useSelector(
+    (state: RootState) => state.currentUser ?? null
+  );
+
   const [shouldShowLogs, setShouldShowLogs] = useState(false);
 
   const boardContextMenuId = `comp-simulation--board-context-menu--${simulationUid}`;
@@ -180,8 +185,10 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
   );
 
   const handleSave = useCallback(() => {
-    simulationInstanceService.save(simulationUid);
-  }, [simulationUid]);
+    if (hasValue(currentUser?.username)) {
+      simulationInstanceService.save(simulationUid);
+    }
+  }, [currentUser?.username, simulationUid]);
 
   const handleExport = useCallback(() => {
     simulationInstanceService.openExportUrl(simulationUid);
@@ -248,11 +255,13 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
               <Button
                 onClick={handleSave}
                 variant="light"
-                disabled={!isPaused}
+                disabled={!isPaused || !hasValue(currentUser.username)}
                 title={
-                  isPaused
+                  isPaused && hasValue(currentUser.username)
                     ? 'Save this simulation'
-                    : 'Saving a running simulation is not supported. Pause first.'
+                    : !isPaused
+                    ? 'Saving a running simulation is not supported. Pause first.'
+                    : 'Log in to be able to save your simulations.'
                 }
               >
                 <FontAwesomeIcon icon={faSave} />
