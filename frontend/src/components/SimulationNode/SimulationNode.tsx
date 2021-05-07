@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Draggable, {
   DraggableData,
   DraggableEvent,
@@ -23,7 +23,7 @@ interface SimulationNodeProps {
 export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   const {
     simulationUid,
-    data: { nodeUid, positionY, positionX },
+    data: { nodeUid, positionY, positionX, nodeName: name },
     launchHandler,
     onDrag,
   } = props;
@@ -34,6 +34,10 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   const { show: showContextMenu } = useContextMenu({
     id: contextMenuId,
   });
+
+  const [isRenaming, setIsRenaming] = useState<boolean>(false);
+  const [nodeName, setNodeName] = useState<string>(name);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const updateNodePosition = (event: DraggableEvent, data: DraggableData) => {
     //this condition prevent to trigger this function when user does not move the node,
@@ -52,6 +56,18 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     launchHandler(nodeUid);
   };
 
+  const handleRename = () => {
+    setIsRenaming(true);
+  };
+
+  const rename = () => {
+    simulationBridge.sendSimulationRenameNode(simulationUid, {
+      nodeUid,
+      nodeName,
+    });
+    setIsRenaming(false);
+  };
+
   const handleDeleteNode = () => {
     simulationBridge.sendSimulationDeleteNode(simulationUid, { nodeUid });
   };
@@ -61,6 +77,10 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     event.preventDefault();
     showContextMenu(event);
   };
+
+  useEffect(() => {
+    if (nameInputRef.current !== null) nameInputRef.current.focus();
+  }, [isRenaming]);
 
   return (
     <>
@@ -82,14 +102,45 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
             className="comp-simulation-node--node-icon position-absolute"
             src={nodeIcon}
             alt="nodeIcon"
-          />
+          />{' '}
           <span className="position-absolute comp-simulation-node--node-id text-truncate mb-3">
-            {hasValue(nodeUid.split('-')[0]) ? nodeUid.split('-')[0] : nodeUid}
+            {!isRenaming ? (
+              name !== '' ? (
+                name
+              ) : hasValue(nodeUid.split('-')[0]) ? (
+                nodeUid.split('-')[0]
+              ) : (
+                nodeUid
+              )
+            ) : (
+              <div className="input-group comp-simulation-node--node-name-input">
+                <input
+                  ref={nameInputRef}
+                  value={nodeName}
+                  type="text"
+                  className="form-control comp-simulation-node--node-name-input"
+                  placeholder="Name"
+                  onChange={(event) => {
+                    setNodeName(event.target.value);
+                  }}
+                />
+                <div className="input-group-append">
+                  <button
+                    className="btn btn-success comp-simulation-node--node-name-input p-1"
+                    type="button"
+                    onClick={rename}
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            )}
           </span>
         </div>
       </Draggable>
       <Menu id={contextMenuId} theme={theme.light} animation={animation.fade}>
         <Item onClick={handleDeleteNode}>Delete Node</Item>
+        <Item onClick={handleRename}>Rename</Item>
       </Menu>
     </>
   );

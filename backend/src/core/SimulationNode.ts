@@ -35,6 +35,8 @@ export class SimulationNode {
 
   private readonly socketEmitter: SimulationNamespaceEmitter;
 
+  public nodeName: string;
+
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
     connectionMap: NodeConnectionMap,
@@ -43,7 +45,8 @@ export class SimulationNode {
     nodeUid: string,
     positionX: number,
     positionY: number,
-    receivedMails: SimulationNodeMail[]
+    receivedMails: SimulationNodeMail[],
+    nodeName: string
   ) {
     this.socketEmitter = socketEmitter;
     this.connectionMap = connectionMap;
@@ -53,6 +56,7 @@ export class SimulationNode {
     this._positionX = positionX;
     this._positionY = positionY;
     this._receivedMails = [...receivedMails];
+    this.nodeName = nodeName;
   }
 
   public readonly teardown = (): void => {
@@ -144,6 +148,11 @@ export class SimulationNode {
       positionY: this._positionY,
       receivedMails: [...this._receivedMails],
       blockchainApp: this.blockchainApp.takeSnapshot(),
+      nodeName: this.nodeName,
     };
+  };
+
+  public readonly renameNode = (name: string): void => {
+    this.nodeName = name;
   };
 }

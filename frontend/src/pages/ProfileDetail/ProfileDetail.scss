@@ -9,12 +9,12 @@
   font-family: 'Lucida Console', Monaco, monospace;
   color: #fff;
 
-  &--alert{
+  &--alert {
     position: fixed;
-    bottom: 10px;
-    font-size: small;
     right: 10px;
+    bottom: 10px;
     width: 20%;
+    font-size: small;
   }
 
   &--form-container {

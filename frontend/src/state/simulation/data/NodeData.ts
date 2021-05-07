@@ -7,6 +7,7 @@ export interface NodeData {
   readonly nodeUid: string;
   readonly positionX: number;
   readonly positionY: number;
+  readonly nodeName: string;
   readonly receivedMails: SimulationNodeMail[];
   readonly blockchainApp: NodeBlockchainAppData;
 

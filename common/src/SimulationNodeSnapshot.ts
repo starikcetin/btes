@@ -7,4 +7,5 @@ export interface SimulationNodeSnapshot {
   readonly positionY: number;
   readonly receivedMails: SimulationNodeMail[];
   readonly blockchainApp: NodeBlockchainAppSnapshot;
+  readonly nodeName: string;
 }

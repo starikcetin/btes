@@ -35,6 +35,7 @@ import { TreeNode } from '../../common/tree/TreeNode';
 import { makeNodeData } from './utils/makeNodeData';
 import { makeTxLookupsFromBlockTree } from './utils/makeTxLookupsFromBlockTree';
 import { BlockchainOwnUtxoSetChangedActionPayload } from './actionPayloads/BlockchainOwnUtxoSetChangedActionPayload';
+import { SimulationNodeRenamedActionPayload } from './actionPayloads/SimulationNodeRenamedActionPayload';
 
 const initialState: SimulationSliceState = {};
 
@@ -155,6 +156,14 @@ export const simulationSlice = createSlice({
       const node = sim.nodeMap[payload.nodeUid];
       node.positionX = payload.positionX;
       node.positionY = payload.positionY;
+    },
+    nodeRenamed: (
+      state,
+      { payload }: PayloadAction<SimulationNodeRenamedActionPayload>
+    ) => {
+      const sim = state[payload.simulationUid];
+      const node = sim.nodeMap[payload.nodeUid];
+      node.nodeName = payload.nodeName;
     },
     nodesConnected: (
       state,

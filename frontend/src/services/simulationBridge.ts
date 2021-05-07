@@ -26,6 +26,7 @@ import { BlockchainAbortMiningPayload } from '../common/socketPayloads/Blockchai
 import { BlockchainDismissMiningPayload } from '../common/socketPayloads/BlockchainDismissMiningPayload';
 import { BlockchainBroadcastMinedBlockPayload } from '../common/socketPayloads/BlockchainBroadcastMinedBlockPayload';
 import { BlockchainBroadcastTxPayload } from '../common/socketPayloads/BlockchainBroadcastTxPayload';
+import { SimulationRenameNodePayload } from '../common/socketPayloads/SimulationRenameNodePayload';
 
 class SimulationBridge {
   private readonly uidtoSocketMap: {
@@ -140,6 +141,19 @@ class SimulationBridge {
       body
     );
     this.emit(simulationUid, socketEvents.simulation.updateNodePosition, body);
+  }
+
+  public sendSimulationRenameNode(
+    simulationUid: string,
+    body: SimulationRenameNodePayload
+  ) {
+    this.dispatchLogNodeEvent(
+      simulationUid,
+      body.nodeUid,
+      socketEvents.simulation.renameNode,
+      body
+    );
+    this.emit(simulationUid, socketEvents.simulation.renameNode, body);
   }
 
   public sendSimulationUndo(simulationUid: string) {

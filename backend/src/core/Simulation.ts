@@ -137,7 +137,8 @@ export class Simulation {
       nodeUid,
       positionX,
       positionY,
-      []
+      [],
+      ''
     );
     this.nodeMap[nodeUid] = newNode;
 
@@ -211,7 +212,8 @@ export class Simulation {
       nodeSnapshot.nodeUid,
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,
-      nodeSnapshot.receivedMails
+      nodeSnapshot.receivedMails,
+      nodeSnapshot.nodeName
     );
 
     this.nodeMap[nodeSnapshot.nodeUid] = newNode;
@@ -246,6 +248,16 @@ export class Simulation {
       nodeUid,
       positionX,
       positionY,
+    });
+  };
+
+  public readonly renameNode = (nodeUid: string, nodeName: string): void => {
+    const node = this.nodeMap[nodeUid];
+    node.renameNode(nodeName);
+
+    this.socketEmitter.sendSimulationNodeRenamed({
+      nodeUid,
+      nodeName,
     });
   };
 

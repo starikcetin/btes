@@ -24,6 +24,7 @@ import { TxAddedToOrphanagePayload } from '../common/socketPayloads/TxAddedToOrp
 import { TxRemovedFromMempoolPayload } from '../common/socketPayloads/TxRemovedFromMempoolPayload';
 import { TxsRemovedFromOrphanagePayload } from '../common/socketPayloads/TxsRemovedFromOrphanagePayload';
 import { BlockchainOwnUtxoSetChangedPayload } from '../common/socketPayloads/BlockchainOwnUtxoSetChangedPayload';
+import { SimulationNodeRenamedPayload } from '../common/socketPayloads/SimulationNodeRenamedPayload';
 
 export class SimulationSocketListener {
   private readonly simulationUid: string;
@@ -48,6 +49,10 @@ export class SimulationSocketListener {
     socket.on(
       socketEvents.simulation.nodePositionUpdated,
       this.handleSimulationNodePositionUpdated
+    );
+    socket.on(
+      socketEvents.simulation.nodeRenamed,
+      this.handleSimulationNodeRenamed
     );
     socket.on(
       socketEvents.simulation.nodesConnected,
@@ -220,6 +225,23 @@ export class SimulationSocketListener {
     this.dispatchLogNodeEvent(
       body.nodeUid,
       socketEvents.simulation.nodePositionUpdated,
+      body
+    );
+  };
+
+  private readonly handleSimulationNodeRenamed = (
+    body: SimulationNodeRenamedPayload
+  ) => {
+    store.dispatch(
+      simulationSlice.actions.nodeRenamed({
+        simulationUid: this.simulationUid,
+        ...body,
+      })
+    );
+
+    this.dispatchLogNodeEvent(
+      body.nodeUid,
+      socketEvents.simulation.nodeRenamed,
       body
     );
   };
