@@ -33,7 +33,7 @@ export const LessonPopupStepRunner: React.FC<LessonPopupStepRunnerProps> = (
   const formattedSteps = useMemo(
     () =>
       popupSteps.map((step) => ({
-        target: step.targetElementId,
+        target: step.target,
         title: step.title,
         content: step.body,
         disableBeacon: true,
@@ -67,6 +67,7 @@ export const LessonPopupStepRunner: React.FC<LessonPopupStepRunnerProps> = (
         options: {
           ...joyrideDefaultStyles,
           primaryColor: '#28a745',
+          zIndex: 999990, // Basically infinite. 9 less than SaneSelect menu.
         },
       }}
     />

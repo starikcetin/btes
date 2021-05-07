@@ -34,6 +34,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
       keyboard={false}
       size="xl"
       scrollable
+      dialogClassName="comp-node-modal"
     >
       <Modal.Header closeButton>
         <Modal.Title>Node Details</Modal.Title>
@@ -94,6 +95,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
               eventKey="network"
               title="Network"
               className="comp-node-modal--tab-content"
+              tabClassName="comp-node-modal--network-tab-handle"
             >
               <NodeNetworkDashboard
                 simulationUid={simulationUid}

@@ -54,6 +54,7 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
       backdrop="static"
       keyboard={false}
       size="lg"
+      dialogClassName="comp-node-connection-modal"
     >
       <Modal.Header closeButton>
         <Modal.Title>Node Connection Details</Modal.Title>
@@ -62,16 +63,18 @@ const NodeConnectionModal: React.FC<NodeConnectionModalProps> = (props) => {
         {!hasValue(connection) ? (
           <span>Connection not found</span>
         ) : (
-          <div className="container w-50">
-            <div className="input-group border">
-              <span className="input-group-text w-100">
-                Connection from {connection.firstNodeUid} to{' '}
-                {connection.secondNodeUid}
-              </span>
+          <div className="d-flex flex-column align-items-center">
+            <div>
+              <p>
+                1st node: <code>{connection.firstNodeUid}</code>
+              </p>
+              <p>
+                2nd node: <code>{connection.secondNodeUid}</code>
+              </p>
             </div>
-            <div className="input-group">
+            <div className="input-group w-50">
               <div className="input-group-prepend">
-                <span className="input-group-text">Latency</span>
+                <span className="input-group-text">Latency (ms)</span>
               </div>
               <input
                 type="number"

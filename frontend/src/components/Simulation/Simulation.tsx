@@ -209,6 +209,7 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
           <ButtonToolbar>
             <ButtonGroup className="mr-4">
               <Button
+                id="comp-simulation--toolbox__undo-button"
                 onClick={handleUndo}
                 variant="light"
                 className="rounded-0"
@@ -217,6 +218,7 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
                 <FontAwesomeIcon icon={faUndo} />
               </Button>
               <Button
+                id="comp-simulation--toolbox__redo-button"
                 onClick={handleRedo}
                 variant="light"
                 className="rounded-0"
@@ -227,6 +229,7 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
             </ButtonGroup>
             <ButtonGroup className="mr-4">
               <Button
+                id="comp-simulation--toolbox__pause-resume-button"
                 onClick={handlePauseOrResume}
                 variant="light"
                 className="rounded-0"
@@ -236,7 +239,7 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
               </Button>
             </ButtonGroup>
             <InputGroup
-              className="rounded-0 mr-4 comp-simulation--time-scale"
+              className="comp-simulation--time-scale rounded-0 mr-4"
               title="Time Scale"
             >
               <InputGroup.Prepend>
@@ -253,6 +256,7 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
             </InputGroup>
             <ButtonGroup className="ml-auto">
               <Button
+                id="comp-simulation--toolbox__save-button"
                 onClick={handleSave}
                 variant="light"
                 disabled={!isPaused || !hasValue(currentUser.username)}
@@ -267,6 +271,7 @@ export const Simulation: React.FC<SimulationProps> = (props) => {
                 <FontAwesomeIcon icon={faSave} />
               </Button>
               <Button
+                id="comp-simulation--toolbox__export-button"
                 onClick={handleExport}
                 variant="light"
                 disabled={!isPaused}
