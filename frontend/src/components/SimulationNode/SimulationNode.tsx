@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Draggable, {
   DraggableData,
   DraggableEvent,
@@ -35,6 +35,8 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     id: contextMenuId,
   });
 
+  const [isRenaming, setIsRenaming] = useState<boolean>(false);
+
   const updateNodePosition = (event: DraggableEvent, data: DraggableData) => {
     //this condition prevent to trigger this function when user does not move the node,
     // not trigger when doubleClick
@@ -50,6 +52,14 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
 
   const handleDoubleClick = () => {
     launchHandler(nodeUid);
+  };
+
+  const handleRename = () => {
+    setIsRenaming(true);
+  };
+
+  const rename = () => {
+    setIsRenaming(false);
   };
 
   const handleDeleteNode = () => {
@@ -82,14 +92,38 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
             className="comp-simulation-node--node-icon position-absolute"
             src={nodeIcon}
             alt="nodeIcon"
-          />
+          />{' '}
           <span className="position-absolute comp-simulation-node--node-id text-truncate mb-3">
-            {hasValue(nodeUid.split('-')[0]) ? nodeUid.split('-')[0] : nodeUid}
+            {!isRenaming ? (
+              hasValue(nodeUid.split('-')[0]) ? (
+                nodeUid.split('-')[0]
+              ) : (
+                nodeUid
+              )
+            ) : (
+              <div className="input-group comp-simulation-node--node-name-input">
+                <input
+                  type="text"
+                  className="form-control comp-simulation-node--node-name-input"
+                  placeholder="Name"
+                />
+                <div className="input-group-append">
+                  <button
+                    className="btn btn-success comp-simulation-node--node-name-input p-1"
+                    type="button"
+                    onClick={rename}
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            )}
           </span>
         </div>
       </Draggable>
       <Menu id={contextMenuId} theme={theme.light} animation={animation.fade}>
         <Item onClick={handleDeleteNode}>Delete Node</Item>
+        <Item onClick={handleRename}>Rename</Item>
       </Menu>
     </>
   );
