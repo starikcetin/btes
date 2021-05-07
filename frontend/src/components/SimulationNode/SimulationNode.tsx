@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Draggable, {
   DraggableData,
   DraggableEvent,
@@ -37,6 +37,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
 
   const [isRenaming, setIsRenaming] = useState<boolean>(false);
   const [nodeName, setNodeName] = useState<string>(name);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const updateNodePosition = (event: DraggableEvent, data: DraggableData) => {
     //this condition prevent to trigger this function when user does not move the node,
@@ -77,6 +78,10 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
     showContextMenu(event);
   };
 
+  useEffect(() => {
+    if (nameInputRef.current !== null) nameInputRef.current.focus();
+  }, [isRenaming]);
+
   return (
     <>
       <Draggable
@@ -110,6 +115,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
             ) : (
               <div className="input-group comp-simulation-node--node-name-input">
                 <input
+                  ref={nameInputRef}
                   value={nodeName}
                   type="text"
                   className="form-control comp-simulation-node--node-name-input"
