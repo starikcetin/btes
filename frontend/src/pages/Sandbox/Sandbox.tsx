@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSelector } from 'react-redux';
 
 import './Sandbox.scss';
 import background from './sandbox_bg.jpg';
@@ -19,7 +20,6 @@ import { SimulationSaveMetadata } from '../../../../common/src/saveLoad/Simulati
 import { SimulationSaveListItem } from '../../components/SimulationSaveListItem/SimulationSaveListItem';
 import { hasValue } from '../../common/utils/hasValue';
 import { SimulationExport } from '../../../../backend/src/common/importExport/SimulationExport';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
 import SimulationBlockchainConfigModal from '../../components/SimulationBlockchainConfigModal/SimulationBlockchainConfigModal';
 

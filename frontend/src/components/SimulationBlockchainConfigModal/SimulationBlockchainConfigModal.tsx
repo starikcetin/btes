@@ -1,7 +1,8 @@
 import React, { SyntheticEvent, useState } from 'react';
 import { Modal } from 'react-bootstrap';
-import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { useHistory } from 'react-router-dom';
+
+import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 
 interface SimulationBlockchainConfigModalProps {
