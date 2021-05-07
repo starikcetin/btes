@@ -21,6 +21,7 @@ import { hasValue } from '../../common/utils/hasValue';
 import { SimulationExport } from '../../../../backend/src/common/importExport/SimulationExport';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../state/RootState';
+import SimulationBlockchainConfigModal from '../../components/SimulationBlockchainConfigModal/SimulationBlockchainConfigModal';
 
 const Sandbox: React.FC = () => {
   const history = useHistory();
@@ -45,6 +46,10 @@ const Sandbox: React.FC = () => {
     setDoesSaveMetadatasHaveError,
   ] = useState<boolean>(false);
 
+  const [viewBlockchainConfigModal, setViewBlockchainConfigModal] = useState(
+    false
+  );
+
   const currentUser = useSelector(
     (state: RootState) => state.currentUser ?? null
   );
@@ -55,8 +60,7 @@ const Sandbox: React.FC = () => {
   };
 
   const createSimulationOnClick = async () => {
-    const simulationUid = await simulationInstanceService.create();
-    history.push('/sandboxSimulation/' + simulationUid);
+    setViewBlockchainConfigModal(true);
   };
 
   const joinSimulation = useCallback(
@@ -225,6 +229,10 @@ const Sandbox: React.FC = () => {
         className="global-bg-img page-sandbox--bg-img"
         src={background}
         alt="background"
+      />
+      <SimulationBlockchainConfigModal
+        closeHandler={() => setViewBlockchainConfigModal(false)}
+        show={viewBlockchainConfigModal}
       />
       <Container fluid={true} className="h-100">
         <Row className="h-100">
