@@ -4,7 +4,7 @@
 
 ![The requested url was not found on this server.](./res/home.jpg "HOME")
 
-# <p style="text-align: center;">  USER MANUAL   </span>
+# <p style="text-align: center;">  USER MANUAL  </p>
 
 ##### INTRODUCTION
 <br>
@@ -20,7 +20,9 @@
 > BTES is basically an application that uses web-based with blockchain technology.
 
 ## Site Map
+
 ### 1. Home 
+
 > There exist;
 * <p style="color:green;"> Start Learning button to open Lessons page.  </p>
 *  <p style="color:#17A2B7;"> Sandbox button  to join simulation.  </p>
@@ -31,25 +33,37 @@
 
 
 ### 2. Registration/Sign In
+
 <br>
 
-##### 2.1 Sign In 
+##### 2.1 Register 
+
+![The requested url was not found on this server.](./res/register.jpg "REGISTER")
+
+> Clicking on the register button in the upper middle of the main page will go to the
+ registration page. Or at home page you can click the red button for to direct you for registering.
+
+ ![The requested url was not found on this server.](./res/c1.jpg "REGISTER")
+
+![The requested url was not found on this server.](./res/c0.jpg "REGISTER")
+
+
+##### 2.2 Sign In 
 
 > Clicking on the register button in the upper middle of the main page will go to the
  signin/registration page.
 
  > Or at home page you can click the red button for sign in.
 
-![The requested url was not found on this server.](./res/signin.jpg "SIGN IN")
+![The requested url was not found on this server.](./res/c00.jpg "Profile Details")
 
-##### 2.2 Register 
+![The requested url was not found on this server.](./res/c2.jpg "username")
 
-![The requested url was not found on this server.](./res/register.jpg "REGISTER")
+##### 2.3 Update 
 
-> Clicking on the register button in the upper middle of the main page will go to the
- registration page.
+> You can change your password from update button.
 
- > Or at home page you can click the red button for to direct you for registering.
+![The requested url was not found on this server.](./res/c3.jpg "update")
 
 ### 3. Sandbox 
 
@@ -63,8 +77,9 @@
 
 ![The requested url was not found on this server.](./res/createsim.jpg "CREATE")
 
-##### 3.2 Create Node
+![The requested url was not found on this server.](./res/c4.jpg "LISTED SIMULATIONS")
 
+##### 3.2 Create Node
 
 * Create or put number to create a new simulation
 
@@ -176,8 +191,19 @@
 ##### 4.2 Lessons with Sign In
 <br>
 
+> If you did not log in, completion can not be seen.
+
+![The requested url was not found on this server.](./res/c7.jpg "LESSONS")
+
+> When you finish, you will take a complete message. 
+
+![The requested url was not found on this server.](./res/c5.jpg "LESSONS")
+
 ##### 4.3 Lessons Completed 
 
+![The requested url was not found on this server.](./res/c6.jpg "LESSONS")
+
+![The requested url was not found on this server.](./res/complete.jpg "COMPLETE")
 <br>
 
 ### 5. Explorer 
