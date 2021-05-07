@@ -1,4 +1,3 @@
-import { SimulationUpdateNodePositionPayload } from '../../common/socketPayloads/SimulationUpdateNodePositionPayload';
 import { Simulation } from '../Simulation';
 import { UndoableSimulationCommand } from '../undoRedo/UndoableSimulationCommand';
 import { SimulationRenameNodePayload } from '../../common/socketPayloads/SimulationRenameNodePayload';
@@ -34,7 +33,7 @@ export class SimulationRenameNodeCommand implements UndoableSimulationCommand {
   public readonly redo = this.perform;
 
   public readonly undo = (): void => {
-    if (undefined === this.previousNodeName || '' === this.previousNodeName) {
+    if (undefined === this.previousNodeName) {
       throw new Error('undo invoked before execute!');
     }
 
