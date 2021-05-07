@@ -63,6 +63,14 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
                     <td>ID:</td>
                     <td>{node.nodeUid}</td>
                   </tr>
+                  {node.nodeName !== '' ? (
+                    <tr>
+                      <td>Name:</td>
+                      <td>{node.nodeName}</td>
+                    </tr>
+                  ) : (
+                    <></>
+                  )}
                   <tr>
                     <td>Status:</td>
                     <td>Active</td>
