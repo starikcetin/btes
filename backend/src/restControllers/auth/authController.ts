@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken';
 
 import { UserModel } from '../../database/UserModel';
 import { hasValue } from '../../common/utils/hasValue';
-import { UserData } from '../../common/database/UserData';
+import { UserData, UserDataRaw } from '../../common/database/UserData';
 import { authTokenBlacklistService } from '../../auth/authTokenBlacklistService';
 import { AuthRegisterRequestBody } from '../../common/auth/AuthRegisterBody';
 import { AuthUpdateRequestBody } from '../../common/auth/AuthUpdateBody';
@@ -30,11 +30,17 @@ export class AuthController extends Controller {
   ): Promise<UserData> {
     const { username, password, email } = body;
     const passwordHash = await bcrypt.hash(password, 10);
-    const createdUser = await UserModel.create({
+
+    const newUserData: UserDataRaw = {
       username,
       passwordHash,
       email,
-    });
+      lessonData: {
+        lessonCompletionDatas: {},
+      },
+    };
+
+    const createdUser = await UserModel.create(newUserData);
 
     this.setStatus(201);
     return createdUser;

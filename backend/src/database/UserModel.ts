@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema<UserDocument>(
     email: { type: String, required: true, unique: true },
     lessonData: { type: mongoose.Schema.Types.Mixed, required: true },
   },
-  { timestamps: true }
+  { timestamps: true, minimize: false }
 );
 
 export const UserModel = mongoose.model<UserDocument>('User', UserSchema);
