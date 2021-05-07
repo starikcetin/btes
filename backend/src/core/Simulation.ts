@@ -18,13 +18,6 @@ import { BlockchainMiner } from './blockchain/modules/miner/BlockchainMiner';
 import { BlockchainNetwork } from './blockchain/modules/BlockchainNetwork';
 import { NodeConnection } from './network/NodeConnection';
 
-// TODO: this should not be here
-const blockchainConfig: BlockchainConfig = {
-  blockCreationFee: 100,
-  coinbaseMaturity: 5,
-  targetLeadingZeroCount: 3,
-};
-
 export class Simulation {
   public readonly simulationUid: string;
   public readonly nodeMap: { [nodeUid: string]: SimulationNode } = {};
@@ -32,17 +25,19 @@ export class Simulation {
   private readonly socketEmitter: SimulationNamespaceEmitter;
   private readonly connectionMap: NodeConnectionMap;
   private readonly timerService: ControlledTimerService;
-
+  private readonly blockchainConfig: BlockchainConfig;
   constructor(
     socketEmitter: SimulationNamespaceEmitter,
     connectionMap: NodeConnectionMap,
     timerService: ControlledTimerService,
-    simulationUid: string
+    simulationUid: string,
+    blockchainConfig: BlockchainConfig
   ) {
     this.socketEmitter = socketEmitter;
     this.connectionMap = connectionMap;
     this.timerService = timerService;
     this.simulationUid = simulationUid;
+    this.blockchainConfig = blockchainConfig;
   }
 
   public readonly importSnapshot = (snapshot: SimulationSnapshot): void => {
@@ -105,7 +100,7 @@ export class Simulation {
       blockchainTxDb,
       blockchainBlockDb,
       nodeUid,
-      blockchainConfig,
+      this.blockchainConfig,
       [],
       null
     );
@@ -116,7 +111,7 @@ export class Simulation {
       blockchainBlockDb,
       blockchainTxDb,
       nodeUid,
-      blockchainConfig,
+      this.blockchainConfig,
       { state: 'idle' }
     );
 
@@ -126,7 +121,7 @@ export class Simulation {
       blockchainTxDb,
       blockchainBlockDb,
       blockchainMiner,
-      blockchainConfig
+      this.blockchainConfig
     );
 
     const newNode = new SimulationNode(
@@ -287,6 +282,7 @@ export class Simulation {
       nodeMap: nodeSnapshots,
       connectionMap: this.connectionMap.takeSnapshot(),
       timerService: this.timerService.takeSnapshot(),
+      blockchainConfig: this.blockchainConfig,
     };
   };
 }

@@ -4,13 +4,15 @@ import { SimulationSaveMetadataList } from '../../../common/src/saveLoad/Simulat
 import { ensureDate } from '../utils/ensureDate';
 import { SimulationExport } from '../../../backend/src/common/importExport/SimulationExport';
 import axiosAuth from '../helpers/axiosAuth';
+import { BlockchainConfig } from '../common/blockchain/BlockchainConfig';
 
 class SimulationInstanceService {
-  public async create(): Promise<string> {
+  public async create(body: BlockchainConfig): Promise<string> {
     console.log('requesting simulation instance');
 
-    const response = await axios.get<string>(
-      '/api/rest/simulationInstanceBroker/create'
+    const response = await axios.post<string>(
+      '/api/rest/simulationInstanceBroker/create',
+      { ...body }
     ); // 'await' isteğin cevabını bekliyor
     const simulationUid = response.data;
 

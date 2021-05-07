@@ -2,6 +2,7 @@ import React, { SyntheticEvent, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { simulationInstanceService } from '../../services/simulationInstanceService';
 import { useHistory } from 'react-router-dom';
+import { BlockchainConfig } from '../../common/blockchain/BlockchainConfig';
 
 interface SimulationBlockchainConfigModalProps {
   closeHandler: () => void;
@@ -20,7 +21,12 @@ const SimulationBlockchainConfigModal: React.FC<SimulationBlockchainConfigModalP
 
   const createSimulation = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const simulationUid = await simulationInstanceService.create();
+    const body: BlockchainConfig = {
+      blockCreationFee,
+      targetLeadingZeroCount,
+      coinbaseMaturity,
+    };
+    const simulationUid = await simulationInstanceService.create(body);
     history.push('/sandboxSimulation/' + simulationUid);
   };
   return (
