@@ -137,7 +137,8 @@ export class Simulation {
       nodeUid,
       positionX,
       positionY,
-      []
+      [],
+      ''
     );
     this.nodeMap[nodeUid] = newNode;
 
@@ -211,7 +212,8 @@ export class Simulation {
       nodeSnapshot.nodeUid,
       nodeSnapshot.positionX,
       nodeSnapshot.positionY,
-      nodeSnapshot.receivedMails
+      nodeSnapshot.receivedMails,
+      nodeSnapshot.nodeName
     );
 
     this.nodeMap[nodeSnapshot.nodeUid] = newNode;

@@ -45,7 +45,8 @@ export class SimulationNode {
     nodeUid: string,
     positionX: number,
     positionY: number,
-    receivedMails: SimulationNodeMail[]
+    receivedMails: SimulationNodeMail[],
+    nodeName: string
   ) {
     this.socketEmitter = socketEmitter;
     this.connectionMap = connectionMap;
@@ -55,7 +56,7 @@ export class SimulationNode {
     this._positionX = positionX;
     this._positionY = positionY;
     this._receivedMails = [...receivedMails];
-    this.nodeName = '';
+    this.nodeName = nodeName;
   }
 
   public readonly teardown = (): void => {
