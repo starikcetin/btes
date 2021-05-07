@@ -17,6 +17,7 @@ export const makeNodeData = (
     positionY,
     receivedMails,
     blockchainApp,
+    nodeName,
   } = nodeSnapshot;
 
   const blockchainTree = Tree.fromJsonObject(blockchainApp.blockDb.blockchain);
@@ -32,6 +33,7 @@ export const makeNodeData = (
     positionX: positionX,
     positionY: positionY,
     receivedMails: receivedMails,
+    nodeName: nodeName,
     blockchainApp: {
       txDb: {
         mempool: blockchainApp.txDb.mempool,

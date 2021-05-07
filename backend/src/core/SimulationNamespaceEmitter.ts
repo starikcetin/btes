@@ -21,6 +21,7 @@ import { BlocksRemovedFromOrphanagePayload } from '../common/socketPayloads/Bloc
 import { TxRemovedFromMempoolPayload } from '../common/socketPayloads/TxRemovedFromMempoolPayload';
 import { TxsRemovedFromOrphanagePayload } from '../common/socketPayloads/TxsRemovedFromOrphanagePayload';
 import { BlockchainOwnUtxoSetChangedPayload } from '../common/socketPayloads/BlockchainOwnUtxoSetChangedPayload';
+import { SimulationNodeRenamedPayload } from '../common/socketPayloads/SimulationNodeRenamedPayload';
 
 export class SimulationNamespaceEmitter {
   private readonly ns: Namespace;
@@ -55,6 +56,12 @@ export class SimulationNamespaceEmitter {
     body: SimulationNodePositionUpdatedPayload
   ): void => {
     this.ns.emit(socketEvents.simulation.nodePositionUpdated, body);
+  };
+
+  public readonly sendSimulationNodeRenamed = (
+    body: SimulationNodeRenamedPayload
+  ): void => {
+    this.ns.emit(socketEvents.simulation.nodeRenamed, body);
   };
 
   public readonly sendSimulationNodeMailReceived = (

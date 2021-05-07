@@ -23,7 +23,7 @@ interface SimulationNodeProps {
 export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   const {
     simulationUid,
-    data: { nodeUid, positionY, positionX },
+    data: { nodeUid, positionY, positionX, nodeName: name },
     launchHandler,
     onDrag,
   } = props;
@@ -36,6 +36,7 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   });
 
   const [isRenaming, setIsRenaming] = useState<boolean>(false);
+  const [nodeName, setNodeName] = useState<string>(name);
 
   const updateNodePosition = (event: DraggableEvent, data: DraggableData) => {
     //this condition prevent to trigger this function when user does not move the node,
@@ -59,6 +60,10 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
   };
 
   const rename = () => {
+    simulationBridge.sendSimulationRenameNode(simulationUid, {
+      nodeUid,
+      nodeName,
+    });
     setIsRenaming(false);
   };
 
@@ -95,7 +100,9 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
           />{' '}
           <span className="position-absolute comp-simulation-node--node-id text-truncate mb-3">
             {!isRenaming ? (
-              hasValue(nodeUid.split('-')[0]) ? (
+              name !== '' ? (
+                name
+              ) : hasValue(nodeUid.split('-')[0]) ? (
                 nodeUid.split('-')[0]
               ) : (
                 nodeUid
@@ -103,9 +110,13 @@ export const SimulationNode: React.FC<SimulationNodeProps> = (props) => {
             ) : (
               <div className="input-group comp-simulation-node--node-name-input">
                 <input
+                  value={nodeName}
                   type="text"
                   className="form-control comp-simulation-node--node-name-input"
                   placeholder="Name"
+                  onChange={(event) => {
+                    setNodeName(event.target.value);
+                  }}
                 />
                 <div className="input-group-append">
                   <button

@@ -249,6 +249,16 @@ export class Simulation {
     });
   };
 
+  public readonly renameNode = (nodeUid: string, nodeName: string): void => {
+    const node = this.nodeMap[nodeUid];
+    node.renameNode(nodeName);
+
+    this.socketEmitter.sendSimulationNodeRenamed({
+      nodeUid,
+      nodeName,
+    });
+  };
+
   public readonly connectNodes = (
     firstNodeUid: string,
     secondNodeUid: string

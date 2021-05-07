@@ -39,6 +39,8 @@ import { BlockchainBroadcastMinedBlockCommand } from './commands/BlockchainBroad
 import { BlockchainDismissMiningCommand } from './commands/BlockchainDismissMiningCommand';
 import { BlockchainBroadcastTxPayload } from '../common/socketPayloads/BlockchainBroadcastTxPayload';
 import { BlockchainBroadcastTxCommand } from './commands/BlockchainBroadcastTxCommand';
+import { SimulationRenameNodePayload } from '../common/socketPayloads/SimulationRenameNodePayload';
+import { SimulationRenameNodeCommand } from './commands/SimulationRenameNodeCommand';
 
 export class SimulationNamespaceListener {
   private readonly simulation: Simulation;
@@ -97,6 +99,10 @@ export class SimulationNamespaceListener {
     socket.on(
       socketEvents.simulation.updateNodePosition,
       this.handleSimulationUpdateNodePosition
+    );
+    socket.on(
+      socketEvents.simulation.renameNode,
+      this.handleSimulationRenameNode
     );
     socket.on(socketEvents.simulation.undo, this.handleSimulationUndo);
     socket.on(socketEvents.simulation.redo, this.handleSimulationRedo);
@@ -214,6 +220,18 @@ export class SimulationNamespaceListener {
     body: SimulationUpdateNodePositionPayload
   ) => {
     const createCommand = new SimulationUpdateNodePositionCommand(
+      this.simulation,
+      body
+    );
+
+    this.commandHistoryManager.register(createCommand);
+    createCommand.execute();
+  };
+
+  private readonly handleSimulationRenameNode = (
+    body: SimulationRenameNodePayload
+  ) => {
+    const createCommand = new SimulationRenameNodeCommand(
       this.simulation,
       body
     );
