@@ -1,12 +1,11 @@
-.comp-alert-message{
-  &--alert{
-    display: flex;
+.comp-alert-message {
+  &--alert {
     position: fixed;
-    bottom: 10px;
-    font-size: small;
     right: 10px;
-    width: 20%;
+    bottom: 10px;
     z-index: 1000;
+    display: flex;
+    width: 20%;
+    font-size: small;
   }
-
 }
