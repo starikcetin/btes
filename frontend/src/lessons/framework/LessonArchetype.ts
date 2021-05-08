@@ -19,5 +19,5 @@ export type LessonPopupStepArchetype = {
   readonly type: 'popup';
   readonly title: string;
   readonly body: string;
-  readonly targetElementId: string;
+  readonly target: string;
 };

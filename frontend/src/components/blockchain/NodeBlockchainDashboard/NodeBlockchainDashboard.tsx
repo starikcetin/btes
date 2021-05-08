@@ -58,19 +58,34 @@ export const NodeBlockchainDashboard: React.FC<NodeBlockchainDashboardProps> = (
           <Row>
             <Col xl="2" className="position-relative">
               <Nav variant="pills" className="flex-xl-column sticky-top">
-                <Nav.Item className="text-lg-right">
+                <Nav.Item
+                  className="text-lg-right"
+                  id="comp-node-blockchain-dashboard__overview-tab-handle"
+                >
                   <Nav.Link eventKey={tabKey.overview}>Overview</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-lg-right">
+                <Nav.Item
+                  className="text-lg-right"
+                  id="comp-node-blockchain-dashboard__block-database-tab-handle"
+                >
                   <Nav.Link eventKey={tabKey.blockDb}>Block Database</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-lg-right">
+                <Nav.Item
+                  className="text-lg-right"
+                  id="comp-node-blockchain-dashboard__transaction-pool-tab-handle"
+                >
                   <Nav.Link eventKey={tabKey.txPool}>Transaction Pool</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-lg-right">
+                <Nav.Item
+                  className="text-lg-right"
+                  id="comp-node-blockchain-dashboard__wallet-tab-handle"
+                >
                   <Nav.Link eventKey={tabKey.wallet}>Wallet</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="text-lg-right">
+                <Nav.Item
+                  className="text-lg-right"
+                  id="comp-node-blockchain-dashboard__miner-tab-handle"
+                >
                   <Nav.Link eventKey={tabKey.miner}>
                     Miner <small>({_.capitalize(minerState)})</small>
                   </Nav.Link>

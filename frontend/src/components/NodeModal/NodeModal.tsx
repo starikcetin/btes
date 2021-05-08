@@ -34,6 +34,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
       keyboard={false}
       size="xl"
       scrollable
+      dialogClassName="comp-node-modal"
     >
       <Modal.Header closeButton>
         <Modal.Title>Node Details</Modal.Title>
@@ -52,6 +53,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
               eventKey="summary"
               title="Summary"
               className="comp-node-modal--tab-content"
+              tabClassName="comp-node-modal--summary-tab-handle"
             >
               <Table striped>
                 <colgroup>
@@ -94,6 +96,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
               eventKey="network"
               title="Network"
               className="comp-node-modal--tab-content"
+              tabClassName="comp-node-modal--network-tab-handle"
             >
               <NodeNetworkDashboard
                 simulationUid={simulationUid}
@@ -104,6 +107,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
               eventKey="mails"
               title="Mails"
               className="comp-node-modal--tab-content"
+              tabClassName="comp-node-modal--mails-tab-handle"
             >
               <NodeMailsDashboard
                 simulationUid={simulationUid}
@@ -114,6 +118,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
               eventKey="blockchain"
               title="Blockchain"
               className="comp-node-modal--tab-content"
+              tabClassName="comp-node-modal--blockchain-tab-handle"
             >
               <NodeBlockchainDashboard
                 simulationUid={simulationUid}
@@ -124,6 +129,7 @@ const NodeModal: React.FC<NodeModalProps> = (props) => {
               eventKey="log"
               title="Log"
               className="comp-node-modal--tab-content"
+              tabClassName="comp-node-modal--log-tab-handle"
             >
               <LogTable logs={node.logs} />
             </Tab>

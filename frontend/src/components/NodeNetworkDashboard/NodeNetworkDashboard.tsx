@@ -82,7 +82,7 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
   return (
     <Container>
       <Row>
-        <Col>
+        <Col id="comp-node-network-dashboard__display-column">
           <Row>
             <Col>Connected Nodes</Col>
           </Row>
@@ -124,14 +124,14 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
             </Col>
           </Row>
         </Col>
-        <Col>
+        <Col id="comp-node-network-dashboard__action-column">
           <Form
             onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
               e.preventDefault();
               e.stopPropagation();
             }}
           >
-            <Form.Group>
+            <Form.Group id="comp-node-network-dashboard__target-node-input">
               <Form.Label>Target Node</Form.Label>
               <SaneSelect
                 options={makeTargetNodeSelectOptions(unconnectedNodeUids)}
@@ -139,6 +139,7 @@ const NodeNetworkDashboard: React.FC<NodeNetworkDashboardProps> = (props) => {
               />
             </Form.Group>
             <Button
+              id="comp-node-network-dashboard__connect-button"
               variant="success"
               type="button"
               onClick={connect}
