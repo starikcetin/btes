@@ -82,7 +82,7 @@
     "@types/bootstrap": "^5.0.12",
     "@types/bs58": "^4.0.1",
     "@types/date-and-time": "^0.13.0",
-    "@types/jest": "^26.0.22",
+    "@types/jest": "^26.0.23",
     "@types/jest-expect-message": "^1.0.3",
     "@types/jquery": "^3.5.5",
     "@types/lodash": "^4.14.168",
