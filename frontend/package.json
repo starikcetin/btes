@@ -41,7 +41,7 @@
     "bs58": "^4.0.1",
     "camelcase": "^6.2.0",
     "chart.js": "^2.9.4",
-    "date-and-time": "^0.14.2",
+    "date-and-time": "^1.0.1",
     "jquery": "^3.6.0",
     "jsum": "^1.0.1",
     "lodash": "^4.17.21",
