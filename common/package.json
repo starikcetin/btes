@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/bs58": "^4.0.1",
-    "@types/jest": "^26.0.22",
+    "@types/jest": "^26.0.24",
     "@types/jest-expect-message": "^1.0.3",
     "@types/ripemd160": "^2.0.0",
     "@types/secp256k1": "^4.0.1",
